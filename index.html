@@ -21,15 +21,14 @@
   </p>
   <div class="table-container">
 
-    <label for="filter">Filtrer par type de séjour :</label>
-    <select id="filter" onchange="filterTable()">
-      <option value="all">Tous</option>
-      <option value="alsh">Centre de loisir sans hébergement</option>
-      <option value="colo">Colonie de vacances</option>
-      <option value="autre">Autre (SNU, Classe découverte)</option>
-    </select>
-
-    <table border="1">
+    <div class="tabs">
+      <div class="tab" onclick="filterTable('all')">Tous</div>
+      <div class="tab" onclick="filterTable('alsh')">Centre de loisir</div>
+      <div class="tab" onclick="filterTable('colo')">Colonie de vacances</div>
+      <div class="tab" onclick="filterTable('autre')">Autre (SNU, Classe découverte)</div>
+    </div>
+  <div class="tabs">
+  <table>
       <tr data-type="colo autre alsh" class="always-visible">
         <th>N°</th>
         <th>Date</th>
@@ -328,19 +327,39 @@
       </tr>
     </table>
   </div>
+  </div>
 </div>
+
 </body>
 <script>
-  function filterTable() {
-    let filterValue = document.getElementById("filter").value;
+  function filterTable(type) {
+    let tabs = document.querySelectorAll(".tab");
     let rows = document.querySelectorAll("tbody tr");
 
+    tabs.forEach(tab => {
+      tab.classList.remove("active");
+      if (tab.textContent === type || (type === "all" && tab.textContent === "Tous")) {
+        tab.classList.add("active");
+      }
+    });
+
     rows.forEach(row => {
-      let type = row.getAttribute("data-type");
-      if (row.classList.contains("always-visible") || filterValue === "all" || type === filterValue) {
+      let types = row.getAttribute("data-type").split(" ");
+      if (type === "all" || types.includes(type)) {
         row.style.display = "";
       } else {
         row.style.display = "none";
+      }
+    });
+
+    // Réappliquer les classes pour l'alternance des couleurs
+    let visibleRows = Array.from(rows).filter(row => row.style.display !== "none");
+    visibleRows.forEach((row, index) => {
+      row.classList.remove("even", "odd");
+      if (index % 2 === 0) {
+        row.classList.add("even");
+      } else {
+        row.classList.add("odd");
       }
     });
   }

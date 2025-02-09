@@ -65,10 +65,10 @@ p {
   margin-bottom: 10px;
   text-align: center;
   color: #555;
-  max-width: 650px; /* Limite la largeur des lignes à 100px */
-  word-wrap: break-word; /* Force la coupure des mots qui dépassent */
-  margin-left: auto; /* Centre le paragraphe horizontalement */
-  margin-right: auto; /* Centre le paragraphe horizontalement */
+  max-width: 650px;
+  word-wrap: break-word;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 
@@ -83,6 +83,36 @@ p {
 .table-container {
   overflow-x: auto;
   margin-top: 15px;
+}
+
+/*filtre*/
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  margin: 0 5px;
+  background: #a6d866;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.tab:hover {
+  background: #8ecf4e;
+}
+
+.tab.active {
+  background: #f39c12;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Tableaux */
