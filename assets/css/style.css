@@ -91,6 +91,7 @@ p {
   justify-content: space-between;
   margin-bottom: 10px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .tab {
@@ -113,6 +114,20 @@ p {
 .tab.active {
   background: #f39c12;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1040px) {
+  .tabs {
+    flex-direction: column;
+    align-items: center;
+    overflow-x: auto;
+  }
+
+  .tab {
+    width: 100%;
+    margin: 5px 0;
+    overflow-x: auto;
+  }
 }
 
 /* Tableaux */
@@ -182,7 +197,7 @@ table tr:nth-child(even) {
   }
 }
 
-@media only screen and (max-width: 980px) {
+@media only screen and (max-width: 1040px) {
   #mobile-message {
     display: block;
     background-color: #f8d7da;
