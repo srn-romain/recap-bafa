@@ -20,8 +20,17 @@
   <div id="mobile-message">Le tableau est réduit. Faites défiler horizontalement pour voir l'intégralité du contenu.</div>
   </p>
   <div class="table-container">
+
+    <label for="filter">Filtrer par type de séjour :</label>
+    <select id="filter" onchange="filterTable()">
+      <option value="all">Tous</option>
+      <option value="alsh">Centre de loisir sans hébergement</option>
+      <option value="colo">Colonie de vacances</option>
+      <option value="autre">Autre (SNU, Classe découverte)</option>
+    </select>
+
     <table border="1">
-      <tr>
+      <tr data-type="colo autre alsh" class="always-visible">
         <th>N°</th>
         <th>Date</th>
         <th>Durée</th>
@@ -34,7 +43,7 @@
         <th>Nb de jeunes</th>
       </tr>
       <!-- Lignes du tableau -->
-      <tr>
+      <tr data-type="colo">
         <td>23</td>
         <td>Août 2024</td>
         <td>18 jours</td>
@@ -51,7 +60,7 @@
         <td>13-14 ans</td>
         <td>16</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>22</td>
         <td>Juillet 2024</td>
         <td>14 jours</td>
@@ -63,7 +72,7 @@
         <td>8-17 ans</td>
         <td>37</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>21</td>
         <td>Juillet 2024</td>
         <td>12 jours</td>
@@ -75,7 +84,7 @@
         <td>12-17 ans</td>
         <td>48</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>20</td>
         <td>Juillet 2024</td>
         <td>8 jours</td>
@@ -87,7 +96,7 @@
         <td>14-17 ans</td>
         <td>52</td>
       </tr>
-      <tr>
+      <tr data-type="autre">
         <td>19</td>
         <td>Juin 2024</td>
         <td>18 jours</td>
@@ -99,7 +108,7 @@
         <td>15-17 ans</td>
         <td>84</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>18</td>
         <td>Avril 2024</td>
         <td>8 jours</td>
@@ -111,7 +120,7 @@
         <td>14-17 ans</td>
         <td>97</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>17</td>
         <td>Février 2024</td>
         <td>8 jours</td>
@@ -123,7 +132,7 @@
         <td>6-11 ans</td>
         <td>42</td>
       </tr>
-      <tr>
+      <tr data-type="alsh">
         <td>16</td>
         <td>2023-2024</td>
         <td>Tous les mercredis</td>
@@ -135,7 +144,7 @@
         <td>3-8 ans</td>
         <td>25</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>15</td>
         <td>Août 2023</td>
         <td>12 jours</td>
@@ -147,7 +156,7 @@
         <td>10-15 ans</td>
         <td>50</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>14</td>
         <td>Juillet 2023</td>
         <td>14 jours</td>
@@ -161,7 +170,7 @@
         <td>14-17 ans</td>
         <td>41</td>
       </tr>
-      <tr>
+      <tr data-type="autre">
         <td>13</td>
         <td>Juillet 2023</td>
         <td>6 jours</td>
@@ -173,7 +182,7 @@
         <td>3-5 ans</td>
         <td>33</td>
       </tr>
-      <tr>
+      <tr data-type="alsh">
         <td>12</td>
         <td>2022-2023</td>
         <td>Tous les mercredis</td>
@@ -185,7 +194,7 @@
         <td>5-12 ans</td>
         <td>30</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>11</td>
         <td>Mai 2023</td>
         <td>5 jours</td>
@@ -197,7 +206,7 @@
         <td>10-17 ans</td>
         <td>26</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>10</td>
         <td>Avril 2023</td>
         <td>8 jours</td>
@@ -209,7 +218,7 @@
         <td>6-12 ans</td>
         <td>53</td>
       </tr>
-      <tr>
+      <tr data-type="alsh">
         <td>9</td>
         <td>Février 2023</td>
         <td>5 jours</td>
@@ -221,7 +230,7 @@
         <td>3-5 ans</td>
         <td>30</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>8</td>
         <td>Février 2023</td>
         <td>8 jours</td>
@@ -233,7 +242,7 @@
         <td>11-17 ans</td>
         <td>54</td>
       </tr>
-      <tr>
+      <tr data-type="alsh">
         <td>7</td>
         <td>Octobre 2022</td>
         <td>5 jours</td>
@@ -245,7 +254,7 @@
         <td>10-12 ans</td>
         <td>30</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>6</td>
         <td>Octobre 2022</td>
         <td>8 jours</td>
@@ -257,7 +266,7 @@
         <td>6-12 ans</td>
         <td>66</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>5</td>
         <td>Août 2022</td>
         <td>8 jours</td>
@@ -269,7 +278,7 @@
         <td>6-14 ans</td>
         <td>94</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>4</td>
         <td>Juillet 2022</td>
         <td>14 jours</td>
@@ -281,7 +290,7 @@
         <td>12-17 ans</td>
         <td>47</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>3</td>
         <td>Février 2022</td>
         <td>8 jours</td>
@@ -293,7 +302,7 @@
         <td>8-17 ans</td>
         <td>37</td>
       </tr>
-      <tr>
+      <tr data-type="alsh">
         <td>2</td>
         <td>Octobre 2021</td>
         <td>5 jours</td>
@@ -305,7 +314,7 @@
         <td>10-12 ans</td>
         <td>25</td>
       </tr>
-      <tr>
+      <tr data-type="colo">
         <td>1</td>
         <td>Août 2021</td>
         <td>13 jours</td>
@@ -321,4 +330,19 @@
   </div>
 </div>
 </body>
+<script>
+  function filterTable() {
+    let filterValue = document.getElementById("filter").value;
+    let rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+      let type = row.getAttribute("data-type");
+      if (row.classList.contains("always-visible") || filterValue === "all" || type === filterValue) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+</script>
 </html>
