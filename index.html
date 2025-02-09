@@ -336,7 +336,9 @@
 
     tabs.forEach(tab => {
       tab.classList.remove("active");
-      if (tab.textContent === type || (type === "all" && tab.textContent === "Tous")) {
+
+      // Ajoute "active" uniquement si le texte de la tab correspond à "type"
+      if ((type === "all" && tab.textContent.trim() === "Tous") || tab.getAttribute("data-filter") === type) {
         tab.classList.add("active");
       }
     });
@@ -361,5 +363,11 @@
       }
     });
   }
+
+  // Ajouter un attribut data-filter pour chaque tab
+  document.querySelectorAll('.tab').forEach((tab, index) => {
+    const types = ['all', 'alsh', 'colo', 'autre'];
+    tab.setAttribute('data-filter', types[index]);
+  });
 </script>
 </html>
