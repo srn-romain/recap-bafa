@@ -21,13 +21,13 @@
   </p>
 
     <div class="tabs">
-      <div class="tab active" onclick="filterTable('all')">Toute les expériences</div>
-      <div class="tab" onclick="filterTable('alsh')">Centre de loisir</div>
-      <div class="tab" onclick="filterTable('colo')">Colonie de vacances</div>
-      <div class="tab" onclick="filterTable('autre')">Autre (SNU, Classe découverte)</div>
+      <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
+      <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
+      <div class="tab" onclick="filterTable('colo', 'table-experiences')">Colonie de vacances</div>
+      <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
     </div>
   <div class="tabs">
-  <table>
+  <table id="table-experiences">
       <tr data-type="colo autre alsh" class="always-visible">
         <th>N°</th>
         <th>Date</th>
@@ -40,7 +40,7 @@
         <th>Tranche d'âge</th>
         <th>Nb de jeunes</th>
       </tr>
-      <!-- Lignes du tableau -->
+
       <tr data-type="colo">
         <td class="num"></td>
         <td>Août 2024</td>
@@ -326,7 +326,84 @@
       </tr>
     </table>
   </div>
+
+
+  <div class="tabs">
+    <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
+    <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
+    <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
+  </div>
+  <div class="tabs">
+    <table id="table-formations">
+      <tr data-type="bafa bafd" class="always-visible">
+        <th>N°</th>
+        <th>Date</th>
+        <th>Durée</th>
+        <th>Organisme</th>
+        <th>Logo</th>
+        <th>Intitulé</th>
+        <th>Lieu</th>
+      </tr>
+      <tr data-type="bafd">
+        <td class="num"></td>
+        <td>Avril 2025</td>
+        <td>8 jours</td>
+        <td>UFCV (93)</td>
+        <td><img src="assets/img/ufcv.png" alt="Logo de la formation" class="image-carrée"></td>
+        <td>Formation générale BAFD</td>
+        <td><a href="https://maps.app.goo.gl/7Z8Z9Z9Z9Z9Z9Z9Z9" target="_blank">Lyon (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Février 2021</td>
+        <td>2 jours</td>
+        <td>UFCV (93)</td>
+        <td><img src="assets/img/ufcv.png" alt="Logo de la formation" class="image-carrée"></td>
+        <td>Formation de formateur bafa</td>
+        <td><a href="https://maps.app.goo.gl/7Z8Z9Z9Z9Z9Z9Z9Z9" target="_blank">Lyon (69)</a></td>
+      </tr>
+      <tr data-type="bafa bafd">
+        <td class="num"></td>
+        <td>Avril 2022</td>
+        <td>5 jours</td>
+        <td>FFSS (69)</td>
+        <td><img src="assets/img/ffss.jpeg" alt="Logo de la formation" class="image-carrée"></td>
+        <td>Brevet de Surveillant de Baignade</td>
+        <td><a href="https://maps.app.goo.gl/7Z8Z9Z9Z9Z9Z9Z9Z9" target="_blank">Lyon (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Décembre 2021</td>
+        <td>8 jours</td>
+        <td>UCPA (94)</td>
+        <td><img src="assets/img/ucpa.jpeg" alt="Logo de la formation" class="image-carrée"></td>
+        <td>Approfondissement ski & glisse</td>
+        <td><a href="https://maps.app.goo.gl/7Z8Z9Z9Z9Z9Z9Z9Z9" target="_blank">Les Arcs (??)</a></td>
+      </tr>
+      <tr data-type="bafa bafd">
+        <td class="num"></td>
+        <td>Octobre 2021</td>
+        <td>1 jour</td>
+        <td>Pompier de Lyon (69)</td>
+        <td><img src="assets/img/pompier.png" alt="Logo de la formation" class="image-carrée"></td>
+        <td>Formation Premiers Secours (PSC1)</td>
+        <td><a href="https://maps.app.goo.gl/7Z8Z9Z9Z9Z9Z9Z9Z9" target="_blank">Lyon (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Juillet 2021</td>
+        <td>8 jours</td>
+        <td>AFOCAL (59)</td>
+        <td><img src="assets/img/afocal.jpg" alt="Logo de la formation" class="image-carrée"></td>
+        <td>Formation générale BAFA</td>
+        <td><a href="https://maps.app.goo.gl/7Z8Z9Z9Z9Z9Z9Z9Z9" target="_blank">Lyon (69)</a></td>
+      </tr>
+    </table>
+  </div>
 </div>
+
+<a href="https://docs.google.com" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
 <script src="assets/js/main.js"></script>
 </body>
 </html>

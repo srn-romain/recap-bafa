@@ -1,65 +1,58 @@
-// Fonction pour filtrer les lignes et remplir les numéros de la colonne "num"
-function filterTable(type) {
-  let tabs = document.querySelectorAll(".tab");
-  let rows = document.querySelectorAll("tbody tr");
+function setActiveTab(clickedTab, tableId) {
+  let tabs = document.querySelectorAll(`.tabs .tab`);
 
-  // Filtrage des tabs
   tabs.forEach(tab => {
-    tab.classList.remove("active");
-
-    // Ajoute "active" uniquement si le texte de la tab correspond à "type"
-    if ((type === "all" && tab.textContent.trim() === "Tous") || tab.getAttribute("data-filter") === type) {
-      tab.classList.add("active");
+    if (tab.parentElement.nextElementSibling?.querySelector(`#${tableId}`)) {
+      tab.classList.remove("active"); // Retire la classe active des onglets liés au tableau
     }
   });
 
-  // Filtrage des lignes
+  clickedTab.classList.add("active"); // Ajoute la classe active à l'onglet cliqué
+}
+
+function filterTable(type, tableId) {
+  let table = document.getElementById(tableId);
+  let rows = table.querySelectorAll("tbody tr");
+
   rows.forEach(row => {
-    let types = row.getAttribute("data-type").split(" ");
-    if (type === "all" || types.includes(type)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
+    let types = row.getAttribute("data-type") ? row.getAttribute("data-type").split(" ") : [];
+    row.style.display = (type === "all" || types.includes(type)) ? "" : "none";
   });
 
-  // Réappliquer les classes pour l'alternance des couleurs (evens/odds)
   let visibleRows = Array.from(rows).filter(row => row.style.display !== "none");
   visibleRows.forEach((row, index) => {
     row.classList.remove("even", "odd");
-    if (index % 2 === 0) {
-      row.classList.add("even");
-    } else {
-      row.classList.add("odd");
-    }
+    row.classList.add(index % 2 === 0 ? "even" : "odd");
   });
 
-  // Appeler la fonction pour remplir les numéros après le filtrage
-  remplirNum();
+  remplirNum(table);
 }
 
-// Fonction pour remplir les cellules de la colonne avec la classe "num" en partant du bas
-function remplirNum() {
-  const cells = document.querySelectorAll('.num'); // Sélectionne toutes les cellules avec la classe "num"
+// Associer les onglets avec leur tableau respectif
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", function () {
+    let type = this.getAttribute("onclick").match(/'([^']+)'/)[1];
+    let tableId = this.getAttribute("onclick").match(/'([^']+)'/g)[1].replace(/'/g, "");
 
-  // Filtrer les lignes visibles
+    filterTable(type, tableId);
+    setActiveTab(this, tableId);
+  });
+});
+
+// Initialisation
+window.onload = function () {
+  filterTable('all', 'table-experiences');
+  filterTable('all', 'table-formations');
+};
+
+// Fonction pour remplir les numéros dans un tableau spécifique
+function remplirNum(table) {
+  const cells = table.querySelectorAll('.num'); // Sélectionne les cellules "num" du tableau concerné
   const visibleRows = Array.from(cells).filter(cell => cell.closest('tr').style.display !== 'none');
 
-  // Remplir chaque cellule en partant du bas
+  // Remplir chaque cellule avec un numéro en partant du bas
   const totalRows = visibleRows.length;
   visibleRows.forEach((cell, index) => {
-    // L'index commence à 0 en haut, donc on inverse en calculant : totalRows - index
     cell.textContent = totalRows - index;
   });
 }
-
-// Ajouter un attribut data-filter pour chaque tab
-document.querySelectorAll('.tab').forEach((tab, index) => {
-  const types = ['all', 'alsh', 'colo', 'autre'];
-  tab.setAttribute('data-filter', types[index]);
-});
-
-// Appeler la fonction pour remplir les numéros après le chargement de la page
-window.onload = function() {
-  filterTable('all'); // Applique le filtre "all" pour afficher toutes les lignes au début
-};
