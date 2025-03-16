@@ -153,6 +153,10 @@ table tr:nth-child(even) {
   border-radius: 5px;
 }
 
+.image-carrée:hover {
+  border: 2px solid black;
+}
+
 #mobile-message {
   display: none;
 }
