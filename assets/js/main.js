@@ -1,3 +1,6 @@
+/*--------------------------------------------------------------
+# Numéroter les lignes d'un tableau
+--------------------------------------------------------------*/
 function setActiveTab(clickedTab, tableId) {
   let tabs = document.querySelectorAll(`.tabs .tab`);
 
@@ -57,6 +60,9 @@ function remplirNum(table) {
   });
 }
 
+/*--------------------------------------------------------------
+# Back to top button
+--------------------------------------------------------------*/
 document.addEventListener("DOMContentLoaded", function () {
   let backToTopButton = document.querySelector(".back-to-top");
 
