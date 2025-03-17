@@ -75,7 +75,7 @@ p {
 
 .info-box{
     display: flex;
-    max-width: 900px;
+    max-width: 980px;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
