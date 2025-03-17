@@ -67,12 +67,23 @@ p {
   margin-bottom: 10px;
   text-align: center;
   color: #555;
-  max-width: 650px;
+  max-width: 1000px;
   word-wrap: break-word;
   margin-left: auto;
   margin-right: auto;
 }
 
+.info-box{
+    display: flex;
+    max-width: 840px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #4f624B;;
+    color: #ffffff;
+    border-radius: 5px;
+}
 
 #mobile-message {
   color: #e74c3c;
