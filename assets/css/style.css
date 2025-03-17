@@ -75,7 +75,7 @@ p {
 
 .info-box{
     display: flex;
-    max-width: 840px;
+    max-width: 900px;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
@@ -171,7 +171,6 @@ table tr:nth-child(even) {
 #mobile-message {
   display: none;
 }
-
 
 /*--------------------------------------------------------------
 # Back to top button
