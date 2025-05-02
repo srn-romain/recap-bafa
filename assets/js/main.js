@@ -286,31 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function calculateAdditionalStatistics() {
-  calculateAnimatorsCount();
   calculateFormationStatistics();
-}
-
-function calculateAnimatorsCount() {
-  // Ajouter une nouvelle carte statistique pour le nombre d'animateurs
-  const statsGrid = document.querySelector('.stats-section .stats-grid');
-  if (!statsGrid) return;
-
-  const animatorCard = document.createElement('div');
-  animatorCard.className = 'stat-card';
-  animatorCard.innerHTML = `
-    <div class="stat-value" id="total-animators">0</div>
-    <div class="stat-label">Animateurs rencontrés</div>
-  `;
-  statsGrid.appendChild(animatorCard);
-
-  // Estimation du nombre d'animateurs (en moyenne 1 animateur pour 8 jeunes + l'équipe de direction)
-  const totalYouth = parseInt(document.getElementById('total-youth').textContent) || 0;
-  const totalExperiences = parseInt(document.getElementById('total-experiences').textContent) || 0;
-
-  // Formule approximative: 1 animateur pour 8 jeunes + 2 membres de direction par expérience
-  const estimatedAnimators = Math.round(totalYouth / 8 + totalExperiences * 2);
-
-  document.getElementById('total-animators').textContent = estimatedAnimators;
 }
 
 function calculateFormationStatistics() {
