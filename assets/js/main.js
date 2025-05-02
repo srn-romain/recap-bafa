@@ -81,18 +81,25 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
-
-
 /*--------------------------------------------------------------
 # Statistiques
 --------------------------------------------------------------*/
 document.addEventListener("DOMContentLoaded", function() {
   // Attendre que le DOM soit chargé pour calculer les statistiques
-  setTimeout(calculateStatistics, 500);
+  setTimeout(calculateAllStatistics, 500);
 });
 
-function calculateStatistics() {
+// Fonction principale pour calculer toutes les statistiques
+function calculateAllStatistics() {
+  // Calculer les statistiques des expériences
+  calculateExperienceStatistics();
+
+  // Calculer les statistiques des formations
+  calculateFormationStatistics();
+}
+
+// Fonction pour calculer les statistiques des expériences
+function calculateExperienceStatistics() {
   const experienceTable = document.getElementById('table-experiences');
   if (!experienceTable) return;
 
@@ -152,143 +159,10 @@ function calculateStatistics() {
   document.getElementById('total-experiences').textContent = rows.length - 1; // -1 pour l'en-tête
 
   // Créer le graphique pour les jours par organisme
-  createOrganizationChart(organizationDays);
+  createChart('organizationChart', organizationDays, 'Nombre de jours par organisme');
 }
 
-function extractDays(text) {
-  if (!text) return 0;
-
-  // Cas spécial "Tous les mercredis"
-  if (text.includes('mercredis')) {
-    // Estimation: environ 36 mercredis dans une année scolaire
-    return 36;
-  }
-
-  const match = text.match(/(\d+)\s*jour/i);
-  return match ? parseInt(match[1], 10) : 0;
-}
-
-function extractNumber(text) {
-  if (!text) return 0;
-  if (text === '?') return 0;
-
-  const match = text.match(/(\d+)/);
-  return match ? parseInt(match[1], 10) : 0;
-}
-
-function createOrganizationChart(organizationDays) {
-  // S'assurer que Chart.js est disponible
-  if (typeof Chart === 'undefined') {
-    // Charger Chart.js si nécessaire
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-    script.onload = function() {
-      renderChart(organizationDays);
-    };
-    document.head.appendChild(script);
-  } else {
-    renderChart(organizationDays);
-  }
-}
-
-function renderChart(organizationDays) {
-  const canvas = document.getElementById('organizationChart');
-  if (!canvas) return;
-
-  // Trier les organismes par nombre de jours (décroissant)
-  const sortedData = Object.entries(organizationDays)
-      .sort((a, b) => b[1] - a[1]);
-
-  const labels = sortedData.map(entry => entry[0]);
-  const data = sortedData.map(entry => entry[1]);
-
-  // Générer des couleurs
-  const colors = generateColors(labels.length);
-
-  new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Nombre de jours',
-        data: data,
-        backgroundColor: colors,
-        borderColor: colors.map(color => darkenColor(color, 0.1)),
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Nombre de jours'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Organismes'
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        title: {
-          display: true,
-          text: 'Nombre de jours par organisme'
-        }
-      }
-    }
-  });
-}
-
-function generateColors(count) {
-  const baseColors = [
-    '#f39c12', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6',
-    '#1abc9c', '#d35400', '#34495e', '#16a085', '#27ae60'
-  ];
-
-  const colors = [];
-  for (let i = 0; i < count; i++) {
-    colors.push(baseColors[i % baseColors.length]);
-  }
-
-  return colors;
-}
-
-function darkenColor(color, amount) {
-  // Convertir la couleur hex en RGB
-  let r = parseInt(color.substring(1, 3), 16);
-  let g = parseInt(color.substring(3, 5), 16);
-  let b = parseInt(color.substring(5, 7), 16);
-
-  // Assombrir chaque composante
-  r = Math.max(0, Math.floor(r * (1 - amount)));
-  g = Math.max(0, Math.floor(g * (1 - amount)));
-  b = Math.max(0, Math.floor(b * (1 - amount)));
-
-  // Reconvertir en hex
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-}
-
-/*--------------------------------------------------------------
-# Statistiques supplémentaires
---------------------------------------------------------------*/
-document.addEventListener("DOMContentLoaded", function() {
-  // Attendre que le DOM soit chargé pour calculer les statistiques
-  setTimeout(calculateAdditionalStatistics, 500);
-});
-
-function calculateAdditionalStatistics() {
-  calculateFormationStatistics();
-}
-
+// Fonction pour calculer les statistiques des formations
 function calculateFormationStatistics() {
   const formationTable = document.getElementById('table-formations');
   if (!formationTable) return;
@@ -338,19 +212,43 @@ function calculateFormationStatistics() {
   document.getElementById('total-bafd-formations').textContent = totalBafdFormations;
 
   // Créer le graphique pour les jours par organisme de formation
-  createFormationOrganizationChart(formationOrganizationDays);
+  createChart('formationOrganizationChart', formationOrganizationDays, 'Nombre de jours par organisme de formation');
 }
 
-function createFormationOrganizationChart(formationOrganizationDays) {
-  const canvas = document.getElementById('formationOrganizationChart');
+// Fonction utilitaire pour extraire le nombre de jours
+function extractDays(text) {
+  if (!text) return 0;
+
+  // Cas spécial "Tous les mercredis"
+  if (text.includes('mercredis')) {
+    // Estimation: environ 36 mercredis dans une année scolaire
+    return 36;
+  }
+
+  const match = text.match(/(\d+)\s*jour/i);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
+// Fonction utilitaire pour extraire un nombre
+function extractNumber(text) {
+  if (!text) return 0;
+  if (text === '?') return 0;
+
+  const match = text.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
+// Fonction générique pour créer un graphique
+function createChart(canvasId, data, titleText) {
+  const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
-  // Trier les organismes par nombre de jours (décroissant)
-  const sortedData = Object.entries(formationOrganizationDays)
+  // Trier les données par nombre de jours (décroissant)
+  const sortedData = Object.entries(data)
       .sort((a, b) => b[1] - a[1]);
 
   const labels = sortedData.map(entry => entry[0]);
-  const data = sortedData.map(entry => entry[1]);
+  const values = sortedData.map(entry => entry[1]);
 
   // Générer des couleurs
   const colors = generateColors(labels.length);
@@ -360,10 +258,9 @@ function createFormationOrganizationChart(formationOrganizationDays) {
     data: {
       labels: labels,
       datasets: [{
-        label: 'Nombre de jours',
-        data: data,
+        data: values,
         backgroundColor: colors,
-        borderColor: colors.map(color => darkenColor(color, 0.1)),
+        borderColor: colors.map(color => darkenColor(color, 0.2)),
         borderWidth: 1
       }]
     },
@@ -373,15 +270,8 @@ function createFormationOrganizationChart(formationOrganizationDays) {
       scales: {
         y: {
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Nombre de jours'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Organismes'
+          ticks: {
+            precision: 0
           }
         }
       },
@@ -391,9 +281,32 @@ function createFormationOrganizationChart(formationOrganizationDays) {
         },
         title: {
           display: true,
-          text: 'Nombre de jours par organisme de formation'
+          text: titleText
         }
       }
     }
   });
+}
+
+// Fonction pour générer des couleurs
+function generateColors(count) {
+  const baseColors = [
+    '#f39c12', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6',
+    '#1abc9c', '#d35400', '#34495e', '#16a085', '#27ae60'
+  ];
+
+  return Array.from({ length: count }, (_, i) => baseColors[i % baseColors.length]);
+}
+
+// Fonction pour assombrir une couleur
+function darkenColor(color, amount) {
+  const r = parseInt(color.substring(1, 3), 16);
+  const g = parseInt(color.substring(3, 5), 16);
+  const b = parseInt(color.substring(5, 7), 16);
+
+  const newR = Math.max(0, Math.floor(r * (1 - amount))).toString(16).padStart(2, '0');
+  const newG = Math.max(0, Math.floor(g * (1 - amount))).toString(16).padStart(2, '0');
+  const newB = Math.max(0, Math.floor(b * (1 - amount))).toString(16).padStart(2, '0');
+
+  return `#${newR}${newG}${newB}`;
 }
