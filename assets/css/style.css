@@ -259,12 +259,27 @@ table tr:nth-child(even) {
   }
 }
 
-
-
-
 /*--------------------------------------------------------------
 # Statistiques
 --------------------------------------------------------------*/
+#stats-mobile-message {
+  display: none;
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  margin: 10px 0 20px;
+  border: 1px solid #ffeeba;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 500;
+}
+
+@media only screen and (max-width: 768px) {
+  #stats-mobile-message {
+    display: block;
+  }
+}
+
 .stats-container {
   margin-top: 20px;
   width: 100%;
