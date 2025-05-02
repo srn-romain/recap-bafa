@@ -94,6 +94,9 @@ function calculateAllStatistics() {
   // Calculer les statistiques des expériences
   calculateExperienceStatistics();
 
+  // Calculer les statistiques des tranches d'âges
+  calculateAgeGroupStatistics();
+
   // Calculer les statistiques des formations
   calculateFormationStatistics();
 }
@@ -309,4 +312,169 @@ function darkenColor(color, amount) {
   const newB = Math.max(0, Math.floor(b * (1 - amount))).toString(16).padStart(2, '0');
 
   return `#${newR}${newG}${newB}`;
+}
+
+// Fonction pour calculer les statistiques des tranches d'âges
+function calculateAgeGroupStatistics() {
+  const experienceTable = document.getElementById('table-experiences');
+  if (!experienceTable) return;
+
+  const rows = experienceTable.querySelectorAll('tr[data-type]');
+  const ageGroups = {};
+  let totalLowerAge = 0;
+  let totalHigherAge = 0;
+  let totalExperiences = 0;
+
+  // Pour calculer l'âge moyen
+  let sumOfAges = 0;
+  let countOfAges = 0;
+
+  // Pour identifier la tranche d'âge la plus fréquente
+  const ageFrequency = {};
+
+  rows.forEach(row => {
+    // Ignorer la ligne d'en-tête
+    if (row.classList.contains('always-visible')) return;
+
+    // Extraire la tranche d'âge
+    const ageCell = row.cells[8];
+    if (!ageCell) return;
+
+    const ageText = ageCell.textContent.trim();
+    if (!ageText) return;
+
+    // Analyser la tranche d'âge (format "X-Y ans")
+    const ageMatch = ageText.match(/(\d+)-(\d+)/);
+    if (ageMatch) {
+      const lowerAge = parseInt(ageMatch[1], 10);
+      const higherAge = parseInt(ageMatch[2], 10);
+
+      // Créer une clé pour cette tranche d'âge
+      const ageRange = `${lowerAge}-${higherAge} ans`;
+      ageGroups[ageRange] = (ageGroups[ageRange] || 0) + 1;
+
+      // Pour l'âge le plus fréquent
+      for (let age = lowerAge; age <= higherAge; age++) {
+        ageFrequency[age] = (ageFrequency[age] || 0) + 1;
+      }
+
+      // Pour l'âge moyen
+      sumOfAges += (lowerAge + higherAge) / 2;
+      countOfAges++;
+
+      totalLowerAge += lowerAge;
+      totalHigherAge += higherAge;
+      totalExperiences++;
+    }
+  });
+
+  // Calculer l'âge moyen
+  const averageAge = countOfAges > 0 ? (sumOfAges / countOfAges).toFixed(1) : 0;
+
+  // Trouver l'âge le plus fréquent
+  let mostCommonAge = 0;
+  let highestFrequency = 0;
+
+  for (const [age, frequency] of Object.entries(ageFrequency)) {
+    if (frequency > highestFrequency) {
+      highestFrequency = frequency;
+      mostCommonAge = age;
+    }
+  }
+
+  // Mettre à jour les valeurs dans le DOM
+  document.getElementById('average-age').textContent = averageAge;
+  document.getElementById('most-common-age').textContent = mostCommonAge;
+
+  // Créer le graphique pour les tranches d'âges
+  createAgeGroupChart(ageGroups);
+}
+
+// Fonction pour créer le graphique des tranches d'âges
+function createAgeGroupChart(data) {
+  const canvas = document.getElementById('ageGroupChart');
+  if (!canvas) return;
+
+  // Trier les données par tranche d'âge (du plus jeune au plus âgé)
+  const sortedData = Object.entries(data)
+      .sort((a, b) => {
+        const ageA = parseInt(a[0].split('-')[0], 10);
+        const ageB = parseInt(b[0].split('-')[0], 10);
+        return ageA - ageB;
+      });
+
+  const labels = sortedData.map(entry => entry[0]);
+  const values = sortedData.map(entry => entry[1]);
+
+  // Générer les couleurs
+  const colors = generateColorGradient('#3498db', '#f39c12', labels.length);
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderColor: colors.map(color => darkenColor(color, 0.2)),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: 'Nombre d\'expériences par tranche d\'âge'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.raw;
+              return value + (value > 1 ? ' expériences' : ' expérience');
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// Fonction pour générer un dégradé de couleurs
+function generateColorGradient(startColor, endColor, steps) {
+  const start = {
+    r: parseInt(startColor.slice(1, 3), 16),
+    g: parseInt(startColor.slice(3, 5), 16),
+    b: parseInt(startColor.slice(5, 7), 16)
+  };
+
+  const end = {
+    r: parseInt(endColor.slice(1, 3), 16),
+    g: parseInt(endColor.slice(3, 5), 16),
+    b: parseInt(endColor.slice(5, 7), 16)
+  };
+
+  const colors = [];
+
+  for (let i = 0; i < steps; i++) {
+    const r = Math.round(start.r + (end.r - start.r) * i / (steps - 1));
+    const g = Math.round(start.g + (end.g - start.g) * i / (steps - 1));
+    const b = Math.round(start.b + (end.b - start.b) * i / (steps - 1));
+
+    colors.push(`#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`);
+  }
+
+  return colors;
 }
