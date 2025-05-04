@@ -359,3 +359,10 @@ table tr:nth-child(even) {
     height: 250px;
   }
 }
+
+@media (max-width: 1200px) {
+  .stats-container div:not(.stats-chart) {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+}
