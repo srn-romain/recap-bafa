@@ -283,16 +283,23 @@ table tr:nth-child(even) {
 .stats-container {
   margin-top: 20px;
   width: 100%;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }
 
 .stats-section {
   margin-bottom: 40px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .stats-section h3 {
   text-align: center;
   margin-bottom: 25px;
-  color: #2c3e50;
+  color: #f39c12;
   font-size: 1.6rem;
   padding-bottom: 10px;
   border-bottom: 2px solid #a6d866;
@@ -303,13 +310,14 @@ table tr:nth-child(even) {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  background: transparent;
 }
 
 .stat-sentence {
   text-align: center;
   font-size: 1.2rem;
   margin-bottom: 12px;
-  color: #444;
+  color: black;
 }
 
 .stat-value {
@@ -322,10 +330,10 @@ table tr:nth-child(even) {
 .stats-chart {
   margin-top: 30px;
   height: 350px;
-  background-color: #fafafa;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
