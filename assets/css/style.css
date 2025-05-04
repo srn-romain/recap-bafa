@@ -263,8 +263,8 @@ table tr:nth-child(even) {
 # Statistiques
 --------------------------------------------------------------*/
 #stats-mobile-message {
-  display: none;
-  background-color: #fff3cd;
+  display: block !important;
+  background-color: #fff3cd !important;
   color: #856404;
   padding: 12px;
   margin: 10px 0 20px;
@@ -272,6 +272,7 @@ table tr:nth-child(even) {
   border-radius: 5px;
   text-align: center;
   font-weight: 500;
+  max-width: 100%;
 }
 
 @media only screen and (max-width: 768px) {
