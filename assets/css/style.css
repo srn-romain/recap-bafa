@@ -195,9 +195,16 @@ table tr:nth-child(even) {
   transition: all 0.4s;
 }
 
+.back-to-top i {
+  font-size: 28px;
+  color: #fff;
+  line-height: 0;
+}
+
 .back-to-top:hover {
   background: #f39c12;
-  transform: scale(1.2);
+  transform: scale(1.28);
+  color: #fff;
 }
 
 .back-to-top.active {
@@ -216,7 +223,6 @@ table tr:nth-child(even) {
   }
 }
 
-/* Responsivité */
 @media (max-width: 768px) {
   h2 {
     font-size: 1.5rem;
