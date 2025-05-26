@@ -478,3 +478,127 @@ function generateColorGradient(startColor, endColor, steps) {
 
   return colors;
 }
+
+/*--------------------------------------------------------------
+# Barre de rechecherche dans les tableaux
+--------------------------------------------------------------*/
+
+// Fonction de recherche dans les tableaux améliorée
+function setupSearch(searchInputId, tableId) {
+  const searchInput = document.getElementById(searchInputId);
+  const table = document.getElementById(tableId);
+
+  searchInput.addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+
+    // Si la barre de recherche contient du texte, réinitialisons d'abord le filtre par onglet
+    if (searchTerm.length > 0) {
+      // Réinitialiser visuellement l'onglet actif
+      const tabContainer = table.closest('.tabs').previousElementSibling;
+      const tabs = tabContainer.querySelectorAll('.tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      tabs[0].classList.add('active'); // Activer "Toutes les expériences/formations"
+    }
+
+    const rows = table.getElementsByTagName('tr');
+
+    // Commencer à 1 pour sauter l'en-tête
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const text = row.textContent.toLowerCase();
+
+      // Si l'utilisateur recherche quelque chose
+      if (searchTerm.length > 0) {
+        // Réinitialiser d'abord tous les filtres d'onglets
+        row.style.display = '';
+
+        // Puis appliquer le filtre de recherche
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          if (!row.classList.contains('always-visible')) {
+            row.style.display = 'none';
+          }
+        }
+      } else {
+        // Si la barre de recherche est vide, on revient au filtre par onglet actif
+        const activeTab = table.closest('.tabs').previousElementSibling.querySelector('.tab.active');
+        const activeFilter = activeTab.textContent.toLowerCase();
+
+        if (activeFilter.includes('toutes') || row.classList.contains('always-visible')) {
+          row.style.display = '';
+        } else {
+          const rowType = row.getAttribute('data-type').toLowerCase();
+          const filterType = activeTab.getAttribute('onclick').split("'")[1].toLowerCase();
+
+          if (rowType.includes(filterType)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      }
+    }
+
+    // Ajouter cette ligne pour mettre à jour la numérotation
+    remplirNum(table);
+
+    // Mettre à jour les classes alternées
+    const visibleRows = Array.from(rows).filter(row => row.style.display !== "none" && !row.classList.contains('always-visible'));
+    visibleRows.forEach((row, index) => {
+      row.classList.remove("even", "odd");
+      row.classList.add(index % 2 === 0 ? "even" : "odd");
+    });
+  });
+}
+
+// Fonction de filtrage par onglets améliorée
+function filterTable(type, tableId) {
+  const table = document.getElementById(tableId);
+  const rows = table.getElementsByTagName('tr');
+  const searchInput = document.getElementById(tableId === 'table-experiences' ? 'search-experiences' : 'search-formations');
+
+  // Réinitialiser la barre de recherche
+  searchInput.value = '';
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (type === 'all' || row.classList.contains('always-visible')) {
+      row.style.display = '';
+    } else {
+      const rowType = row.getAttribute('data-type');
+      if (rowType && rowType.includes(type)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  }
+
+  // Mettre à jour la numérotation
+  remplirNum(table);
+
+  // Mettre à jour les classes alternées
+  const visibleRows = Array.from(rows).filter(row => row.style.display !== "none" && !row.classList.contains('always-visible'));
+  visibleRows.forEach((row, index) => {
+    row.classList.remove("even", "odd");
+    row.classList.add(index % 2 === 0 ? "even" : "odd");
+  });
+
+  // Mettre à jour l'onglet actif
+  const tabContainer = table.closest('.tabs').previousElementSibling;
+  const tabs = tabContainer.querySelectorAll('.tab');
+  tabs.forEach(tab => {
+    if (tab.getAttribute('onclick').includes(type)) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+}
+
+// Initialiser la recherche pour les deux tableaux quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+  setupSearch('search-experiences', 'table-experiences');
+  setupSearch('search-formations', 'table-formations');
+});
