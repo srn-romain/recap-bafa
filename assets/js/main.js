@@ -13,24 +13,6 @@ function setActiveTab(clickedTab, tableId) {
   clickedTab.classList.add("active"); // Ajoute la classe active à l'onglet cliqué
 }
 
-function filterTable(type, tableId) {
-  let table = document.getElementById(tableId);
-  let rows = table.querySelectorAll("tbody tr");
-
-  rows.forEach(row => {
-    let types = row.getAttribute("data-type") ? row.getAttribute("data-type").split(" ") : [];
-    row.style.display = (type === "all" || types.includes(type)) ? "" : "none";
-  });
-
-  let visibleRows = Array.from(rows).filter(row => row.style.display !== "none");
-  visibleRows.forEach((row, index) => {
-    row.classList.remove("even", "odd");
-    row.classList.add(index % 2 === 0 ? "even" : "odd");
-  });
-
-  remplirNum(table);
-}
-
 // Associer les onglets avec leur tableau respectif
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", function () {
@@ -488,51 +470,71 @@ function setupSearch(searchInputId, tableId) {
   const searchInput = document.getElementById(searchInputId);
   const table = document.getElementById(tableId);
 
+  // Vérifier si un message "Aucun résultat" existe déjà, sinon le créer
+  let noResultsRow = table.querySelector('.no-results-row');
+  if (!noResultsRow) {
+    noResultsRow = document.createElement('tr');
+    noResultsRow.className = 'no-results-row';
+    noResultsRow.style.display = 'none';
+
+    const cell = document.createElement('td');
+    cell.colSpan = table.rows[0].cells.length; // Couvre toutes les colonnes
+    cell.textContent = 'Aucun résultat trouvé';
+    cell.style.textAlign = 'center';
+    cell.style.padding = '20px';
+    cell.style.fontStyle = 'italic';
+    cell.style.color = '#888';
+
+    noResultsRow.appendChild(cell);
+    table.querySelector('tbody').appendChild(noResultsRow);
+  }
+
   searchInput.addEventListener('keyup', function() {
     const searchTerm = this.value.toLowerCase();
 
-    // Si la barre de recherche contient du texte, réinitialisons d'abord le filtre par onglet
     if (searchTerm.length > 0) {
-      // Réinitialiser visuellement l'onglet actif
       const tabContainer = table.closest('.tabs').previousElementSibling;
       const tabs = tabContainer.querySelectorAll('.tab');
       tabs.forEach(tab => tab.classList.remove('active'));
-      tabs[0].classList.add('active'); // Activer "Toutes les expériences/formations"
+      tabs[0].classList.add('active');
     }
 
     const rows = table.getElementsByTagName('tr');
+    let visibleCount = 0;
 
-    // Commencer à 1 pour sauter l'en-tête
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
+      if (row.classList.contains('no-results-row')) continue;
+
       const text = row.textContent.toLowerCase();
 
-      // Si l'utilisateur recherche quelque chose
       if (searchTerm.length > 0) {
-        // Réinitialiser d'abord tous les filtres d'onglets
         row.style.display = '';
 
-        // Puis appliquer le filtre de recherche
         if (text.includes(searchTerm)) {
           row.style.display = '';
+          visibleCount++;
         } else {
           if (!row.classList.contains('always-visible')) {
             row.style.display = 'none';
+          } else {
+            visibleCount++;
           }
         }
       } else {
-        // Si la barre de recherche est vide, on revient au filtre par onglet actif
         const activeTab = table.closest('.tabs').previousElementSibling.querySelector('.tab.active');
         const activeFilter = activeTab.textContent.toLowerCase();
 
         if (activeFilter.includes('toutes') || row.classList.contains('always-visible')) {
           row.style.display = '';
+          visibleCount++;
         } else {
-          const rowType = row.getAttribute('data-type').toLowerCase();
+          const rowType = row.getAttribute('data-type')?.toLowerCase() || '';
           const filterType = activeTab.getAttribute('onclick').split("'")[1].toLowerCase();
 
           if (rowType.includes(filterType)) {
             row.style.display = '';
+            visibleCount++;
           } else {
             row.style.display = 'none';
           }
@@ -540,15 +542,24 @@ function setupSearch(searchInputId, tableId) {
       }
     }
 
-    // Ajouter cette ligne pour mettre à jour la numérotation
-    remplirNum(table);
+    // Afficher ou masquer le message "Aucun résultat"
+    const hasVisibleRows = visibleCount > 0;
+    noResultsRow.style.display = hasVisibleRows ? 'none' : 'table-row';
 
-    // Mettre à jour les classes alternées
-    const visibleRows = Array.from(rows).filter(row => row.style.display !== "none" && !row.classList.contains('always-visible'));
-    visibleRows.forEach((row, index) => {
-      row.classList.remove("even", "odd");
-      row.classList.add(index % 2 === 0 ? "even" : "odd");
-    });
+    if (hasVisibleRows) {
+      remplirNum(table);
+
+      const visibleRows = Array.from(rows).filter(row =>
+          row.style.display !== "none" &&
+          !row.classList.contains('always-visible') &&
+          !row.classList.contains('no-results-row')
+      );
+
+      visibleRows.forEach((row, index) => {
+        row.classList.remove("even", "odd");
+        row.classList.add(index % 2 === 0 ? "even" : "odd");
+      });
+    }
   });
 }
 
@@ -557,35 +568,49 @@ function filterTable(type, tableId) {
   const table = document.getElementById(tableId);
   const rows = table.getElementsByTagName('tr');
   const searchInput = document.getElementById(tableId === 'table-experiences' ? 'search-experiences' : 'search-formations');
+  const noResultsRow = table.querySelector('.no-results-row');
 
-  // Réinitialiser la barre de recherche
   searchInput.value = '';
+  let visibleCount = 0;
 
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
+    if (row.classList.contains('no-results-row')) continue;
+
     if (type === 'all' || row.classList.contains('always-visible')) {
       row.style.display = '';
+      visibleCount++;
     } else {
       const rowType = row.getAttribute('data-type');
       if (rowType && rowType.includes(type)) {
         row.style.display = '';
+        visibleCount++;
       } else {
         row.style.display = 'none';
       }
     }
   }
 
-  // Mettre à jour la numérotation
-  remplirNum(table);
+  // Afficher ou masquer le message "Aucun résultat"
+  if (noResultsRow) {
+    noResultsRow.style.display = visibleCount > 0 ? 'none' : 'table-row';
+  }
 
-  // Mettre à jour les classes alternées
-  const visibleRows = Array.from(rows).filter(row => row.style.display !== "none" && !row.classList.contains('always-visible'));
-  visibleRows.forEach((row, index) => {
-    row.classList.remove("even", "odd");
-    row.classList.add(index % 2 === 0 ? "even" : "odd");
-  });
+  if (visibleCount > 0) {
+    remplirNum(table);
 
-  // Mettre à jour l'onglet actif
+    const visibleRows = Array.from(rows).filter(row =>
+        row.style.display !== "none" &&
+        !row.classList.contains('always-visible') &&
+        !row.classList.contains('no-results-row')
+    );
+
+    visibleRows.forEach((row, index) => {
+      row.classList.remove("even", "odd");
+      row.classList.add(index % 2 === 0 ? "even" : "odd");
+    });
+  }
+
   const tabContainer = table.closest('.tabs').previousElementSibling;
   const tabs = tabContainer.querySelectorAll('.tab');
   tabs.forEach(tab => {
