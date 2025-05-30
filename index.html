@@ -18,12 +18,13 @@
       Si vous êtes ici, c'est que vous souhaitez découvrir mes expériences BAFA et BAFD. Vous trouverez d'abord un
       aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi qu'une section
       statistiques pour visualiser mon parcours.
-    </p>
+    </p><br>
 
     <div class="info-box">
       <i>
         <b>🔍 Astuces :</b>
         <ul>
+          <li>-Utiliser le sommaire en haut de la page pour naviguer rapidement entre les différentes sections.</li>
           <li>-Utilisez la barre de recherche au-dessus des tableaux pour trouver rapidement une information (lieu, date, âge...).</li>
           <li>-Trier mes expériences/formations grâce aux filtres (les boutons verts) en haut de chaque tableau.</li>
           <li>-Cliquer sur le nom du lieu pour l'ouvrir dans <a href="https://www.google.com/maps" target="_blank" style="color:#f39c12">
@@ -39,6 +40,14 @@
 
     <p>👉 <strong>Bonne navigation !</strong></p>
 
+    <div class="sommaire">
+      <ul class="sommaire-liste">
+        <li><a href="#experiences"><i class="bi bi-briefcase"></i> Expériences</a></li>
+        <li><a href="#formations"><i class="bi bi-journal-text"></i> Formations</a></li>
+        <li><a href="#statistiques"><i class="bi bi-bar-chart-line"></i> Statistiques</a></li>
+      </ul>
+    </div>
+
     <div id="mobile-message" class="mobile-notification">
       Le tableau est réduit. Faites défiler horizontalement pour voir l'intégralité du contenu.
     </div>
@@ -50,7 +59,7 @@
     <button class="search-button"><i class="bi bi-search"></i></button>
   </p>
 
-  <h1>1- Expériences </h1>
+  <h1 id="experiences">1- Expériences</h1>
   <div class="tabs">
       <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
       <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
@@ -488,7 +497,7 @@
     <button class="search-button"><i class="bi bi-search"></i></button>
   </p>
 
-  <h1>2- Formations</h1>
+  <h1 id="formations">2- Formations</h1>
   <div class="tabs">
     <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
     <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
@@ -599,7 +608,7 @@
     </table>
   </div><br>
 
-  <h1>3- Statistiques</h1>
+  <h1 id="statistiques">3- Statistiques</h1>
   <div class="tabs">
     <div class="stats-container">
       <div id="stats-mobile-message" class="mobile-notification">
