@@ -302,95 +302,66 @@ function calculateAgeGroupStatistics() {
   if (!experienceTable) return;
 
   const rows = experienceTable.querySelectorAll('tr[data-type]');
-  const ageGroups = {};
-  let totalLowerAge = 0;
-  let totalHigherAge = 0;
-  let totalExperiences = 0;
+  // Nouveau : tableau pour compter chaque âge de 3 à 17 ans
+  const ageCounts = {};
+  for (let age = 3; age <= 17; age++) {
+    ageCounts[age] = 0;
+  }
 
-  // Pour calculer l'âge moyen
   let sumOfAges = 0;
   let countOfAges = 0;
-
-  // Pour identifier la tranche d'âge la plus fréquente
   const ageFrequency = {};
 
   rows.forEach(row => {
-    // Ignorer la ligne d'en-tête
     if (row.classList.contains('always-visible')) return;
-
-    // Extraire la tranche d'âge
     const ageCell = row.cells[8];
     if (!ageCell) return;
-
     const ageText = ageCell.textContent.trim();
     if (!ageText) return;
-
-    // Analyser la tranche d'âge (format "X-Y ans")
+    // Cherche les tranches d'âge du type "X-Y ans"
     const ageMatch = ageText.match(/(\d+)-(\d+)/);
     if (ageMatch) {
       const lowerAge = parseInt(ageMatch[1], 10);
       const higherAge = parseInt(ageMatch[2], 10);
-
-      // Créer une clé pour cette tranche d'âge
-      const ageRange = `${lowerAge}-${higherAge} ans`;
-      ageGroups[ageRange] = (ageGroups[ageRange] || 0) + 1;
-
-      // Pour l'âge le plus fréquent
+      // Pour chaque âge de la tranche, on incrémente le compteur
       for (let age = lowerAge; age <= higherAge; age++) {
+        if (ageCounts[age] !== undefined) {
+          ageCounts[age]++;
+        }
         ageFrequency[age] = (ageFrequency[age] || 0) + 1;
       }
-
       // Pour l'âge moyen
       sumOfAges += (lowerAge + higherAge) / 2;
       countOfAges++;
-
-      totalLowerAge += lowerAge;
-      totalHigherAge += higherAge;
-      totalExperiences++;
     }
   });
 
   // Calculer l'âge moyen
   const averageAge = countOfAges > 0 ? (sumOfAges / countOfAges).toFixed(1) : 0;
-
   // Trouver l'âge le plus fréquent
   let mostCommonAge = 0;
   let highestFrequency = 0;
-
   for (const [age, frequency] of Object.entries(ageFrequency)) {
     if (frequency > highestFrequency) {
       highestFrequency = frequency;
       mostCommonAge = age;
     }
   }
-
-  // Mettre à jour les valeurs dans le DOM
   document.getElementById('average-age').textContent = averageAge;
   document.getElementById('most-common-age').textContent = mostCommonAge;
-
-  // Créer le graphique pour les tranches d'âges
-  createAgeGroupChart(ageGroups);
+  // Créer le graphique pour les âges individuels
+  createAgeGroupChart(ageCounts);
 }
 
-// Fonction pour créer le graphique des tranches d'âges
+// Fonction pour créer le graphique des âges individuels
 function createAgeGroupChart(data) {
   const canvas = document.getElementById('ageGroupChart');
   if (!canvas) return;
-
-  // Trier les données par tranche d'âge (du plus jeune au plus âgé)
-  const sortedData = Object.entries(data)
-      .sort((a, b) => {
-        const ageA = parseInt(a[0].split('-')[0], 10);
-        const ageB = parseInt(b[0].split('-')[0], 10);
-        return ageA - ageB;
-      });
-
-  const labels = sortedData.map(entry => entry[0]);
-  const values = sortedData.map(entry => entry[1]);
-
+  // Labels de 3 à 17 ans avec "ans"
+  const labels = Object.keys(data).map(age => age + ' ans');
+  const values = Object.values(data);
   // Générer les couleurs
   const colors = generateColorGradient('#3498db', '#f39c12', labels.length);
-
   new Chart(canvas, {
     type: 'bar',
     data: {
@@ -398,7 +369,7 @@ function createAgeGroupChart(data) {
       datasets: [{
         data: values,
         backgroundColor: colors,
-        borderColor: colors.map(color => darkenColor(color, 0.2)),
+        borderColor: colors,
         borderWidth: 1
       }]
     },
@@ -408,24 +379,19 @@ function createAgeGroupChart(data) {
       scales: {
         y: {
           beginAtZero: true,
-          ticks: {
-            precision: 0
-          }
+          ticks: { precision: 0 }
         }
       },
       plugins: {
-        legend: {
-          display: false
-        },
-        title: {
-          display: true,
-          text: 'Nombre d\'expériences par tranche d\'âge'
-        },
+        legend: { display: false },
+        title: { display: true, text: "Nombre d'expériences par âge" },
         tooltip: {
           callbacks: {
             label: function(context) {
-              const value = context.raw;
-              return value + (value > 1 ? ' expériences' : ' expérience');
+              // Récupère l'âge sans le " ans" pour l'affichage
+              const age = context.label.replace(' ans', '');
+              const nb = context.parsed.y;
+              return `Âge : ${age} ans — Nombre d'expériences : ${nb}`;
             }
           }
         }
