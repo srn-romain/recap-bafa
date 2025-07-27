@@ -592,4 +592,248 @@ function filterTable(type, tableId) {
 document.addEventListener('DOMContentLoaded', function() {
   setupSearch('search-experiences', 'table-experiences');
   setupSearch('search-formations', 'table-formations');
+
+  // Ajouter la fonctionnalité de tri aux tableaux
+  setupSortableTables();
 });
+
+/*--------------------------------------------------------------
+# Tri des tableaux
+--------------------------------------------------------------*/
+function setupSortableTables() {
+  // Configurer les en-têtes triables pour les deux tableaux
+  setupSortableHeaders('table-experiences');
+  setupSortableHeaders('table-formations');
+
+  // Appliquer le tri initial par date (descendant) pour les deux tableaux
+  const experiencesTable = document.getElementById('table-experiences');
+  const formationsTable = document.getElementById('table-formations');
+
+  if (experiencesTable) {
+    // La colonne Date est à l'index 1
+    sortTable(experiencesTable, 1);
+    // Force l'inversion pour avoir un tri descendant (plus récent en premier)
+    sortTable(experiencesTable, 1);
+  }
+
+  if (formationsTable) {
+    // La colonne Date est à l'index 1
+    sortTable(formationsTable, 1);
+    // Force l'inversion pour avoir un tri descendant (plus récent en premier)
+    sortTable(formationsTable, 1);
+  }
+}
+
+function setupSortableHeaders(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+
+  // Obtenir toutes les cellules d'en-tête sauf celle des logos
+  const headers = table.querySelectorAll('tr:first-child th');
+
+  headers.forEach((header, index) => {
+    // Ignorer la colonne des logos (index 4) et la colonne des tranches d'âge (index 8) pour le tableau des expériences
+    if (index === 4 || (tableId === 'table-experiences' && index === 8)) return;
+
+    // Ajouter un indicateur de tri et un style de curseur
+    header.classList.add('sortable');
+    header.style.cursor = 'pointer';
+    header.innerHTML = `${header.innerHTML} <span class="sort-indicator"></span>`;
+
+    // Ajouter un écouteur d'événement pour le clic
+    header.addEventListener('click', function() {
+      sortTable(table, index);
+    });
+  });
+}
+
+function sortTable(table, columnIndex) {
+  let rows, switching, i, x, y, shouldSwitch, direction, switchcount = 0;
+  switching = true;
+  // Définir la direction de tri à "ascending"
+  direction = "asc";
+
+  // Mettre à jour les indicateurs visuels
+  updateSortIndicators(table, columnIndex, direction);
+
+  // Boucle jusqu'à ce que le tri soit terminé
+  while (switching) {
+    switching = false;
+    rows = table.getElementsByTagName("tr");
+
+    // Parcourir toutes les lignes sauf la première (en-tête)
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+
+      // Ignorer les lignes masquées et la ligne "Aucun résultat"
+      if (rows[i].style.display === 'none' || rows[i].classList.contains('no-results-row') ||
+          rows[i+1].style.display === 'none' || rows[i+1].classList.contains('no-results-row')) {
+        continue;
+      }
+
+      // Comparer deux éléments
+      x = rows[i].getElementsByTagName("td")[columnIndex];
+      y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+      if (!x || !y) continue;
+
+      // Comparer en fonction du type de données
+      if (isNumeric(x.textContent) && isNumeric(y.textContent)) {
+        // Comparaison numérique
+        if (direction === "asc") {
+          if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      } else if (isDate(x.textContent) && isDate(y.textContent)) {
+        // Comparaison de dates
+        const dateX = parseFrenchDate(x.textContent);
+        const dateY = parseFrenchDate(y.textContent);
+
+        if (direction === "asc") {
+          if (dateX > dateY) {
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (dateX < dateY) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      } else {
+        // Comparaison alphabétique
+        if (direction === "asc") {
+          if (x.textContent.toLowerCase() > y.textContent.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        } else {
+          if (x.textContent.toLowerCase() < y.textContent.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (shouldSwitch) {
+      // Effectuer l'échange des lignes
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount++;
+    } else {
+      // Si aucun échange n'a été fait et la direction est "asc",
+      // inverser la direction et recommencer
+      if (switchcount === 0 && direction === "asc") {
+        direction = "desc";
+        updateSortIndicators(table, columnIndex, direction);
+        switching = true;
+      }
+    }
+  }
+
+  // Renuméroter les lignes après le tri
+  remplirNum(table);
+
+  // Appliquer les styles alternés
+  const visibleRows = Array.from(table.getElementsByTagName('tr')).filter(row =>
+    row.style.display !== "none" &&
+    !row.classList.contains('always-visible') &&
+    !row.classList.contains('no-results-row')
+  );
+
+  visibleRows.forEach((row, index) => {
+    row.classList.remove("even", "odd");
+    row.classList.add(index % 2 === 0 ? "even" : "odd");
+  });
+}
+
+function updateSortIndicators(table, activeColumnIndex, direction) {
+  // Mettre à jour tous les indicateurs de tri
+  const headers = table.querySelectorAll('tr:first-child th');
+
+  headers.forEach((header, index) => {
+    const indicator = header.querySelector('.sort-indicator');
+    if (!indicator) return;
+
+    if (index === activeColumnIndex) {
+      // Définir la flèche en fonction de la direction
+      indicator.innerHTML = direction === 'asc' ? '&#9650;' : '&#9660;';
+      indicator.style.opacity = '1';
+    } else {
+      // Réinitialiser les autres indicateurs
+      indicator.innerHTML = '';
+      indicator.style.opacity = '0.3';
+    }
+  });
+}
+
+// Fonction utilitaire pour vérifier si une chaîne est numérique
+function isNumeric(str) {
+  return /^-?\d+(\.\d+)?$/.test(str.trim());
+}
+
+// Fonction utilitaire pour vérifier si une chaîne est une date
+function isDate(str) {
+  // Vérifie si la chaîne contient des motifs de date en français
+  return /\d{1,2}\s*(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|janv|févr|avr|juil|sept|oct|nov|déc)\s*\d{4}|\d{4}(-\d{4})?/.test(str);
+}
+
+// Fonction pour analyser les dates françaises
+function parseFrenchDate(dateStr) {
+  // Traitement des dates comme "Juillet 2023" ou "2023-2024"
+  dateStr = dateStr.toLowerCase().trim();
+
+  // Gérer le cas spécial "à venir"
+  if (dateStr.includes('venir')) {
+    return new Date(3000, 0, 1); // Date future très éloignée
+  }
+
+  // Gérer les périodes comme "2023-2024"
+  if (/^\d{4}-\d{4}$/.test(dateStr)) {
+    return new Date(parseInt(dateStr.split('-')[0], 10), 0, 1);
+  }
+
+  // Mappez les noms de mois français aux numéros de mois (0-11)
+  const monthMap = {
+    'janvier': 0, 'janv': 0,
+    'février': 1, 'févr': 1,
+    'mars': 2,
+    'avril': 3, 'avr': 3,
+    'mai': 4,
+    'juin': 5,
+    'juillet': 6, 'juil': 6,
+    'août': 7,
+    'septembre': 8, 'sept': 8,
+    'octobre': 9, 'oct': 9,
+    'novembre': 10, 'nov': 10,
+    'décembre': 11, 'déc': 11
+  };
+
+  // Extraire l'année et le mois
+  let year = 0;
+  let month = 0;
+
+  // Rechercher l'année dans la chaîne
+  const yearMatch = dateStr.match(/\d{4}/);
+  if (yearMatch) {
+    year = parseInt(yearMatch[0], 10);
+  }
+
+  // Rechercher le mois dans la chaîne
+  for (const [monthName, monthValue] of Object.entries(monthMap)) {
+    if (dateStr.includes(monthName)) {
+      month = monthValue;
+      break;
+    }
+  }
+
+  return new Date(year, month, 1);
+}
