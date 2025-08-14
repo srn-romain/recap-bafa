@@ -625,154 +625,144 @@ function setupSortableTables() {
 }
 
 function setupSortableHeaders(tableId) {
-  const table = document.getElementById(tableId);
-  if (!table) return;
+    const table = document.getElementById(tableId);
+    if (!table) return;
 
-  // Obtenir toutes les cellules d'en-tête sauf celle des logos
-  const headers = table.querySelectorAll('tr:first-child th');
+    // Obtenir toutes les cellules d'en-tête sauf celle des logos
+    const headers = table.querySelectorAll('tr:first-child th');
 
-  headers.forEach((header, index) => {
-    // Ignorer la colonne des logos (index 4) et la colonne des tranches d'âge (index 8) pour le tableau des expériences
-    if (index === 4 || (tableId === 'table-experiences' && index === 8)) return;
+    headers.forEach((header, index) => {
+        // Ignorer la colonne des logos (index 4) et la colonne des tranches d'âge (index 8) pour le tableau des expériences
+        if (index === 4 || (tableId === 'table-experiences' && index === 8)) return;
 
-    // Ajouter un indicateur de tri et un style de curseur
-    header.classList.add('sortable');
-    header.style.cursor = 'pointer';
-    header.innerHTML = `${header.innerHTML} <span class="sort-indicator"></span>`;
+        // Ajouter un indicateur de tri et un style de curseur
+        header.classList.add('sortable');
+        header.style.cursor = 'pointer';
 
-    // Ajouter un écouteur d'événement pour le clic
-    header.addEventListener('click', function() {
-      sortTable(table, index);
+        // Ajouter le triangle de tri (initialement neutre)
+        header.innerHTML = `${header.innerHTML} <span class="sort-indicator">▼</span>`;
+
+        // Ajouter la classe pour le style initial du triangle
+        const indicator = header.querySelector('.sort-indicator');
+        indicator.classList.add('sort-neutral');
+
+        // Ajouter un écouteur d'événement pour le clic
+        header.addEventListener('click', function() {
+            sortTable(table, index);
+        });
     });
-  });
-}
-
-function sortTable(table, columnIndex) {
-  let rows, switching, i, x, y, shouldSwitch, direction, switchcount = 0;
-  switching = true;
-  // Définir la direction de tri à "ascending"
-  direction = "asc";
-
-  // Mettre à jour les indicateurs visuels
-  updateSortIndicators(table, columnIndex, direction);
-
-  // Boucle jusqu'à ce que le tri soit terminé
-  while (switching) {
-    switching = false;
-    rows = table.getElementsByTagName("tr");
-
-    // Parcourir toutes les lignes sauf la première (en-tête)
-    for (i = 1; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
-
-      // Ignorer les lignes masquées et la ligne "Aucun résultat"
-      if (rows[i].style.display === 'none' || rows[i].classList.contains('no-results-row') ||
-          rows[i+1].style.display === 'none' || rows[i+1].classList.contains('no-results-row')) {
-        continue;
-      }
-
-      // Comparer deux éléments
-      x = rows[i].getElementsByTagName("td")[columnIndex];
-      y = rows[i + 1].getElementsByTagName("td")[columnIndex];
-
-      if (!x || !y) continue;
-
-      // Comparer en fonction du type de données
-      if (isNumeric(x.textContent) && isNumeric(y.textContent)) {
-        // Comparaison numérique
-        if (direction === "asc") {
-          if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
-            shouldSwitch = true;
-            break;
-          }
-        } else {
-          if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      } else if (isDate(x.textContent) && isDate(y.textContent)) {
-        // Comparaison de dates
-        const dateX = parseFrenchDate(x.textContent);
-        const dateY = parseFrenchDate(y.textContent);
-
-        if (direction === "asc") {
-          if (dateX > dateY) {
-            shouldSwitch = true;
-            break;
-          }
-        } else {
-          if (dateX < dateY) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      } else {
-        // Comparaison alphabétique
-        if (direction === "asc") {
-          if (x.textContent.toLowerCase() > y.textContent.toLowerCase()) {
-            shouldSwitch = true;
-            break;
-          }
-        } else {
-          if (x.textContent.toLowerCase() < y.textContent.toLowerCase()) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      }
-    }
-
-    if (shouldSwitch) {
-      // Effectuer l'échange des lignes
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      switchcount++;
-    } else {
-      // Si aucun échange n'a été fait et la direction est "asc",
-      // inverser la direction et recommencer
-      if (switchcount === 0 && direction === "asc") {
-        direction = "desc";
-        updateSortIndicators(table, columnIndex, direction);
-        switching = true;
-      }
-    }
-  }
-
-  // Renuméroter les lignes après le tri
-  remplirNum(table);
-
-  // Appliquer les styles alternés
-  const visibleRows = Array.from(table.getElementsByTagName('tr')).filter(row =>
-    row.style.display !== "none" &&
-    !row.classList.contains('always-visible') &&
-    !row.classList.contains('no-results-row')
-  );
-
-  visibleRows.forEach((row, index) => {
-    row.classList.remove("even", "odd");
-    row.classList.add(index % 2 === 0 ? "even" : "odd");
-  });
 }
 
 function updateSortIndicators(table, activeColumnIndex, direction) {
-  // Mettre à jour tous les indicateurs de tri
-  const headers = table.querySelectorAll('tr:first-child th');
+    // Réinitialiser tous les indicateurs
+    const headers = table.querySelectorAll('th.sortable');
 
-  headers.forEach((header, index) => {
-    const indicator = header.querySelector('.sort-indicator');
-    if (!indicator) return;
+    headers.forEach((header, index) => {
+        const indicator = header.querySelector('.sort-indicator');
+        if (indicator) {
+            // Réinitialiser l'indicateur
+            indicator.classList.remove('sort-asc', 'sort-desc');
+            indicator.classList.add('sort-neutral');
 
-    if (index === activeColumnIndex) {
-      // Définir la flèche en fonction de la direction
-      indicator.innerHTML = direction === 'asc' ? '&#9650;' : '&#9660;';
-      indicator.style.opacity = '1';
-    } else {
-      // Réinitialiser les autres indicateurs
-      indicator.innerHTML = '';
-      indicator.style.opacity = '0.3';
+            // Mettre à jour l'indicateur pour la colonne active
+            if (index === activeColumnIndex) {
+                indicator.classList.remove('sort-neutral');
+                indicator.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            }
+        }
+    });
+}
+
+function sortTable(table, columnIndex) {
+    let rows, switching, i, x, y, shouldSwitch, direction, switchcount = 0;
+    switching = true;
+    // Définir la direction de tri à "ascending"
+    direction = "asc";
+
+    // Mettre à jour les indicateurs visuels
+    updateSortIndicators(table, columnIndex, direction);
+
+    // Boucle jusqu'à ce que le tri soit terminé
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("tr");
+
+        // Parcourir toutes les lignes sauf la première (en-tête)
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+
+            // Obtenir les deux éléments à comparer
+            x = rows[i].getElementsByTagName("td")[columnIndex];
+            y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+            if (!x || !y) continue;
+
+            let compareResult;
+
+            // Traitement spécial pour la colonne Durée (index 2)
+            if (columnIndex === 2) {
+                // Extraire le nombre de jours des textes comme "5 jours" ou "Tous les mercredis"
+                let xDays = extractDays(x.textContent);
+                let yDays = extractDays(y.textContent);
+
+                compareResult = direction === "asc" ? xDays - yDays : yDays - xDays;
+            }
+            // Traitement pour les dates
+            else if (isDate(x.textContent) || isDate(y.textContent)) {
+                const xDate = parseFrenchDate(x.textContent);
+                const yDate = parseFrenchDate(y.textContent);
+
+                compareResult = direction === "asc" ? xDate - yDate : yDate - xDate;
+            }
+            // Traitement pour les valeurs numériques
+            else if (isNumeric(x.textContent) && isNumeric(y.textContent)) {
+                const xNum = parseFloat(x.textContent);
+                const yNum = parseFloat(y.textContent);
+
+                compareResult = direction === "asc" ? xNum - yNum : yNum - xNum;
+            }
+            // Traitement par défaut pour les chaînes de texte
+            else {
+                const xText = x.textContent.toLowerCase();
+                const yText = y.textContent.toLowerCase();
+
+                compareResult = direction === "asc" ?
+                    xText.localeCompare(yText, 'fr') :
+                    yText.localeCompare(xText, 'fr');
+            }
+
+            if (compareResult > 0) {
+                shouldSwitch = true;
+                break;
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else if (switchcount === 0 && direction === "asc") {
+            direction = "desc";
+            updateSortIndicators(table, columnIndex, direction);
+            switching = true;
+            switchcount = 0;
+        }
     }
-  });
+
+    // Renuméroter les lignes après le tri
+    remplirNum(table);
+
+    // Appliquer les styles alternés
+    const visibleRows = Array.from(table.getElementsByTagName('tr')).filter(row =>
+        row.style.display !== "none" &&
+        !row.classList.contains('always-visible') &&
+        !row.classList.contains('no-results-row')
+    );
+
+    visibleRows.forEach((row, index) => {
+        row.classList.remove("even", "odd");
+        row.classList.add(index % 2 === 0 ? "even" : "odd");
+    });
 }
 
 // Fonction utilitaire pour vérifier si une chaîne est numérique
