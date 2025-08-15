@@ -632,8 +632,11 @@ function setupSortableHeaders(tableId) {
     const headers = table.querySelectorAll('tr:first-child th');
 
     headers.forEach((header, index) => {
-        // Ignorer la colonne des logos (index 4) et la colonne des tranches d'âge (index 8) pour le tableau des expériences
-        if (index === 4 || (tableId === 'table-experiences' && index === 8)) return;
+        // Ignorer:
+        // - la colonne de numérotation (index 0)
+        // - la colonne des logos (index 4)
+        // - la colonne des tranches d'âge (index 8) pour le tableau des expériences
+        if (index === 0 || index === 4 || (tableId === 'table-experiences' && index === 8)) return;
 
         // Ajouter un indicateur de tri et un style de curseur
         header.classList.add('sortable');
