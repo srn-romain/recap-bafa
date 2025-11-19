@@ -12,8 +12,16 @@
 <body>
 <div>
   <h2>Détails de mes expériences BAFA & BAFD</h2>
+  <a href="https://www.linkedin.com/in/romain-sieurin/" target="_blank" class="linkedin-icon-top" style="position: absolute; top: 20px; left: 20px; font-size: 1.5rem; color: #0077b5; text-decoration: none; z-index: 10;">
+    <i class="bi bi-linkedin"></i>
+  </a>
+  <button id="auth-button-top" onclick="showAuthModal()" class="auth-btn-top" style="display: none; position: absolute; top: 20px; right: 20px;">
+    <i class="bi bi-person"></i> Se connecter
+  </button>
+  <button id="logout-button-top" onclick="signOut()" class="auth-btn-top logout-btn" style="display: none; position: absolute; top: 20px; right: 20px;">
+    <i class="bi bi-box-arrow-right"></i> Se déconnecter
+  </button>
   <section>
-    <h3 style="text-align: center">Bienvenue sur mon site !</h3>
     <p>
       Si vous êtes ici, c'est que vous souhaitez découvrir mes expériences BAFA et BAFD. Vous trouverez d'abord un
       aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi qu'une section
@@ -28,8 +36,7 @@
           <li>-Utilisez la <orange>barre de recherche</orange> au-dessus des tableaux pour trouver rapidement une information (lieu, date, âge...).</li>
           <li>-Trier mes expériences/formations grâce aux <orange>filtres</orange> (les boutons verts) en haut de chaque tableau pour afficher un type spécifique.</li>
           <li>-Cliquez sur les <orange>en-têtes des colonnes</orange> pour trier le tableau.</li>
-          <li>-Cliquer sur le nom du lieu pour l'ouvrir dans <a href="https://www.google.com/maps" target="_blank" style="color:#f39c12">
-            Google Maps</a> et sur le logo ou le nom de l'organisme pour accéder directement à leur site.</li>
+          <li>-Cliquer sur le nom du lieu pour l'ouvrir dans <a href="https://www.google.com/maps" target="_blank" style="color:#f39c12">Google Maps</a>&nbsp;et sur le logo ou le nom de l'organisme pour accéder directement à leur site.</li>
           <li>-Consulter la section <orange>statistiques</orange> pour avoir une vue d'ensemble de mon parcours d'animateur.</li>
         </ul>
       </i>
@@ -38,8 +45,6 @@
     <p>
       N’hésitez pas à <a href="https://www.linkedin.com/in/romain-sieurin/" style="color:#f39c12">me contacter</a> pour toute question !
     </p>
-
-    <p>👉 <strong>Bonne navigation !</strong></p>
 
     <div class="sommaire">
       <ul class="sommaire-liste">
@@ -58,9 +63,12 @@
   <p class="search-container">
     <input type="text" id="search-experiences" class="search-input" placeholder="Rechercher une expérience (lieu, date, âge...)">
     <button class="search-button"><i class="bi bi-search"></i></button>
+    <button id="add-experience-btn" class="add-btn-inline" style="display: none;">
+      <i class="bi bi-plus-circle"></i> Ajouter
+    </button>
   </p>
 
-  <h1 id="experiences">1- Expériences</h1>
+  <h1 id="experiences" data-section="experiences" data-section-title="Expériences">1- Expériences</h1>
   <div class="tabs">
       <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
       <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
@@ -89,9 +97,12 @@
   <p class="search-container">
     <input type="text" id="search-formations" class="search-input" placeholder="Rechercher une formation (organisme, lieu, date...)">
     <button class="search-button"><i class="bi bi-search"></i></button>
+    <button id="add-formation-btn" class="add-btn-inline" style="display: none;">
+      <i class="bi bi-plus-circle"></i> Ajouter
+    </button>
   </p>
 
-  <h1 id="formations">2- Formations</h1>
+  <h1 id="formations" data-section="formations" data-section-title="Formations">2- Formations</h1>
   <div class="tabs">
     <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
     <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
@@ -112,7 +123,7 @@
     </table>
   </div><br>
 
-  <h1 id="statistiques">3- Statistiques</h1>
+  <h1 id="statistiques" data-section="statistiques" data-section-title="Statistiques">3- Statistiques</h1>
   <div class="tabs">
     <div class="stats-container">
       <div id="stats-mobile-message" class="mobile-notification">
@@ -166,17 +177,202 @@
 
 <footer id="footer">
   <br>
+  <div id="invitation-message" style="display: none; background: #f39c12; color: white; padding: 20px; margin: 20px auto; border-radius: 8px; text-align: center; max-width: 800px;">
+    <h3 style="margin-bottom: 10px;">🔒 Contenu restreint</h3>
+    <p style="margin-bottom: 15px;">
+      Pour voir toutes les informations détaillées (formations, statistiques complètes, liens Google Maps), 
+      connectez-vous en tant qu'invité.
+    </p>
+    <p style="margin-bottom: 15px;">
+      <a href="https://www.linkedin.com/in/romain-sieurin/" target="_blank" style="color: white; text-decoration: underline; font-weight: bold;">
+        Contactez-moi sur LinkedIn
+      </a> 
+      et je vous donnerai un compte invité pour accéder à toutes les informations.
+    </p>
+    <button onclick="showAuthModal()" class="auth-btn" style="background: white; color: #f39c12; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+      <i class="bi bi-person-plus"></i> Se connecter
+    </button>
+  </div>
   <p style="color: white; text-align: center"> &copy; By Romain SIEURIN</p>
 </footer>
 
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+<!-- Modal d'authentification -->
+<div id="auth-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+    <h2>Connexion</h2>
+    <div id="auth-error-message" class="error-message" style="display: none;"></div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="login-email" placeholder="Votre email" required>
+      </div>
+      <div class="form-group">
+        <label>Mot de passe *</label>
+        <input type="password" id="login-password" placeholder="Votre mot de passe" required>
+      </div>
+      <button type="submit" class="auth-option-btn admin-btn" style="width: 100%;">
+        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal d'ajout/modification d'expérience -->
+<div id="experience-modal" class="modal" style="display: none;">
+  <div class="modal-content large-modal">
+    <span class="close-modal" onclick="closeExperienceModal()">&times;</span>
+    <h2 id="experience-modal-title">Ajouter une expérience</h2>
+    <div id="experience-error-message" class="error-message" style="display: none;"></div>
+    <form id="experience-form">
+      <div class="form-group">
+        <label>Type <span class="required-asterisk">*</span></label>
+        <select id="exp-type" required>
+          <option value="colo">Colonie de vacances</option>
+          <option value="alsh">Centre de loisir</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Date <span class="required-asterisk">*</span></label>
+        <input type="month" id="exp-date-month" required>
+        <input type="hidden" id="exp-date">
+      </div>
+      <div class="form-group">
+        <label>Durée</label>
+        <input type="text" id="exp-duration" placeholder="Ex: 17 jours">
+      </div>
+      <div class="form-group">
+        <label>Organisateur <span class="required-asterisk">*</span></label>
+        <input type="text" id="exp-organizer" placeholder="Ex: Temps-Jeunes (69)" required>
+      </div>
+      <div class="form-group">
+        <label>URL Organisateur</label>
+        <input type="url" id="exp-organizer-url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Chemin du logo</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="color: #666; font-size: 0.9rem;">assets/img/</span>
+          <input type="text" id="exp-logo-path" placeholder="tj.png" style="flex: 1;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Lieu <span class="required-asterisk">*</span></label>
+        <input type="text" id="exp-location" placeholder="Ex: Nice (06)" required>
+      </div>
+      <div class="form-group">
+        <label>URL Lieu</label>
+        <input type="url" id="exp-location-url" placeholder="https://maps.app.goo.gl/...">
+      </div>
+      <div class="form-group">
+        <label>Type de séjour</label>
+        <input type="text" id="exp-stay-type" placeholder="Ex: Pension complète">
+      </div>
+      <div class="form-group">
+        <label>Intitulé du poste</label>
+        <input type="text" id="exp-position" placeholder="Ex: Directeur stagiaire">
+      </div>
+      <div class="form-group">
+        <label>Tranche d'âge</label>
+        <input type="text" id="exp-age-range" placeholder="Ex: 11-13 ans">
+      </div>
+      <div class="form-group">
+        <label>Nombre de jeunes</label>
+        <input type="number" id="exp-youth-count" min="0">
+      </div>
+      <button type="submit" class="submit-btn">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div id="delete-confirm-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeDeleteConfirmModal()">&times;</span>
+    <h2>Confirmer la suppression</h2>
+    <p>Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.</p>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+      <button onclick="confirmDelete()" class="submit-btn" style="background: #e74c3c; flex: 1; max-width: 150px;">
+        Supprimer
+      </button>
+      <button onclick="closeDeleteConfirmModal()" class="submit-btn" style="background: #95a5a6; flex: 1; max-width: 150px;">
+        Annuler
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'ajout/modification de formation -->
+<div id="formation-modal" class="modal" style="display: none;">
+  <div class="modal-content large-modal">
+    <span class="close-modal" onclick="closeFormationModal()">&times;</span>
+    <h2 id="formation-modal-title">Ajouter une formation</h2>
+    <div id="formation-error-message" class="error-message" style="display: none;"></div>
+    <form id="formation-form">
+      <div class="form-group">
+        <label>Type <span class="required-asterisk">*</span></label>
+        <select id="form-type" required>
+          <option value="bafa">BAFA</option>
+          <option value="bafd">BAFD</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Date <span class="required-asterisk">*</span></label>
+        <input type="month" id="form-date-month" required>
+        <input type="hidden" id="form-date">
+      </div>
+      <div class="form-group">
+        <label>Durée</label>
+        <input type="text" id="form-duration" placeholder="Ex: 8 jours">
+      </div>
+      <div class="form-group">
+        <label>Organisme <span class="required-asterisk">*</span></label>
+        <input type="text" id="form-organism" placeholder="Ex: UFCV (93)" required>
+      </div>
+      <div class="form-group">
+        <label>URL Organisme</label>
+        <input type="url" id="form-organism-url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Chemin du logo</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="color: #666; font-size: 0.9rem;">assets/img/</span>
+          <input type="text" id="form-logo-path" placeholder="ufcv.png" style="flex: 1;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Intitulé</label>
+        <input type="text" id="form-title" placeholder="Ex: Formation générale BAFD">
+      </div>
+      <div class="form-group">
+        <label>Lieu <span class="required-asterisk">*</span></label>
+        <input type="text" id="form-location" placeholder="Ex: Lyon Tassin (69)" required>
+      </div>
+      <div class="form-group">
+        <label>URL Lieu</label>
+        <input type="url" id="form-location-url" placeholder="https://maps.app.goo.gl/...">
+      </div>
+      <button type="submit" class="submit-btn">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
 <!-- Firebase SDK (version compat pour navigateurs) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <!-- Configuration Firebase (à configurer avec vos identifiants) -->
 <script src="assets/js/firebase-config.js"></script>
+
+<!-- Script d'authentification Firebase -->
+<script src="assets/js/firebase-auth.js"></script>
+
+<!-- Script pour gérer les formulaires admin -->
+<script src="assets/js/admin-forms.js"></script>
 
 <!-- Script pour charger les données depuis Firebase -->
 <script src="assets/js/firebase-data.js"></script>

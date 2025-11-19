@@ -65,8 +65,22 @@ function createExperienceRow(experience) {
   } else {
     // Un seul lieu
     const locLink = document.createElement('a');
-    locLink.href = experience.locationUrl;
-    locLink.target = '_blank';
+    // Vérifier si l'utilisateur est connecté avant d'activer le lien
+    const isLoggedIn = window.currentUser !== null && window.userRole !== null;
+    if (isLoggedIn && experience.locationUrl && experience.locationUrl !== '#') {
+      locLink.href = experience.locationUrl;
+      locLink.target = '_blank';
+    } else {
+      locLink.href = '#';
+      locLink.style.pointerEvents = 'none';
+      locLink.style.cursor = 'not-allowed';
+      locLink.style.color = '#333';
+      locLink.style.textDecoration = 'none';
+      locLink.title = 'Connectez-vous pour voir sur Google Maps';
+      if (experience.locationUrl && experience.locationUrl !== '#') {
+        locLink.setAttribute('data-original-href', experience.locationUrl);
+      }
+    }
     locLink.textContent = experience.location;
     tdLocation.appendChild(locLink);
   }
@@ -147,8 +161,22 @@ function createFormationRow(formation) {
   // Colonne Lieu
   const tdLocation = document.createElement('td');
   const locLink = document.createElement('a');
-  locLink.href = formation.locationUrl;
-  locLink.target = '_blank';
+  // Vérifier si l'utilisateur est connecté avant d'activer le lien
+  const isLoggedIn = window.currentUser !== null && window.userRole !== null;
+  if (isLoggedIn && formation.locationUrl && formation.locationUrl !== '#') {
+    locLink.href = formation.locationUrl;
+    locLink.target = '_blank';
+  } else {
+    locLink.href = '#';
+    locLink.style.pointerEvents = 'none';
+    locLink.style.cursor = 'not-allowed';
+    locLink.style.color = '#333';
+    locLink.style.textDecoration = 'none';
+    locLink.title = 'Connectez-vous pour voir sur Google Maps';
+    if (formation.locationUrl && formation.locationUrl !== '#') {
+      locLink.setAttribute('data-original-href', formation.locationUrl);
+    }
+  }
   locLink.textContent = formation.location;
   tdLocation.appendChild(locLink);
   tr.appendChild(tdLocation);
@@ -402,6 +430,14 @@ async function loadDataFromFirebase() {
           window.sortableTablesInitialized = false;
         }
         setupSortableTables();
+      }
+      
+      // Mettre à jour l'UI pour gérer les liens Google Maps et les colonnes d'édition
+      // Appeler updateUI() dans tous les cas (connecté ou non) pour désactiver/activer les liens
+      if (typeof updateUI === 'function') {
+        setTimeout(() => {
+          updateUI();
+        }, 100);
       }
     }, 200);
   }

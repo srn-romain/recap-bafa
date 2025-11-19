@@ -663,7 +663,12 @@ function setupSortableHeaders(tableId) {
         // - la colonne de numérotation (index 0)
         // - la colonne des logos (index 4)
         // - la colonne des tranches d'âge (index 8) pour le tableau des expériences
-        if (index === 0 || index === 4 || (tableId === 'table-experiences' && index === 8)) return;
+        // - la colonne "Modifier" (colonne d'édition)
+        // - la colonne "Supprimer" (colonne de suppression)
+        const headerText = header.textContent.trim();
+        if (index === 0 || index === 4 || (tableId === 'table-experiences' && index === 8) || 
+            headerText === 'Modifier' || headerText === 'Supprimer' || 
+            header.classList.contains('edit-column') || header.classList.contains('delete-column')) return;
 
         // Vérifier si l'indicateur de tri existe déjà pour éviter les doublons
         if (header.querySelector('.sort-indicator')) return;
