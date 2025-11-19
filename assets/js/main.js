@@ -223,10 +223,19 @@ function extractNumber(text) {
   return match ? parseInt(match[1], 10) : 0;
 }
 
+// Stocker les instances de graphiques pour pouvoir les détruire
+const chartInstances = {};
+
 // Fonction générique pour créer un graphique
 function createChart(canvasId, data, titleText) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
+
+  // Détruire le graphique existant s'il existe
+  if (chartInstances[canvasId]) {
+    chartInstances[canvasId].destroy();
+    chartInstances[canvasId] = null;
+  }
 
   // Trier les données par nombre de jours (décroissant)
   const sortedData = Object.entries(data)
@@ -238,7 +247,8 @@ function createChart(canvasId, data, titleText) {
   // Générer des couleurs
   const colors = generateColors(labels.length);
 
-  new Chart(canvas, {
+  // Créer et stocker le nouveau graphique
+  chartInstances[canvasId] = new Chart(canvas, {
     type: 'bar',
     data: {
       labels: labels,
@@ -357,12 +367,21 @@ function calculateAgeGroupStatistics() {
 function createAgeGroupChart(data) {
   const canvas = document.getElementById('ageGroupChart');
   if (!canvas) return;
+  
+  // Détruire le graphique existant s'il existe
+  if (chartInstances['ageGroupChart']) {
+    chartInstances['ageGroupChart'].destroy();
+    chartInstances['ageGroupChart'] = null;
+  }
+  
   // Labels de 3 à 17 ans avec "ans"
   const labels = Object.keys(data).map(age => age + ' ans');
   const values = Object.values(data);
   // Générer les couleurs
   const colors = generateColorGradient('#3498db', '#f39c12', labels.length);
-  new Chart(canvas, {
+  
+  // Créer et stocker le nouveau graphique
+  chartInstances['ageGroupChart'] = new Chart(canvas, {
     type: 'bar',
     data: {
       labels: labels,
@@ -600,7 +619,13 @@ document.addEventListener('DOMContentLoaded', function() {
 /*--------------------------------------------------------------
 # Tri des tableaux
 --------------------------------------------------------------*/
+// Variable pour éviter d'initialiser plusieurs fois
+window.sortableTablesInitialized = false;
+
 function setupSortableTables() {
+  // Éviter d'initialiser plusieurs fois
+  if (window.sortableTablesInitialized) return;
+  
   // Configurer les en-têtes triables pour les deux tableaux
   setupSortableHeaders('table-experiences');
   setupSortableHeaders('table-formations');
@@ -609,24 +634,26 @@ function setupSortableTables() {
   const experiencesTable = document.getElementById('table-experiences');
   const formationsTable = document.getElementById('table-formations');
 
-  if (experiencesTable) {
+  if (experiencesTable && typeof sortTable === 'function') {
     // La colonne Date est à l'index 1
     sortTable(experiencesTable, 1);
     // Force l'inversion pour avoir un tri descendant (plus récent en premier)
     sortTable(experiencesTable, 1);
   }
 
-  if (formationsTable) {
+  if (formationsTable && typeof sortTable === 'function') {
     // La colonne Date est à l'index 1
     sortTable(formationsTable, 1);
     // Force l'inversion pour avoir un tri descendant (plus récent en premier)
     sortTable(formationsTable, 1);
   }
+  
+  window.sortableTablesInitialized = true;
 }
 
 function setupSortableHeaders(tableId) {
     const table = document.getElementById(tableId);
-    if (!table) return;
+    if (!table || !table.querySelectorAll) return;
 
     // Obtenir toutes les cellules d'en-tête sauf celle des logos
     const headers = table.querySelectorAll('tr:first-child th');
@@ -638,19 +665,29 @@ function setupSortableHeaders(tableId) {
         // - la colonne des tranches d'âge (index 8) pour le tableau des expériences
         if (index === 0 || index === 4 || (tableId === 'table-experiences' && index === 8)) return;
 
+        // Vérifier si l'indicateur de tri existe déjà pour éviter les doublons
+        if (header.querySelector('.sort-indicator')) return;
+
         // Ajouter un indicateur de tri et un style de curseur
         header.classList.add('sortable');
         header.style.cursor = 'pointer';
 
         // Ajouter le triangle de tri (initialement neutre)
-        header.innerHTML = `${header.innerHTML} <span class="sort-indicator">▼</span>`;
+        const originalText = header.textContent.trim();
+        header.innerHTML = `${originalText} <span class="sort-indicator">▼</span>`;
 
         // Ajouter la classe pour le style initial du triangle
         const indicator = header.querySelector('.sort-indicator');
-        indicator.classList.add('sort-neutral');
+        if (indicator) {
+            indicator.classList.add('sort-neutral');
+        }
 
+        // Supprimer les anciens écouteurs d'événement s'ils existent
+        const newHeader = header.cloneNode(true);
+        header.parentNode.replaceChild(newHeader, header);
+        
         // Ajouter un écouteur d'événement pour le clic
-        header.addEventListener('click', function() {
+        newHeader.addEventListener('click', function() {
             sortTable(table, index);
         });
     });
@@ -677,6 +714,12 @@ function updateSortIndicators(table, activeColumnIndex, direction) {
 }
 
 function sortTable(table, columnIndex) {
+    // Vérifier que table est un élément DOM valide
+    if (!table || typeof table.querySelectorAll !== 'function') {
+        console.error('Table invalide pour le tri');
+        return;
+    }
+    
     let rows, switching, i, x, y, shouldSwitch, direction, switchcount = 0;
     switching = true;
     // Définir la direction de tri à "ascending"

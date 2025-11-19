@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation</title>
+  <link href="assets/img/favicon.png" rel="icon">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div>
+  <h2>Détails de mes expériences BAFA & BAFD</h2>
+  <section>
+    <h3 style="text-align: center">Bienvenue sur mon site !</h3>
+    <p>
+      Si vous êtes ici, c'est que vous souhaitez découvrir mes expériences BAFA et BAFD. Vous trouverez d'abord un
+      aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi qu'une section
+      statistiques pour visualiser mon parcours.
+    </p><br>
+
+    <div class="info-box">
+      <i>
+        <b>🔍 Astuces :</b>
+        <ul>
+          <li>-Utiliser le <orange>sommaire</orange> en haut de la page pour naviguer rapidement entre les différentes sections.</li>
+          <li>-Utilisez la <orange>barre de recherche</orange> au-dessus des tableaux pour trouver rapidement une information (lieu, date, âge...).</li>
+          <li>-Trier mes expériences/formations grâce aux <orange>filtres</orange> (les boutons verts) en haut de chaque tableau pour afficher un type spécifique.</li>
+          <li>-Cliquez sur les <orange>en-têtes des colonnes</orange> pour trier le tableau.</li>
+          <li>-Cliquer sur le nom du lieu pour l'ouvrir dans <a href="https://www.google.com/maps" target="_blank" style="color:#f39c12">
+            Google Maps</a> et sur le logo ou le nom de l'organisme pour accéder directement à leur site.</li>
+          <li>-Consulter la section <orange>statistiques</orange> pour avoir une vue d'ensemble de mon parcours d'animateur.</li>
+        </ul>
+      </i>
+    </div>
+
+    <p>
+      N’hésitez pas à <a href="https://www.linkedin.com/in/romain-sieurin/" style="color:#f39c12">me contacter</a> pour toute question !
+    </p>
+
+    <p>👉 <strong>Bonne navigation !</strong></p>
+
+    <div class="sommaire">
+      <ul class="sommaire-liste">
+        <li><a href="#experiences"><i class="bi bi-briefcase"></i> Expériences</a></li>
+        <li><a href="#formations"><i class="bi bi-journal-text"></i> Formations</a></li>
+        <li><a href="#statistiques"><i class="bi bi-bar-chart-line"></i> Statistiques</a></li>
+      </ul>
+    </div>
+
+    <div id="mobile-message" class="mobile-notification">
+      Le tableau est réduit. Faites défiler horizontalement pour voir l'intégralité du contenu.
+    </div>
+  </section>
+
+  <!-- Barre de recherche pour les expériences -->
+  <p class="search-container">
+    <input type="text" id="search-experiences" class="search-input" placeholder="Rechercher une expérience (lieu, date, âge...)">
+    <button class="search-button"><i class="bi bi-search"></i></button>
+  </p>
+
+  <h1 id="experiences">1- Expériences</h1>
+  <div class="tabs">
+      <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
+      <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
+      <div class="tab" onclick="filterTable('colo', 'table-experiences')">Colonie de vacances</div>
+      <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
+    </div>
+  <div class="tabs">
+  <table id="table-experiences">
+      <tr data-type="colo autre alsh" class="always-visible">
+        <th>N°</th>
+        <th>Date</th>
+        <th onclick="sortTable(2, 'table-experiences')">Durée</th>
+        <th>Organisateur</th>
+        <th>Logo</th>
+        <th>Lieu</th>
+        <th>Type de séjour</th>
+        <th>Intitulé du poste</th>
+        <th>Tranche d'âge</th>
+        <th>Nb de jeunes</th>
+      </tr>xx
+      <!-- Les données sont chargées dynamiquement depuis Firebase -->
+    </table>xx
+  </div><br>
+
+  <!-- Barre de recherche pour les formations -->
+  <p class="search-container">
+    <input type="text" id="search-formations" class="search-input" placeholder="Rechercher une formation (organisme, lieu, date...)">
+    <button class="search-button"><i class="bi bi-search"></i></button>
+  </p>
+
+  <h1 id="formations">2- Formations</h1>
+  <div class="tabs">
+    <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
+    <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
+    <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
+  </div>
+  <div class="tabs">
+    <table id="table-formations">
+      <tr data-type="bafa bafd" class="always-visible">
+        <th>N°</th>
+        <th>Date</th>
+        <th>Durée</th>
+        <th>Organisme</th>
+        <th>Logo</th>
+        <th>Intitulé</th>
+        <th>Lieu</th>
+      </tr>
+      <!-- Les données sont chargées dynamiquement depuis Firebase -->
+    </table>
+  </div><br>
+
+  <h1 id="statistiques">3- Statistiques</h1>
+  <div class="tabs">
+    <div class="stats-container">
+      <div id="stats-mobile-message" class="mobile-notification">
+        ⚠️ Les graphiques statistiques s'affichent mieux sur un écran plus large. Pour une meilleure expérience, consultez cette section sur ordinateur.
+      </div>
+
+      <div class="stats-section">
+        <h3>Expériences</h3>
+        <div class="stats-sentences">
+          <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span> jours en colonie de vacances</p>
+          <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span> jours en centre de loisirs</p>
+          <p class="stat-sentence">J'ai encadré <span class="stat-value" id="total-youth">0</span> jeunes au total</p>
+          <p class="stat-sentence">J'ai réalisé <span class="stat-value" id="total-experiences">0</span> expériences d'animation</p>
+          <p class="stat-sentence">J'ai travaillé avec <span class="stat-value">149</span> animateurs et <span class="stat-value">13</span> directeurs</p>
+          <p class="stat-sentence">J'ai principalement travaillé avec des <span class="stat-value" id="most-common-age">0</span> ans</p>
+          <p class="stat-sentence">L'âge moyen est de <span class="stat-value" id="average-age">0</span> ans</p>
+        </div>
+
+        <div id="visu-graph-stat-ordi">
+          ℹ️ Pour visualiser les graphiques plus en détail, survolez les barres verticales avec votre curseur.
+        </div>
+
+        <div id="visu-graph-stat-tel">
+          ℹ️ Pour visualiser les graphiques plus en détail, appuyez sur les barres verticales avec votre doigt.
+        </div>
+
+        <div id="days-by-organization" class="stats-chart">
+          <canvas id="organizationChart"></canvas>
+        </div>
+
+        <div id="age-group-chart-container" class="stats-chart">
+          <canvas id="ageGroupChart"></canvas>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>Formations</h3>
+        <div class="stats-sentences">
+          <p class="stat-sentence">J'ai suivi <span class="stat-value" id="total-days-formation">0</span> jours de formation</p>
+          <p class="stat-sentence">J'ai participé à <span class="stat-value" id="total-bafa-formations">0</span> formations BAFA</p>
+          <p class="stat-sentence">J'ai participé à <span class="stat-value" id="total-bafd-formations">0</span> formations BAFD</p>
+        </div>
+
+        <div id="formation-organization-chart" class="stats-chart">
+          <canvas id="formationOrganizationChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer id="footer">
+  <br>
+  <p style="color: white; text-align: center"> &copy; By Romain SIEURIN</p>
+</footer>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Firebase SDK (version compat pour navigateurs) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- Configuration Firebase (à configurer avec vos identifiants) -->
+<script src="assets/js/firebase-config.js"></script>
+
+<!-- Script pour charger les données depuis Firebase -->
+<script src="assets/js/firebase-data.js"></script>
+
+<!-- Script d'import (optionnel, pour faciliter la migration) -->
+<script src="assets/js/import-data.js"></script>
+
+<!-- Scripts principaux -->
+<script src="assets/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

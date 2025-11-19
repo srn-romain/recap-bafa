@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation</title>
+  <link href="assets/img/favicon.png" rel="icon">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div>
+  <h2>Détails de mes expériences BAFA & BAFD</h2>
+  <section>
+    <h3 style="text-align: center">Bienvenue sur mon site !</h3>
+    <p>
+      Si vous êtes ici, c'est que vous souhaitez découvrir mes expériences BAFA et BAFD. Vous trouverez d'abord un
+      aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi qu'une section
+      statistiques pour visualiser mon parcours.
+    </p><br>
+
+    <div class="info-box">
+      <i>
+        <b>🔍 Astuces :</b>
+        <ul>
+          <li>-Utiliser le <orange>sommaire</orange> en haut de la page pour naviguer rapidement entre les différentes sections.</li>
+          <li>-Utilisez la <orange>barre de recherche</orange> au-dessus des tableaux pour trouver rapidement une information (lieu, date, âge...).</li>
+          <li>-Trier mes expériences/formations grâce aux <orange>filtres</orange> (les boutons verts) en haut de chaque tableau pour afficher un type spécifique.</li>
+          <li>-Cliquez sur les <orange>en-têtes des colonnes</orange> pour trier le tableau.</li>
+          <li>-Cliquer sur le nom du lieu pour l'ouvrir dans <a href="https://www.google.com/maps" target="_blank" style="color:#f39c12">
+            Google Maps</a> et sur le logo ou le nom de l'organisme pour accéder directement à leur site.</li>
+          <li>-Consulter la section <orange>statistiques</orange> pour avoir une vue d'ensemble de mon parcours d'animateur.</li>
+        </ul>
+      </i>
+    </div>
+
+    <p>
+      N’hésitez pas à <a href="https://www.linkedin.com/in/romain-sieurin/" style="color:#f39c12">me contacter</a> pour toute question !
+    </p>
+
+    <p>👉 <strong>Bonne navigation !</strong></p>
+
+    <div class="sommaire">
+      <ul class="sommaire-liste">
+        <li><a href="#experiences"><i class="bi bi-briefcase"></i> Expériences</a></li>
+        <li><a href="#formations"><i class="bi bi-journal-text"></i> Formations</a></li>
+        <li><a href="#statistiques"><i class="bi bi-bar-chart-line"></i> Statistiques</a></li>
+      </ul>
+    </div>
+
+    <div id="mobile-message" class="mobile-notification">
+      Le tableau est réduit. Faites défiler horizontalement pour voir l'intégralité du contenu.
+    </div>
+  </section>
+
+  <!-- Barre de recherche pour les expériences -->
+  <p class="search-container">
+    <input type="text" id="search-experiences" class="search-input" placeholder="Rechercher une expérience (lieu, date, âge...)">
+    <button class="search-button"><i class="bi bi-search"></i></button>
+  </p>
+
+  <h1 id="experiences">1- Expériences</h1>
+  <div class="tabs">
+      <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
+      <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
+      <div class="tab" onclick="filterTable('colo', 'table-experiences')">Colonie de vacances</div>
+      <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
+    </div>
+  <div class="tabs">
+  <table id="table-experiences">
+      <tr data-type="colo autre alsh" class="always-visible">
+        <th>N°</th>
+        <th>Date</th>
+        <th onclick="sortTable(2, 'table-experiences')">Durée</th>
+        <th>Organisateur</th>
+        <th>Logo</th>
+        <th>Lieu</th>
+        <th>Type de séjour</th>
+        <th>Intitulé du poste</th>
+        <th>Tranche d'âge</th>
+        <th>Nb de jeunes</th>
+      </tr>
+
+    <tr data-type="colo">
+      <td class="num"></td>
+      <td>Août 2025</td>
+      <td>17 jours</td>
+      <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+      <td>
+        <a href="https://temps-jeunes.com/" target="_blank">
+          <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+        </a>
+      </td>
+      <td><a href="https://maps.app.goo.gl/kaZxAM6bwsG9ydc26" target="_blank">Nice (06)</a></td>
+      <td>Pension complète</td>
+      <td>Directeur stagiaire</td>
+      <td>11-13 ans</td>
+      <td>25</td>
+    </tr>
+    <tr data-type="colo">
+      <td class="num"></td>
+      <td>Juillet 2025</td>
+      <td>6 jours</td>
+      <td><a href="https://bafa.ufcv.fr" target="_blank">UFCV (93)</a></td>
+      <td>
+        <a href="https://bafa.ufcv.fr" target="_blank">
+          <img src="assets/img/ufcv.png" alt="Logo de la formation" class="image-carrée">
+        </a>
+      </td>
+      <td><a href="https://maps.app.goo.gl/84EdW2ojVVc3SVc36" target="_blank">Annecy (74)</a></td>
+      <td>Pension complète</td>
+      <td>Formateur BAFA</td>
+      <td>17-39 ans</td>
+      <td>33</td>
+    </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Avril 2025</td>
+        <td>5 jours</td>
+        <td><a href="https://www.capmonde.fr/sejours/accueil.html" target="_blank">Cap Monde (74)</a></td>
+        <td>
+          <a href="https://www.capmonde.fr/sejours/accueil.html" target="_blank">
+            <img src="assets/img/capMonde.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/hVNmraD4oQoU67xAA" target="_blank">Europa Park (Allemagne)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur</td>
+        <td>12-17 ans</td>
+        <td>37</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Août 2024</td>
+        <td>18 jours</td>
+        <td><a href="https://www.cgcv.org/com/homepage" target="_blank">CGCV (92)</a></td>
+        <td>
+          <a href="https://www.cgcv.org/com/homepage" target="_blank">
+            <img src="assets/img/cgcv.jpeg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>
+          <a href="https://maps.app.goo.gl/99KDqzDQAaW15ADT7" target="_blank">Amsterdam</a>,
+          <a href="https://maps.app.goo.gl/18uFzWGsEFDMjFn77" target="_blank">Gouda</a>,
+          <a href="https://maps.app.goo.gl/Lvrq6BBRgdDgKvZ59" target="_blank">Rotterdam</a>,
+          <a href="https://maps.app.goo.gl/1R8KDbzkiV2u74PMA" target="_blank">Noordwijk</a> (Pays-Bas)
+        </td>
+        <td>410km d'itinérance à vélo</td>
+        <td>Animateur</td>
+        <td>13-14 ans</td>
+        <td>16</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Juillet 2024</td>
+        <td>14 jours</td>
+        <td><a href="https://www.sport-nature.org/" target="_blank">Hautes-Pyrénées Sport & Nature (65)</a></td>
+        <td>
+          <a href="https://www.sport-nature.org/" target="_blank">
+            <img src="assets/img/hpsn.jpg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/a4UahnqAg7A6n1TP8" target="_blank">Saint-Pé-de-Bigorre (65)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur SB</td>
+        <td>8-17 ans</td>
+        <td>37</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Juillet 2024</td>
+        <td>12 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/fWv1V1fYGiZrJKZn8" target="_blank">Algajola - Corse (2B)</a></td>
+        <td>Auto-gestion au camping</td>
+        <td>Animateur SB</td>
+        <td>12-17 ans</td>
+        <td>48</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Juillet 2024</td>
+        <td>8 jours</td>
+        <td><a href="https://www.ucpa.com/" target="_blank">UCPA (94)</a></td>
+        <td>
+          <a href="https://www.ucpa.com/" target="_blank">
+            <img src="assets/img/ucpa.jpeg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/2v9K2GyJaR9WUS9v9" target="_blank">Argelès (66)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur SB</td>
+        <td>14-17 ans</td>
+        <td>52</td>
+      </tr>
+      <tr data-type="autre">
+        <td class="num"></td>
+        <td>Juin 2024</td>
+        <td>18 jours</td>
+        <td><a href="https://www.snu.gouv.fr/" target="_blank">SNU Région Auvergne Rhône-Alpe (69)</a></td>
+        <td>
+          <a href="https://www.snu.gouv.fr/" target="_blank">
+            <img src="assets/img/snu.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/eLxQvHwzx2Ynh7w86" target="_blank">Lycée Horticole de Dardilly (69)</a></td>
+        <td>Service National Universel</td>
+        <td>Tuteur de maisonnée</td>
+        <td>15-17 ans</td>
+        <td>84</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Avril 2024</td>
+        <td>8 jours</td>
+        <td><a href="https://www.ucpa.com/" target="_blank">UCPA (94)</a></td>
+        <td>
+          <a href="https://www.ucpa.com/" target="_blank">
+            <img src="assets/img/ucpa.jpeg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/Phpe2BrnCdNEhxXC9" target="_blank">Hyères (83)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur SB</td>
+        <td>14-17 ans</td>
+        <td>97</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Février 2024</td>
+        <td>8 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/2r3rforVh8jpX9Ym7" target="_blank">Alpe du Grand Serre (38)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur Ski</td>
+        <td>6-11 ans</td>
+        <td>42</td>
+      </tr>
+      <tr data-type="alsh">
+        <td class="num"></td>
+        <td>2023-2024</td>
+        <td>Tous les mercredis</td>
+        <td><a href="https://www.cc-pierresdorees.com/" target="_blank">L’escapade (69)</a></td>
+        <td>
+          <a href="https://www.cc-pierresdorees.com/" target="_blank">
+            <img src="assets/img/cl.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/Fnz6NhVwhxwHY6Eu7" target="_blank">Chazay (69)</a></td>
+        <td>CLSH</td>
+        <td>Animateur</td>
+        <td>3-8 ans</td>
+        <td>25</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Août 2023</td>
+        <td>12 jours</td>
+        <td><a href="https://www.telligo.fr/" target="_blank">Telligo (94)</a></td>
+        <td>
+          <a href="https://www.telligo.fr/" target="_blank">
+            <img src="assets/img/telligo.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/Fh1FS9pwbrSc2wPt7" target="_blank">Val Cenis (73)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur Surveillant de Baignade</td>
+        <td>10-15 ans</td>
+        <td>50</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Juillet 2023</td>
+        <td>14 jours</td>
+        <td><a href="https://www.compagnons.asso.fr/" target="_blank">Compagnon des Jours Heureux (78)</a></td>
+        <td>
+          <a href="https://www.compagnons.asso.fr/" target="_blank">
+            <img src="assets/img/cjh.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/i64edhh1KJs45fKg7" target="_blank">Barcelone</a>,
+          <a href="https://maps.app.goo.gl/nTZd5d2UcvgwY74R6" target="_blank">Tortosa</a>,
+          <a href="https://maps.app.goo.gl/B1NpbE8AJ3kyaxJa8" target="_blank">Palafrugell</a> (Espagne)
+        </td>
+        <td>Itinérance</td>
+        <td>Directeur Adjoint & SB</td>
+        <td>14-17 ans</td>
+        <td>41</td>
+      </tr>
+      <tr data-type="autre">
+        <td class="num"></td>
+        <td>Juillet 2023</td>
+        <td>6 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/FBavUHLdv1mciCD49" target="_blank">Saint-Nectaire (63)</a></td>
+        <td>Classe découverte</td>
+        <td>Animateur</td>
+        <td>3-5 ans</td>
+        <td>33</td>
+      </tr>
+      <tr data-type="alsh">
+        <td class="num"></td>
+        <td>2022-2023</td>
+        <td>Tous les mercredis</td>
+        <td><a href="https://www.cc-pierresdorees.com/" target="_blank">L’escapade (69)</a></td>
+        <td>
+          <a href="https://www.cc-pierresdorees.com/" target="_blank">
+            <img src="assets/img/cl.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/Fnz6NhVwhxwHY6Eu7" target="_blank">Chazay (69)</a></td>
+        <td>CLSH</td>
+        <td>Animateur</td>
+        <td>5-12 ans</td>
+        <td>30</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Mai 2023</td>
+        <td>5 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/n9SKVgBFzRHKVwyk7" target="_blank">Parc Astérix (60)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur</td>
+        <td>10-17 ans</td>
+        <td>26</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Avril 2023</td>
+        <td>8 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/TAzttKNoLtebu3Rg9" target="_blank">Theix (56)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur</td>
+        <td>6-12 ans</td>
+        <td>53</td>
+      </tr>
+      <tr data-type="alsh">
+        <td class="num"></td>
+        <td>Février 2023</td>
+        <td>5 jours</td>
+        <td><a href="https://www.cc-pierresdorees.com/" target="_blank">L’escapade (69)</a></td>
+        <td>
+          <a href="https://www.cc-pierresdorees.com/" target="_blank">
+            <img src="assets/img/cl.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/Fnz6NhVwhxwHY6Eu7" target="_blank">Chazay (69)</a></td>
+        <td>CLSH</td>
+        <td>Animateur</td>
+        <td>3-5 ans</td>
+        <td>30</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Février 2023</td>
+        <td>8 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/bntFHY4uWXnNqz5VA" target="_blank">Morillon (74)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur Ski</td>
+        <td>11-17 ans</td>
+        <td>54</td>
+      </tr>
+      <tr data-type="alsh">
+        <td class="num"></td>
+        <td>Octobre 2022</td>
+        <td>5 jours</td>
+        <td><a href="https://www.cc-pierresdorees.com/" target="_blank">L’escapade (69)</a></td>
+        <td>
+          <a href="https://www.cc-pierresdorees.com/" target="_blank">
+            <img src="assets/img/cl.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/Fnz6NhVwhxwHY6Eu7" target="_blank">Chazay (69)</a></td>
+        <td>CLSH</td>
+        <td>Animateur</td>
+        <td>10-12 ans</td>
+        <td>30</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Octobre 2022</td>
+        <td>8 jours</td>
+        <td><a href="https://temps-jeunes.com/" target="_blank">Temps-Jeunes (69)</a></td>
+        <td>
+          <a href="https://temps-jeunes.com/" target="_blank">
+            <img src="assets/img/tj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/FBavUHLdv1mciCD49" target="_blank">St-Nectaire (63)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur</td>
+        <td>6-12 ans</td>
+        <td>66</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Août 2022</td>
+        <td>8 jours</td>
+        <td><a href="https://www.djuringa-juniors.fr/" target="_blank">Djuringa (69)</a></td>
+        <td>
+          <a href="https://www.djuringa-juniors.fr/" target="_blank">
+            <img src="assets/img/djuringa.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/p1MGPz15XKgWqSkw6" target="_blank">Retournac (43)</a></td>
+        <td>Pension complète</td>
+        <td>Responsable de groupe</td>
+        <td>6-14 ans</td>
+        <td>94</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Juillet 2022</td>
+        <td>14 jours</td>
+        <td><a href="https://naj-colo.com/" target="_blank">Nouvelle Aventure Junior (13)</a></td>
+        <td>
+          <a href="https://naj-colo.com/" target="_blank">
+            <img src="assets/img/naj.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/2gdt1ckKoQkvhH6R6" target="_blank">Calvi – Corse (2B)</a></td>
+        <td>Auto-gestion au camping</td>
+        <td>Assistant Sanitaire</td>
+        <td>12-17 ans</td>
+        <td>47</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Février 2022</td>
+        <td>8 jours</td>
+        <td><a href="https://www.sportselitejeunes.fr/" target="_blank">Sport Elite Jeunes (75)</a></td>
+        <td>
+          <a href="https://www.sportselitejeunes.fr/" target="_blank">
+            <img src="assets/img/sej.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/aCXDwHoKCEDArxC99" target="_blank">Courchevel (73)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur Ski</td>
+        <td>8-17 ans</td>
+        <td>37</td>
+      </tr>
+      <tr data-type="alsh">
+        <td class="num"></td>
+        <td>Octobre 2021</td>
+        <td>5 jours</td>
+        <td><a href="https://www.cc-pierresdorees.com/" target="_blank">Centro’Gones (69)</a></td>
+        <td>
+          <a href="https://www.cc-pierresdorees.com/" target="_blank">
+            <img src="assets/img/cl.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/9X2jmCh3TFmFuAHX6" target="_blank">Lozanne (69)</a></td>
+        <td>CLSH</td>
+        <td>Animateur stagiaire</td>
+        <td>10-12 ans</td>
+        <td>25</td>
+      </tr>
+      <tr data-type="colo">
+        <td class="num"></td>
+        <td>Août 2021</td>
+        <td>13 jours</td>
+        <td><a href="https://www.djuringa-juniors.fr/" target="_blank">Djuringa (69)</a></td>
+        <td>
+          <a href="https://www.djuringa-juniors.fr/" target="_blank">
+            <img src="assets/img/djuringa.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td><a href="https://maps.app.goo.gl/p1MGPz15XKgWqSkw6" target="_blank">Retournac (43)</a></td>
+        <td>Pension complète</td>
+        <td>Animateur stagiaire</td>
+        <td>6-14 ans</td>
+        <td>86</td>
+      </tr>
+    </table>
+  </div><br>
+
+  <!-- Barre de recherche pour les formations -->
+  <p class="search-container">
+    <input type="text" id="search-formations" class="search-input" placeholder="Rechercher une formation (organisme, lieu, date...)">
+    <button class="search-button"><i class="bi bi-search"></i></button>
+  </p>
+
+  <h1 id="formations">2- Formations</h1>
+  <div class="tabs">
+    <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
+    <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
+    <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
+  </div>
+  <div class="tabs">
+    <table id="table-formations">
+      <tr data-type="bafa bafd" class="always-visible">
+        <th>N°</th>
+        <th>Date</th>
+        <th>Durée</th>
+        <th>Organisme</th>
+        <th>Logo</th>
+        <th>Intitulé</th>
+        <th>Lieu</th>
+      </tr>
+      <tr data-type="bafd">
+        <td class="num"></td>
+        <td>Avril 2025</td>
+        <td>8 jours</td>
+        <td><a href="https://bafa.ufcv.fr/" target="_blank">UFCV (93)</a></td>
+        <td>
+          <a href="https://bafa.ufcv.fr/" target="_blank">
+            <img src="assets/img/ufcv.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Formation générale BAFD</td>
+        <td><a href="https://maps.app.goo.gl/Eb5waDZYek1VebnQ9" target="_blank">Lyon Tassin (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Février 2025</td>
+        <td>2 jours</td>
+        <td><a href="https://bafa.ufcv.fr/" target="_blank">UFCV (93)</a></td>
+        <td>
+          <a href="https://bafa.ufcv.fr/" target="_blank">
+            <img src="assets/img/ufcv.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Formation de formateur bafa</td>
+        <td><a href="https://maps.app.goo.gl/M42mFukZu1c4WB9v6" target="_blank">Lyon 5 (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Mai 2024</td>
+        <td>5 jours</td>
+        <td><a href="https://www.snu.gouv.fr/" target="_blank">SNU Région Auvergne Rhône-Alpe (69)</a></td>
+        <td>
+          <a href="https://www.snu.gouv.fr/" target="_blank">
+            <img src="assets/img/snu.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Formation SNU tuteur de maisonnée</td>
+        <td><a href="https://maps.app.goo.gl/LfAePJU5N8wWwidF8" target="_blank">Lyon Dardilly (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Avril 2022</td>
+        <td>5 jours</td>
+        <td><a href="https://www.secourisme69.com/" target="_blank">FFSS (69)</a></td>
+        <td>
+          <a href="https://www.secourisme69.com/" target="_blank">
+            <img src="assets/img/ffss.jpeg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Brevet de Surveillant de Baignade</td>
+        <td><a href="https://maps.app.goo.gl/yMajGa8ddMHNQFqQ7" target="_blank">Lyon Oullins (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Décembre 2021</td>
+        <td>8 jours</td>
+        <td><a href="https://www.ucpa.com/" target="_blank">UCPA (94)</a></td>
+        <td>
+          <a href="https://www.ucpa.com/" target="_blank">
+            <img src="assets/img/ucpa.jpeg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Approfondissement ski & glisse</td>
+        <td><a href="https://maps.app.goo.gl/Z7vrxFSqvyLtENdq6" target="_blank">Les Arcs (73)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Octobre 2021</td>
+        <td>1 jour</td>
+        <td><a href="https://cascformation.fr/" target="_blank">Pompier de Lyon (69)</a></td>
+        <td>
+          <a href="https://cascformation.fr/" target="_blank">
+            <img src="assets/img/pompier.png" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Formation Premiers Secours (PSC1)</td>
+        <td><a href="https://maps.app.goo.gl/6znHeSG46eyJNZEdA" target="_blank">Lyon Perrache (69)</a></td>
+      </tr>
+      <tr data-type="bafa">
+        <td class="num"></td>
+        <td>Juillet 2021</td>
+        <td>8 jours</td>
+        <td><a href="https://www.afocal.fr/" target="_blank">Afocal (59)</a></td>
+        <td>
+          <a href="https://www.afocal.fr/" target="_blank">
+            <img src="assets/img/afocal.jpg" alt="Logo de la formation" class="image-carrée">
+          </a>
+        </td>
+        <td>Formation générale BAFA</td>
+        <td><a href="https://maps.app.goo.gl/2vFS1X6LD6GsnxN38" target="_blank">Lyon Oullins (69)</a></td>
+      </tr>
+    </table>
+  </div><br>
+
+  <h1 id="statistiques">3- Statistiques</h1>
+  <div class="tabs">
+    <div class="stats-container">
+      <div id="stats-mobile-message" class="mobile-notification">
+        ⚠️ Les graphiques statistiques s'affichent mieux sur un écran plus large. Pour une meilleure expérience, consultez cette section sur ordinateur.
+      </div>
+
+      <div class="stats-section">
+        <h3>Expériences</h3>
+        <div class="stats-sentences">
+          <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span> jours en colonie de vacances</p>
+          <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span> jours en centre de loisirs</p>
+          <p class="stat-sentence">J'ai encadré <span class="stat-value" id="total-youth">0</span> jeunes au total</p>
+          <p class="stat-sentence">J'ai réalisé <span class="stat-value" id="total-experiences">0</span> expériences d'animation</p>
+          <p class="stat-sentence">J'ai travaillé avec <span class="stat-value">149</span> animateurs et <span class="stat-value">13</span> directeurs</p>
+          <p class="stat-sentence">J'ai principalement travaillé avec des <span class="stat-value" id="most-common-age">0</span> ans</p>
+          <p class="stat-sentence">L'âge moyen est de <span class="stat-value" id="average-age">0</span> ans</p>
+        </div>
+
+        <div id="visu-graph-stat-ordi">
+          ℹ️ Pour visualiser les graphiques plus en détail, survolez les barres verticales avec votre curseur.
+        </div>
+
+        <div id="visu-graph-stat-tel">
+          ℹ️ Pour visualiser les graphiques plus en détail, appuyez sur les barres verticales avec votre doigt.
+        </div>
+
+        <div id="days-by-organization" class="stats-chart">
+          <canvas id="organizationChart"></canvas>
+        </div>
+
+        <div id="age-group-chart-container" class="stats-chart">
+          <canvas id="ageGroupChart"></canvas>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>Formations</h3>
+        <div class="stats-sentences">
+          <p class="stat-sentence">J'ai suivi <span class="stat-value" id="total-days-formation">0</span> jours de formation</p>
+          <p class="stat-sentence">J'ai participé à <span class="stat-value" id="total-bafa-formations">0</span> formations BAFA</p>
+          <p class="stat-sentence">J'ai participé à <span class="stat-value" id="total-bafd-formations">0</span> formations BAFD</p>
+        </div>
+
+        <div id="formation-organization-chart" class="stats-chart">
+          <canvas id="formationOrganizationChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer id="footer">
+  <br>
+  <p style="color: white; text-align: center"> &copy; By Romain SIEURIN</p>
+</footer>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<!-- Configuration Firebase (à configurer avec vos identifiants) -->
+<script src="assets/js/firebase-config.js"></script>
+
+<!-- Script pour charger les données depuis Firebase -->
+<script src="assets/js/firebase-data.js"></script>
+
+<!-- Script d'import (optionnel, pour faciliter la migration) -->
+<script src="assets/js/import-data.js"></script>
+
+<!-- Scripts principaux -->
+<script src="assets/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
