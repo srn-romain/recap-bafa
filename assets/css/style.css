@@ -1160,19 +1160,54 @@ th.sortable:hover .sort-indicator.sort-neutral {
     margin-bottom: 10px;
   }
   
-  .auth-btn-top {
+  /* Cacher l'icône LinkedIn sur mobile */
+  .linkedin-icon-top {
+    display: none !important;
+  }
+  
+  /* Bouton de connexion prend toute la largeur sur mobile */
+  .auth-btn-top,
+  .logout-btn {
+    position: static !important;
     width: 100%;
     padding: 12px 20px;
     font-size: 0.95rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
   
   .header-auth-buttons {
     width: 100%;
   }
   
-  .logout-btn {
+  /* Filtres en colonne sur mobile */
+  h1 + .tabs {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  h1 + .tabs .tab {
     width: 100%;
-    margin-top: 10px;
+    border-radius: 8px;
+    margin: 0;
+  }
+  
+  h1 + .tabs .tab.active {
+    border-bottom: 1px solid #a6d866;
+  }
+  
+  /* Ajuster le conteneur du tableau sur mobile */
+  h1 + .tabs + .tabs {
+    border-radius: 8px;
+    margin-top: 0;
+    overflow-x: auto; /* Permet le scroll horizontal sur mobile */
+    overflow-y: hidden;
+  }
+  
+  /* Assurer que le tableau peut dépasser la largeur sur mobile */
+  h1 + .tabs + .tabs table {
+    min-width: 100%;
+    width: max-content;
   }
 }
 
