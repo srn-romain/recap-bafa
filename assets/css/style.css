@@ -343,9 +343,7 @@ p {
 }
 
 .info-box b {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: block;
     margin-bottom: 10px;
 }
 
@@ -361,33 +359,19 @@ p {
 }
 
 .info-box li {
-    margin-bottom: 2px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.4;
-    flex-wrap: wrap;
+    margin-bottom: 8px;
+    line-height: 1.6;
     text-align: left;
-    justify-content: flex-start;
+    display: block;
 }
 
 .info-box li a {
-    white-space: nowrap;
-    flex-shrink: 0;
+    color: #f39c12;
+    text-decoration: none;
 }
 
-/* Empêcher le retour à la ligne après "Google Maps" */
-.info-box li {
-    word-break: keep-all;
-}
-
-.info-box li:has(a[href*="google.com/maps"]) {
-    flex-wrap: nowrap;
-}
-
-/* Alternative pour les navigateurs qui ne supportent pas :has() */
-.info-box li:nth-child(5) {
-    flex-wrap: nowrap;
+.info-box li a:hover {
+    text-decoration: underline;
 }
 
 /* Icône LinkedIn en haut à droite */
@@ -402,8 +386,6 @@ p {
 
 .info-box li i {
     color: #f39c12;
-    flex-shrink: 0;
-    margin-top: 3px;
     font-size: 0.95rem;
 }
 
@@ -412,16 +394,6 @@ p {
     font-weight: 600;
 }
 
-.info-box a {
-    color: #f39c12;
-    text-decoration: none;
-    font-weight: normal;
-    white-space: nowrap;
-}
-
-.info-box a:hover {
-    text-decoration: underline;
-}
 
 #mobile-message {
   color: #e74c3c;
