@@ -445,6 +445,72 @@ p {
   flex-wrap: wrap;
 }
 
+/* Style pour les filtres (première div.tabs avant le tableau) - effet intercalaire */
+h1 + .tabs {
+  margin-bottom: 0;
+  margin-top: 15px;
+}
+
+h1 + .tabs .tab {
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0;
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+}
+
+h1 + .tabs .tab.active {
+  z-index: 2;
+  background: #fff;
+  color: #2c3e50;
+  border: 1px solid #a6d866;
+  border-bottom: 1px solid #fff;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le conteneur du tableau (deuxième div.tabs) - effet intercalaire */
+h1 + .tabs + .tabs {
+  margin-top: -1px;
+  border: 1px solid #a6d866;
+  border-radius: 0 0 8px 8px;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Style pour les filtres (première div.tabs avant le tableau) - effet intercalaire */
+h1 + .tabs {
+  margin-bottom: 0;
+  margin-top: 15px;
+}
+
+h1 + .tabs .tab {
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0;
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+}
+
+h1 + .tabs .tab.active {
+  z-index: 2;
+  background: #fff;
+  color: #2c3e50;
+  border: 1px solid #a6d866;
+  border-bottom: 1px solid #fff;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le conteneur du tableau (deuxième div.tabs) - effet intercalaire */
+h1 + .tabs + .tabs {
+  margin-top: -1px;
+  border: 1px solid #a6d866;
+  border-radius: 0 0 8px 8px;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
 .tab {
   flex: 1;
   text-align: center;
@@ -474,6 +540,12 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+}
+
+/* Tableau dans un conteneur avec filtres (effet intercalaire) */
+h1 + .tabs + .tabs table {
+  margin-bottom: 0;
+  border: none;
 }
 
 table th, table td {
@@ -662,7 +734,8 @@ table tr:nth-child(even) {
 }
 
 .stats-container {
-  margin-top: 20px;
+  margin-top: 15px;
+  margin-bottom: 10px;
   width: 100%;
   background: transparent;
   box-shadow: none;
@@ -670,7 +743,7 @@ table tr:nth-child(even) {
 }
 
 .stats-section {
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   background: transparent;
   border-radius: 0;
   padding: 0;
@@ -702,6 +775,48 @@ table tr:nth-child(even) {
   margin-left: auto;
   margin-right: auto;
   background: transparent;
+}
+
+/* Style mise en avant selon design system français */
+.highlight-box {
+  background: #E8EDFF;
+  border-left: 4px solid #0063CB;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #161616;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.highlight-item:last-child {
+  margin-bottom: 0;
+}
+
+.highlight-item i {
+  color: #0063CB;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.highlight-item strong {
+  font-weight: 600;
+  color: #161616;
+}
+
+.highlight-item .stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0063CB;
+  margin: 0 2px;
 }
 
 .stat-sentence {

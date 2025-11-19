@@ -75,10 +75,15 @@ function frenchTextToMonth(dateText) {
 // Extraire le nom du fichier du chemin complet du logo
 function extractLogoFilename(logoPath) {
   if (!logoPath) return '';
+  // Enlever le préfixe GitHub Pages
+  const githubPrefix = 'https://srn-romain.github.io/recap-bafa/assets/img/';
+  if (logoPath.startsWith(githubPrefix)) {
+    return logoPath.replace(githubPrefix, '');
+  }
   // Enlever le préfixe file:///C:/Users/Sieur/WebstormProjects/recap-bafa/
-  const prefix = 'file:///C:/Users/Sieur/WebstormProjects/recap-bafa/';
-  if (logoPath.startsWith(prefix)) {
-    const withoutPrefix = logoPath.replace(prefix, '');
+  const localPrefix = 'file:///C:/Users/Sieur/WebstormProjects/recap-bafa/';
+  if (logoPath.startsWith(localPrefix)) {
+    const withoutPrefix = logoPath.replace(localPrefix, '');
     // Si c'est assets/img/xxx, retourner juste xxx
     if (withoutPrefix.startsWith('assets/img/')) {
       return withoutPrefix.replace('assets/img/', '');
@@ -248,9 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const dateText = monthValue ? monthToFrenchText(monthValue) : '';
       document.getElementById('exp-date').value = dateText;
       
-      // Gérer le chemin du logo avec le préfixe
+      // Gérer le chemin du logo avec le préfixe GitHub Pages
       const logoFilename = document.getElementById('exp-logo-path').value.trim();
-      const logoPath = logoFilename ? `file:///C:/Users/Sieur/WebstormProjects/recap-bafa/assets/img/${logoFilename}` : '';
+      const logoPath = logoFilename ? `https://srn-romain.github.io/recap-bafa/assets/img/${logoFilename}` : '';
       
       const data = {
         type: document.getElementById('exp-type').value,
@@ -306,9 +311,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const dateText = monthValue ? monthToFrenchText(monthValue) : '';
       document.getElementById('form-date').value = dateText;
       
-      // Gérer le chemin du logo avec le préfixe
+      // Gérer le chemin du logo avec le préfixe GitHub Pages
       const logoFilename = document.getElementById('form-logo-path').value.trim();
-      const logoPath = logoFilename ? `file:///C:/Users/Sieur/WebstormProjects/recap-bafa/assets/img/${logoFilename}` : '';
+      const logoPath = logoFilename ? `https://srn-romain.github.io/recap-bafa/assets/img/${logoFilename}` : '';
       
       const data = {
         type: document.getElementById('form-type').value,
