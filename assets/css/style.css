@@ -941,7 +941,7 @@ table tr:nth-child(even) {
 
   .search-button {
     padding: 8px 12px;
-    border-radius: 0;
+    border-radius: 0 25px 25px 0;
     flex-shrink: 0;
   }
 
