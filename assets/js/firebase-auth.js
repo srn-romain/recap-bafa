@@ -87,11 +87,28 @@ async function handleLogin(event) {
   // Masquer les erreurs précédentes
   hideAuthError();
   
-  const email = document.getElementById('login-email').value;
+  let email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   
   if (!email || !password) {
     showAuthError('Veuillez remplir tous les champs.');
+    return;
+  }
+  
+  // Si l'identifiant contient 'invite', ajouter automatiquement '@gmail.com'
+  if (email.toLowerCase().includes('invite')) {
+    // Si l'email ne contient pas déjà '@', ajouter '@gmail.com'
+    if (!email.includes('@')) {
+      email = email + '@gmail.com';
+      // Mettre à jour la valeur dans le champ pour que l'utilisateur voie le changement
+      document.getElementById('login-email').value = email;
+    }
+  }
+  
+  // Valider le format de l'email après traitement
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showAuthError("Format d'email invalide.");
     return;
   }
   
@@ -126,13 +143,15 @@ async function handleLogin(event) {
       }, 300);
     }
   } catch (error) {
-    console.error("Erreur lors de la connexion:", error);
-    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-      showAuthError("Email ou mot de passe incorrect.");
-    } else if (error.code === 'auth/invalid-email') {
-      showAuthError("Format d'email invalide.");
+    // Ne pas afficher l'erreur Firebase par défaut dans la console
+    // Gérer les erreurs d'authentification avec un message personnalisé
+    if (error.code === 'auth/user-not-found' || 
+        error.code === 'auth/wrong-password' || 
+        error.code === 'auth/invalid-credential' ||
+        error.code === 'auth/invalid-email') {
+      showAuthError("Votre identifiant ou mot de passe est invalide.");
     } else {
-      showAuthError("Erreur lors de la connexion. Veuillez réessayer.");
+      showAuthError("Votre identifiant ou mot de passe est invalide.");
     }
   }
 }
@@ -674,6 +693,22 @@ function editFormation(row) {
   
   if (typeof showEditFormationModal === 'function') {
     showEditFormationModal(data, row);
+  }
+}
+
+// Toggle la visibilité du mot de passe
+function togglePasswordVisibility() {
+  const passwordInput = document.getElementById('login-password');
+  const eyeIcon = document.getElementById('password-eye-icon');
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    eyeIcon.classList.remove('bi-eye');
+    eyeIcon.classList.add('bi-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    eyeIcon.classList.remove('bi-eye-slash');
+    eyeIcon.classList.add('bi-eye');
   }
 }
 
