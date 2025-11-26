@@ -530,6 +530,37 @@ table th, table td {
   hyphens: auto;
 }
 
+/* Limiter la largeur de certaines colonnes pour forcer les retours à la ligne */
+/* Colonne Organisateur (expériences) */
+#table-experiences th:nth-child(4),
+#table-experiences td:nth-child(4) {
+  max-width: 200px;
+  white-space: normal;
+}
+
+/* Colonne Lieu */
+#table-experiences th:nth-child(6),
+#table-experiences td:nth-child(6),
+#table-formations th:nth-child(7),
+#table-formations td:nth-child(7) {
+  max-width: 200px;
+  white-space: normal;
+}
+
+/* Colonne Intitulé du poste (expériences) */
+#table-experiences th:nth-child(8),
+#table-experiences td:nth-child(8) {
+  max-width: 200px;
+  white-space: normal;
+}
+
+/* Colonne Intitulé (formations) */
+#table-formations th:nth-child(6),
+#table-formations td:nth-child(6) {
+  max-width: 200px;
+  white-space: normal;
+}
+
 table th {
   background-color: #a6d866;
   color: #fff;
