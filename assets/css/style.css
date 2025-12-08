@@ -80,8 +80,8 @@ a:hover {
   text-decoration: none;
 }
 
-orange{
-    color: #f39c12;
+orange {
+  color: #f39c12;
 }
 
 h2 {
@@ -334,64 +334,64 @@ p {
 
 /* Ancien style info-box conservé pour compatibilité */
 .info-box {
-    max-width: 980px;
-    margin: 20px auto;
-    padding: 15px 20px;
-    background: #4f624B;
-    color: #ffffff;
-    border-radius: 5px;
+  max-width: 980px;
+  margin: 20px auto;
+  padding: 15px 20px;
+  background: #4f624B;
+  color: #ffffff;
+  border-radius: 5px;
 }
 
 .info-box b {
-    display: block;
-    margin-bottom: 10px;
+  display: block;
+  margin-bottom: 10px;
 }
 
 .info-box b i {
-    color: #f39c12;
-    font-size: 1.1rem;
+  color: #f39c12;
+  font-size: 1.1rem;
 }
 
 .info-box ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 10px 0 0 0;
+  list-style: none;
+  padding-left: 0;
+  margin: 10px 0 0 0;
 }
 
 .info-box li {
-    margin-bottom: 8px;
-    line-height: 1.6;
-    text-align: left;
-    display: block;
+  margin-bottom: 8px;
+  line-height: 1.6;
+  text-align: left;
+  display: block;
 }
 
 .info-box li a {
-    color: #f39c12;
-    text-decoration: none;
+  color: #f39c12;
+  text-decoration: none;
 }
 
 .info-box li a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Icône LinkedIn en haut à droite */
 .linkedin-icon-top {
-    transition: transform 0.3s, color 0.3s;
+  transition: transform 0.3s, color 0.3s;
 }
 
 .linkedin-icon-top:hover {
-    transform: scale(1.2);
-    color: #005885 !important;
+  transform: scale(1.2);
+  color: #005885 !important;
 }
 
 .info-box li i {
-    color: #f39c12;
-    font-size: 0.95rem;
+  color: #f39c12;
+  font-size: 0.95rem;
 }
 
 .info-box orange {
-    color: #f39c12;
-    font-weight: 600;
+  color: #f39c12;
+  font-weight: 600;
 }
 
 
@@ -418,12 +418,12 @@ p {
 }
 
 /* Style pour les filtres (première div.tabs avant le tableau) - effet intercalaire */
-h1 + .tabs {
+h1+.tabs {
   margin-bottom: 0;
   margin-top: 15px;
 }
 
-h1 + .tabs .tab {
+h1+.tabs .tab {
   border-radius: 8px 8px 0 0;
   margin-bottom: 0;
   margin-top: 0;
@@ -431,7 +431,7 @@ h1 + .tabs .tab {
   z-index: 1;
 }
 
-h1 + .tabs .tab.active {
+h1+.tabs .tab.active {
   z-index: 2;
   background: #fff;
   color: #2c3e50;
@@ -441,7 +441,7 @@ h1 + .tabs .tab.active {
 }
 
 /* Style pour le conteneur du tableau (deuxième div.tabs) - effet intercalaire */
-h1 + .tabs + .tabs {
+h1+.tabs+.tabs {
   margin-top: -1px;
   border: 1px solid #a6d866;
   border-radius: 0 0 8px 8px;
@@ -451,12 +451,12 @@ h1 + .tabs + .tabs {
 }
 
 /* Style pour les filtres (première div.tabs avant le tableau) - effet intercalaire */
-h1 + .tabs {
+h1+.tabs {
   margin-bottom: 0;
   margin-top: 15px;
 }
 
-h1 + .tabs .tab {
+h1+.tabs .tab {
   border-radius: 8px 8px 0 0;
   margin-bottom: 0;
   margin-top: 0;
@@ -464,7 +464,7 @@ h1 + .tabs .tab {
   z-index: 1;
 }
 
-h1 + .tabs .tab.active {
+h1+.tabs .tab.active {
   z-index: 2;
   background: #fff;
   color: #2c3e50;
@@ -474,7 +474,7 @@ h1 + .tabs .tab.active {
 }
 
 /* Style pour le conteneur du tableau (deuxième div.tabs) - effet intercalaire */
-h1 + .tabs + .tabs {
+h1+.tabs+.tabs {
   margin-top: -1px;
   border: 1px solid #a6d866;
   border-radius: 0 0 8px 8px;
@@ -515,12 +515,13 @@ table {
 }
 
 /* Tableau dans un conteneur avec filtres (effet intercalaire) */
-h1 + .tabs + .tabs table {
+h1+.tabs+.tabs table {
   margin-bottom: 0;
   border: none;
 }
 
-table th, table td {
+table th,
+table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
@@ -528,6 +529,13 @@ table th, table td {
   word-break: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+}
+
+/* Style pour la colonne numéro */
+.num {
+  white-space: nowrap;
+  min-width: 40px;
+  text-align: center;
 }
 
 /* Limiter la largeur de certaines colonnes pour forcer les retours à la ligne */
@@ -649,7 +657,8 @@ table tr:nth-child(even) {
     font-size: 0.95rem;
   }
 
-  table th, table td {
+  table th,
+  table td {
     font-size: 0.85rem;
     padding: 6px;
   }
@@ -1048,30 +1057,32 @@ table tr:nth-child(even) {
 
 /* Style pour les indicateurs de tri */
 .sort-indicator {
-    display: inline-block;
-    font-size: 0.7em;
-    margin-left: 5px;
-    transition: transform 0.2s, opacity 0.2s;
+  display: inline-block;
+  font-size: 0.7em;
+  margin-left: 5px;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
 .sort-neutral {
-    opacity: 0.3;
-    transform: rotate(0);
+  opacity: 0.3;
+  transform: rotate(0);
 }
 
 .sort-asc {
-    opacity: 1;
-    transform: rotate(180deg); /* Flèche vers le haut */
+  opacity: 1;
+  transform: rotate(180deg);
+  /* Flèche vers le haut */
 }
 
 .sort-desc {
-    opacity: 1;
-    transform: rotate(0); /* Flèche vers le bas */
+  opacity: 1;
+  transform: rotate(0);
+  /* Flèche vers le bas */
 }
 
 /* Hover effect pour indiquer que la colonne est triable */
 th.sortable:hover .sort-indicator.sort-neutral {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
 /*--------------------------------------------------------------
@@ -1161,17 +1172,17 @@ th.sortable:hover .sort-indicator.sort-neutral {
     align-items: stretch;
     text-align: center;
   }
-  
+
   .header-container h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
   }
-  
+
   /* Cacher l'icône LinkedIn sur mobile */
   .linkedin-icon-top {
     display: none !important;
   }
-  
+
   /* Bouton de connexion prend toute la largeur sur mobile */
   .auth-btn-top,
   .logout-btn {
@@ -1182,37 +1193,38 @@ th.sortable:hover .sort-indicator.sort-neutral {
     margin-top: 10px;
     margin-bottom: 10px;
   }
-  
+
   .header-auth-buttons {
     width: 100%;
   }
-  
+
   /* Filtres en colonne sur mobile */
-  h1 + .tabs {
+  h1+.tabs {
     flex-direction: column;
     gap: 5px;
   }
-  
-  h1 + .tabs .tab {
+
+  h1+.tabs .tab {
     width: 100%;
     border-radius: 8px;
     margin: 0;
   }
-  
-  h1 + .tabs .tab.active {
+
+  h1+.tabs .tab.active {
     border-bottom: 1px solid #a6d866;
   }
-  
+
   /* Ajuster le conteneur du tableau sur mobile */
-  h1 + .tabs + .tabs {
+  h1+.tabs+.tabs {
     border-radius: 8px;
     margin-top: 0;
-    overflow-x: auto; /* Permet le scroll horizontal sur mobile */
+    overflow-x: auto;
+    /* Permet le scroll horizontal sur mobile */
     overflow-y: hidden;
   }
-  
+
   /* Assurer que le tableau peut dépasser la largeur sur mobile */
-  h1 + .tabs + .tabs table {
+  h1+.tabs+.tabs table {
     min-width: 100%;
     width: max-content;
   }
@@ -1222,7 +1234,7 @@ th.sortable:hover .sort-indicator.sort-neutral {
   .header-container h2 {
     font-size: 1.3rem;
   }
-  
+
   .auth-btn-top {
     padding: 10px 15px;
     font-size: 0.9rem;
@@ -1315,7 +1327,7 @@ th.sortable:hover .sort-indicator.sort-neutral {
     max-width: 400px;
     padding: 18px;
   }
-  
+
   .large-modal {
     max-width: 480px;
   }
