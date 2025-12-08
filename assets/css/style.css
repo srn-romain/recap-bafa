@@ -394,11 +394,11 @@ p {
   font-weight: 600;
 }
 
-
 #mobile-message {
   color: #e74c3c;
   font-size: 0.9rem;
   margin-bottom: 15px;
+  display: none;
 }
 
 .table-container {
@@ -421,6 +421,12 @@ p {
 h1+.tabs {
   margin-bottom: 0;
   margin-top: 15px;
+  background: transparent;
+  /* Enlever le fond blanc */
+  box-shadow: none;
+  /* Enlever l'ombre */
+  padding: 0 5px;
+  /* Ajuster le padding */
 }
 
 h1+.tabs .tab {
@@ -429,54 +435,35 @@ h1+.tabs .tab {
   margin-top: 0;
   position: relative;
   z-index: 1;
+  background: #a6d866;
+  /* Couleur par défaut */
+  color: #fff;
+  border: none;
+}
+
+h1+.tabs .tab:hover {
+  background: #8ecf4e;
 }
 
 h1+.tabs .tab.active {
   z-index: 2;
-  background: #fff;
-  color: #2c3e50;
-  border: 1px solid #a6d866;
-  border-bottom: 1px solid #fff;
+  background: #f39c12;
+  /* Orange demandé */
+  color: #fff;
+  border: 1px solid #f39c12;
+  border-bottom: 1px solid #f39c12;
+  /* Assurer la continuité */
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Style pour le conteneur du tableau (deuxième div.tabs) - effet intercalaire */
 h1+.tabs+.tabs {
-  margin-top: -1px;
-  border: 1px solid #a6d866;
-  border-radius: 0 0 8px 8px;
-  padding: 0;
-  overflow: hidden;
-  background: #fff;
-}
-
-/* Style pour les filtres (première div.tabs avant le tableau) - effet intercalaire */
-h1+.tabs {
-  margin-bottom: 0;
-  margin-top: 15px;
-}
-
-h1+.tabs .tab {
-  border-radius: 8px 8px 0 0;
-  margin-bottom: 0;
   margin-top: 0;
-  position: relative;
-  z-index: 1;
-}
-
-h1+.tabs .tab.active {
-  z-index: 2;
-  background: #fff;
-  color: #2c3e50;
-  border: 1px solid #a6d866;
-  border-bottom: 1px solid #fff;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Style pour le conteneur du tableau (deuxième div.tabs) - effet intercalaire */
-h1+.tabs+.tabs {
-  margin-top: -1px;
-  border: 1px solid #a6d866;
+  /* Coller au filtre */
+  border: 1px solid #ddd;
+  /* Bordure plus discrète */
+  border-top: 3px solid #f39c12;
+  /* Ligne orange pour lier au filtre actif */
   border-radius: 0 0 8px 8px;
   padding: 0;
   overflow: hidden;
@@ -541,13 +528,7 @@ table td {
 /* Limiter la largeur de certaines colonnes pour forcer les retours à la ligne */
 /* Colonne Organisateur (expériences) */
 #table-experiences th:nth-child(4),
-#table-experiences td:nth-child(4) {
-  max-width: 200px;
-  white-space: normal;
-}
 
-/* Colonne Lieu */
-#table-experiences th:nth-child(6),
 #table-experiences td:nth-child(6),
 #table-formations th:nth-child(7),
 #table-formations td:nth-child(7) {
