@@ -557,7 +557,7 @@ table th {
 }
 
 /* Lignes alternées */
-table tr:nth-child(even) {
+table tr.even {
   background-color: #f2f2f2;
 }
 
