@@ -1182,7 +1182,8 @@ th.sortable:hover .sort-indicator.sort-neutral {
   /* Filtres en colonne sur mobile */
   h1+.tabs {
     flex-direction: column;
-    gap: 5px;
+    gap: 10px;
+    margin-bottom: 20px;
   }
 
   h1+.tabs .tab {
