@@ -21,14 +21,6 @@ function initAuth() {
     } else {
       window.currentUser = null;
       window.userRole = null;
-      // Masquer immédiatement la section stats formations
-      const allStatsSections = document.querySelectorAll('#statistiques .stats-section');
-      allStatsSections.forEach(section => {
-        const h3 = section.querySelector('h3');
-        if (h3 && h3.textContent.trim() === 'Formations') {
-          section.classList.add('hidden-formations');
-        }
-      });
       document.body.classList.remove('user-logged-in');
       updateUI();
     }
@@ -170,17 +162,20 @@ async function signOut() {
       rows.forEach(row => row.remove());
     }
     
-    // Masquer immédiatement la section stats formations avant de recalculer
-    const allStatsSections = document.querySelectorAll('#statistiques .stats-section');
-    allStatsSections.forEach(section => {
-      const h3 = section.querySelector('h3');
-      if (h3 && h3.textContent.trim() === 'Formations') {
-        section.style.display = 'none';
-        section.style.visibility = 'hidden';
-        section.style.height = '0';
-        section.style.overflow = 'hidden';
-      }
-    });
+    // Vider les stats formations
+    const totalDaysFormation = document.getElementById('total-days-formation');
+    const totalBafaFormations = document.getElementById('total-bafa-formations');
+    const totalBafdFormations = document.getElementById('total-bafd-formations');
+    if (totalDaysFormation) totalDaysFormation.textContent = '0';
+    if (totalBafaFormations) totalBafaFormations.textContent = '0';
+    if (totalBafdFormations) totalBafdFormations.textContent = '0';
+    
+    // Cacher le canvas du graphique
+    const formationCanvas = document.getElementById('formationOrganizationChart');
+    if (formationCanvas) {
+      formationCanvas.style.display = 'none';
+      formationCanvas.style.visibility = 'hidden';
+    }
     
     // Recalculer les statistiques (sans les formations)
     if (typeof calculateAllStatistics === 'function') {
@@ -297,42 +292,70 @@ function updateUI() {
   const formationChart = document.getElementById('formation-organization-chart');
   const formationCanvas = document.getElementById('formationOrganizationChart');
   
+  // Modales de contenu restreint
+  const formationsTableRestrictedModal = document.getElementById('formations-restricted-modal');
+  const formationsChartRestrictedModal = document.getElementById('formations-chart-restricted-modal');
+  
   if (!isLoggedIn) {
-    // Masquer TOUTES les formations si non connecté
-    if (formationsTitle) formationsTitle.style.display = 'none';
-    if (formationsTableContainer) formationsTableContainer.style.display = 'none';
-    if (formationsFilters) formationsFilters.style.display = 'none';
+    // Toujours afficher les titres
+    if (formationsTitle) formationsTitle.style.display = '';
     
-    // Masquer la section stats formations complète (titre + texte + graphique)
+    // Toujours afficher les conteneurs (tableau et graphique)
+    if (formationsTableContainer) formationsTableContainer.style.display = '';
+    if (formationsFilters) formationsFilters.style.display = '';
+    
+    // Toujours afficher la section stats formations (titre h3)
     if (formationsStats) {
-      formationsStats.style.display = 'none';
-      formationsStats.style.visibility = 'hidden';
-      formationsStats.style.height = '0';
-      formationsStats.style.overflow = 'hidden';
-      formationsStats.classList.add('hidden-formations');
+      formationsStats.style.display = '';
+      formationsStats.style.visibility = '';
+      formationsStats.style.height = '';
+      formationsStats.style.overflow = '';
+      formationsStats.classList.remove('hidden-formations');
     }
     
-    // Ajouter une classe au body pour le CSS
-    document.body.classList.remove('user-logged-in');
-    
-    // Masquer aussi individuellement le graphique au cas où
-    if (formationChart) {
-      formationChart.style.display = 'none';
-      formationChart.style.visibility = 'hidden';
-    }
-    if (formationCanvas) {
-      formationCanvas.style.display = 'none';
-      formationCanvas.style.visibility = 'hidden';
-    }
-    
-    if (formationsTab) formationsTab.style.display = 'none';
-    if (formationsSearch) formationsSearch.style.display = 'none';
-    
-    // Vider le tableau des formations pour éviter qu'il reste visible
+    // Cacher toutes les données des formations
+    // Cacher le tableau
     if (formationsTable) {
+      formationsTable.style.display = 'none';
+      // Vider aussi les données
       const rows = formationsTable.querySelectorAll('tr[data-type]:not(.always-visible)');
       rows.forEach(row => row.remove());
     }
+    
+    // Cacher les stats sentences et le graphique
+    if (formationsStats) {
+      const statsSentences = formationsStats.querySelector('.stats-sentences');
+      if (statsSentences) {
+        statsSentences.style.display = 'none';
+      }
+      if (formationChart) {
+        formationChart.style.display = 'none';
+      }
+      if (formationCanvas) {
+        formationCanvas.style.display = 'none';
+        formationCanvas.style.visibility = 'hidden';
+      }
+    }
+    
+    // Afficher les modales de contenu restreint
+    if (formationsTableRestrictedModal) {
+      formationsTableRestrictedModal.style.display = 'flex';
+      // S'assurer que le conteneur a une hauteur minimale pour centrer la modale
+      if (formationsTableContainer) {
+        formationsTableContainer.style.minHeight = '300px';
+      }
+    }
+    if (formationsChartRestrictedModal) {
+      formationsChartRestrictedModal.style.display = 'flex';
+    }
+    
+    // Masquer les filtres et la recherche (mais garder les titres et conteneurs)
+    if (formationsFilters) formationsFilters.style.display = 'none';
+    if (formationsSearch) formationsSearch.style.display = 'none';
+    if (formationsTab) formationsTab.style.display = 'none';
+    
+    // Ajouter une classe au body pour le CSS
+    document.body.classList.remove('user-logged-in');
   } else {
     // Afficher les formations si connecté
     if (formationsTitle) formationsTitle.style.display = '';
@@ -346,16 +369,47 @@ function updateUI() {
       formationsStats.classList.remove('hidden-formations');
     }
     
-    // Ajouter une classe au body pour le CSS
-    document.body.classList.add('user-logged-in');
-    if (formationChart) {
-      formationChart.style.display = '';
-      formationChart.style.visibility = '';
+    // Afficher toutes les données des formations quand connecté
+    // Afficher le tableau
+    if (formationsTable) {
+      formationsTable.style.display = '';
     }
+    
+    // Afficher les stats sentences et le graphique
+    if (formationsStats) {
+      const statsSentences = formationsStats.querySelector('.stats-sentences');
+      if (statsSentences) {
+        statsSentences.style.display = '';
+      }
+      if (formationChart) {
+        formationChart.style.display = '';
+      }
+      if (formationCanvas) {
+        formationCanvas.style.display = '';
+        formationCanvas.style.visibility = '';
+      }
+    }
+    
+    // Cacher les modales de contenu restreint
+    if (formationsTableRestrictedModal) {
+      formationsTableRestrictedModal.style.display = 'none';
+      // Réinitialiser la hauteur minimale
+      if (formationsTableContainer) {
+        formationsTableContainer.style.minHeight = '';
+      }
+    }
+    if (formationsChartRestrictedModal) {
+      formationsChartRestrictedModal.style.display = 'none';
+    }
+    
+    // Afficher le canvas du graphique
     if (formationCanvas) {
       formationCanvas.style.display = '';
       formationCanvas.style.visibility = '';
     }
+    
+    // Ajouter une classe au body pour le CSS
+    document.body.classList.add('user-logged-in');
     if (formationsTab) formationsTab.style.display = '';
     if (formationsSearch) formationsSearch.style.display = '';
   }
