@@ -75,6 +75,10 @@
       <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
     </div>
   <div class="tabs">
+  <div id="loading-experiences" class="loading-spinner hidden">
+    <div class="spinner"></div>
+    <p>Chargement des données...</p>
+  </div>
   <table id="table-experiences">
       <tr data-type="colo autre alsh" class="always-visible">
         <th>N°</th>
@@ -108,6 +112,10 @@
     <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
   </div>
   <div class="tabs" id="formations-table-container">
+    <div id="loading-formations" class="loading-spinner hidden">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
     <table id="table-formations">
       <tr data-type="bafa bafd" class="always-visible">
         <th>N°</th>

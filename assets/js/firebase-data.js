@@ -188,9 +188,27 @@ function createFormationRow(formation) {
  * Charger les expériences depuis Firebase
  */
 async function loadExperiencesFromFirebase() {
+  const loadingSpinner = document.getElementById('loading-experiences');
+  const table = document.getElementById('table-experiences');
+  
   if (!window.firebaseInitialized || !window.firebaseDb) {
     console.log("Firebase non disponible, utilisation des données statiques");
+    // Cacher le spinner si pas de Firebase
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+    }
+    if (table) {
+      table.style.display = '';
+    }
     return false;
+  }
+  
+  // Afficher le spinner si pas déjà affiché
+  if (loadingSpinner && loadingSpinner.classList.contains('hidden')) {
+    loadingSpinner.classList.remove('hidden');
+  }
+  if (table && table.style.display !== 'none') {
+    table.style.display = 'none';
   }
   
   try {
@@ -273,10 +291,27 @@ async function loadExperiencesFromFirebase() {
       table.appendChild(row);
     });
     
+    // Cacher le spinner et afficher le tableau
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+    }
+    if (table) {
+      table.style.display = '';
+    }
+    
     console.log("Expériences chargées depuis Firebase");
     return true;
   } catch (error) {
     console.error("Erreur lors du chargement des expériences:", error);
+    // Cacher le spinner en cas d'erreur
+    const loadingSpinner = document.getElementById('loading-experiences');
+    const table = document.getElementById('table-experiences');
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+    }
+    if (table) {
+      table.style.display = '';
+    }
     return false;
   }
 }
@@ -285,9 +320,27 @@ async function loadExperiencesFromFirebase() {
  * Charger les formations depuis Firebase
  */
 async function loadFormationsFromFirebase() {
+  const loadingSpinner = document.getElementById('loading-formations');
+  const table = document.getElementById('table-formations');
+  
   if (!window.firebaseInitialized || !window.firebaseDb) {
     console.log("Firebase non disponible, utilisation des données statiques");
+    // Cacher le spinner si pas de Firebase
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+    }
+    if (table) {
+      table.style.display = '';
+    }
     return false;
+  }
+  
+  // Afficher le spinner si pas déjà affiché
+  if (loadingSpinner && loadingSpinner.classList.contains('hidden')) {
+    loadingSpinner.classList.remove('hidden');
+  }
+  if (table && table.style.display !== 'none') {
+    table.style.display = 'none';
   }
   
   try {
@@ -365,10 +418,27 @@ async function loadFormationsFromFirebase() {
       table.appendChild(row);
     });
     
+    // Cacher le spinner et afficher le tableau
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+    }
+    if (table) {
+      table.style.display = '';
+    }
+    
     console.log("Formations chargées depuis Firebase");
     return true;
   } catch (error) {
     console.error("Erreur lors du chargement des formations:", error);
+    // Cacher le spinner en cas d'erreur
+    const loadingSpinner = document.getElementById('loading-formations');
+    const table = document.getElementById('table-formations');
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+    }
+    if (table) {
+      table.style.display = '';
+    }
     return false;
   }
 }
@@ -377,6 +447,26 @@ async function loadFormationsFromFirebase() {
  * Charger toutes les données depuis Firebase
  */
 async function loadDataFromFirebase() {
+  // Afficher les spinners au début du chargement
+  const loadingExperiences = document.getElementById('loading-experiences');
+  const loadingFormations = document.getElementById('loading-formations');
+  const tableExperiences = document.getElementById('table-experiences');
+  const tableFormations = document.getElementById('table-formations');
+  
+  if (loadingExperiences) {
+    loadingExperiences.classList.remove('hidden');
+  }
+  if (tableExperiences) {
+    tableExperiences.style.display = 'none';
+  }
+  
+  if (loadingFormations) {
+    loadingFormations.classList.remove('hidden');
+  }
+  if (tableFormations) {
+    tableFormations.style.display = 'none';
+  }
+  
   const experiencesLoaded = await loadExperiencesFromFirebase();
   const formationsLoaded = await loadFormationsFromFirebase();
   
