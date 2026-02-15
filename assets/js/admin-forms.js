@@ -723,7 +723,16 @@ async function showEditExperienceModal(data, row) {
   document.getElementById('exp-date').value = data.date || '';
 
   document.getElementById('exp-duration').value = data.duration || '';
-  document.getElementById('exp-organizer').value = data.organizer || '';
+  const rawOrganizer = data.organizer || '';
+  // Matcher "Nom (Dept)"
+  const organizerMatch = rawOrganizer.match(/^(.*?)\s*\(([^)]+)\)$/);
+  if (organizerMatch) {
+    document.getElementById('exp-organizer').value = organizerMatch[1].trim();
+    document.getElementById('exp-dept').value = organizerMatch[2].trim();
+  } else {
+    document.getElementById('exp-organizer').value = rawOrganizer;
+    document.getElementById('exp-dept').value = '';
+  }
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
 
   // Gérer le logo
@@ -1054,7 +1063,11 @@ document.addEventListener('DOMContentLoaded', function () {
         type: document.getElementById('exp-type').value,
         date: dateText,
         duration: document.getElementById('exp-duration').value || '',
-        organizer: document.getElementById('exp-organizer').value,
+        organizer: (() => {
+          const org = document.getElementById('exp-organizer').value.trim();
+          const dept = document.getElementById('exp-dept').value.trim();
+          return dept ? `${org} (${dept})` : org;
+        })(),
         organizerUrl: document.getElementById('exp-organizer-url').value || '',
         logoPath: logoPath,
         location: location,
