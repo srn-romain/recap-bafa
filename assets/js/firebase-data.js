@@ -57,13 +57,10 @@ function createExperienceRow(experience) {
       if (isLoggedIn && loc.url && loc.url !== '#') {
         locLink.href = loc.url;
         locLink.target = '_blank';
-        locLink.style.color = '#2563eb'; // Bleu lien standard
+        locLink.className = 'location-link';
       } else {
         locLink.href = '#';
-        locLink.style.pointerEvents = 'none';
-        locLink.style.cursor = 'default';
-        locLink.style.color = '#333';
-        locLink.style.textDecoration = 'none';
+        locLink.className = 'location-link-disabled';
         if (loc.url && loc.url !== '#') {
           locLink.title = 'Connectez-vous pour voir sur Google Maps';
         }
@@ -87,12 +84,10 @@ function createExperienceRow(experience) {
     if (isLoggedIn && experience.locationUrl && experience.locationUrl !== '#') {
       locLink.href = experience.locationUrl;
       locLink.target = '_blank';
+      locLink.className = 'location-link';
     } else {
       locLink.href = '#';
-      locLink.style.pointerEvents = 'none';
-      locLink.style.cursor = 'not-allowed';
-      locLink.style.color = '#333';
-      locLink.style.textDecoration = 'none';
+      locLink.className = 'location-link-disabled';
       locLink.title = 'Connectez-vous pour voir sur Google Maps';
       if (experience.locationUrl && experience.locationUrl !== '#') {
         locLink.setAttribute('data-original-href', experience.locationUrl);
@@ -183,12 +178,10 @@ function createFormationRow(formation) {
   if (isLoggedIn && formation.locationUrl && formation.locationUrl !== '#') {
     locLink.href = formation.locationUrl;
     locLink.target = '_blank';
+    locLink.className = 'location-link';
   } else {
     locLink.href = '#';
-    locLink.style.pointerEvents = 'none';
-    locLink.style.cursor = 'not-allowed';
-    locLink.style.color = '#333';
-    locLink.style.textDecoration = 'none';
+    locLink.className = 'location-link-disabled';
     locLink.title = 'Connectez-vous pour voir sur Google Maps';
     if (formation.locationUrl && formation.locationUrl !== '#') {
       locLink.setAttribute('data-original-href', formation.locationUrl);

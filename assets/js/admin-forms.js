@@ -158,10 +158,14 @@ function toggleLocationFields() {
     const expLocation = document.getElementById('exp-location');
     if (expLocation) expLocation.removeAttribute('required');
 
-    // Initialiser avec une ligne si vide
+    // Initialiser avec une ligne si vide SEULEMENT si on n'est pas en train de charger des données via edit
+    // On laisse showEditExperienceModal gérer le remplissage ou l'ajout si vide.
+    // Pour showAddExperienceModal, on l'appellera explicitement.
+    /*
     if (tbody && tbody.children.length === 0) {
       addItineraryRow();
     }
+    */
   } else {
     if (singleFields) singleFields.style.display = 'block';
     if (itineraryFields) itineraryFields.style.display = 'none';
@@ -653,9 +657,6 @@ function toggleLogoInfoMessages() {
   }
 }
 
-// Afficher/Masquer info logo formation
-
-
 // Fonction pour supprimer le logo
 function removeLogo() {
   const fileInput = document.getElementById('exp-logo-file');
@@ -732,17 +733,27 @@ async function showEditExperienceModal(data, row) {
   }
 
   // Gérer le type de séjour et les lieux
-  document.getElementById('exp-stay-type').value = data.stayType || '';
+  const stayTypeVal = data.stayType || '';
+  document.getElementById('exp-stay-type').value = stayTypeVal;
 
   // Basculer vers le bon mode (itinérance ou classique)
   toggleLocationFields();
 
-  if (data.stayType === 'Itinérance' && data.itineraryLocations && data.itineraryLocations.length > 0) {
+  // Données d'itinérance : supporter nouveau et ancien format
+  const itineraryData = data.locations || data.itineraryLocations || [];
+
+  if (stayTypeVal === 'Itinérance' && itineraryData.length > 0) {
     // Mode itinérance : pré-remplir le tableau
     clearItineraryTable();
-    data.itineraryLocations.forEach(loc => {
-      addItineraryRow(loc.location, loc.url);
+    itineraryData.forEach(loc => {
+      // Gérer potentiellement loc.name (ancien) vs loc.location (nouveau)
+      const locationName = loc.location || loc.name || '';
+      addItineraryRow(locationName, loc.url);
     });
+  } else if (stayTypeVal === 'Itinérance') {
+    // Si itinérance mais pas de données (cas bizarre), mettre une ligne vide
+    clearItineraryTable();
+    addItineraryRow();
   } else {
     // Mode classique : pré-remplir les champs uniques
     document.getElementById('exp-location').value = data.location || '';
