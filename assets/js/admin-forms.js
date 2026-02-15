@@ -92,24 +92,37 @@ async function updatePositionLabels() {
     { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
     { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
     { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
-    { m: 'Autre', f: 'Autre' }
+    { m: 'Autre (préciser)', f: 'Autre (préciser)' }
   ];
 
   positions.forEach((pos, index) => {
-    // Enregistrement TOUJOURS au masculin (pos.m)
+    // Enregistrement en base au masculin (pos.m)
     // Affichage au masculin ou féminin selon le genre (text)
     if (options[index + 1]) {
       options[index + 1].value = pos.m;
       options[index + 1].text = isFeminin ? pos.f : pos.m;
     }
   });
+
+  // Synchroniser Tom Select si présent
+  if (positionSelect.tomselect) {
+    positionSelect.tomselect.sync();
+  }
 }
 
 
 // Afficher le modal d'ajout d'expérience
 async function showAddExperienceModal() {
   document.getElementById('experience-modal-title').textContent = 'Ajouter une expérience';
-  document.getElementById('experience-form').reset();
+  const form = document.getElementById('experience-form');
+  form.reset();
+
+  // Reset Tom Selects
+  ['exp-stay-type', 'exp-position'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.tomselect) el.tomselect.clear();
+  });
+
   hideExperienceError();
   currentEditingRow = null;
   currentEditingDocId = null;
@@ -161,7 +174,52 @@ async function showAddExperienceModal() {
     customInput.value = '';
     customInput.required = false;
   }
+
+  // Réinitialiser le champ type sejour custom
+  const stayCustom = document.getElementById('exp-stay-type-custom');
+  if (stayCustom) {
+    stayCustom.style.display = 'none';
+    stayCustom.value = '';
+    stayCustom.required = false;
+  }
+
+  // Initialiser les dropdowns de recherche
+  initSearchableSelects();
 }
+
+// Initialiser Tom Select pour les listes déroulantes
+function initSearchableSelects() {
+  const ids = ['exp-stay-type', 'exp-position', 'form-title'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.tomselect) {
+      new TomSelect(el, {
+        create: false,
+        sortField: [], // Désactiver le tri pour respecter l'ordre du DOM (groupes, hiérarchie)
+        plugins: ['dropdown_input'], // Assure que l'input de recherche est dans le dropdown
+        onInitialize: function () {
+          // S'assurer que le container a la bonne largeur
+          this.wrapper.style.width = '100%';
+        }
+      });
+    }
+  });
+}
+
+// Toggle l'affichage du champ "Autre" pour le type de séjour
+window.toggleExpStayTypeCustom = function () {
+  const select = document.getElementById('exp-stay-type');
+  const customInput = document.getElementById('exp-stay-type-custom');
+  if (select && customInput) {
+    if (select.value === 'Autre') {
+      customInput.style.display = 'block';
+      customInput.required = true;
+    } else {
+      customInput.style.display = 'none';
+      customInput.required = false;
+    }
+  }
+};
 
 // Toggle l'affichage du champ "Autre" pour l'intitulé du poste d'une expérience
 window.toggleExpPositionCustom = function () {
@@ -190,6 +248,7 @@ window.toggleMapExplanation = function (event, type) {
 
 // Toggle entre champs lieu unique et tableau itinérance
 function toggleLocationFields() {
+  toggleExpStayTypeCustom(); // Mettre à jour l'affichage du champ custom
   const stayType = document.getElementById('exp-stay-type')?.value;
   const singleFields = document.getElementById('single-location-fields');
   const itineraryFields = document.getElementById('itinerary-locations');
@@ -809,7 +868,49 @@ async function showEditExperienceModal(data, row) {
 
   // Gérer le type de séjour et les lieux
   const stayTypeVal = data.stayType || '';
-  document.getElementById('exp-stay-type').value = stayTypeVal;
+
+  const stayTypeSelect = document.getElementById('exp-stay-type');
+  const stayTypeCustom = document.getElementById('exp-stay-type-custom');
+
+  let optionExists = false;
+  if (stayTypeSelect) {
+    for (let i = 0; i < stayTypeSelect.options.length; i++) {
+      if (stayTypeSelect.options[i].value === stayTypeVal) {
+        optionExists = true;
+        break;
+      }
+    }
+  }
+
+  if (optionExists) {
+    if (stayTypeSelect) {
+      stayTypeSelect.value = stayTypeVal;
+      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.setValue(stayTypeVal);
+    }
+    if (stayTypeCustom) {
+      stayTypeCustom.style.display = 'none';
+      stayTypeCustom.value = '';
+    }
+  } else if (stayTypeVal) {
+    // C'est un type personnalisé -> "Autre"
+    if (stayTypeSelect) {
+      stayTypeSelect.value = 'Autre';
+      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.setValue('Autre');
+    }
+    if (stayTypeCustom) {
+      stayTypeCustom.style.display = 'block';
+      stayTypeCustom.value = stayTypeVal;
+    }
+  } else {
+    if (stayTypeSelect) {
+      stayTypeSelect.value = '';
+      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.clear();
+    }
+    if (stayTypeCustom) {
+      stayTypeCustom.style.display = 'none';
+      stayTypeCustom.value = '';
+    }
+  }
 
   // Basculer vers le bon mode (itinérance ou classique)
   toggleLocationFields();
@@ -908,7 +1009,6 @@ async function showEditExperienceModal(data, row) {
   currentEditingDocId = null;
 
   // Ajouter l'event listener pour le changement de type de séjour
-  const stayTypeSelect = document.getElementById('exp-stay-type');
   if (stayTypeSelect) {
     stayTypeSelect.addEventListener('change', toggleLocationFields);
   }
@@ -1000,6 +1100,11 @@ window.toggleFormTitleCustom = function () {
 function showAddFormationModal() {
   document.getElementById('formation-modal-title').textContent = 'Ajouter une formation';
   document.getElementById('formation-form').reset();
+
+  // Reset Tom Select
+  const titleSelect = document.getElementById('form-title');
+  if (titleSelect && titleSelect.tomselect) titleSelect.tomselect.clear();
+
   const customInput = document.getElementById('form-title-custom');
   if (customInput) { customInput.style.display = 'none'; }
 
@@ -1092,6 +1197,8 @@ function showEditFormationModal(data, row) {
 
     if (optionExists) {
       titleSelect.value = currentTitle;
+      if (titleSelect.tomselect) titleSelect.tomselect.setValue(currentTitle);
+
       if (customTitleInput) {
         customTitleInput.value = '';
         customTitleInput.style.display = 'none';
@@ -1099,6 +1206,8 @@ function showEditFormationModal(data, row) {
     } else {
       // Si n'existe pas, mettre "Autre" et remplir le champ custom
       titleSelect.value = 'Autre';
+      if (titleSelect.tomselect) titleSelect.tomselect.setValue('Autre');
+
       if (customTitleInput) {
         customTitleInput.value = currentTitle;
         customTitleInput.style.display = 'block';
@@ -1237,7 +1346,14 @@ document.addEventListener('DOMContentLoaded', function () {
         logoPath: logoPath,
         location: location,
         locationUrl: locationUrl,
-        stayType: stayType,
+        locationUrl: locationUrl,
+        stayType: (() => {
+          const selectVal = document.getElementById('exp-stay-type').value;
+          if (selectVal === 'Autre') {
+            return document.getElementById('exp-stay-type-custom').value.trim();
+          }
+          return selectVal;
+        })(),
         position: (() => {
           const selectVal = document.getElementById('exp-position').value;
           if (selectVal === 'Autre') {
