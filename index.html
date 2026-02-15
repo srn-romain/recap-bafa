@@ -10,96 +10,346 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    .home-actions {
-      text-align: center;
-      margin: 40px 0;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 5px solid #f39c12;
+    /* Reset & Globals */
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f9fafb;
+      color: #374151;
     }
 
-    .btn-large {
-      padding: 12px 25px;
-      font-size: 1.1rem;
-      margin: 10px;
-      border-radius: 5px;
+    /* Navigation Buttons */
+    .nav-btn-outline {
+      padding: 10px 20px;
+      border: 2px solid #e5e7eb;
+      background: transparent;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #374151;
       cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn-outline:hover {
+      border-color: #d1d5db;
+      background: #f3f4f6;
+    }
+
+    .nav-btn-fill {
+      padding: 10px 20px;
       border: none;
+      background: #1f2937;
       color: white;
-      font-weight: bold;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn-fill:hover {
+      background: #111827;
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    /* Hero Buttons */
+    .hero-btn-primary {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: opacity 0.3s;
+      gap: 10px;
+      transition: all 0.3s;
+      box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4);
     }
 
-    .btn-large:hover {
-      opacity: 0.9;
+    .hero-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.5);
     }
 
-    .btn-orange {
-      background: #f39c12;
+    .hero-btn-secondary {
+      padding: 16px 32px;
+      background: white;
+      color: #4b5563;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
-    .btn-green {
-      background: #50644c;
+    .hero-btn-secondary:hover {
+      background: #f9fafb;
+      color: #111827;
+      border-color: #d1d5db;
+    }
+
+    /* Features */
+    .feature-card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      border: 1px solid #f3f4f6;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+
+    .icon-yellow {
+      background: #fffbeb;
+      color: #f59e0b;
+    }
+
+    .icon-green {
+      background: #ecfdf5;
+      color: #10b981;
+    }
+
+    .icon-dark {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .icon-blue {
+      background: #eff6ff;
+      color: #3b82f6;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 10px;
+      color: #111827;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    /* Search */
+    .search-input-modern {
+      flex: 1;
+      min-width: 200px;
+      padding: 16px;
+      border: 1px solid transparent;
+      background: #f9fafb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .search-input-modern:focus {
+      background: white;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+    }
+
+    .search-btn-modern {
+      padding: 16px 32px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .search-btn-modern:hover {
+      background: #000;
+      transform: scale(1.02);
     }
   </style>
 </head>
 
 <body>
-  <div>
-    <h2>Récapitulatif d'Expériences BAFA & BAFD</h2>
+  <div class="landing-page" style="font-family: 'Roboto', sans-serif;">
 
-    <button onclick="showAuthModal('login')" class="auth-btn-top" style="position: absolute; top: 20px; right: 20px;">
-      <i class="bi bi-person"></i> Se connecter
-    </button>
+    <!-- CSS Updated -->
+    <style>
+      /* Correctif pour annuler le style global 'div' violent de style.css sur nos éléments */
+      .layout-reset,
+      .features-wrapper,
+      .features-grid {
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+      }
 
-    <section>
-      <p>
-        Bienvenue sur la plateforme collaborative de gestion de parcours d'animation.
-        Ce site permet à tout animateur ou directeur de créer son propre tableau de bord
-        pour centraliser ses expériences et formations.
-      </p><br>
+      /* Features Grid : 4 colonnes strictes sur Desktop */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+      }
 
-      <div class="info-box">
-        <i>
-          <b>🚀 Pourquoi utiliser cet outil ?</b>
-          <ul>
-            <li>-<orange>Centralisez</orange> toutes vos colos, centres de loisirs et stages dans un seul endroit.</li>
-            <li>-<orange>Partagez</orange> votre profil via une URL unique personnalisée.</li>
-            <li>-<orange>Analysez</orange> vos statistiques (jours travaillés, tranches d'âges, publics...).</li>
-            <li>-<orange>Accédez</orange> à vos données depuis n'importe où, sur mobile ou ordinateur.</li>
-          </ul>
-        </i>
+      /* Responsive pour mobile et tablette */
+      @media (max-width: 992px) {
+        .features-grid {
+          grid-template-columns: repeat(2, 1fr);
+          padding: 0 20px !important;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Hide empty search results */
+      #search-results:empty {
+        display: none;
+      }
+    </style>
+
+    <!-- Header / Navbar -->
+    <header
+      style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+      <div style="display: flex; align-items: center; gap: 12px; cursor: pointer;"
+        onclick="window.location.href='index.html'">
+        <img src="assets/img/favicon.png" alt="Logo" style="height: 40px; width: auto;">
+        <h1 style="font-size: 1.4rem; color: #1f2937; margin: 0; font-weight: 800; letter-spacing: -0.5px;">Récap BAFA
+        </h1>
       </div>
-
-      <div class="home-actions">
-        <h3>Créez votre tableau de bord dès maintenant</h3>
-        <p>C'est gratuit, simple et rapide.</p>
-        <br>
-        <button onclick="showAuthModal('register')" class="btn-large btn-orange">
-          <i class="bi bi-magic"></i> Créer mon compte
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button onclick="showAuthModal('login')" class="nav-btn-outline">
+          Se connecter
         </button>
-        <button onclick="showAuthModal('login')" class="btn-large btn-green">
-          <i class="bi bi-box-arrow-in-right"></i> J'ai déjà un compte
+        <button onclick="showAuthModal('register')" class="nav-btn-fill">
+          Créer un compte
         </button>
       </div>
+    </header>
 
-      <h1 id="search">Rechercher un profil</h1>
-      <p>
-        Vous souhaitez consulter les expériences d'un animateur ? Entrez son identifiant ci-dessous.
+    <!-- Hero Section -->
+    <section class="hero-section"
+      style="text-align: center; padding: 80px 20px 60px; background: white; margin-bottom: 0;">
+      <h2
+        style="font-size: 3rem; color: #111827; margin-bottom: 20px; font-weight: 800; line-height: 1.1; letter-spacing: -1px;">
+        Gérez vos animations,<br>
+        <span
+          style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">simplement.</span>
+      </h2>
+      <p style="font-size: 1.2rem; color: #4b5563; max-width: 650px; margin: 0 auto 40px; line-height: 1.6;">
+        La solution tout-en-un pour les animateurs et directeurs.
       </p>
 
-      <p class="search-container" style="justify-content: center; max-width: 600px; margin: 20px auto;">
-        <input type="text" id="profile-id-input" class="search-input" placeholder="Identifiant (ex: romain-sieurin)"
-          style="width: 100%;">
-        <button onclick="goToProfile()" class="search-button"><i class="bi bi-search"></i></button>
-      </p>
-
-      <br><br>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <button onclick="showAuthModal('register')" class="hero-btn-primary">
+          <i class="bi bi-rocket-takeoff-fill"></i> Commencer gratuitement
+        </button>
+        <button onclick="document.getElementById('search-section').scrollIntoView({behavior: 'smooth'})"
+          class="hero-btn-secondary">
+          <i class="bi bi-search"></i> Trouver un profil
+        </button>
+      </div>
     </section>
+
+    <!-- Section Background Vert (Design System #50644c) -->
+    <section style="background-color: #50644c; padding: 60px 0; width: 100%; margin: 0;">
+
+      <!-- Cartes de fonctionnalités (4 sur la même ligne) -->
+      <div class="features-wrapper" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <div class="features-grid">
+
+          <div class="feature-card">
+            <div class="feature-icon icon-yellow">
+              <i class="bi bi-folder2-open"></i>
+            </div>
+            <h3>Centralisez</h3>
+            <p>Toutes vos expériences au même endroit.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon icon-green">
+              <i class="bi bi-share-fill"></i>
+            </div>
+            <h3>Partagez</h3>
+            <p>Un profil public accessible via URL unique.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon icon-dark">
+              <i class="bi bi-bar-chart-fill"></i>
+            </div>
+            <h3>Analysez</h3>
+            <p>Visualisez vos statistiques en temps réel.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon icon-blue">
+              <i class="bi bi-phone-fill"></i>
+            </div>
+            <h3>Accédez</h3>
+            <p>Votre tableau de bord partout avec vous.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Contenu Principal -->
+    <div class="layout-reset" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+
+      <!-- Section Recherche Profil -->
+      <section id="search-section"
+        style="text-align: center; padding: 80px 20px; background: #f9fafb; border-radius: 24px; margin-bottom: 80px;">
+        <h2 style="font-size: 2rem; font-weight: 800; color: #111827; margin-bottom: 16px;"><i class="bi bi-search"
+            style="color:#f59e0b;"></i> Rechercher un animateur</h2>
+        <p style="color: #6b7280; margin-bottom: 32px; font-size: 1.1rem;">Retrouvez le parcours d'un animateur grâce à
+          sa fiche publique.</p>
+
+        <div class="search-form"
+          style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; max-width: 600px; margin: 0 auto; background: white; padding: 8px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          <input type="text" id="search-firstname" placeholder="Prénom (ex: Jean)" class="search-input-modern">
+          <input type="text" id="search-lastname" placeholder="Nom (ex: Dupont)" class="search-input-modern">
+          <button onclick="searchProfile()" class="search-btn-modern">
+            Rechercher
+          </button>
+        </div>
+
+        <div id="search-results" style="margin-top: 40px; min-height: 20px;"></div>
+      </section>
+
+    </div>
   </div>
 
   <footer id="footer">
@@ -235,9 +485,99 @@
       }
     }
 
-    function goToProfile() {
-      const id = document.getElementById('profile-id-input').value.trim();
-      if (id) window.location.href = `dashboard.html?uid=${encodeURIComponent(id)}`;
+    async function searchProfile() {
+      const fnInput = document.getElementById('search-firstname');
+      const lnInput = document.getElementById('search-lastname');
+      const resultsDiv = document.getElementById('search-results');
+
+      const fn = fnInput.value.trim();
+      const ln = lnInput.value.trim();
+
+      if (!fn || !ln) {
+        resultsDiv.innerHTML = '<p style="color:#dc2626; font-weight:500;">Veuillez remplir le prénom et le nom.</p>';
+        return;
+      }
+
+      // Spinner de chargement
+      resultsDiv.innerHTML = '<div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #50644c; border-radius: 50%; animation: spin 1s linear infinite;"></div><style>@keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}</style>';
+
+      try {
+        // Normalisation pour la recherche (stratégie multi-casse pour le Nom)
+        const lnLower = ln.toLowerCase();
+        const lnCap = ln.charAt(0).toUpperCase() + ln.slice(1).toLowerCase();
+        const lnUpper = ln.toUpperCase();
+
+        // On lance plusieurs requêtes en parallèle pour couvrir les formats de stockage potentiels (jean, Jean, JEAN)
+        // car Firestore ne gère pas nativement la recherche insensible à la casse sans index spécifique
+        const promises = [
+          window.firebaseDb.collection('users').where('lastname', '==', ln).get(),        // Exact
+          window.firebaseDb.collection('users').where('lastname', '==', lnCap).get(),     // Capitalisé
+          window.firebaseDb.collection('users').where('lastname', '==', lnUpper).get()    // Majuscule
+        ];
+
+        const snapshots = await Promise.all(promises);
+
+        // Fusionner les résultats sans doublons
+        const uniqueDocs = new Map();
+        snapshots.forEach(snap => {
+          snap.docs.forEach(doc => uniqueDocs.set(doc.id, doc));
+        });
+
+        // Filtrer par Prénom (insensible à la casse) et par Visibilité
+        const results = [];
+        uniqueDocs.forEach(doc => {
+          const data = doc.data();
+          // Vérif prénom
+          if (data.firstname && data.firstname.trim().toLowerCase() === fn.toLowerCase()) {
+            // Vérif visibilité (par défaut true ou undefined = visible, false = caché)
+            if (data.publiclyVisible !== false) {
+              results.push({ id: doc.id, ...data });
+            }
+          }
+        });
+
+        resultsDiv.innerHTML = '';
+
+        if (results.length === 0) {
+          resultsDiv.innerHTML = '<p style="color:#6b7280; font-style:italic; background: #f9fafb; padding: 10px; border-radius: 6px; display: inline-block;">Aucun profil public trouvé pour cette recherche.</p>';
+        } else {
+          // Affichage des résultats
+          results.forEach(user => {
+            const emailHtml = (user.emailVisible && user.email) ?
+              `<div style="margin: 10px 0; color: #555; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                       <i class="bi bi-envelope-at-fill" style="color: #6b7280;"></i> 
+                       <a href="mailto:${user.email}" style="color: #2563eb; text-decoration: none;">${user.email}</a>
+                     </div>` : '';
+
+            const card = document.createElement('div');
+            card.className = "result-card";
+            card.style = "border: 1px solid #e5e7eb; padding: 25px; border-radius: 12px; background: white; max-width: 400px; margin: 15px auto; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); text-align: center; transition: all 0.3s ease;";
+
+            card.innerHTML = `
+                    <div style="background: #eff6ff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 2px solid #dbeafe;">
+                        <i class="bi bi-person-fill" style="font-size: 1.8rem; color: #2563eb;"></i>
+                    </div>
+                    <h3 style="color: #1f2937; margin-bottom: 5px; font-size: 1.35rem; font-weight: 700;">${user.firstname} ${user.lastname}</h3>
+                    
+                    ${emailHtml}
+
+                    <div style="margin-top: 20px;">
+                        <a href="dashboard.html?uid=${user.id}" class="btn-orange" style="text-decoration:none; padding: 12px 24px; border-radius: 8px; display:inline-block; font-weight:bold; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; border: none; box-shadow: 0 4px 6px -1px rgba(243, 156, 18, 0.4);">
+                            <i class="bi bi-eye-fill" style="margin-right: 8px;"></i> Voir le profil complet
+                        </a>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.8rem; color: #9ca3af;">
+                        <i class="bi bi-link-45deg"></i> Lien personnalisé public
+                    </div>
+                `;
+            resultsDiv.appendChild(card);
+          });
+        }
+
+      } catch (e) {
+        console.error(e);
+        resultsDiv.innerHTML = '<p style="color:#dc2626;">Une erreur technique est survenue lors de la recherche.</p>';
+      }
     }
 
     // Fermer modale au clic extérieur
