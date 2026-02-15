@@ -1327,9 +1327,9 @@ document.addEventListener('DOMContentLoaded', function () {
             showExperienceError("L'âge minimum ne peut pas être supérieur à l'âge maximum.");
             return;
           }
-          ageRangeString = `${ageMin}-${ageMax}ans`;
+          ageRangeString = `${ageMin}-${ageMax} ans`;
         } else {
-          ageRangeString = `${ageMin}ans`;
+          ageRangeString = `${ageMin} ans`;
         }
       }
 
@@ -1388,7 +1388,9 @@ document.addEventListener('DOMContentLoaded', function () {
         closeExperienceModal();
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
+          const scrollPos = window.scrollY; // Sauvegarder la position
           await loadDataFromFirebase();
+          window.scrollTo(0, scrollPos); // Restaurer la position
         }
       } catch (error) {
         console.error('Erreur:', error);
@@ -1472,7 +1474,9 @@ document.addEventListener('DOMContentLoaded', function () {
         closeFormationModal();
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
+          const scrollPos = window.scrollY; // Sauvegarder la position
           await loadDataFromFirebase();
+          window.scrollTo(0, scrollPos); // Restaurer la position
         }
       } catch (error) {
         console.error('Erreur:', error);
