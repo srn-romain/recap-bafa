@@ -13,6 +13,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 <i class="bi bi-house-door-fill"></i> Accueil
             </a>
 
+            <!-- Liens Sommaire (visible sur Dashboard) -->
+            <test id="nav-link-experiences" class="nav-item nav-toc-link" onclick="document.getElementById('experiences').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+                <i class="bi bi-briefcase"></i> Expériences
+            </test>
+            <test id="nav-link-formations" class="nav-item nav-toc-link" onclick="document.getElementById('formations').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+                <i class="bi bi-journal-text"></i> Formations
+            </test>
+            <test id="nav-link-stats" class="nav-item nav-toc-link" onclick="document.getElementById('statistiques').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+                <i class="bi bi-bar-chart-line"></i> Statistiques
+            </test>
+
             <!-- LinkedIn (visible si connecté) -->
             <a id="linkedin-link" href="#" target="_blank" class="nav-item" title="LinkedIn" style="display: none;">
                 <i class="bi bi-linkedin"></i>
@@ -92,4 +103,74 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!document.getElementById('auth-modal')) {
         document.body.insertAdjacentHTML('beforeend', authModalHTML);
     }
+
+    // Fonction globale pour mettre à jour la visibilité des liens de navigation
+    window.updateNavbarLinksVisibility = function () {
+        const sections = ['experiences', 'formations', 'statistiques'];
+        // Mapping IDs des liens
+        const linkIds = {
+            'experiences': 'nav-link-experiences',
+            'formations': 'nav-link-formations',
+            'statistiques': 'nav-link-stats'
+        };
+
+        sections.forEach((sectionId) => {
+            const section = document.getElementById(sectionId);
+            const link = document.getElementById(linkIds[sectionId]);
+            if (link) {
+                // Masquer si la section n'existe pas ou si elle est cachée (display: none)
+                if (!section || window.getComputedStyle(section).display === 'none') {
+                    link.style.display = 'none';
+                } else {
+                    link.style.display = 'flex'; // Afficher en flex pour alignement icone/texte
+                }
+            }
+        });
+    };
+
+    // Appeler une première fois (pour l'initialisation sync)
+    // Utiliser setTimeout pour laisser le temps au CSS/DOM de se stabiliser
+    setTimeout(window.updateNavbarLinksVisibility, 100);
+
+    // Scroll Spy pour activer les liens au défilement
+    function setupScrollSpy() {
+        const sections = ['experiences', 'formations', 'statistiques'];
+        const navLinks = {
+            'experiences': document.getElementById('nav-link-experiences'),
+            'formations': document.getElementById('nav-link-formations'),
+            'statistiques': document.getElementById('nav-link-stats')
+        };
+
+        // On utilise IntersectionObserver pour détecter quelle section est visible
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px', // Active la section quand elle est dans le haut de l'écran
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Désactiver tous les liens
+                    Object.values(navLinks).forEach(link => {
+                        if (link) link.classList.remove('active');
+                    });
+
+                    // Activer le lien courant
+                    const id = entry.target.id;
+                    if (navLinks[id]) {
+                        navLinks[id].classList.add('active');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(id => {
+            const section = document.getElementById(id);
+            if (section) observer.observe(section);
+        });
+    }
+
+    // Initialiser le ScrollSpy
+    setupScrollSpy();
 });

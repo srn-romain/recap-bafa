@@ -43,7 +43,8 @@
     padding: 5px;
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.nav-item.active {
     color: #f39c12;
     transform: translateY(-2px);
 }
@@ -94,9 +95,26 @@ body {
     color: white;
 }
 
-#nav-home-btn {
-    display: flex;
-    /* Visible by default (mobile) */
+
+/* Liens Sommaire Navbar */
+.nav-toc-link {
+    font-size: 1rem;
+    /* Taille texte ajustée */
+    font-weight: bold;
+    gap: 8px;
+}
+
+@media (max-width: 900px) {
+
+    /* Masquer le texte sur petit écran pour gagner de la place */
+    .nav-toc-link span.nav-text {
+        display: none;
+    }
+
+    .nav-toc-link {
+        font-size: 1.2rem;
+        /* Icone visible */
+    }
 }
 
 /* Desktop styles */
