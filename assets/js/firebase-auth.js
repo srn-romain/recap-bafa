@@ -447,12 +447,12 @@ function addEditColumns() {
     if (headerRow && !headerRow.querySelector('th.edit-column')) {
       const editHeader = document.createElement('th');
       editHeader.className = 'edit-column';
-      editHeader.textContent = '✏️';
+      editHeader.innerHTML = '<i class="bi bi-pencil-square"></i>';
       headerRow.appendChild(editHeader);
 
       const deleteHeader = document.createElement('th');
       deleteHeader.className = 'delete-column';
-      deleteHeader.textContent = '❌';
+      deleteHeader.innerHTML = '<i class="bi bi-trash3"></i>';
       headerRow.appendChild(deleteHeader);
     }
 
@@ -464,7 +464,7 @@ function addEditColumns() {
         editCell.className = 'edit-column';
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-btn';
-        editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
+        editBtn.innerHTML = '<i class="bi bi-pencil-square"></i>';
         editBtn.onclick = () => editExperience(row);
         editCell.appendChild(editBtn);
         row.appendChild(editCell);
@@ -473,7 +473,7 @@ function addEditColumns() {
         deleteCell.className = 'delete-column';
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
-        deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+        deleteBtn.innerHTML = '<i class="bi bi-trash3"></i>';
         deleteBtn.onclick = () => showDeleteConfirmModal(row, 'experience');
         deleteCell.appendChild(deleteBtn);
         row.appendChild(deleteCell);
@@ -488,12 +488,12 @@ function addEditColumns() {
     if (headerRow && !headerRow.querySelector('th.edit-column')) {
       const editHeader = document.createElement('th');
       editHeader.className = 'edit-column';
-      editHeader.textContent = '✏️';
+      editHeader.innerHTML = '<i class="bi bi-pencil-square"></i>';
       headerRow.appendChild(editHeader);
 
       const deleteHeader = document.createElement('th');
       deleteHeader.className = 'delete-column';
-      deleteHeader.textContent = '❌';
+      deleteHeader.innerHTML = '<i class="bi bi-trash3"></i>';
       headerRow.appendChild(deleteHeader);
     }
 
@@ -505,7 +505,7 @@ function addEditColumns() {
         editCell.className = 'edit-column';
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-btn';
-        editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
+        editBtn.innerHTML = '<i class="bi bi-pencil-square"></i>';
         editBtn.onclick = () => editFormation(row);
         editCell.appendChild(editBtn);
         row.appendChild(editCell);
@@ -514,7 +514,7 @@ function addEditColumns() {
         deleteCell.className = 'delete-column';
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
-        deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+        deleteBtn.innerHTML = '<i class="bi bi-trash3"></i>';
         deleteBtn.onclick = () => showDeleteConfirmModal(row, 'formation');
         deleteCell.appendChild(deleteBtn);
         row.appendChild(deleteCell);
