@@ -50,7 +50,7 @@
                 aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi
                 qu'une section
                 statistiques pour visualiser mon parcours.
-            </p><br>
+            </p>
 
             <div class="info-box">
                 <i>
@@ -292,7 +292,6 @@
         <div class="modal-content large-modal">
             <span class="close-modal" onclick="closeExperienceModal()">&times;</span>
             <h2 id="experience-modal-title">Ajouter une expérience</h2>
-            <div id="experience-error-message" class="error-message" style="display: none;"></div>
             <form id="experience-form">
                 <div class="form-group">
                     <label>Type <span class="required-asterisk">*</span></label>
@@ -358,29 +357,31 @@
                 <div id="itinerary-locations" style="display: none;">
                     <div class="form-group">
                         <label>Lieux de l'itinérance <span class="required-asterisk">*</span></label>
-                        <div
-                            style="background: #f9fdf7; border: 1px solid #a6d866; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
-                            <table id="itinerary-table" style="width: 100%; border-collapse: collapse;">
-                                <thead>
-                                    <tr>
-                                        <th
-                                            style="text-align: left; padding: 8px; border-bottom: 2px solid #ddd; width: 40%;">
-                                            Lieu</th>
-                                        <th
-                                            style="text-align: left; padding: 8px; border-bottom: 2px solid #ddd; width: 50%;">
-                                            URL Google Map</th>
-                                        <th
-                                            style="text-align: center; padding: 8px; border-bottom: 2px solid #ddd; width: 10%;">
-                                            Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="itinerary-tbody">
-                                    <!-- Les lignes seront ajoutées dynamiquement -->
-                                </tbody>
-                            </table>
-                            <button type="button" onclick="addItineraryRow()" class="submit-btn"
-                                style="margin-top: 10px; width: 100%; background: #27ae60;">
-                                <i class="bi bi-plus-circle"></i> Ajouter un lieu
+                        <div class="itinerary-container"
+                            style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                                <table id="itinerary-table"
+                                    style="width: 100%; min-width: 450px; border-collapse: collapse; margin-bottom: 10px; text-align: left; color: #15803d; font-size: 0.875rem;">
+                                    <thead
+                                        style="background-color: #dcfce7; color: #15803d; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        <tr>
+                                            <th style="padding: 10px; border-bottom: 2px solid #bbf7d0; width: 45%;">
+                                                Lieu</th>
+                                            <th style="padding: 10px; border-bottom: 2px solid #bbf7d0; width: 45%;">URL
+                                                Google Map</th>
+                                            <th
+                                                style="padding: 10px; border-bottom: 2px solid #bbf7d0; text-align: center; width: 10%;">
+                                                </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="itinerary-tbody">
+                                        <!-- Les lignes seront ajoutées dynamiquement -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" onclick="addItineraryRow()" class="add-row-btn"
+                                style="margin-top: 10px; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; width: fit-content;">
+                                <i class="bi bi-plus-circle"></i> Ajouter une étape
                             </button>
                         </div>
                     </div>
@@ -390,30 +391,30 @@
                     <label>Intitulé du poste</label>
                     <select id="exp-position">
                         <option value="">-- Sélectionner --</option>
-                        <option value="Animateur stagiaire">Animateur stagiaire</option>
-                        <option value="Animateur">Animateur (diplômé)</option>
-                        <option value="Animateur Ski">Animateur Ski</option>
-                        <option value="Animateur Snow">Animateur Snow</option>
-                        <option value="Animateur SB">Animateur SB</option>
-                        <option value="Animateur AS">Animateur AS</option>
-                        <option value="Animateur Référent Handicap">Animateur Référent Handicap</option>
-                        <option value="Responsable de Groupe">Responsable de Groupe</option>
-                        <option value="Surveillant de Baignade">Surveillant de Baignade (non animateur)</option>
-                        <option value="Assistant Sanitaire">Assistant Sanitaire (non animateur)</option>
-                        <option value="Tuteur de Maisonnée">Tuteur de Maisonnée (SNU)</option>
-                        <option value="Cuisinier">Cuisinier(ère)</option>
-                        <option value="Directeur">Directeur</option>
-                        <option value="Directeur Stagiaire">Directeur Stagiaire</option>
-                        <option value="Directeur AS">Directeur AS</option>
-                        <option value="Directeur SB">Directeur SB</option>
-                        <option value="Directeur de Formation">Directeur de Formation</option>
-                        <option value="Directeur de Structure">Directeur de Structure</option>
-                        <option value="Directeur Adjoint">Directeur Adjoint</option>
-                        <option value="Directeur Adjoint & SB">Directeur Adjoint & SB</option>
-                        <option value="Directeur Adjoint & AS">Directeur Adjoint & AS</option>
-                        <option value="Formateur BAFA">Formateur BAFA</option>
-                        <option value="Formateur BAFD">Formateur BAFD</option>
-                        <option value="Autre">Autre</option>
+                        <option value="anim-stagiaire">Animateur Stagiaire</option>
+                        <option value="anim-diplome">Animateur (diplômé)</option>
+                        <option value="anim-ski">Animateur Ski</option>
+                        <option value="anim-snow">Animateur Snow</option>
+                        <option value="anim-sb">Animateur SB</option>
+                        <option value="anim-as">Animateur AS</option>
+                        <option value="anim-ref-handicap">Animateur Référent Handicap</option>
+                        <option value="resp-groupe">Responsable de Groupe</option>
+                        <option value="sb-seul">Surveillant de Baignade (non animateur)</option>
+                        <option value="as-seul">Assistant Sanitaire (non animateur)</option>
+                        <option value="tuteur-snu">Tuteur de Maisonnée (SNU)</option>
+                        <option value="cuisinier">Cuisinier</option>
+                        <option value="directeur">Directeur</option>
+                        <option value="dir-stagiaire">Directeur Stagiaire</option>
+                        <option value="dir-as">Directeur AS</option>
+                        <option value="dir-sb">Directeur SB</option>
+                        <option value="dir-formation">Directeur de Formation</option>
+                        <option value="dir-structure">Directeur de Structure</option>
+                        <option value="dir-adjoint">Directeur Adjoint</option>
+                        <option value="dir-adjoint-sb">Directeur Adjoint & SB</option>
+                        <option value="dir-adjoint-as">Directeur Adjoint & AS</option>
+                        <option value="formateur-bafa">Formateur BAFA</option>
+                        <option value="formateur-bafd">Formateur BAFD</option>
+                        <option value="autre">Autre</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -491,6 +492,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div id="experience-error-message" class="error-message" style="display: none; margin-bottom: 15px;">
                 </div>
                 <button type="submit" class="submit-btn">Enregistrer</button>
             </form>
@@ -614,7 +617,85 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Lien LinkedIn</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin: 0;">Genre</label>
+                        <a href="#" id="gender-why-link" onclick="toggleGenderExplanation(event)"
+                            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                            Pourquoi cette question ?
+                        </a>
+                    </div>
+
+                    <!-- Bulle explicative -->
+                    <div id="gender-explanation-bubble"
+                        style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+                        <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                    border-radius: 8px; 
+                                    padding: 15px; 
+                                    color: white; 
+                                    font-size: 0.85rem; 
+                                    box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                    position: relative;">
+                            <!-- Flèche pointant vers le haut (vers le lien à droite) -->
+                            <div style="position: absolute; 
+                                        top: -8px; 
+                                        right: 120px; 
+                                        width: 0; 
+                                        height: 0; 
+                                        border-left: 8px solid transparent; 
+                                        border-right: 8px solid transparent; 
+                                        border-bottom: 8px solid #a6d866;"></div>
+
+                            <p style="margin: 0; line-height: 1.5;">
+                                Cette information permet d'adapter automatiquement les termes d'intitulé de poste :
+                                <em>Animateur/Animatrice</em>, <em>Directeur/Directrice</em>, etc.
+                                Cela rend le profil plus personnel !
+                            </p>
+                        </div>
+                    </div>
+
+                    <select id="settings-gender">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="masculin">Masculin</option>
+                        <option value="feminin">Féminin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin: 0;">Lien LinkedIn</label>
+                        <a href="#" id="linkedin-why-link" onclick="toggleLinkedinExplanation(event)"
+                            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                            Pourquoi cette question ?
+                        </a>
+                    </div>
+
+                    <!-- Bulle explicative LinkedIn -->
+                    <div id="linkedin-explanation-bubble"
+                        style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+                        <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                    border-radius: 8px; 
+                                    padding: 15px; 
+                                    color: white; 
+                                    font-size: 0.85rem; 
+                                    box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                    position: relative;">
+                            <!-- Flèche pointant vers le haut -->
+                            <div style="position: absolute; 
+                                        top: -8px; 
+                                        right: 120px; 
+                                        width: 0; 
+                                        height: 0; 
+                                        border-left: 8px solid transparent; 
+                                        border-right: 8px solid transparent; 
+                                        border-bottom: 8px solid #a6d866;"></div>
+
+                            <p style="margin: 0; line-height: 1.5;">
+                                Ajouter votre LinkedIn permet aux recruteurs et aux autres membres de vous contacter
+                                plus facilement et de voir votre parcours professionnel complet !
+                            </p>
+                        </div>
+                    </div>
+
                     <input type="url" id="settings-linkedin" placeholder="https://linkedin.com/in/...">
                 </div>
 

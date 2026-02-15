@@ -38,8 +38,71 @@ function hideExperienceError() {
   }
 }
 
+// Adapter les labels du menu "Intitulé du poste" selon le genre
+async function updatePositionLabels() {
+  const positionSelect = document.getElementById('exp-position');
+  if (!positionSelect) return;
+
+  // Charger le genre de l'utilisateur
+  let gender = '';
+  try {
+    if (window.currentUser && window.firebaseDb) {
+      const doc = await window.firebaseDb.collection('users').doc(window.currentUser.uid).get();
+      if (doc.exists) {
+        gender = doc.data().gender || '';
+      }
+    }
+  } catch (e) {
+    console.warn('Impossible de charger le genre:', e);
+  }
+
+  // Définir les labels en fonction du genre
+  const isFeminin = gender === 'feminin';
+
+  // Mettre à jour les options (texte et valeur)
+  const options = positionSelect.options;
+  options[0].text = '-- Sélectionner --';
+  options[0].value = '';
+
+  const positions = [
+    { m: 'Animateur Stagiaire', f: 'Animatrice Stagiaire' },
+    { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)' },
+    { m: 'Animateur Ski', f: 'Animatrice Ski' },
+    { m: 'Animateur Snow', f: 'Animatrice Snow' },
+    { m: 'Animateur SB', f: 'Animatrice SB' },
+    { m: 'Animateur AS', f: 'Animatrice AS' },
+    { m: 'Animateur Référent Handicap', f: 'Animatrice Référente Handicap' },
+    { m: 'Responsable de Groupe', f: 'Responsable de Groupe' },
+    { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)' },
+    { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)' },
+    { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)' },
+    { m: 'Cuisinier', f: 'Cuisinière' },
+    { m: 'Directeur', f: 'Directrice' },
+    { m: 'Directeur Stagiaire', f: 'Directrice Stagiaire' },
+    { m: 'Directeur AS', f: 'Directrice AS' },
+    { m: 'Directeur SB', f: 'Directrice SB' },
+    { m: 'Directeur de Formation', f: 'Directrice de Formation' },
+    { m: 'Directeur de Structure', f: 'Directrice de Structure' },
+    { m: 'Directeur Adjoint', f: 'Directrice Adjointe' },
+    { m: 'Directeur Adjoint & SB', f: 'Directrice Adjointe & SB' },
+    { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
+    { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
+    { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
+    { m: 'Autre', f: 'Autre' }
+  ];
+
+  positions.forEach((pos, index) => {
+    const val = isFeminin ? pos.f : pos.m;
+    if (options[index + 1]) {
+      options[index + 1].text = val;
+      options[index + 1].value = val;
+    }
+  });
+}
+
+
 // Afficher le modal d'ajout d'expérience
-function showAddExperienceModal() {
+async function showAddExperienceModal() {
   document.getElementById('experience-modal-title').textContent = 'Ajouter une expérience';
   document.getElementById('experience-form').reset();
   hideExperienceError();
@@ -76,6 +139,9 @@ function showAddExperienceModal() {
 
   // Afficher les messages d'info par défaut (pas de logo au départ)
   toggleLogoInfoMessages();
+
+  // Adapter les labels selon le genre
+  await updatePositionLabels();
 }
 
 // Toggle entre champs lieu unique et tableau itinérance
@@ -83,6 +149,7 @@ function toggleLocationFields() {
   const stayType = document.getElementById('exp-stay-type')?.value;
   const singleFields = document.getElementById('single-location-fields');
   const itineraryFields = document.getElementById('itinerary-locations');
+  const tbody = document.getElementById('itinerary-tbody');
 
   if (stayType === 'Itinérance') {
     if (singleFields) singleFields.style.display = 'none';
@@ -90,6 +157,11 @@ function toggleLocationFields() {
     // Désactiver le required sur le champ unique
     const expLocation = document.getElementById('exp-location');
     if (expLocation) expLocation.removeAttribute('required');
+
+    // Initialiser avec une ligne si vide
+    if (tbody && tbody.children.length === 0) {
+      addItineraryRow();
+    }
   } else {
     if (singleFields) singleFields.style.display = 'block';
     if (itineraryFields) itineraryFields.style.display = 'none';
@@ -105,23 +177,38 @@ function addItineraryRow(location = '', url = '') {
   if (!tbody) return;
 
   const rowId = `itinerary-row-${Date.now()}`;
+  const rowCount = tbody.children.length;
+
   const row = document.createElement('tr');
   row.id = rowId;
+  row.style.background = 'white';
+  row.style.borderBottom = '1px solid #bbf7d0';
+
   row.innerHTML = `
     <td style="padding: 8px;">
       <input type="text" class="itinerary-location" placeholder="Ex: Lyon" 
-        style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;" value="${location}">
+        style="width: 100%; padding: 6px 10px; border: 1px solid #bbf7d0; border-radius: 4px; font-size: 0.85rem; color: #166534; transition: all 0.2s;" 
+        value="${location}" onfocus="this.style.borderColor='#15803d'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(21, 128, 61, 0.1)';" onblur="this.style.borderColor='#bbf7d0'; this.style.boxShadow='none';">
     </td>
     <td style="padding: 8px;">
       <input type="url" class="itinerary-url" placeholder="https://maps.app.goo.gl/..." 
-        style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;" value="${url}">
+        style="width: 100%; padding: 6px 10px; border: 1px solid #bbf7d0; border-radius: 4px; font-size: 0.85rem; color: #166534; transition: all 0.2s;" 
+        value="${url}" onfocus="this.style.borderColor='#15803d'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(21, 128, 61, 0.1)';" onblur="this.style.borderColor='#bbf7d0'; this.style.boxShadow='none';">
     </td>
     <td style="padding: 8px; text-align: center;">
-      <button type="button" onclick="removeItineraryRow('${rowId}')" 
-        style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2rem;"
-        title="Supprimer">
-        <i class="bi bi-trash"></i>
-      </button>
+      ${rowCount > 0 ? `
+        <button type="button" onclick="removeItineraryRow('${rowId}')" 
+          style="background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; transition: all 0.2s;"
+          onmouseover="this.style.background='#fecaca'; this.style.color='#7f1d1d'"
+          onmouseout="this.style.background='#fee2e2'; this.style.color='#991b1b'"
+          title="Supprimer">
+          <i class="bi bi-trash"></i>
+        </button>
+      ` : `
+        <span style="color: #cbd5e0; font-size: 0.8rem;" title="La première étape ne peut pas être supprimée">
+          <i class="bi bi-lock"></i>
+        </span>
+      `}
     </td>
   `;
   tbody.appendChild(row);
@@ -489,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Afficher le modal d'édition d'expérience
-function showEditExperienceModal(data, row) {
+async function showEditExperienceModal(data, row) {
   document.getElementById('experience-modal-title').textContent = 'Modifier une expérience';
   hideExperienceError();
 
@@ -545,7 +632,20 @@ function showEditExperienceModal(data, row) {
     document.getElementById('exp-location-url').value = data.locationUrl || '';
   }
 
-  document.getElementById('exp-position').value = data.position || '';
+  // Adapter les labels (et valeurs) selon le genre AVANT de sélectionner la valeur
+  await updatePositionLabels();
+
+  const positionSelect = document.getElementById('exp-position');
+  if (positionSelect) {
+    positionSelect.value = data.position || '';
+
+    // Si la valeur exacte n'est pas trouvée (cas de changement de genre), on peut essayer de matcher
+    if (positionSelect.selectedIndex === -1 && data.position) {
+      // Logique optionnelle pour mapper les anciens genres ou codes si besoin
+      // Pour l'instant on laisse si pas de match
+    }
+  }
+
   document.getElementById('exp-age-range').value = data.ageRange || '';
   document.getElementById('exp-youth-count').value = data.youthCount || 0;
 

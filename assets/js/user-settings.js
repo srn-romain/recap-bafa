@@ -22,6 +22,38 @@ function showSettingsFeedback(type, message) {
     }
 }
 
+/**
+ * Toggle l'affichage de la bulle explicative du genre
+ */
+function toggleGenderExplanation(event) {
+    event.preventDefault();
+    const bubble = document.getElementById('gender-explanation-bubble');
+
+    if (bubble) {
+        if (bubble.style.display === 'none' || !bubble.style.display) {
+            bubble.style.display = 'block';
+        } else {
+            bubble.style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Toggle l'affichage de la bulle explicative LinkedIn
+ */
+function toggleLinkedinExplanation(event) {
+    event.preventDefault();
+    const bubble = document.getElementById('linkedin-explanation-bubble');
+
+    if (bubble) {
+        if (bubble.style.display === 'none' || !bubble.style.display) {
+            bubble.style.display = 'block';
+        } else {
+            bubble.style.display = 'none';
+        }
+    }
+}
+
 // Variables pour l'image de fond
 let backgroundImageData = null;
 const MAX_IMAGE_SIZE_MB = 2;
@@ -108,6 +140,7 @@ function getSettingsState() {
     return {
         firstname: document.getElementById('settings-firstname')?.value.trim() || '',
         lastname: document.getElementById('settings-lastname')?.value.trim() || '',
+        gender: document.getElementById('settings-gender')?.value || '',
         linkedin: document.getElementById('settings-linkedin')?.value.trim() || '',
         publiclyVisible: document.getElementById('settings-public-visibility')?.checked || false,
         emailVisible: document.getElementById('settings-email-visibility')?.checked || false,
@@ -146,11 +179,13 @@ async function openSettingsModal() {
             const data = doc.data();
             const firstnameInput = document.getElementById('settings-firstname');
             const lastnameInput = document.getElementById('settings-lastname');
+            const genderInput = document.getElementById('settings-gender');
             const linkedinInput = document.getElementById('settings-linkedin');
             const visibilityInput = document.getElementById('settings-public-visibility');
 
             if (firstnameInput) firstnameInput.value = data.firstname || '';
             if (lastnameInput) lastnameInput.value = data.lastname || '';
+            if (genderInput) genderInput.value = data.gender || '';
             if (linkedinInput) linkedinInput.value = data.linkedin || '';
             if (visibilityInput) visibilityInput.checked = data.publiclyVisible !== false; // Par défaut true
 
@@ -257,6 +292,7 @@ async function handleSettingsSubmit(event) {
 
     const firstname = document.getElementById('settings-firstname').value.trim();
     const lastname = document.getElementById('settings-lastname').value.trim();
+    const gender = document.getElementById('settings-gender').value;
     const linkedin = document.getElementById('settings-linkedin').value.trim();
     const publiclyVisible = document.getElementById('settings-public-visibility').checked;
     const emailVisible = document.getElementById('settings-email-visibility').checked;
@@ -274,6 +310,7 @@ async function handleSettingsSubmit(event) {
         await window.firebaseDb.collection('users').doc(window.currentUser.uid).update({
             firstname: firstname,
             lastname: lastname,
+            gender: gender,
             displayName: `${firstname} ${lastname}`,
             linkedin: linkedin,
             publiclyVisible: publiclyVisible,
@@ -291,6 +328,11 @@ async function handleSettingsSubmit(event) {
         // Mettre à jour l'UI locale
         if (typeof loadUserProfile === 'function') {
             loadUserProfile(); // Recharger le titre
+        }
+
+        // Mettre à jour les labels des postes si la fonction existe
+        if (typeof updatePositionLabels === 'function') {
+            updatePositionLabels();
         }
 
         showSettingsFeedback('success', "Profil mis à jour avec succès !");
