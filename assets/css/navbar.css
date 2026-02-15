@@ -111,3 +111,55 @@ body {
         /* Show menu button on desktop */
     }
 }
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    #sticky-navbar {
+        padding: 5px 0;
+    }
+
+    .nav-content {
+        padding: 5px 15px;
+        border-radius: 30px;
+        /* Slightly less rounded on small screens if desired, or keep */
+        gap: 10px;
+        /* Reduce gap between items */
+    }
+
+    .nav-item {
+        font-size: 1.2rem;
+        padding: 2px;
+    }
+
+    .nav-item i {
+        font-size: 1.2rem;
+    }
+
+    /* Adjust body padding to prevent content from being hidden behind smaller navbar */
+    body {
+        padding-top: 60px !important;
+    }
+}
+
+/* Titre responsive de la navbar */
+.nav-title-mobile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-title-desktop {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .nav-title-mobile {
+        display: none;
+    }
+
+    .nav-title-desktop {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
