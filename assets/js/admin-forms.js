@@ -153,7 +153,40 @@ async function showAddExperienceModal() {
 
   // Adapter les labels selon le genre
   await updatePositionLabels();
+
+  // Réinitialiser le champ custom
+  const customInput = document.getElementById('exp-position-custom');
+  if (customInput) {
+    customInput.style.display = 'none';
+    customInput.value = '';
+    customInput.required = false;
+  }
 }
+
+// Toggle l'affichage du champ "Autre" pour l'intitulé du poste d'une expérience
+window.toggleExpPositionCustom = function () {
+  const select = document.getElementById('exp-position');
+  const customInput = document.getElementById('exp-position-custom');
+  if (select && customInput) {
+    if (select.value === 'Autre') {
+      customInput.style.display = 'block';
+      customInput.required = true;
+    } else {
+      customInput.style.display = 'none';
+      customInput.required = false;
+    }
+  }
+};
+
+// Basculer l'affichage de l'explication pour l'URL Google Map
+window.toggleMapExplanation = function (event, type) {
+  if (event) event.preventDefault();
+  const bubbleId = type === 'exp' ? 'exp-map-explanation-bubble' : 'form-map-explanation-bubble';
+  const bubble = document.getElementById(bubbleId);
+  if (bubble) {
+    bubble.style.display = bubble.style.display === 'none' ? 'block' : 'none';
+  }
+};
 
 // Toggle entre champs lieu unique et tableau itinérance
 function toggleLocationFields() {
@@ -804,13 +837,42 @@ async function showEditExperienceModal(data, row) {
   await updatePositionLabels();
 
   const positionSelect = document.getElementById('exp-position');
-  if (positionSelect) {
-    positionSelect.value = data.position || '';
+  const customPositionInput = document.getElementById('exp-position-custom');
 
-    // Si la valeur exacte n'est pas trouvée (cas de changement de genre), on peut essayer de matcher
-    if (positionSelect.selectedIndex === -1 && data.position) {
-      // Logique optionnelle pour mapper les anciens genres ou codes si besoin
-      // Pour l'instant on laisse si pas de match
+  if (positionSelect) {
+    const currentPosition = data.position || '';
+    let optionExists = false;
+
+    // Vérifier si la position existe dans les options
+    for (let i = 0; i < positionSelect.options.length; i++) {
+      if (positionSelect.options[i].value === currentPosition) {
+        optionExists = true;
+        break;
+      }
+    }
+
+    if (optionExists) {
+      positionSelect.value = currentPosition;
+      if (customPositionInput) {
+        customPositionInput.value = '';
+        customPositionInput.style.display = 'none';
+        customPositionInput.required = false;
+      }
+    } else if (currentPosition) {
+      // Si n'existe pas, mettre "Autre" et remplir le champ custom
+      positionSelect.value = 'Autre';
+      if (customPositionInput) {
+        customPositionInput.value = currentPosition;
+        customPositionInput.style.display = 'block';
+        customPositionInput.required = true;
+      }
+    } else {
+      positionSelect.value = '';
+      if (customPositionInput) {
+        customPositionInput.value = '';
+        customPositionInput.style.display = 'none';
+        customPositionInput.required = false;
+      }
     }
   }
 
@@ -1161,7 +1223,13 @@ document.addEventListener('DOMContentLoaded', function () {
         location: location,
         locationUrl: locationUrl,
         stayType: stayType,
-        position: document.getElementById('exp-position').value || '',
+        position: (() => {
+          const selectVal = document.getElementById('exp-position').value;
+          if (selectVal === 'Autre') {
+            return document.getElementById('exp-position-custom').value.trim();
+          }
+          return selectVal;
+        })(),
         ageRange: ageRangeString,
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
       };

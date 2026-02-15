@@ -338,7 +338,8 @@
     <footer id="footer">
         <br>
         <p style="color: white; text-align: center"> &copy; Récap BAFA/BAFD - Plateforme collaborative - By <a
-                href="https://www.instagram.com/romain_colo/" target="_blank" style="color:#f39c12; font-weight:bold;">@romain_colo</a>
+                href="https://www.instagram.com/romain_colo/" target="_blank"
+                style="color:#f39c12; font-weight:bold;">@romain_colo</a>
         </p>
     </footer>
 
@@ -383,15 +384,15 @@
                     <label>Type de séjour</label>
                     <select id="exp-stay-type">
                         <option value="">-- Sélectionner --</option>
-                        <option value="Pension complète">Pension complète</option>
-                        <option value="Gestion libre">Gestion libre</option>
-                        <option value="Itinérance">Itinérance</option>
-                        <option value="Gestion libre / Camping">Gestion libre / Camping</option>
                         <option value="ALSH">ALSH (Accueil de Loisirs Sans Hébergement)</option>
-                        <option value="Péri-scolaire">Péri-scolaire</option>
-                        <option value="SNU">SNU (Service National Universel)</option>
                         <option value="Classe découverte">Classe découverte</option>
+                        <option value="Gestion libre">Gestion libre</option>
+                        <option value="Gestion libre / Camping">Gestion libre / Camping</option>
+                        <option value="Itinérance">Itinérance</option>
+                        <option value="Pension complète">Pension complète</option>
+                        <option value="Péri-scolaire">Péri-scolaire</option>
                         <option value="Scout">Scout</option>
+                        <option value="SNU">SNU (Service National Universel)</option>
                         <option value="Autre">Autre</option>
                     </select>
                 </div>
@@ -407,7 +408,39 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>URL Google Map</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="margin: 0;">URL Google Map</label>
+                            <a href="#" onclick="toggleMapExplanation(event, 'exp')"
+                                style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                                Pourquoi cette question ?
+                            </a>
+                        </div>
+
+                        <!-- Bulle explicative -->
+                        <div id="exp-map-explanation-bubble"
+                            style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+                            <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                        border-radius: 8px; 
+                                        padding: 15px; 
+                                        color: white; 
+                                        font-size: 0.85rem; 
+                                        box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                        position: relative;">
+                                <div style="position: absolute; 
+                                            top: -8px; 
+                                            right: 120px; 
+                                            width: 0; 
+                                            height: 0; 
+                                            border-left: 8px solid transparent; 
+                                            border-right: 8px solid transparent; 
+                                            border-bottom: 8px solid #a6d866;"></div>
+                                <p style="margin: 0; line-height: 1.5;">
+                                    Ajouter ce lien permet d'afficher vos lieux d'expériences sur la carte interactive
+                                    de votre profil public !
+                                </p>
+                            </div>
+                        </div>
+
                         <input type="url" id="exp-location-url" placeholder="https://maps.app.goo.gl/...">
                     </div>
                 </div>
@@ -455,33 +488,37 @@
 
                 <div class="form-group">
                     <label>Intitulé du poste</label>
-                    <select id="exp-position">
-                        <option value="">-- Sélectionner --</option>
-                        <option value="anim-stagiaire">Animateur Stagiaire</option>
-                        <option value="anim-diplome">Animateur (diplômé)</option>
-                        <option value="anim-ski">Animateur Ski</option>
-                        <option value="anim-snow">Animateur Snow</option>
-                        <option value="anim-sb">Animateur SB</option>
-                        <option value="anim-as">Animateur AS</option>
-                        <option value="anim-ref-handicap">Animateur Référent Handicap</option>
-                        <option value="resp-groupe">Responsable de Groupe</option>
-                        <option value="sb-seul">Surveillant de Baignade (non animateur)</option>
-                        <option value="as-seul">Assistant Sanitaire (non animateur)</option>
-                        <option value="tuteur-snu">Tuteur de Maisonnée (SNU)</option>
-                        <option value="cuisinier">Cuisinier</option>
-                        <option value="directeur">Directeur</option>
-                        <option value="dir-stagiaire">Directeur Stagiaire</option>
-                        <option value="dir-as">Directeur AS</option>
-                        <option value="dir-sb">Directeur SB</option>
-                        <option value="dir-formation">Directeur de Formation</option>
-                        <option value="dir-structure">Directeur de Structure</option>
-                        <option value="dir-adjoint">Directeur Adjoint</option>
-                        <option value="dir-adjoint-sb">Directeur Adjoint & SB</option>
-                        <option value="dir-adjoint-as">Directeur Adjoint & AS</option>
-                        <option value="formateur-bafa">Formateur BAFA</option>
-                        <option value="formateur-bafd">Formateur BAFD</option>
-                        <option value="autre">Autre</option>
-                    </select>
+                    <test id="exp-position-container">
+                        <select id="exp-position" onchange="toggleExpPositionCustom()">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="anim-stagiaire">Animateur Stagiaire</option>
+                            <option value="anim-diplome">Animateur (diplômé)</option>
+                            <option value="anim-ski">Animateur Ski</option>
+                            <option value="anim-snow">Animateur Snow</option>
+                            <option value="anim-sb">Animateur SB</option>
+                            <option value="anim-as">Animateur AS</option>
+                            <option value="anim-ref-handicap">Animateur Référent Handicap</option>
+                            <option value="resp-groupe">Responsable de Groupe</option>
+                            <option value="sb-seul">Surveillant de Baignade (non animateur)</option>
+                            <option value="as-seul">Assistant Sanitaire (non animateur)</option>
+                            <option value="tuteur-snu">Tuteur de Maisonnée (SNU)</option>
+                            <option value="cuisinier">Cuisinier</option>
+                            <option value="directeur">Directeur</option>
+                            <option value="dir-stagiaire">Directeur Stagiaire</option>
+                            <option value="dir-as">Directeur AS</option>
+                            <option value="dir-sb">Directeur SB</option>
+                            <option value="dir-formation">Directeur de Formation</option>
+                            <option value="dir-structure">Directeur de Structure</option>
+                            <option value="dir-adjoint">Directeur Adjoint</option>
+                            <option value="dir-adjoint-sb">Directeur Adjoint & SB</option>
+                            <option value="dir-adjoint-as">Directeur Adjoint & AS</option>
+                            <option value="formateur-bafa">Formateur BAFA</option>
+                            <option value="formateur-bafd">Formateur BAFD</option>
+                            <option value="Autre">Autre (préciser)</option>
+                        </select>
+                        <input type="text" id="exp-position-custom" placeholder="Précisez l'intitulé"
+                            style="display: none; margin-top: 10px;">
+                    </test>
                 </div>
                 <div class="form-group">
                     <label>Tranche d'âge</label>
@@ -501,11 +538,11 @@
                     <label>Lien site internet de l'organisme</label>
                     <div style="display: flex; gap: 5px;">
                         <input type="url" id="exp-organizer-url" placeholder="https://..." style="flex: 1;">
-                        <button type="button" onclick="autoDetectLogo()" class="submit-btn"
+                        <!--<button type="button" onclick="autoDetectLogo()" class="submit-btn"
                                 style="width: auto; padding: 0 10px; background: #3498db; color: white;"
                                 title="Rechercher le logo automatiquement">
                             <i class="bi bi-magic"></i>
-                        </button>
+                        </button>-->
                     </div>
                 </div>
                 <div class="form-group">
@@ -513,7 +550,7 @@
 
                     <!-- Bulle d'information -->
                     <div id="logo-auto-info-box"
-                         style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
+                        style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
                         <i class="bi bi-info-circle"></i> Si vous n'ajoutez pas de logo, le programme tentera d'en
                         rechercher automatiquement un lors de l'enregistrement.
                     </div>
@@ -703,12 +740,44 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>URL Google Map</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin: 0;">URL Google Map</label>
+                        <a href="#" onclick="toggleMapExplanation(event, 'form')"
+                            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                            Pourquoi cette question ?
+                        </a>
+                    </div>
+
+                    <!-- Bulle explicative -->
+                    <div id="form-map-explanation-bubble"
+                        style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+                        <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                    border-radius: 8px; 
+                                    padding: 15px; 
+                                    color: white; 
+                                    font-size: 0.85rem; 
+                                    box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                    position: relative;">
+                            <div style="position: absolute; 
+                                        top: -8px; 
+                                        right: 120px; 
+                                        width: 0; 
+                                        height: 0; 
+                                        border-left: 8px solid transparent; 
+                                        border-right: 8px solid transparent; 
+                                        border-bottom: 8px solid #a6d866;"></div>
+                            <p style="margin: 0; line-height: 1.5;">
+                                Ce lien sert à positionner vos lieux de formation sur la carte de votre profil public.
+                            </p>
+                        </div>
+                    </div>
+
                     <input type="url" id="form-location-url" placeholder="https://maps.app.goo.gl/...">
                 </div>
                 <div class="form-group">
                     <label>Logo de l'organisme</label>
-                    <small id="form-logo-auto-info-small" style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
+                    <small id="form-logo-auto-info-small"
+                        style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
                         <i class="bi bi-info-circle"></i> Si vous n'ajoutez pas de logo, le programme tentera d'en
                         rechercher automatiquement un lors de l'enregistrement.
                     </small>
