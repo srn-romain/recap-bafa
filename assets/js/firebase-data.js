@@ -4,23 +4,21 @@
 /**
  * Structure des données d'expérience
  */
-/**
- * Structure des données d'expérience
- */
 
+// Map des genres pour l'affichage (synchronisé avec admin-forms.js)
 // Map des genres pour l'affichage (synchronisé avec admin-forms.js)
 const GENDER_MAP = [
   { m: 'Animateur Stagiaire', f: 'Animatrice Stagiaire' },
-  { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)' },
+  { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)', displayM: 'Animateur', displayF: 'Animatrice' },
   { m: 'Animateur Ski', f: 'Animatrice Ski' },
   { m: 'Animateur Snow', f: 'Animatrice Snow' },
   { m: 'Animateur SB', f: 'Animatrice SB' },
   { m: 'Animateur AS', f: 'Animatrice AS' },
   { m: 'Animateur Référent Handicap', f: 'Animatrice Référente Handicap' },
   { m: 'Responsable de Groupe', f: 'Responsable de Groupe' },
-  { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)' },
-  { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)' },
-  { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)' },
+  { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)', displayM: 'Surveillant de Baignade', displayF: 'Surveillante de Baignade' },
+  { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)', displayM: 'Assistant Sanitaire', displayF: 'Assistante Sanitaire' },
+  { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)', displayM: 'Tuteur de Maisonnée', displayF: 'Tutrice de Maisonnée' },
   { m: 'Cuisinier', f: 'Cuisinière' },
   { m: 'Directeur', f: 'Directrice' },
   { m: 'Directeur Stagiaire', f: 'Directrice Stagiaire' },
@@ -142,11 +140,20 @@ function createExperienceRow(experience) {
   const tdPosition = document.createElement('td');
   let positionText = experience.position;
 
-  // Féminisation si nécessaire
-  if (window.userGender === 'feminin' && experience.position) {
+  // Utiliser le mapping pour l'affichage (féminisation et versions courtes)
+  if (experience.position) {
     const rawPos = experience.position.trim();
     const mapped = GENDER_MAP.find(p => p.m === rawPos);
-    if (mapped) positionText = mapped.f;
+
+    if (mapped) {
+      if (window.userGender === 'feminin') {
+        // Mode féminin : utiliser displayF (court) ou f (complet)
+        positionText = mapped.displayF || mapped.f;
+      } else {
+        // Mode masculin : utiliser displayM (court) si dispo, sinon garder la valeur originale (m)
+        positionText = mapped.displayM || mapped.m;
+      }
+    }
   }
 
   tdPosition.textContent = positionText;
