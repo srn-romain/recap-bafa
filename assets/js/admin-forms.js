@@ -3,6 +3,18 @@
 let currentEditingRow = null;
 let currentEditingDocId = null;
 
+/**
+ * Formate un nom (lieu ou pays) : 
+ * Première lettre en majuscule, le reste en minuscule.
+ * Après un espace ou un tiret, la lettre suivante est mise en majuscule.
+ */
+function formatLocationName(str) {
+  if (!str) return '';
+  return str.toLowerCase().replace(/(^|[\s\-])\S/g, function (match) {
+    return match.toUpperCase();
+  });
+}
+
 // Helper: Vérifier si l'utilisateur est propriétaire ou admin
 function isOwner() {
   // Si on est sur une page utilisateur spécifique
@@ -175,12 +187,19 @@ async function showAddExperienceModal() {
     customInput.required = false;
   }
 
-  // Réinitialiser le champ type sejour custom
+  // Réinitialiser les champs custom
   const stayCustom = document.getElementById('exp-stay-type-custom');
   if (stayCustom) {
     stayCustom.style.display = 'none';
     stayCustom.value = '';
     stayCustom.required = false;
+  }
+
+  const countryInput = document.getElementById('exp-country');
+  if (countryInput) {
+    countryInput.style.display = 'none';
+    countryInput.value = '';
+    countryInput.required = false;
   }
 
   // Initialiser les dropdowns de recherche
@@ -210,6 +229,8 @@ function initSearchableSelects() {
 window.toggleExpStayTypeCustom = function () {
   const select = document.getElementById('exp-stay-type');
   const customInput = document.getElementById('exp-stay-type-custom');
+  const countryInput = document.getElementById('exp-country');
+
   if (select && customInput) {
     if (select.value === 'Autre') {
       customInput.style.display = 'block';
@@ -217,6 +238,18 @@ window.toggleExpStayTypeCustom = function () {
     } else {
       customInput.style.display = 'none';
       customInput.required = false;
+    }
+  }
+
+  if (select && countryInput) {
+    // Si le type contient "étranger" (peu importe la casse)
+    if (select.value.toLowerCase().includes('étranger')) {
+      countryInput.style.display = 'block';
+      countryInput.required = true;
+    } else {
+      countryInput.style.display = 'none';
+      countryInput.required = false;
+      // Ne pas vider la valeur ici si on est en train de charger un edit
     }
   }
 };
@@ -254,7 +287,7 @@ function toggleLocationFields() {
   const itineraryFields = document.getElementById('itinerary-locations');
   const tbody = document.getElementById('itinerary-tbody');
 
-  if (stayType === 'Itinérance') {
+  if (stayType && stayType.includes('Itinérance')) {
     if (singleFields) singleFields.style.display = 'none';
     if (itineraryFields) itineraryFields.style.display = 'block';
     // Désactiver le required sur le champ unique
@@ -347,7 +380,7 @@ function getItineraryLocations() {
 
     if (locationInput && locationInput.value.trim()) {
       locations.push({
-        location: locationInput.value.trim(),
+        location: formatLocationName(locationInput.value.trim()),
         url: urlInput ? urlInput.value.trim() : ''
       });
     }
@@ -912,13 +945,20 @@ async function showEditExperienceModal(data, row) {
     }
   }
 
+  // Gérer le pays
+  const countryInput = document.getElementById('exp-country');
+  if (countryInput) {
+    countryInput.value = data.country || '';
+    // L'affichage sera géré par toggleLocationFields (qui appelle toggleExpStayTypeCustom)
+  }
+
   // Basculer vers le bon mode (itinérance ou classique)
   toggleLocationFields();
 
   // Données d'itinérance : utiliser uniquement 'locations'
   const itineraryData = data.locations || [];
 
-  if (stayTypeVal === 'Itinérance') {
+  if (stayTypeVal && stayTypeVal.includes('Itinérance')) {
     // Mode itinérance : pré-remplir le tableau
     clearItineraryTable();
     if (itineraryData && itineraryData.length > 0) {
@@ -1265,7 +1305,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let locationUrl = null;
       let itineraryLocations = null;
 
-      if (stayType === 'Itinérance') {
+      if (stayType && stayType.includes('Itinérance')) {
         // Mode itinérance : récupérer le tableau de lieux
         itineraryLocations = getItineraryLocations();
         if (itineraryLocations.length === 0) {
@@ -1277,7 +1317,7 @@ document.addEventListener('DOMContentLoaded', function () {
         locationUrl = null;
       } else {
         // Mode classique : un seul lieu
-        const locName = document.getElementById('exp-location').value.trim();
+        const locName = formatLocationName(document.getElementById('exp-location').value.trim());
         const locDept = document.getElementById('exp-location-dept').value.trim();
         location = locDept ? `${locName} (${locDept})` : locName;
         locationUrl = document.getElementById('exp-location-url').value || '';
@@ -1346,13 +1386,19 @@ document.addEventListener('DOMContentLoaded', function () {
         logoPath: logoPath,
         location: location,
         locationUrl: locationUrl,
-        locationUrl: locationUrl,
         stayType: (() => {
           const selectVal = document.getElementById('exp-stay-type').value;
           if (selectVal === 'Autre') {
             return document.getElementById('exp-stay-type-custom').value.trim();
           }
           return selectVal;
+        })(),
+        country: (() => {
+          const selectVal = document.getElementById('exp-stay-type').value;
+          if (selectVal.toLowerCase().includes('étranger')) {
+            return formatLocationName(document.getElementById('exp-country').value.trim());
+          }
+          return null;
         })(),
         position: (() => {
           const selectVal = document.getElementById('exp-position').value;
@@ -1366,7 +1412,7 @@ document.addEventListener('DOMContentLoaded', function () {
       };
 
       // Gérer le tableau locations : garder l'un ou l'autre selon le type
-      if (stayType === 'Itinérance') {
+      if (stayType && stayType.includes('Itinérance')) {
         data.locations = itineraryLocations;
         // On force la suppression de l'ancien champ s'il existe encore
         data.itineraryLocations = null;
@@ -1455,7 +1501,7 @@ document.addEventListener('DOMContentLoaded', function () {
           return selectVal === 'Autre' ? (document.getElementById('form-title-custom').value || '') : selectVal;
         })(),
         location: (() => {
-          const loc = document.getElementById('form-location').value.trim();
+          const loc = formatLocationName(document.getElementById('form-location').value.trim());
           const dept = document.getElementById('form-location-dept').value.trim();
           return dept ? `${loc} (${dept})` : loc;
         })(),

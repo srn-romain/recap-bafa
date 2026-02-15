@@ -31,7 +31,7 @@ const GENDER_MAP = [
   { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
   { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
   { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
-  { m: 'Autre', f: 'Autre' }
+  { m: 'Autre (préciser)', f: 'Autre (préciser)' }
 ];
 
 function createExperienceRow(experience) {
@@ -128,6 +128,10 @@ function createExperienceRow(experience) {
     }
     locLink.textContent = experience.location;
     tdLocation.appendChild(locLink);
+
+    if (experience.country) {
+      tdLocation.appendChild(document.createTextNode(' (' + experience.country + ')'));
+    }
   }
   tr.appendChild(tdLocation);
 
