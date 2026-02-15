@@ -791,7 +791,21 @@ async function showEditExperienceModal(data, row) {
     }
   }
 
-  document.getElementById('exp-age-range').value = data.ageRange || '';
+  // Parser la tranche d'âge (ex: "11 - 13 ans" ou "12 ans")
+  const ageRange = data.ageRange || '';
+  const ageMatchRange = ageRange.match(/(\d+)\s*-\s*(\d+)/);
+  const ageMatchSingle = ageRange.match(/^(\d+)\s*ans$/); // Matcher "12 ans" précisément
+
+  if (ageMatchRange) {
+    document.getElementById('exp-age-min').value = ageMatchRange[1];
+    document.getElementById('exp-age-max').value = ageMatchRange[2];
+  } else if (ageMatchSingle) {
+    document.getElementById('exp-age-min').value = ageMatchSingle[1];
+    document.getElementById('exp-age-max').value = '';
+  } else {
+    document.getElementById('exp-age-min').value = '';
+    document.getElementById('exp-age-max').value = '';
+  }
   document.getElementById('exp-youth-count').value = data.youthCount || 0;
 
   currentEditingRow = row;
@@ -1017,6 +1031,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
+      // Valider et formater l'âge
+      const ageMinVal = document.getElementById('exp-age-min').value;
+      const ageMaxVal = document.getElementById('exp-age-max').value;
+      let ageRangeString = '';
+
+      if (ageMinVal) {
+        const ageMin = parseInt(ageMinVal, 10);
+        if (ageMaxVal) {
+          const ageMax = parseInt(ageMaxVal, 10);
+          if (ageMin > ageMax) {
+            showExperienceError("L'âge minimum ne peut pas être supérieur à l'âge maximum.");
+            return;
+          }
+          ageRangeString = `${ageMin} - ${ageMax} ans`;
+        } else {
+          ageRangeString = `${ageMin} ans`;
+        }
+      }
+
       const data = {
         type: document.getElementById('exp-type').value,
         date: dateText,
@@ -1028,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', function () {
         locationUrl: locationUrl,
         stayType: stayType,
         position: document.getElementById('exp-position').value || '',
-        ageRange: document.getElementById('exp-age-range').value || '',
+        ageRange: ageRangeString,
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
       };
 

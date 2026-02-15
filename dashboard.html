@@ -490,7 +490,13 @@
                 </div>
                 <div class="form-group">
                     <label>Tranche d'âge</label>
-                    <input type="text" id="exp-age-range" placeholder="Ex: 11-13 ans">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="number" id="exp-age-min" placeholder="Min" style="width: 80px;" min="0" max="99">
+                        <span>-</span>
+                        <input type="number" id="exp-age-max" placeholder="Max" style="width: 80px;" min="0" max="99">
+                        <span>ans</span>
+                    </div>
+                    <!-- Ancien champ caché pour compatibilité éventuelle ou supprimé si JS mis à jour -->
                 </div>
                 <div class="form-group">
                     <label>Nombre de jeunes</label>
