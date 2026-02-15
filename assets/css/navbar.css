@@ -1,0 +1,113 @@
+/*--------------------------------------------------------------
+# Modern Navbar
+--------------------------------------------------------------*/
+#sticky-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.nav-content {
+    background-color: #a6d866;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    gap: 20px;
+    border-radius: 50px;
+    /* Ajoute un style arrondi pour flotter élégamment */
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+    color: white;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    transition: transform 0.2s, color 0.2s;
+    padding: 5px;
+}
+
+.nav-item:hover {
+    color: #f39c12;
+    transform: translateY(-2px);
+}
+
+.nav-item i {
+    font-size: 1.5rem;
+}
+
+/* Specific styles for elements in navbar */
+#linkedin-link {
+    color: white;
+}
+
+#linkedin-link:hover {
+    color: #f39c12;
+}
+
+#nav-home-btn,
+#nav-menu-btn {
+    margin-right: auto;
+}
+
+/* Adjust main container to avoid overlap */
+body {
+    padding-top: 80px !important;
+}
+
+/*.btn-inscription {
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    color: white;
+}
+
+.btn-inscription:hover {
+    background: #f39c12;
+}*/
+
+/* Hide/Show logic based on screen size */
+#nav-menu-btn {
+    display: none;
+    /* Hidden by default (mobile) */
+    font-size: 1rem;
+    font-weight: bold;
+    gap: 8px;
+    color: white;
+}
+
+#nav-home-btn {
+    display: flex;
+    /* Visible by default (mobile) */
+}
+
+/* Desktop styles */
+@media (min-width: 992px) {
+    #nav-home-btn {
+        display: none !important;
+        /* Hide home icon on desktop */
+    }
+
+    #nav-menu-btn {
+        display: flex !important;
+        /* Show menu button on desktop */
+    }
+}

@@ -288,19 +288,9 @@ function updateUI() {
   const logoutButtonTop = document.getElementById('logout-button-top');
 
   if (authButtonTop) {
+    // Si connecté, on cache le bouton de connexion (car on affiche Logout)
+    // Si déconnecté, on l'affiche pour permettre la connexion
     authButtonTop.style.display = isLoggedIn ? 'none' : 'block';
-    if (!isLoggedIn) {
-      // Afficher un petit bouton maison pour revenir à l'accueil
-      authButtonTop.innerHTML = '<i class="bi bi-house-door-fill"></i>';
-      authButtonTop.onclick = function () { window.location.href = 'index.html'; };
-      // Ajuster le style pour en faire un petit bouton carré/rond ou just simple
-      authButtonTop.title = "Retour à l'accueil";
-      authButtonTop.style.padding = "5px 10px";
-      authButtonTop.style.fontSize = "1.5rem"; // Taille de l'icône
-      authButtonTop.style.background = "none";
-      authButtonTop.style.border = "none";
-      authButtonTop.style.color = "#555";
-    }
   }
 
   if (logoutButtonTop) {
