@@ -3,6 +3,24 @@
 let currentEditingRow = null;
 let currentEditingDocId = null;
 
+// Helper: Vérifier si l'utilisateur est propriétaire ou admin
+function isOwner() {
+  // Si on est sur une page utilisateur spécifique
+  if (window.targetUid) {
+    return (window.currentUser && window.currentUser.uid === window.targetUid) || window.userRole === 'admin';
+  }
+  // Si on est sur la page générale (legacy), seul l'admin peut modifier
+  return window.userRole === 'admin';
+}
+
+// Helper: Obtenir la référence de la collection (reflète la logique de lecture)
+function getCollectionRef(name) {
+  if (window.targetUid) {
+    return window.firebaseDb.collection('users').doc(window.targetUid).collection(name);
+  }
+  return window.firebaseDb.collection(name);
+}
+
 // Afficher un message d'erreur dans la modale d'expérience
 function showExperienceError(message) {
   const errorDiv = document.getElementById('experience-error-message');
@@ -28,11 +46,11 @@ function showAddExperienceModal() {
   currentEditingRow = null;
   currentEditingDocId = null;
   document.getElementById('experience-modal').style.display = 'flex';
-  
+
   // Écouter les changements du mois pour mettre à jour le texte
   const monthInput = document.getElementById('exp-date-month');
   if (monthInput) {
-    monthInput.addEventListener('change', function() {
+    monthInput.addEventListener('change', function () {
       const dateText = monthToFrenchText(this.value);
       document.getElementById('exp-date').value = dateText;
     });
@@ -43,8 +61,8 @@ function showAddExperienceModal() {
 function monthToFrenchText(monthValue) {
   if (!monthValue) return '';
   const [year, month] = monthValue.split('-');
-  const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
-                  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
   const monthIndex = parseInt(month, 10) - 1;
   if (monthIndex < 0 || monthIndex > 11) return '';
   return `${months[monthIndex]} ${year}`;
@@ -72,9 +90,15 @@ function frenchTextToMonth(dateText) {
   return year ? `${year}-${month}` : '';
 }
 
-// Extraire le nom du fichier du chemin complet du logo
+// Extraire le nom du fichier ou retourner l'URL/Base64 tel quel
 function extractLogoFilename(logoPath) {
   if (!logoPath) return '';
+
+  // Si c'est du Base64 ou une URL complète (http/https), retourner tel quel
+  if (logoPath.startsWith('data:image') || logoPath.startsWith('http')) {
+    return logoPath;
+  }
+
   // Enlever le préfixe GitHub Pages
   const githubPrefix = 'https://srn-romain.github.io/recap-bafa/assets/img/';
   if (logoPath.startsWith(githubPrefix)) {
@@ -97,36 +121,84 @@ function extractLogoFilename(logoPath) {
   return logoPath;
 }
 
+// Fonction pour auto-détecter le logo depuis l'URL
+async function autoDetectLogo() {
+  const urlInput = document.getElementById('exp-organizer-url');
+  const logoInput = document.getElementById('exp-logo-path');
+  const preview = document.getElementById('logo-preview');
+
+  if (!urlInput || !urlInput.value) {
+    alert("Veuillez d'abord entrer l'URL de l'organisateur.");
+    return;
+  }
+
+  try {
+    const url = new URL(urlInput.value);
+    const domain = url.hostname;
+    // Utiliser l'API Clearbit pour récupérer le logo
+    const logoUrl = `https://logo.clearbit.com/${domain}`;
+
+    // Tenter de récupérer l'image pour l'encoder en Base64
+    // Note: Clearbit permet généralement le CORS
+    const response = await fetch(logoUrl);
+    if (!response.ok) throw new Error("Logo non trouvé");
+
+    const blob = await response.blob();
+
+    // Convertir en Base64
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const base64data = reader.result;
+      logoInput.value = base64data;
+      if (preview) {
+        preview.src = base64data;
+        preview.style.display = 'block';
+      }
+    }
+    reader.readAsDataURL(blob);
+
+  } catch (e) {
+    console.error("Erreur auto-détection logo", e);
+    // Fallback: essayer Google Favicon si Clearbit échoue, ou juste laisser l'utilisateur faire
+    const fallbackUrl = `https://www.google.com/s2/favicons?domain=${urlInput.value}&sz=64`;
+    logoInput.value = fallbackUrl; // On met l'URL car on ne peut pas toujours fetch google favicons en CORS strict
+    if (preview) {
+      preview.src = fallbackUrl;
+      preview.style.display = 'block';
+    }
+  }
+}
+
 // Afficher le modal d'édition d'expérience
 function showEditExperienceModal(data, row) {
   document.getElementById('experience-modal-title').textContent = 'Modifier une expérience';
   hideExperienceError();
-  
+
   // Remplir le formulaire avec les données
   document.getElementById('exp-type').value = data.type || 'colo';
-  
+
   // Convertir la date française en format mois pour l'input month
   const monthValue = frenchTextToMonth(data.date || '');
   document.getElementById('exp-date-month').value = monthValue;
   document.getElementById('exp-date').value = data.date || '';
-  
+
   document.getElementById('exp-duration').value = data.duration || '';
   document.getElementById('exp-organizer').value = data.organizer || '';
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
-  
+
   // Extraire juste le nom du fichier pour le logo
   document.getElementById('exp-logo-path').value = extractLogoFilename(data.logoPath || '');
-  
+
   document.getElementById('exp-location').value = data.location || '';
   document.getElementById('exp-location-url').value = data.locationUrl || '';
   document.getElementById('exp-stay-type').value = data.stayType || '';
   document.getElementById('exp-position').value = data.position || '';
   document.getElementById('exp-age-range').value = data.ageRange || '';
   document.getElementById('exp-youth-count').value = data.youthCount || 0;
-  
+
   currentEditingRow = row;
   currentEditingDocId = null;
-  
+
   document.getElementById('experience-modal').style.display = 'flex';
 }
 
@@ -138,13 +210,13 @@ function closeExperienceModal() {
 }
 
 // Fermer la modale au clic extérieur
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Fermer les modales au clic sur le fond
   const modals = ['experience-modal', 'formation-modal', 'auth-modal', 'delete-confirm-modal'];
   modals.forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (modal) {
-      modal.addEventListener('click', function(e) {
+      modal.addEventListener('click', function (e) {
         if (e.target === modal) {
           if (modalId === 'experience-modal') {
             closeExperienceModal();
@@ -186,11 +258,11 @@ function showAddFormationModal() {
   currentEditingRow = null;
   currentEditingDocId = null;
   document.getElementById('formation-modal').style.display = 'flex';
-  
+
   // Écouter les changements du mois pour mettre à jour le texte
   const monthInput = document.getElementById('form-date-month');
   if (monthInput) {
-    monthInput.addEventListener('change', function() {
+    monthInput.addEventListener('change', function () {
       const dateText = monthToFrenchText(this.value);
       document.getElementById('form-date').value = dateText;
     });
@@ -201,29 +273,29 @@ function showAddFormationModal() {
 function showEditFormationModal(data, row) {
   document.getElementById('formation-modal-title').textContent = 'Modifier une formation';
   hideFormationError();
-  
+
   // Remplir le formulaire avec les données
   document.getElementById('form-type').value = data.type || 'bafa';
-  
+
   // Convertir la date française en format mois pour l'input month
   const monthValue = frenchTextToMonth(data.date || '');
   document.getElementById('form-date-month').value = monthValue;
   document.getElementById('form-date').value = data.date || '';
-  
+
   document.getElementById('form-duration').value = data.duration || '';
   document.getElementById('form-organism').value = data.organism || '';
   document.getElementById('form-organism-url').value = data.organismUrl || '';
-  
+
   // Extraire juste le nom du fichier pour le logo
   document.getElementById('form-logo-path').value = extractLogoFilename(data.logoPath || '');
-  
+
   document.getElementById('form-title').value = data.title || '';
   document.getElementById('form-location').value = data.location || '';
   document.getElementById('form-location-url').value = data.locationUrl || '';
-  
+
   currentEditingRow = row;
   currentEditingDocId = null;
-  
+
   document.getElementById('formation-modal').style.display = 'flex';
 }
 
@@ -235,28 +307,38 @@ function closeFormationModal() {
 }
 
 // Gérer la soumission du formulaire d'expérience
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const expForm = document.getElementById('experience-form');
   if (expForm) {
-    expForm.addEventListener('submit', async function(e) {
+    expForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      
+
       hideExperienceError();
-      
-      if (window.userRole !== 'admin') {
-        showExperienceError('Vous devez être administrateur pour effectuer cette action.');
+
+      if (!isOwner()) {
+        showExperienceError('Vous devez être propriétaire ou administrateur pour effectuer cette action.');
         return;
       }
-      
+
       // Convertir le mois sélectionné en texte français
       const monthValue = document.getElementById('exp-date-month').value;
       const dateText = monthValue ? monthToFrenchText(monthValue) : '';
       document.getElementById('exp-date').value = dateText;
-      
-      // Gérer le chemin du logo avec le préfixe GitHub Pages
-      const logoFilename = document.getElementById('exp-logo-path').value.trim();
-      const logoPath = logoFilename ? `https://srn-romain.github.io/recap-bafa/assets/img/${logoFilename}` : '';
-      
+
+      // Gérer le chemin du logo
+      const logoInputVal = document.getElementById('exp-logo-path').value.trim();
+      let logoPath = '';
+
+      // Si c'est une URL absolue (http/https) ou du Base64 (data:image), on utilise tel quel
+      if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
+        logoPath = logoInputVal;
+      } else if (logoInputVal) {
+        // Sinon c'est un fichier local dans assets/img/
+        logoPath = `assets/img/${logoInputVal}`;
+        // (Optionnel) remettre le préfixe complet si besoin pour compatibilité
+        // logoPath = `https://srn-romain.github.io/recap-bafa/assets/img/${logoInputVal}`; 
+      }
+
       const data = {
         type: document.getElementById('exp-type').value,
         date: dateText,
@@ -271,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ageRange: document.getElementById('exp-age-range').value || '',
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
       };
-      
+
       try {
         if (currentEditingRow) {
           // Modification : trouver le document dans Firebase
@@ -280,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // Ajout
           await addExperienceToFirebase(data);
         }
-        
+
         closeExperienceModal();
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
@@ -292,29 +374,29 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-  
+
   // Gérer la soumission du formulaire de formation
   const formForm = document.getElementById('formation-form');
   if (formForm) {
-    formForm.addEventListener('submit', async function(e) {
+    formForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      
+
       hideFormationError();
-      
-      if (window.userRole !== 'admin') {
-        showFormationError('Vous devez être administrateur pour effectuer cette action.');
+
+      if (!isOwner()) {
+        showFormationError('Vous devez être propriétaire ou administrateur pour effectuer cette action.');
         return;
       }
-      
+
       // Convertir le mois sélectionné en texte français
       const monthValue = document.getElementById('form-date-month').value;
       const dateText = monthValue ? monthToFrenchText(monthValue) : '';
       document.getElementById('form-date').value = dateText;
-      
+
       // Gérer le chemin du logo avec le préfixe GitHub Pages
       const logoFilename = document.getElementById('form-logo-path').value.trim();
       const logoPath = logoFilename ? `https://srn-romain.github.io/recap-bafa/assets/img/${logoFilename}` : '';
-      
+
       const data = {
         type: document.getElementById('form-type').value,
         date: dateText,
@@ -326,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
         location: document.getElementById('form-location').value,
         locationUrl: document.getElementById('form-location-url').value || ''
       };
-      
+
       try {
         if (currentEditingRow) {
           // Modification
@@ -335,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // Ajout
           await addFormationToFirebase(data);
         }
-        
+
         closeFormationModal();
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
@@ -347,13 +429,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-  
+
   // Boutons d'ajout
   const addExpBtn = document.getElementById('add-experience-btn');
   if (addExpBtn) {
     addExpBtn.onclick = showAddExperienceModal;
   }
-  
+
   const addFormBtn = document.getElementById('add-formation-btn');
   if (addFormBtn) {
     addFormBtn.onclick = showAddFormationModal;
@@ -362,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Ajouter une expérience à Firebase
 async function addExperienceToFirebase(data) {
-  await window.firebaseDb.collection('experiences').add(data);
+  await getCollectionRef('experiences').add(data);
   console.log('Expérience ajoutée avec succès');
 }
 
@@ -372,13 +454,13 @@ async function updateExperienceInFirebase(data, row) {
   // On va chercher par les données de la ligne
   const date = row.cells[1]?.textContent?.trim();
   const organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
-  
-  const snapshot = await window.firebaseDb.collection('experiences')
+
+  const snapshot = await getCollectionRef('experiences')
     .where('date', '==', date)
     .where('organizer', '==', organizer)
     .limit(1)
     .get();
-  
+
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
     await doc.ref.update(data);
@@ -390,7 +472,7 @@ async function updateExperienceInFirebase(data, row) {
 
 // Ajouter une formation à Firebase
 async function addFormationToFirebase(data) {
-  await window.firebaseDb.collection('formations').add(data);
+  await getCollectionRef('formations').add(data);
   console.log('Formation ajoutée avec succès');
 }
 
@@ -398,13 +480,13 @@ async function addFormationToFirebase(data) {
 async function updateFormationInFirebase(data, row) {
   const date = row.cells[1]?.textContent?.trim();
   const organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
-  
-  const snapshot = await window.firebaseDb.collection('formations')
+
+  const snapshot = await getCollectionRef('formations')
     .where('date', '==', date)
     .where('organism', '==', organism)
     .limit(1)
     .get();
-  
+
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
     await doc.ref.update(data);
@@ -418,13 +500,13 @@ async function updateFormationInFirebase(data, row) {
 async function deleteExperienceFromFirebase(row) {
   const date = row.cells[1]?.textContent?.trim();
   const organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
-  
-  const snapshot = await window.firebaseDb.collection('experiences')
+
+  const snapshot = await getCollectionRef('experiences')
     .where('date', '==', date)
     .where('organizer', '==', organizer)
     .limit(1)
     .get();
-  
+
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
     await doc.ref.delete();
@@ -438,13 +520,13 @@ async function deleteExperienceFromFirebase(row) {
 async function deleteFormationFromFirebase(row) {
   const date = row.cells[1]?.textContent?.trim();
   const organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
-  
-  const snapshot = await window.firebaseDb.collection('formations')
+
+  const snapshot = await getCollectionRef('formations')
     .where('date', '==', date)
     .where('organism', '==', organism)
     .limit(1)
     .get();
-  
+
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
     await doc.ref.delete();

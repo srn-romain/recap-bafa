@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── FONCTIONS D'AIDE ────────────────────────────────────────
+
+    // Vérifie si l'utilisateur est l'administrateur principal
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.uid == "iaoZlSgBXUc6eYVHaZMy6hz4tVI3" || 
+        // Au cas où le rôle soit stocké dans le token (optionnel)
+        request.auth.token.role == "admin"
+      );
+    }
+
+    // Vérifie si l'utilisateur est connecté
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Vérifie si l'utilisateur est le propriétaire du document (basé sur l'ID utilisateur dans le chemin)
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // ─── COLLECTIONS RACINES (Héritage / Admin seulement) ────────
+
+    // Collection "experiences" (racine) : Lecture publique, Écriture Admin seulement
+    match /experiences/{experiencesId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Collection "formations" (racine) : Lecture publique, Écriture Admin seulement
+    match /formations/{formationsId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─── COLLECTIONS UTILISATEURS (Multi-utilisateurs) ───────────
+
+    // Collection "users" : Lecture publique (pour afficher le nom), Écriture Propriétaire ou Admin
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update, delete: if isOwner(userId) || isAdmin();
+
+      // Sous-collection "experiences" de l'utilisateur
+      match /experiences/{experiencesId} {
+        allow read: if true;
+        allow create, update, delete: if isOwner(userId) || isAdmin();
+      }
+
+      // Sous-collection "formations" de l'utilisateur
+      match /formations/{formationsId} {
+        allow read: if true;
+        allow create, update, delete: if isOwner(userId) || isAdmin();
+      }
+    }
+  }
+}

@@ -7,22 +7,22 @@
 function createExperienceRow(experience) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-type', experience.type);
-  
+
   // Colonne N°
   const tdNum = document.createElement('td');
   tdNum.className = 'num';
   tr.appendChild(tdNum);
-  
+
   // Colonne Date
   const tdDate = document.createElement('td');
   tdDate.textContent = experience.date;
   tr.appendChild(tdDate);
-  
+
   // Colonne Durée
   const tdDuration = document.createElement('td');
   tdDuration.textContent = experience.duration;
   tr.appendChild(tdDuration);
-  
+
   // Colonne Organisateur
   const tdOrganizer = document.createElement('td');
   const organizerLink = document.createElement('a');
@@ -31,7 +31,7 @@ function createExperienceRow(experience) {
   organizerLink.textContent = experience.organizer;
   tdOrganizer.appendChild(organizerLink);
   tr.appendChild(tdOrganizer);
-  
+
   // Colonne Logo
   const tdLogo = document.createElement('td');
   const logoLink = document.createElement('a');
@@ -44,7 +44,7 @@ function createExperienceRow(experience) {
   logoLink.appendChild(logoImg);
   tdLogo.appendChild(logoLink);
   tr.appendChild(tdLogo);
-  
+
   // Colonne Lieu
   const tdLocation = document.createElement('td');
   if (Array.isArray(experience.locations)) {
@@ -85,27 +85,27 @@ function createExperienceRow(experience) {
     tdLocation.appendChild(locLink);
   }
   tr.appendChild(tdLocation);
-  
+
   // Colonne Type de séjour
   const tdStayType = document.createElement('td');
   tdStayType.textContent = experience.stayType;
   tr.appendChild(tdStayType);
-  
+
   // Colonne Intitulé du poste
   const tdPosition = document.createElement('td');
   tdPosition.textContent = experience.position;
   tr.appendChild(tdPosition);
-  
+
   // Colonne Tranche d'âge
   const tdAgeRange = document.createElement('td');
   tdAgeRange.textContent = experience.ageRange;
   tr.appendChild(tdAgeRange);
-  
+
   // Colonne Nb de jeunes
   const tdYouthCount = document.createElement('td');
   tdYouthCount.textContent = experience.youthCount;
   tr.appendChild(tdYouthCount);
-  
+
   return tr;
 }
 
@@ -115,22 +115,22 @@ function createExperienceRow(experience) {
 function createFormationRow(formation) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-type', formation.type);
-  
+
   // Colonne N°
   const tdNum = document.createElement('td');
   tdNum.className = 'num';
   tr.appendChild(tdNum);
-  
+
   // Colonne Date
   const tdDate = document.createElement('td');
   tdDate.textContent = formation.date;
   tr.appendChild(tdDate);
-  
+
   // Colonne Durée
   const tdDuration = document.createElement('td');
   tdDuration.textContent = formation.duration;
   tr.appendChild(tdDuration);
-  
+
   // Colonne Organisme
   const tdOrganism = document.createElement('td');
   const organismLink = document.createElement('a');
@@ -139,7 +139,7 @@ function createFormationRow(formation) {
   organismLink.textContent = formation.organism;
   tdOrganism.appendChild(organismLink);
   tr.appendChild(tdOrganism);
-  
+
   // Colonne Logo
   const tdLogo = document.createElement('td');
   const logoLink = document.createElement('a');
@@ -152,12 +152,12 @@ function createFormationRow(formation) {
   logoLink.appendChild(logoImg);
   tdLogo.appendChild(logoLink);
   tr.appendChild(tdLogo);
-  
+
   // Colonne Intitulé
   const tdTitle = document.createElement('td');
   tdTitle.textContent = formation.title;
   tr.appendChild(tdTitle);
-  
+
   // Colonne Lieu
   const tdLocation = document.createElement('td');
   const locLink = document.createElement('a');
@@ -180,7 +180,7 @@ function createFormationRow(formation) {
   locLink.textContent = formation.location;
   tdLocation.appendChild(locLink);
   tr.appendChild(tdLocation);
-  
+
   return tr;
 }
 
@@ -190,7 +190,7 @@ function createFormationRow(formation) {
 async function loadExperiencesFromFirebase() {
   const loadingSpinner = document.getElementById('loading-experiences');
   const table = document.getElementById('table-experiences');
-  
+
   if (!window.firebaseInitialized || !window.firebaseDb) {
     console.log("Firebase non disponible, utilisation des données statiques");
     // Cacher le spinner si pas de Firebase
@@ -202,7 +202,7 @@ async function loadExperiencesFromFirebase() {
     }
     return false;
   }
-  
+
   // Afficher le spinner si pas déjà affiché
   if (loadingSpinner && loadingSpinner.classList.contains('hidden')) {
     loadingSpinner.classList.remove('hidden');
@@ -210,20 +210,44 @@ async function loadExperiencesFromFirebase() {
   if (table && table.style.display !== 'none') {
     table.style.display = 'none';
   }
-  
+
   try {
-    const experiencesRef = window.firebaseDb.collection('experiences');
+    // Déterminer la collection à utiliser (root ou sous-collection user)
+    let experiencesRef;
+    if (window.targetUid) {
+      experiencesRef = window.firebaseDb.collection('users').doc(window.targetUid).collection('experiences');
+      console.log(`Chargement des expériences pour l'utilisateur ${window.targetUid}`);
+    } else {
+      experiencesRef = window.firebaseDb.collection('experiences');
+      console.log("Chargement des expériences depuis la collection racine (Legacy)");
+    }
+
     // Récupérer toutes les expériences (le tri sera fait côté client)
     const snapshot = await experiencesRef.get();
-    
+
     if (snapshot.empty) {
       console.log("Aucune expérience trouvée dans Firebase");
-      return false;
+      // Cacher le spinner
+      if (loadingSpinner) loadingSpinner.classList.add('hidden');
+      if (table) {
+        table.style.display = '';
+        // Vider le tableau sauf l'en-tête
+        const rows = table.querySelectorAll('tr[data-type]');
+        rows.forEach(row => {
+          if (!row.classList.contains('always-visible')) row.remove();
+        });
+        // Ajouter le message "Aucune donnée"
+        const tbody = table.querySelector('tbody') || table;
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td colspan="10" style="text-align: center; padding: 20px; font-style: italic; color: #7f8c8d;">Aucune donnée à afficher</td>';
+        tbody.appendChild(emptyRow);
+      }
+      return true; // Retourner true pour dire que le chargement est "fini" même si vide
     }
-    
+
     const table = document.getElementById('table-experiences');
     if (!table) return false;
-    
+
     // Supprimer toutes les lignes sauf l'en-tête
     const rows = table.querySelectorAll('tr[data-type]');
     rows.forEach(row => {
@@ -231,7 +255,7 @@ async function loadExperiencesFromFirebase() {
         row.remove();
       }
     });
-    
+
     // Ajouter les expériences depuis Firebase
     const experiences = [];
     snapshot.forEach(doc => {
@@ -253,10 +277,10 @@ async function loadExperiencesFromFirebase() {
         youthCount: data.youthCount || 0
       });
     });
-    
+
     // Trier par date (tri côté client car les dates sont des chaînes)
     // Utiliser la fonction parseFrenchDate de main.js si disponible, sinon créer une version locale
-    const parseDate = typeof parseFrenchDate === 'function' ? parseFrenchDate : function(dateStr) {
+    const parseDate = typeof parseFrenchDate === 'function' ? parseFrenchDate : function (dateStr) {
       dateStr = dateStr.toLowerCase().trim();
       if (/^\d{4}-\d{4}$/.test(dateStr)) {
         return new Date(parseInt(dateStr.split('-')[0], 10), 0, 1);
@@ -278,19 +302,19 @@ async function loadExperiencesFromFirebase() {
       }
       return new Date(year, month, 1);
     };
-    
+
     experiences.sort((a, b) => {
       const dateA = parseDate(a.date);
       const dateB = parseDate(b.date);
       return dateB - dateA; // Tri décroissant (plus récent en premier)
     });
-    
+
     // Ajouter les lignes triées au tableau
     experiences.forEach(experience => {
       const row = createExperienceRow(experience);
       table.appendChild(row);
     });
-    
+
     // Cacher le spinner et afficher le tableau
     if (loadingSpinner) {
       loadingSpinner.classList.add('hidden');
@@ -298,7 +322,7 @@ async function loadExperiencesFromFirebase() {
     if (table) {
       table.style.display = '';
     }
-    
+
     console.log("Expériences chargées depuis Firebase");
     return true;
   } catch (error) {
@@ -322,7 +346,7 @@ async function loadExperiencesFromFirebase() {
 async function loadFormationsFromFirebase() {
   const loadingSpinner = document.getElementById('loading-formations');
   const table = document.getElementById('table-formations');
-  
+
   if (!window.firebaseInitialized || !window.firebaseDb) {
     console.log("Firebase non disponible, utilisation des données statiques");
     // Cacher le spinner si pas de Firebase
@@ -334,7 +358,7 @@ async function loadFormationsFromFirebase() {
     }
     return false;
   }
-  
+
   // Afficher le spinner si pas déjà affiché
   if (loadingSpinner && loadingSpinner.classList.contains('hidden')) {
     loadingSpinner.classList.remove('hidden');
@@ -342,20 +366,44 @@ async function loadFormationsFromFirebase() {
   if (table && table.style.display !== 'none') {
     table.style.display = 'none';
   }
-  
+
   try {
-    const formationsRef = window.firebaseDb.collection('formations');
+    // Déterminer la collection à utiliser (root ou sous-collection user)
+    let formationsRef;
+    if (window.targetUid) {
+      formationsRef = window.firebaseDb.collection('users').doc(window.targetUid).collection('formations');
+      console.log(`Chargement des formations pour l'utilisateur ${window.targetUid}`);
+    } else {
+      formationsRef = window.firebaseDb.collection('formations');
+      console.log("Chargement des formations depuis la collection racine (Legacy)");
+    }
+
     // Récupérer toutes les formations (le tri sera fait côté client)
     const snapshot = await formationsRef.get();
-    
+
     if (snapshot.empty) {
       console.log("Aucune formation trouvée dans Firebase");
-      return false;
+      // Cacher le spinner
+      if (loadingSpinner) loadingSpinner.classList.add('hidden');
+      if (table) {
+        table.style.display = '';
+        // Vider le tableau sauf l'en-tête
+        const rows = table.querySelectorAll('tr[data-type]');
+        rows.forEach(row => {
+          if (!row.classList.contains('always-visible')) row.remove();
+        });
+        // Ajouter le message "Aucune donnée"
+        const tbody = table.querySelector('tbody') || table;
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td colspan="8" style="text-align: center; padding: 20px; font-style: italic; color: #7f8c8d;">Aucune donnée à afficher</td>';
+        tbody.appendChild(emptyRow);
+      }
+      return true; // Retourner true pour dire que le chargement est "fini" même si vide
     }
-    
+
     const table = document.getElementById('table-formations');
     if (!table) return false;
-    
+
     // Supprimer toutes les lignes sauf l'en-tête
     const rows = table.querySelectorAll('tr[data-type]');
     rows.forEach(row => {
@@ -363,7 +411,7 @@ async function loadFormationsFromFirebase() {
         row.remove();
       }
     });
-    
+
     // Ajouter les formations depuis Firebase
     const formations = [];
     snapshot.forEach(doc => {
@@ -380,10 +428,10 @@ async function loadFormationsFromFirebase() {
         locationUrl: data.locationUrl || '#'
       });
     });
-    
+
     // Trier par date (tri côté client car les dates sont des chaînes)
     // Utiliser la fonction parseFrenchDate de main.js si disponible, sinon créer une version locale
-    const parseDate = typeof parseFrenchDate === 'function' ? parseFrenchDate : function(dateStr) {
+    const parseDate = typeof parseFrenchDate === 'function' ? parseFrenchDate : function (dateStr) {
       dateStr = dateStr.toLowerCase().trim();
       if (/^\d{4}-\d{4}$/.test(dateStr)) {
         return new Date(parseInt(dateStr.split('-')[0], 10), 0, 1);
@@ -405,19 +453,19 @@ async function loadFormationsFromFirebase() {
       }
       return new Date(year, month, 1);
     };
-    
+
     formations.sort((a, b) => {
       const dateA = parseDate(a.date);
       const dateB = parseDate(b.date);
       return dateB - dateA; // Tri décroissant (plus récent en premier)
     });
-    
+
     // Ajouter les lignes triées au tableau
     formations.forEach(formation => {
       const row = createFormationRow(formation);
       table.appendChild(row);
     });
-    
+
     // Cacher le spinner et afficher le tableau
     if (loadingSpinner) {
       loadingSpinner.classList.add('hidden');
@@ -425,7 +473,7 @@ async function loadFormationsFromFirebase() {
     if (table) {
       table.style.display = '';
     }
-    
+
     console.log("Formations chargées depuis Firebase");
     return true;
   } catch (error) {
@@ -452,24 +500,30 @@ async function loadDataFromFirebase() {
   const loadingFormations = document.getElementById('loading-formations');
   const tableExperiences = document.getElementById('table-experiences');
   const tableFormations = document.getElementById('table-formations');
-  
+
   if (loadingExperiences) {
     loadingExperiences.classList.remove('hidden');
   }
   if (tableExperiences) {
     tableExperiences.style.display = 'none';
   }
-  
+
   if (loadingFormations) {
     loadingFormations.classList.remove('hidden');
   }
   if (tableFormations) {
     tableFormations.style.display = 'none';
   }
-  
+
   const experiencesLoaded = await loadExperiencesFromFirebase();
   const formationsLoaded = await loadFormationsFromFirebase();
-  
+
+  // Charger les infos du profil (titre)
+  if (window.targetUid) {
+    loadUserProfile();
+  }
+
+
   if (experiencesLoaded || formationsLoaded) {
     // Numéroter les lignes immédiatement après le chargement
     if (typeof remplirNum === 'function') {
@@ -478,7 +532,7 @@ async function loadDataFromFirebase() {
       if (experiencesTable) remplirNum(experiencesTable);
       if (formationsTable) remplirNum(formationsTable);
     }
-    
+
     // Réinitialiser les fonctionnalités après le chargement
     setTimeout(() => {
       // Réinitialiser les filtres (cela appellera aussi remplirNum)
@@ -486,7 +540,7 @@ async function loadDataFromFirebase() {
         filterTable('all', 'table-experiences');
         filterTable('all', 'table-formations');
       }
-      
+
       // S'assurer que les numéros sont bien remplis
       if (typeof remplirNum === 'function') {
         const experiencesTable = document.getElementById('table-experiences');
@@ -494,7 +548,7 @@ async function loadDataFromFirebase() {
         if (experiencesTable) remplirNum(experiencesTable);
         if (formationsTable) remplirNum(formationsTable);
       }
-      
+
       // Recalculer les statistiques
       if (typeof calculateAllStatistics === 'function') {
         calculateAllStatistics();
@@ -506,13 +560,13 @@ async function loadDataFromFirebase() {
           }
         }, 500);
       }
-      
+
       // Réinitialiser la recherche
       if (typeof setupSearch === 'function') {
         setupSearch('search-experiences', 'table-experiences');
         setupSearch('search-formations', 'table-formations');
       }
-      
+
       // Réinitialiser le tri (mais seulement si les en-têtes n'ont pas déjà été configurés)
       if (typeof setupSortableTables === 'function') {
         // Réinitialiser le flag pour permettre la réinitialisation après chargement Firebase
@@ -521,7 +575,7 @@ async function loadDataFromFirebase() {
         }
         setupSortableTables();
       }
-      
+
       // Mettre à jour l'UI pour gérer les liens Google Maps et les colonnes d'édition
       // Appeler updateUI() dans tous les cas (connecté ou non) pour désactiver/activer les liens
       if (typeof updateUI === 'function') {
@@ -540,6 +594,84 @@ function initializeFirebaseData() {
     loadDataFromFirebase();
   } else {
     console.log("Firebase SDK non chargé ou non configuré, utilisation des données statiques");
+  }
+}
+
+// Charger le profil utilisateur (pour le titre et LinkedIn)
+async function loadUserProfile() {
+  if (!window.targetUid || !window.firebaseDb) return;
+
+  try {
+    const doc = await window.firebaseDb.collection('users').doc(window.targetUid).get();
+    if (doc.exists) {
+      const data = doc.data();
+      const title = document.querySelector('h2');
+      const linkedinLink = document.getElementById('linkedin-link');
+
+      // Construire le nom complet
+      let fullName = 'Animateur';
+      if (data.firstname && data.lastname) {
+        // Formater: Prénom (1ère lettre maj, reste min) NOM (tout maj)
+        const formatName = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        fullName = `${formatName(data.firstname)} ${data.lastname.toUpperCase()}`;
+      } else if (data.displayName) {
+        fullName = data.displayName;
+      } else if (data.email) {
+        fullName = data.email.split('@')[0];
+      }
+
+      // Mettre à jour le titre
+      if (title) {
+        title.innerHTML = `Détails des expériences BAFA & BAFD de <orange>${fullName}</orange>`;
+      }
+
+      // Gérer l'icône LinkedIn et le positionnement du bouton paramètres
+      const settingsBtn = document.getElementById('settings-btn');
+      if (linkedinLink) {
+        if (data.linkedin && data.linkedin.trim() !== '') {
+          linkedinLink.href = data.linkedin;
+          linkedinLink.style.display = 'block';
+          // Si LinkedIn est affiché, le bouton settings reste à sa place (à côté)
+          if (settingsBtn) {
+            settingsBtn.style.left = '70px';
+            settingsBtn.style.top = '26px'; // Garder l'alignement vertical défini
+          }
+        } else {
+          linkedinLink.style.display = 'none';
+          // Si LinkedIn est caché, le bouton settings prend sa place
+          if (settingsBtn) {
+            settingsBtn.style.left = '20px';
+            settingsBtn.style.top = '18px'; // S'aligner comme l'icône LinkedIn
+          }
+        }
+      }
+
+      // Gérer l'affichage de l'email de contact
+      const contactEmailParagraph = document.getElementById('contact-email-paragraph');
+      const contactEmailLink = document.getElementById('contact-email-link');
+
+      if (contactEmailParagraph && contactEmailLink) {
+        if (data.emailVisible === true && data.email) {
+          contactEmailLink.href = `mailto:${data.email}`;
+          contactEmailParagraph.style.display = 'block';
+        } else {
+          contactEmailParagraph.style.display = 'none';
+        }
+      }
+
+      // Mettre à jour les statistiques manuelles
+      if (data.stats) {
+        const animEl = document.getElementById('stat-animators-count');
+        const dirEl = document.getElementById('stat-directors-count');
+        const trainEl = document.getElementById('stat-trainers-count');
+
+        if (animEl) animEl.textContent = data.stats.animators !== undefined ? data.stats.animators : 0;
+        if (dirEl) dirEl.textContent = data.stats.directors !== undefined ? data.stats.directors : 0;
+        if (trainEl) trainEl.textContent = data.stats.trainers !== undefined ? data.stats.trainers : 0;
+      }
+    }
+  } catch (e) {
+    console.error("Erreur chargement profil", e);
   }
 }
 

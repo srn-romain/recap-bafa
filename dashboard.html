@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation</title>
+    <link href="assets/img/favicon.png" rel="icon">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/settings-modal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div>
+        <script>
+            // Extraction de l'UID cible depuis l'URL
+            const urlParams = new URLSearchParams(window.location.search);
+            window.targetUid = urlParams.get('uid');
+
+            // Si pas d'UID et pas de redirection en cours, on pourrait rediriger vers l'accueil
+            // Mais on attend de voir si l'utilisateur se connecte
+            if (!window.targetUid) {
+                // Optional: window.location.href = 'index.html';
+                console.log("Aucun UID spécifié, mode démo ou attente connexion");
+            }
+        </script>
+        <h2>Détails des expériences BAFA & BAFD</h2>
+        <a id="linkedin-link" href="#" target="_blank" class="linkedin-icon-top"
+            style="display: none; position: absolute; top: 18px; left: 20px; font-size: 2.2rem; color: #0077b5; text-decoration: none; z-index: 10;">
+            <i class="bi bi-linkedin"></i>
+        </a>
+        <button id="settings-btn" onclick="openSettingsModal()" class="expect-owner rotate-on-hover"
+            style="display: none; position: absolute; top: 26px; left: 70px; font-size: 2.2rem; color: #555; background: none; border: none; cursor: pointer; z-index: 10; padding: 0; line-height: 1;">
+            <i class="bi bi-gear-fill"></i>
+        </button>
+        <button id="auth-button-top" onclick="showAuthModal()" class="auth-btn-top"
+            style="display: none; position: absolute; top: 20px; right: 20px;">
+            <i class="bi bi-person"></i> Se connecter
+        </button>
+        <button id="logout-button-top" onclick="signOut()" class="auth-btn-top logout-btn"
+            style="display: none; position: absolute; top: 20px; right: 20px;">
+            <i class="bi bi-box-arrow-right"></i> Se déconnecter
+        </button>
+        <section>
+            <p>
+                Si vous êtes ici, c'est que vous souhaitez découvrir mes expériences BAFA et BAFD. Vous trouverez
+                d'abord un
+                aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi
+                qu'une section
+                statistiques pour visualiser mon parcours.
+            </p><br>
+
+            <div class="info-box">
+                <i>
+                    <b>🔍 Astuces :</b>
+                    <ul>
+                        <li>-Utiliser le <orange>sommaire</orange> en haut de la page pour naviguer rapidement entre les
+                            différentes sections.</li>
+                        <li>-Utilisez la <orange>barre de recherche</orange> au-dessus des tableaux pour trouver
+                            rapidement une information (lieu, date, âge...).</li>
+                        <li>-Trier mes expériences/formations grâce aux <orange>filtres</orange> (les boutons verts) en
+                            haut de chaque tableau pour afficher un type spécifique.</li>
+                        <li>-Cliquez sur les <orange>en-têtes des colonnes</orange> pour trier le tableau.</li>
+                        <li>-Consulter la section <orange>statistiques</orange> pour avoir une vue d'ensemble de mon
+                            parcours d'animateur.</li>
+                    </ul>
+                </i>
+            </div>
+
+            <!-- Phrase de contact par email (Dynamique) -->
+            <p id="contact-email-paragraph" style="display: none;">
+                N’hésitez pas à <a id="contact-email-link" href="#" style="color:#f39c12">me contacter</a> pour toute
+                question !
+            </p>
+
+            <div class="sommaire">
+                <ul class="sommaire-liste">
+                    <li><a href="#experiences"><i class="bi bi-briefcase"></i> Expériences</a></li>
+                    <li><a href="#formations"><i class="bi bi-journal-text"></i> Formations</a></li>
+                    <li><a href="#statistiques"><i class="bi bi-bar-chart-line"></i> Statistiques</a></li>
+                </ul>
+            </div>
+
+            <div id="mobile-message" class="mobile-notification">
+                Le tableau est réduit. Faites défiler horizontalement pour voir l'intégralité du contenu.
+            </div>
+        </section>
+
+        <!-- Barre de recherche pour les expériences -->
+        <p class="search-container">
+            <input type="text" id="search-experiences" class="search-input"
+                placeholder="Rechercher une expérience (lieu, date, âge...)">
+            <button class="search-button"><i class="bi bi-search"></i></button>
+            <button id="add-experience-btn" class="add-btn-inline" style="display: none;">
+                <i class="bi bi-plus-circle"></i> Ajouter
+            </button>
+        </p>
+
+        <h1 id="experiences" data-section="experiences" data-section-title="Expériences">1- Expériences</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
+            <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
+            <div class="tab" onclick="filterTable('colo', 'table-experiences')">Colonie de vacances</div>
+            <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
+        </div>
+        <div class="tabs">
+            <div id="loading-experiences" class="loading-spinner hidden">
+                <div class="spinner"></div>
+                <p>Chargement des données...</p>
+            </div>
+            <table id="table-experiences">
+                <tr data-type="colo autre alsh" class="always-visible">
+                    <th>N°</th>
+                    <th>Date</th>
+                    <th onclick="sortTable(2, 'table-experiences')">Durée</th>
+                    <th>Organisateur</th>
+                    <th>Logo</th>
+                    <th>Lieu</th>
+                    <th>Type de séjour</th>
+                    <th>Intitulé du poste</th>
+                    <th>Tranche d'âge</th>
+                    <th>Nb de jeunes</th>
+                </tr>
+                <!-- Les données sont chargées dynamiquement depuis Firebase -->
+            </table>
+        </div><br>
+
+        <!-- Barre de recherche pour les formations -->
+        <p class="search-container">
+            <input type="text" id="search-formations" class="search-input"
+                placeholder="Rechercher une formation (organisme, lieu, date...)">
+            <button class="search-button"><i class="bi bi-search"></i></button>
+            <button id="add-formation-btn" class="add-btn-inline" style="display: none;">
+                <i class="bi bi-plus-circle"></i> Ajouter
+            </button>
+        </p>
+
+        <h1 id="formations" data-section="formations" data-section-title="Formations">2- Formations</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
+            <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
+            <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
+        </div>
+        <div class="tabs" id="formations-table-container">
+            <div id="loading-formations" class="loading-spinner hidden">
+                <div class="spinner"></div>
+                <p>Chargement des données...</p>
+            </div>
+            <table id="table-formations">
+                <tr data-type="bafa bafd" class="always-visible">
+                    <th>N°</th>
+                    <th>Date</th>
+                    <th>Durée</th>
+                    <th>Organisme</th>
+                    <th>Logo</th>
+                    <th>Intitulé</th>
+                    <th>Lieu</th>
+                </tr>
+                <!-- Les données sont chargées dynamiquement depuis Firebase -->
+            </table>
+        </div><br>
+
+        <h1 id="statistiques" data-section="statistiques" data-section-title="Statistiques">3- Statistiques</h1>
+        <div class="tabs">
+            <div class="stats-container">
+                <div id="stats-mobile-message" class="mobile-notification">
+                    ⚠️ Les graphiques statistiques s'affichent mieux sur un écran plus large. Pour une meilleure
+                    expérience, consultez cette section sur ordinateur.
+                </div>
+
+                <div class="stats-section">
+                    <h3>Expériences</h3>
+                    <div class="stats-sentences">
+                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span> jours
+                            en colonie de vacances</p>
+                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span> jours
+                            en centre de loisirs</p>
+                        <p class="stat-sentence">J'ai encadré <span class="stat-value" id="total-youth">0</span> jeunes
+                            au total</p>
+                        <p class="stat-sentence">J'ai réalisé <span class="stat-value" id="total-experiences">0</span>
+                            expériences d'animation</p>
+                        <p class="stat-sentence">J'ai travaillé avec <span class="stat-value"
+                                id="stat-animators-count">0</span> animateurs,
+                            <span class="stat-value" id="stat-directors-count">0</span> directeurs et <span
+                                class="stat-value" id="stat-trainers-count">0</span>
+                            formateurs
+                        </p>
+                        <p class="stat-sentence">J'ai principalement encadré des jeunes de <span class="stat-value"
+                                id="most-common-age">0</span> ans</p>
+                        <p class="stat-sentence">L'âge moyen est de <span class="stat-value" id="average-age">0</span>
+                            ans</p>
+                    </div>
+
+                    <div id="visu-graph-stat-ordi">
+                        ℹ️ Pour visualiser les graphiques plus en détail, survolez les barres verticales avec votre
+                        curseur.
+                    </div>
+
+                    <div id="visu-graph-stat-tel">
+                        ℹ️ Pour visualiser les graphiques plus en détail, appuyez sur les barres verticales avec votre
+                        doigt.
+                    </div>
+
+                    <div id="days-by-organization" class="stats-chart">
+                        <canvas id="organizationChart"></canvas>
+                    </div>
+
+                    <div id="age-group-chart-container" class="stats-chart">
+                        <canvas id="ageGroupChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <h3>Formations</h3>
+
+                    <div class="stats-sentences">
+                        <p class="stat-sentence">J'ai suivi <span class="stat-value" id="total-days-formation">0</span>
+                            jours de formation</p>
+                        <p class="stat-sentence">J'ai participé à <span class="stat-value"
+                                id="total-bafa-formations">0</span> formations BAFA</p>
+                        <p class="stat-sentence">J'ai participé à <span class="stat-value"
+                                id="total-bafd-formations">0</span> formations BAFD</p>
+                    </div>
+
+                    <div id="formation-organization-chart" class="stats-chart">
+                        <canvas id="formationOrganizationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <br>
+        <p style="color: white; text-align: center"> &copy; Récap BAFA/BAFD - Plateforme collaborative</p>
+    </footer>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Modal d'authentification -->
+    <div id="auth-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+            <h2>Connexion</h2>
+            <div id="auth-error-message" class="error-message" style="display: none;"></div>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div id="register-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" id="auth-firstname" placeholder="Ex: Jean">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="auth-lastname" placeholder="Ex: Dupont">
+                    </div>
+                    <div class="form-group">
+                        <label>Lien LinkedIn (facultatif)</label>
+                        <input type="url" id="auth-linkedin" placeholder="https://www.linkedin.com/in/...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="login-email" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe *</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="login-password" placeholder="Votre mot de passe" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+                            <i class="bi bi-eye" id="password-eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="auth-option-btn admin-btn" style="width: 100%;">
+                    <i class="bi bi-box-arrow-in-right"></i> <span id="auth-submit-text">Se connecter</span>
+                </button>
+                <!-- Champ caché pour le mode (login/register) -->
+                <input type="hidden" id="auth-mode" value="login">
+            </form>
+            <p style="text-align: center; margin-top: 15px; cursor: pointer; color: #50644c; text-decoration: underline;"
+                onclick="toggleAuthMode()">
+                <span id="auth-toggle-text">Pas encore de compte ? Créer un compte</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal d'ajout/modification d'expérience -->
+    <div id="experience-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <span class="close-modal" onclick="closeExperienceModal()">&times;</span>
+            <h2 id="experience-modal-title">Ajouter une expérience</h2>
+            <div id="experience-error-message" class="error-message" style="display: none;"></div>
+            <form id="experience-form">
+                <div class="form-group">
+                    <label>Type <span class="required-asterisk">*</span></label>
+                    <select id="exp-type" required>
+                        <option value="colo">Colonie de vacances</option>
+                        <option value="alsh">Centre de loisir</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date <span class="required-asterisk">*</span></label>
+                    <input type="month" id="exp-date-month" required>
+                    <input type="hidden" id="exp-date">
+                </div>
+                <div class="form-group">
+                    <label>Durée</label>
+                    <input type="text" id="exp-duration" placeholder="Ex: 17 jours">
+                </div>
+                <div class="form-group">
+                    <label>Organisateur <span class="required-asterisk">*</span></label>
+                    <input type="text" id="exp-organizer" placeholder="Ex: Temps-Jeunes (69)" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Organisateur</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="url" id="exp-organizer-url" placeholder="https://..." style="flex: 1;">
+                        <button type="button" onclick="autoDetectLogo()" class="submit-btn"
+                            style="width: auto; padding: 0 10px; background: #3498db; color: white;"
+                            title="Rechercher le logo automatiquement">
+                            <i class="bi bi-magic"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Logo (URL ou Base64)</label>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <!-- Suppression du préfixe assets/img/ pour permettre les URL complètes -->
+                        <input type="text" id="exp-logo-path" placeholder="URL ou Base64 détecté..." style="flex: 1;">
+                        <img id="logo-preview" src=""
+                            style="width: 30px; height: 30px; object-fit: contain; border: 1px solid #ddd; display: none;">
+                    </div>
+                    <small style="color: #666; font-size: 0.8rem;">Cliquez sur la baguette magique pour tenter de
+                        récupérer le logo depuis l'URL.</small>
+                </div>
+                <div class="form-group">
+                    <label>Lieu <span class="required-asterisk">*</span></label>
+                    <input type="text" id="exp-location" placeholder="Ex: Nice (06)" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Lieu</label>
+                    <input type="url" id="exp-location-url" placeholder="https://maps.app.goo.gl/...">
+                </div>
+                <div class="form-group">
+                    <label>Type de séjour</label>
+                    <select id="exp-stay-type">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="Pension complète">Pension complète</option>
+                        <option value="Demi-pension">Demi-pension</option>
+                        <option value="Gestion libre">Gestion libre</option>
+                        <option value="Itinérance">Itinérance</option>
+                        <option value="Camping">Camping</option>
+                        <option value="ALSH">ALSH (Centre de loisirs)</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Intitulé du poste</label>
+                    <input type="text" id="exp-position" placeholder="Ex: Directeur stagiaire">
+                </div>
+                <div class="form-group">
+                    <label>Tranche d'âge</label>
+                    <input type="text" id="exp-age-range" placeholder="Ex: 11-13 ans">
+                </div>
+                <div class="form-group">
+                    <label>Nombre de jeunes</label>
+                    <input type="number" id="exp-youth-count" placeholder="Ex: 26" min="0">
+                </div>
+                <button type="submit" class="submit-btn">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="delete-confirm-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeDeleteConfirmModal()">&times;</span>
+            <h2>Confirmer la suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button onclick="confirmDelete()" class="submit-btn"
+                    style="background: #e74c3c; flex: 1; max-width: 150px;">
+                    Supprimer
+                </button>
+                <button onclick="closeDeleteConfirmModal()" class="submit-btn"
+                    style="background: #95a5a6; flex: 1; max-width: 150px;">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'ajout/modification de formation -->
+    <div id="formation-modal" class="modal" style="display: none;">
+        <div class="modal-content large-modal">
+            <span class="close-modal" onclick="closeFormationModal()">&times;</span>
+            <h2 id="formation-modal-title">Ajouter une formation</h2>
+            <div id="formation-error-message" class="error-message" style="display: none;"></div>
+            <form id="formation-form">
+                <div class="form-group">
+                    <label>Type <span class="required-asterisk">*</span></label>
+                    <select id="form-type" required>
+                        <option value="bafa">BAFA</option>
+                        <option value="bafd">BAFD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date <span class="required-asterisk">*</span></label>
+                    <input type="month" id="form-date-month" required>
+                    <input type="hidden" id="form-date">
+                </div>
+                <div class="form-group">
+                    <label>Durée</label>
+                    <input type="text" id="form-duration" placeholder="Ex: 8 jours">
+                </div>
+                <div class="form-group">
+                    <label>Organisme <span class="required-asterisk">*</span></label>
+                    <input type="text" id="form-organism" placeholder="Ex: UFCV (93)" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Organisme</label>
+                    <input type="url" id="form-organism-url" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Chemin du logo</label>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="color: #666; font-size: 0.9rem;">assets/img/</span>
+                        <input type="text" id="form-logo-path" placeholder="ufcv.png" style="flex: 1;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Intitulé</label>
+                    <input type="text" id="form-title" placeholder="Ex: Formation générale BAFD">
+                </div>
+                <div class="form-group">
+                    <label>Lieu <span class="required-asterisk">*</span></label>
+                    <input type="text" id="form-location" placeholder="Ex: Lyon Tassin (69)" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Lieu</label>
+                    <input type="url" id="form-location-url" placeholder="https://maps.app.goo.gl/...">
+                </div>
+                <button type="submit" class="submit-btn">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (version compat pour navigateurs) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <!-- Configuration Firebase (à configurer avec vos identifiants) -->
+    <script src="assets/js/firebase-config.js"></script>
+
+    <!-- Script d'authentification Firebase -->
+    <script src="assets/js/firebase-auth.js"></script>
+
+    <!-- Script pour gérer les formulaires admin -->
+    <script src="assets/js/admin-forms.js"></script>
+
+    <!-- Script pour charger les données depuis Firebase -->
+    <script src="assets/js/firebase-data.js"></script>
+
+    <!-- Script d'import (optionnel, pour faciliter la migration) -->
+    <script src="assets/js/import-data.js"></script>
+
+    <!-- Modal de paramètres -->
+    <!-- Modal de paramètres (Standard Design) -->
+    <div id="settings-modal" class="modal" style="display: none;">
+        <div class="modal-content settings-modal-content">
+            <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
+            <h2>Paramètres du compte</h2>
+
+
+
+            <form id="settings-form" onsubmit="handleSettingsSubmit(event)">
+                <h3 class="subsettings-title">Profil</h3>
+
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" id="settings-firstname" placeholder="Prénom">
+                </div>
+
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" id="settings-lastname" placeholder="Nom">
+                </div>
+
+                <div class="form-group">
+                    <label>Lien LinkedIn</label>
+                    <input type="url" id="settings-linkedin" placeholder="https://linkedin.com/in/...">
+                </div>
+
+                <div class="form-group checkbox-row">
+                    <input type="checkbox" id="settings-public-visibility"
+                        style="transform: scale(1.5); margin-right: 10px;">
+                    <label for="settings-public-visibility">Afficher mon profil dans les résultats de recherche</label>
+                </div>
+
+                <div class="form-group checkbox-row">
+                    <input type="checkbox" id="settings-email-visibility"
+                        style="transform: scale(1.5); margin-right: 10px;">
+                    <label for="settings-email-visibility">Rendre mon adresse email visible aux visiteurs</label>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <h3 class="subsettings-title">Statistiques manuelles</h3>
+                <div class="form-row" style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Animateurs</label>
+                        <input type="number" id="settings-animators-count" placeholder="Nb" min="0">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Directeurs</label>
+                        <input type="number" id="settings-directors-count" placeholder="Nb" min="0">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Formateurs</label>
+                        <input type="number" id="settings-trainers-count" placeholder="Nb" min="0">
+                    </div>
+                </div>
+
+
+
+                <button type="submit" class="submit-btn" style="width: 100%; margin-top: 15px;">Enregistrer</button>
+
+                <!-- Feedback Messages (moved here) -->
+                <div id="settings-feedback" class="feedback-message hidden" style="margin-top: 10px;"></div>
+            </form>
+
+            <div class="settings-divider"></div>
+
+            <div class="settings-actions">
+                <h3 class="subsettings-title">Actions</h3>
+
+                <div class="action-buttons-group">
+                    <button type="button" onclick="copyProfileLink()" class="secondary-action-btn">
+                        <i class="bi bi-link-45deg"></i> <span id="share-btn-text">Copier le lien de mon profil</span>
+                    </button>
+                    <!-- Input caché pour la copie -->
+                    <input type="text" id="share-profile-link" class="visually-hidden">
+
+                    <button type="button" onclick="sendPasswordReset()" class="secondary-action-btn">
+                        <i class="bi bi-key"></i> Réinitialiser mot de passe
+                    </button>
+                </div>
+
+                <div class="data-buttons-row">
+                    <button type="button" onclick="exportData()" class="data-btn export-btn">
+                        <i class="bi bi-download"></i> Exporter
+                    </button>
+                    <button type="button" onclick="triggerImportData()" class="data-btn import-btn">
+                        <i class="bi bi-upload"></i> Importer
+                    </button>
+                    <input type="file" id="import-file-input" class="visually-hidden" accept=".json"
+                        onchange="importData(this)">
+                </div>
+            </div>
+
+            <div class="danger-section">
+                <!-- Vue par défaut -->
+                <div id="danger-initial-view">
+                    <h3 class="danger-title">Zone de danger</h3>
+                    <p class="danger-text">La suppression du compte est irréversible.</p>
+                    <button type="button" onclick="showDeleteConfirmation()" class="danger-btn">Supprimer mon
+                        compte</button>
+                </div>
+
+                <!-- Vue confirmation -->
+                <div id="danger-confirmation-view" style="display: none;">
+                    <h3 class="danger-title">Confirmation requise</h3>
+                    <p class="danger-text">Toutes vos données (expériences, formations) seront définitivement effacées.
+                    </p>
+                    <label for="delete-confirmation-input" class="danger-input-label">Pour confirmer, tapez
+                        <strong>SUPPRIMER</strong> ci-dessous :</label>
+                    <input type="text" id="delete-confirmation-input" class="danger-input" placeholder="SUPPRIMER">
+
+                    <div class="danger-actions-row">
+                        <button type="button" onclick="cancelDeleteConfirmation()"
+                            class="secondary-action-btn">Annuler</button>
+                        <button type="button" onclick="finalDeleteAccount()" class="danger-btn">Confirmer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmation d'import -->
+        <div id="import-confirmation-modal" class="modal" style="display: none; z-index: 9999;">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeImportConfirmationModal()">&times;</span>
+                <h2>Confirmation d'import</h2>
+                <p id="import-summary-text" style="text-align: center; margin: 20px 0;">
+                    <!-- Texte rempli dynamiquement -->
+                </p>
+                <div
+                    style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Ces données seront ajoutées à celles existantes.
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                    <button type="button" onclick="confirmImport()" class="submit-btn"
+                        style="flex: 1; max-width: 150px; margin: 0;">Confirmer</button>
+                    <button type="button" onclick="closeImportConfirmationModal()" class="secondary-action-btn"
+                        style="flex: 1; max-width: 150px; margin: 0; ">Annuler</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script pour les paramètres account management -->
+        <script src="assets/js/user-settings.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+
+</html>

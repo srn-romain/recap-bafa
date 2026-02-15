@@ -804,6 +804,23 @@ table tr.even {
   margin-top: 2px;
 }
 
+/* Rotation animation */
+@keyframes rotate-gear {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-on-hover:hover i {
+  display: inline-block;
+  animation: rotate-gear 2s linear infinite;
+  transform-origin: center;
+}
+
 .highlight-item strong {
   font-weight: 600;
   color: #161616;
@@ -965,8 +982,13 @@ h1+.tabs+.tabs {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-spinner p {

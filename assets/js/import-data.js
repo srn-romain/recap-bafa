@@ -35,16 +35,16 @@ function extractExperiencesFromHTML() {
     const type = row.getAttribute('data-type') || 'colo';
     const date = cells[1]?.textContent?.trim() || '';
     const duration = cells[2]?.textContent?.trim() || '';
-    
+
     // Organisateur
     const organizerLink = cells[3]?.querySelector('a');
     const organizer = organizerLink?.textContent?.trim() || '';
     const organizerUrl = organizerLink?.href || '#';
-    
+
     // Logo
     const logoImg = cells[4]?.querySelector('img');
     const logoPath = logoImg?.src || '';
-    
+
     // Lieu (peut être multiple)
     const locationCell = cells[5];
     const locationLinks = locationCell?.querySelectorAll('a') || [];
@@ -127,18 +127,18 @@ function extractFormationsFromHTML() {
     const type = row.getAttribute('data-type') || 'bafa';
     const date = cells[1]?.textContent?.trim() || '';
     const duration = cells[2]?.textContent?.trim() || '';
-    
+
     // Organisme
     const organismLink = cells[3]?.querySelector('a');
     const organism = organismLink?.textContent?.trim() || '';
     const organismUrl = organismLink?.href || '#';
-    
+
     // Logo
     const logoImg = cells[4]?.querySelector('img');
     const logoPath = logoImg?.src || '';
-    
+
     const title = cells[5]?.textContent?.trim() || '';
-    
+
     // Lieu
     const locationLink = cells[6]?.querySelector('a');
     const location = locationLink?.textContent?.trim() || '';
@@ -176,7 +176,7 @@ function extractDataFromHTML() {
 
   console.log("Données extraites :");
   console.log(JSON.stringify(data, null, 2));
-  
+
   // Copier dans le presse-papier si possible
   if (navigator.clipboard) {
     navigator.clipboard.writeText(JSON.stringify(data, null, 2))
@@ -269,20 +269,20 @@ async function importFromHTMLToFirebase() {
   // Vérifier et initialiser Firebase si nécessaire
   if (!window.firebaseInitialized || !window.firebaseDb) {
     console.log("🔄 Tentative d'initialisation de Firebase...");
-    
+
     // Vérifier si Firebase SDK est chargé
     if (typeof firebase === 'undefined') {
       console.error("❌ Firebase SDK n'est pas chargé. Vérifiez que les scripts Firebase sont présents dans le HTML.");
       return false;
     }
-    
+
     // Vérifier si la configuration existe
     const config = window.firebaseConfig || (typeof firebaseConfig !== 'undefined' ? firebaseConfig : null);
     if (!config) {
       console.error("❌ Configuration Firebase non trouvée. Vérifiez firebase-config.js");
       return false;
     }
-    
+
     try {
       // Initialiser Firebase
       if (!firebase.apps.length) {
@@ -296,19 +296,19 @@ async function importFromHTMLToFirebase() {
       return false;
     }
   }
-  
+
   console.log("📥 Extraction des données du HTML...");
   const data = extractDataFromHTML();
-  
+
   console.log("📤 Import vers Firebase...");
   const success = await importToFirebase(data);
-  
+
   if (success) {
     console.log("✅ Import terminé ! Rechargez la page.");
   } else {
     console.log("❌ Erreur lors de l'import. Vérifiez la configuration Firebase.");
   }
-  
+
   return success;
 }
 
