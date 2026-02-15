@@ -10,84 +10,7 @@
   <link rel="stylesheet" href="assets/css/navbar.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    .home-actions {
-      text-align: center;
-      margin: 40px 0;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 5px solid #f39c12;
-    }
 
-    .btn-large {
-      padding: 12px 25px;
-      font-size: 1.1rem;
-      margin: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      border: none;
-      color: white;
-      font-weight: bold;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: opacity 0.3s;
-    }
-
-    .btn-large:hover {
-      opacity: 0.9;
-    }
-
-    .btn-orange {
-      background: #f39c12;
-    }
-
-    .btn-green {
-      background: #50644c;
-    }
-
-    #hero-title {
-      font-size: 3.5rem;
-      margin-bottom: 24px;
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-top: 40px;
-    }
-
-    @media (max-width: 768px) {
-      #hero-title {
-        font-size: 2rem !important;
-        /* Beaucoup réduit pour mobile */
-        margin-top: 20px !important;
-      }
-    }
-
-    /* Features Grid Responsive */
-    #features-grid {
-      display: grid;
-      gap: 20px;
-      grid-template-columns: 1fr;
-      /* Mobile : 1 colonne */
-      margin: 40px 0;
-    }
-
-    @media (min-width: 650px) {
-      #features-grid {
-        grid-template-columns: repeat(2, 1fr);
-        /* Tablette/Petit écran : 2 colonnes (2 par ligne) */
-      }
-    }
-
-    @media (min-width: 1100px) {
-      #features-grid {
-        grid-template-columns: repeat(4, 1fr);
-        /* Grand écran : 4 colonnes (tout aligné) */
-      }
-    }
-  </style>
 </head>
 
 <body>
@@ -204,7 +127,7 @@
           </button>
         </div>
 
-        <div id="search-results" style="margin-top: 30px; min-height: 20px;"></div>
+        <div id="search-results" style="display: none; margin-top: 30px; min-height: 20px;"></div>
       </section>
 
       <br><br>
@@ -406,6 +329,7 @@
       const fnInput = document.getElementById('search-firstname');
       const lnInput = document.getElementById('search-lastname');
       const resultsDiv = document.getElementById('search-results');
+      resultsDiv.style.display = 'block';
 
       const fn = fnInput.value.trim();
       const ln = lnInput.value.trim();
@@ -471,9 +395,9 @@
             card.style = "border: 1px solid #e5e7eb; padding: 25px; border-radius: 12px; background: white; max-width: 400px; margin: 15px auto; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); text-align: center; transition: all 0.3s ease;";
 
             card.innerHTML = `
-                    <div style="background: #eff6ff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 2px solid #dbeafe;">
+                    <test style="background: #eff6ff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 2px solid #dbeafe;">
                         <i class="bi bi-person-fill" style="font-size: 1.8rem; color: #2563eb;"></i>
-                    </div>
+                    </test>
                     <h3 style="color: #1f2937; margin-bottom: 5px; font-size: 1.35rem; font-weight: 700;">${user.firstname} ${user.lastname}</h3>
                     
                     ${emailHtml}

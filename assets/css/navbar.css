@@ -146,6 +146,8 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 0.9rem;
+    /* Taille réduite pour mobile */
 }
 
 .nav-title-desktop {
