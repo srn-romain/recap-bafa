@@ -177,7 +177,6 @@ function addItineraryRow(location = '', url = '') {
   if (!tbody) return;
 
   const rowId = `itinerary-row-${Date.now()}`;
-  const rowCount = tbody.children.length;
 
   const row = document.createElement('tr');
   row.id = rowId;
@@ -195,30 +194,31 @@ function addItineraryRow(location = '', url = '') {
         style="width: 100%; padding: 6px 10px; border: 1px solid #bbf7d0; border-radius: 4px; font-size: 0.85rem; color: #166534; transition: all 0.2s;" 
         value="${url}" onfocus="this.style.borderColor='#15803d'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(21, 128, 61, 0.1)';" onblur="this.style.borderColor='#bbf7d0'; this.style.boxShadow='none';">
     </td>
-    <td style="padding: 8px; text-align: center;">
-      ${rowCount > 0 ? `
-        <button type="button" onclick="removeItineraryRow('${rowId}')" 
-          style="background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; transition: all 0.2s;"
-          onmouseover="this.style.background='#fecaca'; this.style.color='#7f1d1d'"
-          onmouseout="this.style.background='#fee2e2'; this.style.color='#991b1b'"
-          title="Supprimer">
-          <i class="bi bi-trash"></i>
-        </button>
-      ` : `
-        <span style="color: #cbd5e0; font-size: 0.8rem;" title="La première étape ne peut pas être supprimée">
-          <i class="bi bi-lock"></i>
-        </span>
-      `}
-    </td>
   `;
   tbody.appendChild(row);
+
+  updateItineraryRemoveButton();
 }
 
-// Supprimer une ligne du tableau
-function removeItineraryRow(rowId) {
-  const row = document.getElementById(rowId);
-  if (row) {
-    row.remove();
+// Supprimer la dernière ligne du tableau
+function removeLastItineraryRow() {
+  const tbody = document.getElementById('itinerary-tbody');
+  if (tbody && tbody.children.length > 0) {
+    tbody.lastElementChild.remove();
+    updateItineraryRemoveButton();
+  }
+}
+
+// Mettre à jour la visibilité du bouton "Retirer"
+function updateItineraryRemoveButton() {
+  const tbody = document.getElementById('itinerary-tbody');
+  const removeBtn = document.getElementById('remove-itinerary-btn');
+  if (tbody && removeBtn) {
+    if (tbody.children.length >= 2) {
+      removeBtn.style.display = 'flex';
+    } else {
+      removeBtn.style.display = 'none';
+    }
   }
 }
 
@@ -248,6 +248,7 @@ function clearItineraryTable() {
   if (tbody) {
     tbody.innerHTML = '';
   }
+  updateItineraryRemoveButton();
 }
 
 // Convertir un mois (YYYY-MM) en texte français
@@ -519,6 +520,119 @@ function initLogoFileUpload() {
   });
 }
 
+// Gestionnaire pour l'upload du fichier logo (Formation)
+function initFormationLogoFileUpload() {
+  const fileInput = document.getElementById('form-logo-file');
+  const logoPathInput = document.getElementById('form-logo-path');
+  const preview = document.getElementById('form-logo-preview');
+  const errorEl = document.getElementById('form-logo-error');
+
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+
+    // Réinitialiser les erreurs
+    if (errorEl) {
+      errorEl.style.display = 'none';
+      errorEl.textContent = '';
+    }
+
+    if (!file) return;
+
+    // Vérifier la taille du fichier
+    if (file.size > MAX_LOGO_SIZE_BYTES) {
+      if (errorEl) {
+        errorEl.textContent = `⚠️ L'image est trop lourde (${(file.size / 1024 / 1024).toFixed(2)} Mo). Taille maximale : ${MAX_LOGO_SIZE_MB} Mo.`;
+        errorEl.style.display = 'block';
+      }
+      fileInput.value = '';
+      return;
+    }
+
+    // Vérifier que c'est une image
+    if (!file.type.startsWith('image/')) {
+      if (errorEl) {
+        errorEl.textContent = '⚠️ Le fichier doit être une image.';
+        errorEl.style.display = 'block';
+      }
+      fileInput.value = '';
+      return;
+    }
+
+    // Convertir l'image en Base64
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const base64data = reader.result;
+      const placeholder = document.getElementById('form-logo-placeholder');
+      const removeBtn = document.getElementById('form-remove-logo');
+
+      // Mettre à jour l'input hidden
+      if (logoPathInput) {
+        logoPathInput.value = base64data;
+      }
+
+      // Afficher le preview et cacher le placeholder
+      if (preview) {
+        preview.src = base64data;
+        preview.style.display = 'block';
+      }
+      if (placeholder) {
+        placeholder.style.display = 'none';
+      }
+      if (removeBtn) {
+        removeBtn.style.display = 'inline-block';
+      }
+
+      toggleFormationLogoInfo();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Afficher/Masquer info logo formation
+function toggleFormationLogoInfo() {
+  const logoPathInput = document.getElementById('form-logo-path');
+  const preview = document.getElementById('form-logo-preview');
+  const infoSmall = document.getElementById('form-logo-auto-info-small');
+
+  const hasLogo = (logoPathInput && logoPathInput.value.trim()) ||
+    (preview && preview.style.display === 'block');
+
+  if (infoSmall) {
+    infoSmall.style.display = hasLogo ? 'none' : 'block';
+  }
+}
+
+// Supprimer logo formation
+function removeFormationLogo() {
+  const fileInput = document.getElementById('form-logo-file');
+  const logoPathInput = document.getElementById('form-logo-path');
+  const preview = document.getElementById('form-logo-preview');
+  const placeholder = document.getElementById('form-logo-placeholder');
+  const removeBtn = document.getElementById('form-remove-logo');
+  const errorEl = document.getElementById('form-logo-error');
+
+  if (fileInput) fileInput.value = '';
+  if (logoPathInput) logoPathInput.value = '';
+  if (preview) {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+  if (placeholder) {
+    placeholder.style.display = 'flex';
+  }
+  if (removeBtn) {
+    removeBtn.style.display = 'none';
+  }
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+
+  toggleFormationLogoInfo();
+}
+
 // Fonction pour afficher/masquer les messages d'info selon la présence du logo
 function toggleLogoInfoMessages() {
   const logoPathInput = document.getElementById('exp-logo-path');
@@ -538,6 +652,9 @@ function toggleLogoInfoMessages() {
     infoBox.style.display = hasLogo ? 'none' : 'block';
   }
 }
+
+// Afficher/Masquer info logo formation
+
 
 // Fonction pour supprimer le logo
 function removeLogo() {
@@ -761,8 +878,25 @@ function showEditFormationModal(data, row) {
   document.getElementById('form-organism').value = data.organism || '';
   document.getElementById('form-organism-url').value = data.organismUrl || '';
 
-  // Extraire juste le nom du fichier pour le logo
-  document.getElementById('form-logo-path').value = extractLogoFilename(data.logoPath || '');
+  // Gérer le logo
+  const logoPath = extractLogoFilename(data.logoPath || '');
+  document.getElementById('form-logo-path').value = logoPath;
+
+  const preview = document.getElementById('form-logo-preview');
+  const placeholder = document.getElementById('form-logo-placeholder');
+  const removeBtn = document.getElementById('form-remove-logo');
+
+  if (logoPath) {
+    if (preview) {
+      preview.src = data.logoPath || ''; // Utiliser path complet pour src
+      preview.style.display = 'block';
+    }
+    if (placeholder) placeholder.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'inline-block';
+  } else {
+    removeFormationLogo();
+  }
+  toggleFormationLogoInfo();
 
   document.getElementById('form-title').value = data.title || '';
   document.getElementById('form-location').value = data.location || '';
@@ -912,8 +1046,26 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('form-date').value = dateText;
 
       // Gérer le chemin du logo avec le préfixe GitHub Pages
-      const logoFilename = document.getElementById('form-logo-path').value.trim();
-      const logoPath = logoFilename ? `https://srn-romain.github.io/recap-bafa/assets/img/${logoFilename}` : '';
+      // Gérer le logo : auto-détection si vide
+      let logoPath = '';
+      const logoInputVal = document.getElementById('form-logo-path').value.trim();
+      const organismUrl = document.getElementById('form-organism-url').value.trim();
+
+      if (!logoInputVal && organismUrl) {
+        try {
+          // Auto-détection
+          const detected = await autoDetectLogoAsync(organismUrl);
+          if (detected) logoPath = detected;
+        } catch (err) {
+          console.warn('Auto-détection logo formation failed', err);
+        }
+      } else if (logoInputVal) {
+        if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
+          logoPath = logoInputVal;
+        } else {
+          logoPath = `assets/img/${logoInputVal}`;
+        }
+      }
 
       const data = {
         type: document.getElementById('form-type').value,
