@@ -437,11 +437,17 @@ async function autoDetectLogo() {
 }
 
 // Version async de autoDetectLogo pour utilisation lors de la soumission
-async function autoDetectLogoAsync(organizerUrl) {
-  const logoInput = document.getElementById('exp-logo-path');
-  const preview = document.getElementById('logo-preview');
-  const placeholder = document.getElementById('logo-placeholder');
-  const removeBtn = document.getElementById('remove-logo');
+async function autoDetectLogoAsync(organizerUrl, modalType = 'exp') {
+  const prefix = modalType === 'form' ? 'form-' : '';
+  const logoInputId = modalType === 'form' ? 'form-logo-path' : 'exp-logo-path';
+  const previewId = modalType === 'form' ? 'form-logo-preview' : 'logo-preview';
+  const placeholderId = modalType === 'form' ? 'form-logo-placeholder' : 'logo-placeholder';
+  const removeBtnId = modalType === 'form' ? 'form-remove-logo' : 'remove-logo';
+
+  const logoInput = document.getElementById(logoInputId);
+  const preview = document.getElementById(previewId);
+  const placeholder = document.getElementById(placeholderId);
+  const removeBtn = document.getElementById(removeBtnId);
 
   if (!organizerUrl) {
     throw new Error("URL de l'organisateur manquante");
@@ -473,7 +479,11 @@ async function autoDetectLogoAsync(organizerUrl) {
     if (placeholder) placeholder.style.display = 'none';
     if (removeBtn) removeBtn.style.display = 'inline-block';
 
-    toggleLogoInfoMessages();
+    if (modalType === 'form') {
+      toggleFormationLogoInfo();
+    } else {
+      toggleLogoInfoMessages();
+    }
     return base64data;
 
   } catch (e) {
@@ -746,6 +756,7 @@ function removeLogo() {
 // Initialiser le gestionnaire lors de l'ouverture de la modale
 document.addEventListener('DOMContentLoaded', function () {
   initLogoFileUpload();
+  initFormationLogoFileUpload();
 });
 
 // Afficher le modal d'édition d'expérience
@@ -993,6 +1004,10 @@ function showAddFormationModal() {
   if (customInput) { customInput.style.display = 'none'; }
 
   hideFormationError();
+  // Réinitialiser les logos
+  removeFormationLogo();
+  toggleFormationLogoInfo();
+
   currentEditingRow = null;
   currentEditingDocId = null;
   document.getElementById('formation-modal').style.display = 'flex';
@@ -1293,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!logoInputVal && organismUrl) {
         try {
           // Auto-détection
-          const detected = await autoDetectLogoAsync(organismUrl);
+          const detected = await autoDetectLogoAsync(organismUrl, 'form');
           if (detected) logoPath = detected;
         } catch (err) {
           console.warn('Auto-détection logo formation failed', err);
