@@ -371,6 +371,19 @@ function updateUI() {
     removeEditColumns();
   }
 
+  // Gérer la visibilité de la section statistiques admin
+  const adminStatsSection = document.getElementById('admin-stats-section');
+  if (adminStatsSection) {
+    if (window.userRole === 'admin') {
+      adminStatsSection.style.display = 'block';
+      if (typeof loadAdminStats === 'function') {
+        loadAdminStats();
+      }
+    } else {
+      adminStatsSection.style.display = 'none';
+    }
+  }
+
   updateSectionNumbers();
 }
 

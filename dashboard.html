@@ -88,6 +88,139 @@
             </div>
         </section>
 
+        <!-- Section Admin : Statistiques détaillées (visible uniquement pour l'admin) -->
+        <div id="admin-stats-section"
+            style="display: none; margin-top: 2rem; max-width: 1000px; margin-left: auto; margin-right: auto; background: none; box-shadow: none; padding: 0;">
+            <div
+                style="background-color: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="bi bi-shield-lock-fill"
+                        style="color: #dc2626; font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #991b1b; margin: 0;">Statistiques
+                        Administrateur</h3>
+                </div>
+
+                <!-- FILTRES ADMIN -->
+                <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <button onclick="updateAdminStatsFilter('all')" id="btnAdminFilterAll"
+                        style="padding: 0.25rem 1rem; font-size: 0.875rem; border-radius: 9999px; background-color: #dc2626; color: white; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Tout</button>
+                    <button onclick="updateAdminStatsFilter('past')" id="btnAdminFilterPast"
+                        style="padding: 0.25rem 1rem; font-size: 0.875rem; border-radius: 9999px; background-color: white; color: #dc2626; border: 1px solid #fecaca; font-weight: 500; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                        onmouseover="this.style.backgroundColor='#fef2f2'"
+                        onmouseout="this.style.backgroundColor='white'">Expériences passées</button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem;">
+                    <!-- Utilisateurs -->
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #2563eb; margin: 0;"
+                            id="adminStatTotalUsers">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Utilisateurs inscrits</p>
+                    </div>
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #059669; margin: 0;"
+                            id="adminStatActiveUsers">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Utilisateurs actifs</p>
+                    </div>
+
+                    <!-- Expériences -->
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #7c3aed; margin: 0;"
+                            id="adminStatTotalExps">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Expériences totales</p>
+                    </div>
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #d97706; margin: 0;"
+                            id="adminStatUpcomingExps">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Exps. à venir</p>
+                    </div>
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #4f46e5; margin: 0;"
+                            id="adminStatPastExps">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Exps. passées</p>
+                    </div>
+
+                    <!-- Formations -->
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #059669; margin: 0;"
+                            id="adminStatTotalForms">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Formations totales</p>
+                    </div>
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #d97706; margin: 0;"
+                            id="adminStatUpcomingForms">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Forms. à venir</p>
+                    </div>
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #4f46e5; margin: 0;"
+                            id="adminStatPastForms">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Forms. passées</p>
+                    </div>
+
+                    <!-- Jours & Orgs -->
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #dc2626; margin: 0;"
+                            id="adminStatTotalDays">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Jours cumulés</p>
+                    </div>
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #0891b2; margin: 0;"
+                            id="adminStatTotalOrgs">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Organismes</p>
+                    </div>
+
+                    <!-- Profils -->
+                    <div
+                        style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 1.5rem; font-weight: 700; color: #9ca3af; margin: 0;"
+                            id="adminStatUnlistedProfiles">0</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Profils masqués</p>
+                    </div>
+
+                    <!-- Temporel -->
+                    <div
+                        style="grid-column: 1 / -1; background: white; border-radius: 8px; padding: 0.75rem; text-align: center; border: 1px solid #fee2e2;">
+                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin: 0;"
+                            id="adminStatLastLogin">-</p>
+                        <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Dernière connexion
+                            enregistrée</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARTE ADMIN -->
+            <div
+                style="margin-top: 1.5rem; background: white; border-radius: 12px; padding: 1rem; border: 1px solid #fee2e2; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4
+                    style="font-size: 0.875rem; font-weight: 700; color: #991b1b; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="bi bi-geo-alt-fill"></i> Carte des lieux d'expériences (BAFA/BAFD)
+                </h4>
+                <p id="mapLoadingStatus"
+                    style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; font-style: italic;">
+                    Initialisation de la carte...</p>
+                <div id="adminRacesMap"
+                    style="width: 100%; height: 350px; border-radius: 8px; background-color: #f3f4f6; border: 1px solid #e5e7eb; z-index: 1;">
+                </div>
+            </div>
+
+            <!-- Leaflet CSS & JS -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+                integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        </div>
+
+
         <!-- Barre de recherche pour les expériences -->
         <p class="search-container">
             <input type="text" id="search-experiences" class="search-input"
@@ -371,7 +504,7 @@
                                                 Google Map</th>
                                             <th
                                                 style="padding: 10px; border-bottom: 2px solid #bbf7d0; text-align: center; width: 10%;">
-                                                </th>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="itinerary-tbody">
@@ -581,6 +714,9 @@
 
     <!-- Configuration Firebase (à configurer avec vos identifiants) -->
     <script src="assets/js/firebase-config.js"></script>
+
+    <!-- Script pour les statistiques administrateur -->
+    <script src="assets/js/admin-stats.js"></script>
 
     <!-- Script d'authentification Firebase -->
     <script src="assets/js/firebase-auth.js"></script>
@@ -837,6 +973,7 @@
         <script src="assets/js/user-settings.js"></script>
         <script src="assets/js/main.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </div>
 </body>
 
 </html>
