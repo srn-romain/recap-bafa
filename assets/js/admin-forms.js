@@ -188,26 +188,33 @@ function addItineraryRow(location = '', url = '') {
   row.style.borderBottom = '1px solid #bbf7d0';
 
   row.innerHTML = `
-    <td style="padding: 8px;">
+    <td style="padding: 10px;">
       <input type="text" class="itinerary-location" placeholder="Ex: Lyon" 
-        style="width: 100%; padding: 6px 10px; border: 1px solid #bbf7d0; border-radius: 4px; font-size: 0.85rem; color: #166534; transition: all 0.2s;" 
-        value="${location}" onfocus="this.style.borderColor='#15803d'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(21, 128, 61, 0.1)';" onblur="this.style.borderColor='#bbf7d0'; this.style.boxShadow='none';">
+        style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; color: #1e293b; background: #fff; transition: all 0.2s;" 
+        onfocus="this.style.borderColor='#2563eb'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(37, 99, 235, 0.1)';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
     </td>
-    <td style="padding: 8px;">
+    <td style="padding: 10px;">
       <input type="url" class="itinerary-url" placeholder="https://maps.app.goo.gl/..." 
-        style="width: 100%; padding: 6px 10px; border: 1px solid #bbf7d0; border-radius: 4px; font-size: 0.85rem; color: #166534; transition: all 0.2s;" 
-        value="${url}" onfocus="this.style.borderColor='#15803d'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(21, 128, 61, 0.1)';" onblur="this.style.borderColor='#bbf7d0'; this.style.boxShadow='none';">
+        style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; color: #1e293b; background: #fff; transition: all 0.2s;" 
+        onfocus="this.style.borderColor='#2563eb'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(37, 99, 235, 0.1)';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
     </td>
   `;
+
+  // Assigner les valeurs via JS pour éviter les problèmes d'échappement
+  const inputs = row.getElementsByTagName('input');
+  if (inputs.length >= 1) inputs[0].value = location || '';
+  if (inputs.length >= 2) inputs[1].value = url || '';
+
   tbody.appendChild(row);
 
   updateItineraryRemoveButton();
 }
 
-// Supprimer la dernière ligne du tableau
+// Supprimer la dernière ligne du tableau (sauf si c'est la seule)
 function removeLastItineraryRow() {
   const tbody = document.getElementById('itinerary-tbody');
-  if (tbody && tbody.children.length > 0) {
+  // Ne supprimer que s'il reste plus d'une ligne
+  if (tbody && tbody.children.length > 1) {
     tbody.lastElementChild.remove();
     updateItineraryRemoveButton();
   }
@@ -218,7 +225,7 @@ function updateItineraryRemoveButton() {
   const tbody = document.getElementById('itinerary-tbody');
   const removeBtn = document.getElementById('remove-itinerary-btn');
   if (tbody && removeBtn) {
-    if (tbody.children.length >= 2) {
+    if (tbody.children.length > 1) {
       removeBtn.style.display = 'flex';
     } else {
       removeBtn.style.display = 'none';
@@ -599,12 +606,16 @@ function toggleFormationLogoInfo() {
   const logoPathInput = document.getElementById('form-logo-path');
   const preview = document.getElementById('form-logo-preview');
   const infoSmall = document.getElementById('form-logo-auto-info-small');
+  const infoBox = document.getElementById('form-logo-auto-info-box');
 
   const hasLogo = (logoPathInput && logoPathInput.value.trim()) ||
     (preview && preview.style.display === 'block');
 
   if (infoSmall) {
     infoSmall.style.display = hasLogo ? 'none' : 'block';
+  }
+  if (infoBox) {
+    infoBox.style.display = hasLogo ? 'none' : 'block';
   }
 }
 
@@ -739,21 +750,22 @@ async function showEditExperienceModal(data, row) {
   // Basculer vers le bon mode (itinérance ou classique)
   toggleLocationFields();
 
-  // Données d'itinérance : supporter nouveau et ancien format
-  const itineraryData = data.locations || data.itineraryLocations || [];
+  // Données d'itinérance : utiliser uniquement 'locations'
+  const itineraryData = data.locations || [];
 
-  if (stayTypeVal === 'Itinérance' && itineraryData.length > 0) {
+  if (stayTypeVal === 'Itinérance') {
     // Mode itinérance : pré-remplir le tableau
     clearItineraryTable();
-    itineraryData.forEach(loc => {
-      // Gérer potentiellement loc.name (ancien) vs loc.location (nouveau)
-      const locationName = loc.location || loc.name || '';
-      addItineraryRow(locationName, loc.url);
-    });
-  } else if (stayTypeVal === 'Itinérance') {
-    // Si itinérance mais pas de données (cas bizarre), mettre une ligne vide
-    clearItineraryTable();
-    addItineraryRow();
+    if (itineraryData && itineraryData.length > 0) {
+      itineraryData.forEach(loc => {
+        // Supporter loc.location (nouveau) et loc.name (ancien) si transition
+        const locationName = loc.location || loc.name || '';
+        addItineraryRow(locationName, loc.url);
+      });
+    } else {
+      // Si vide, ajouter une ligne initiale
+      addItineraryRow();
+    }
   } else {
     // Mode classique : pré-remplir les champs uniques
     document.getElementById('exp-location').value = data.location || '';
@@ -948,8 +960,9 @@ document.addEventListener('DOMContentLoaded', function () {
       const stayType = document.getElementById('exp-stay-type').value || '';
 
       // Gérer les lieux selon le type de séjour
-      let location = '';
-      let locationUrl = '';
+
+      let location = null;
+      let locationUrl = null;
       let itineraryLocations = null;
 
       if (stayType === 'Itinérance') {
@@ -959,12 +972,14 @@ document.addEventListener('DOMContentLoaded', function () {
           showExperienceError('Veuillez ajouter au moins un lieu pour l\'itinérance.');
           return;
         }
-        // Créer une string combinée pour "location" (rétrocompatibilité)
-        location = itineraryLocations.map(l => l.location).join(', ');
+        // En itinérance, on vide explicitement les champs location et locationUrl
+        location = null;
+        locationUrl = null;
       } else {
         // Mode classique : un seul lieu
         location = document.getElementById('exp-location').value;
         locationUrl = document.getElementById('exp-location-url').value || '';
+        // itineraryLocations reste null
       }
 
       // Gérer le logo : si vide, tenter la détection automatique
@@ -1012,9 +1027,15 @@ document.addEventListener('DOMContentLoaded', function () {
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
       };
 
-      // Ajouter les lieux d'itinérance si nécessaire
-      if (itineraryLocations && itineraryLocations.length > 0) {
+      // Gérer le tableau locations : garder l'un ou l'autre selon le type
+      if (stayType === 'Itinérance') {
         data.locations = itineraryLocations;
+        // On force la suppression de l'ancien champ s'il existe encore
+        data.itineraryLocations = null;
+      } else {
+        data.locations = null;
+        // On force la suppression de l'ancien champ s'il existe encore
+        data.itineraryLocations = null;
       }
 
       try {

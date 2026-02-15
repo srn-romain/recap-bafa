@@ -1,0 +1,21 @@
+/* Liens de localisation dans les tableaux */
+.location-link {
+    color: #2563eb !important;
+    /* Bleu lien standard, force l'override si nécessaire */
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.location-link:hover {
+    color: #f39c12 !important;
+    /* Orange au survol */
+    text-decoration: none;
+}
+
+.location-link-disabled {
+    color: #333 !important;
+    cursor: default !important;
+    pointer-events: none;
+    text-decoration: none;
+}

@@ -563,22 +563,34 @@ async function confirmDelete() {
 
 // Éditer une expérience
 function editExperience(row) {
-  // Récupérer les données de la ligne
-  const cells = row.cells;
-  const data = {
-    date: cells[1]?.textContent?.trim() || '',
-    duration: cells[2]?.textContent?.trim() || '',
-    organizer: cells[3]?.querySelector('a')?.textContent?.trim() || '',
-    organizerUrl: cells[3]?.querySelector('a')?.href || '',
-    logoPath: cells[4]?.querySelector('img')?.src || '',
-    location: cells[5]?.textContent?.trim() || '',
-    locationUrl: cells[5]?.querySelector('a')?.href || '',
-    stayType: cells[6]?.textContent?.trim() || '',
-    position: cells[7]?.textContent?.trim() || '',
-    ageRange: cells[8]?.textContent?.trim() || '',
-    youthCount: parseInt(cells[9]?.textContent?.trim() || '0', 10),
-    type: row.getAttribute('data-type') || 'colo'
-  };
+  let data = {};
+
+  if (row.dataset.experience) {
+    try {
+      data = JSON.parse(row.dataset.experience);
+    } catch (e) {
+      console.error('Erreur parsing data-experience', e);
+    }
+  }
+
+  // Fallback si pas de dataset (ex: données statiques ou erreur)
+  if (!data.date) {
+    const cells = row.cells;
+    data = {
+      date: cells[1]?.textContent?.trim() || '',
+      duration: cells[2]?.textContent?.trim() || '',
+      organizer: cells[3]?.querySelector('a')?.textContent?.trim() || '',
+      organizerUrl: cells[3]?.querySelector('a')?.href || '',
+      logoPath: cells[4]?.querySelector('img')?.src || '',
+      location: cells[5]?.textContent?.trim() || '',
+      locationUrl: cells[5]?.querySelector('a')?.href || '',
+      stayType: cells[6]?.textContent?.trim() || '',
+      position: cells[7]?.textContent?.trim() || '',
+      ageRange: cells[8]?.textContent?.trim() || '',
+      youthCount: parseInt(cells[9]?.textContent?.trim() || '0', 10),
+      type: row.getAttribute('data-type') || 'colo'
+    };
+  }
 
   if (typeof showEditExperienceModal === 'function') {
     showEditExperienceModal(data, row);

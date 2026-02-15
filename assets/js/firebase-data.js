@@ -7,6 +7,9 @@
 function createExperienceRow(experience) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-type', experience.type);
+  // Stocker l'objet complet pour une récupération facile lors de l'édition
+  tr.dataset.experience = JSON.stringify(experience);
+  tr.classList.add('experience-row');
 
   // Colonne N°
   const tdNum = document.createElement('td');
@@ -271,6 +274,7 @@ async function loadExperiencesFromFirebase() {
     snapshot.forEach(doc => {
       const data = doc.data();
       experiences.push({
+        id: doc.id,
         type: data.type || 'colo',
         date: data.date || '',
         duration: data.duration || '',
