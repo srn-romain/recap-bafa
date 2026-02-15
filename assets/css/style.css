@@ -645,7 +645,7 @@ table tr.even {
   }
 }
 
-@media (max-width: 1040px) {
+@media (max-width: 768px) {
   .tabs {
     flex-direction: column;
     align-items: center;
@@ -1740,4 +1740,35 @@ th.sortable:hover .sort-indicator.sort-neutral {
     grid-template-columns: repeat(4, 1fr);
     /* Grand écran : 4 colonnes (tout aligné) */
   }
+}
+
+/* Styles pour les astuces repliées (discrétion) */
+.info-box.tips-collapsed {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding-bottom: 0;
+  color: #999;
+  transition: all 0.3s ease;
+}
+
+.info-box.tips-collapsed #tips-header {
+  color: #888;
+  font-size: 0.9em;
+  opacity: 0.7;
+  justify-content: center;
+  /* Centrer quand replié */
+}
+
+.info-box.tips-collapsed #tips-header:hover {
+  opacity: 1;
+}
+
+.info-box.tips-collapsed #tips-header b {
+  font-weight: normal;
+}
+
+.info-box.tips-collapsed:hover {
+  background: #f9f9f9;
+  border-color: #eee;
 }

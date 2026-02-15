@@ -39,20 +39,28 @@
             </p>
 
             <div class="info-box">
-                <i>
-                    <b>🔍 Astuces :</b>
-                    <ul>
-                        <li>-Utiliser le <orange>sommaire</orange> en haut de la page pour naviguer rapidement entre les
-                            différentes sections.</li>
-                        <li>-Utilisez la <orange>barre de recherche</orange> au-dessus des tableaux pour trouver
-                            rapidement une information (lieu, date, âge...).</li>
-                        <li>-Trier mes expériences/formations grâce aux <orange>filtres</orange> (les boutons verts) en
-                            haut de chaque tableau pour afficher un type spécifique.</li>
-                        <li>-Cliquez sur les <orange>en-têtes des colonnes</orange> pour trier le tableau.</li>
-                        <li>-Consulter la section <orange>statistiques</orange> pour avoir une vue d'ensemble de mon
-                            parcours d'animateur.</li>
-                    </ul>
-                </i>
+                <test id="tips-header" style="cursor: pointer; display: flex; align-items: center; gap: 10px;"
+                    onclick="toggleTips()">
+                    <b>🔍 Astuces</b>
+                    <i id="tips-icon" class="bi bi-chevron-down"></i>
+                </test>
+                <test id="tips-content" style="display: block; margin-top: 10px;">
+                    <i>
+                        <ul>
+                            <li>-Utiliser le <orange>sommaire</orange> en haut de la page pour naviguer rapidement entre
+                                les
+                                différentes sections.</li>
+                            <li>-Utilisez la <orange>barre de recherche</orange> au-dessus des tableaux pour trouver
+                                rapidement une information (lieu, date, âge...).</li>
+                            <li>-Trier mes expériences/formations grâce aux <orange>filtres</orange> (les boutons verts)
+                                en
+                                haut de chaque tableau pour afficher un type spécifique.</li>
+                            <li>-Cliquez sur les <orange>en-têtes des colonnes</orange> pour trier le tableau.</li>
+                            <li>-Consulter la section <orange>statistiques</orange> pour avoir une vue d'ensemble de mon
+                                parcours d'animateur.</li>
+                        </ul>
+                    </i>
+                </test>
             </div>
 
             <!-- Phrase de contact par email (Dynamique) -->
@@ -646,7 +654,7 @@
                             <option value="Appro BAFA : Activités physiques et sportives">Approfondissement
                                 BAFA : Activités physiques et sportives</option>
                             <option value="Appro BAFA : Activités scientifiques et techniques">
-Approfondissement BAFA : Activités scientifiques et techniques</option>
+                                Approfondissement BAFA : Activités scientifiques et techniques</option>
                             <option value="Appro BAFA : Ados & préados">Approfondissement BAFA : Ados & préados</option>
                             <option value="Appro BAFA : Animer à la mer">Approfondissement BAFA : Animer à la mer
                             </option>

@@ -297,6 +297,27 @@ function updateUI() {
     logoutButtonTop.style.display = isLoggedIn ? 'block' : 'none';
   }
 
+  // Gérer automatiquement le dépliage/pliage des astuces selon qu'on est propriétaire ou non
+  const tipsContent = document.getElementById('tips-content');
+  const tipsIcon = document.getElementById('tips-icon');
+  const tipsContainer = tipsContent ? tipsContent.closest('.info-box') : null;
+
+  if (tipsContent && tipsIcon) {
+    if (isOwner) {
+      // Pour le propriétaire : replié par défaut pour être discret
+      tipsContent.style.display = 'none';
+      tipsIcon.classList.remove('bi-chevron-down');
+      tipsIcon.classList.add('bi-chevron-right');
+      if (tipsContainer) tipsContainer.classList.add('tips-collapsed');
+    } else {
+      // Pour les visiteurs : déplié par défaut pour aider
+      tipsContent.style.display = 'block';
+      tipsIcon.classList.remove('bi-chevron-right');
+      tipsIcon.classList.add('bi-chevron-down');
+      if (tipsContainer) tipsContainer.classList.remove('tips-collapsed');
+    }
+  }
+
   // Gérer la visibilité du bouton Paramètres (nouvel engrenage)
   const settingsBtn = document.getElementById('settings-btn');
   if (settingsBtn) {
@@ -645,4 +666,25 @@ if (window.firebaseInitialized) {
     }
   }, 100);
 }
+
+// Fonction pour plier/déplier la section Astuces
+window.toggleTips = function () {
+  const content = document.getElementById('tips-content');
+  const icon = document.getElementById('tips-icon');
+  const container = content ? content.closest('.info-box') : null;
+
+  if (content && icon) {
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      icon.classList.remove('bi-chevron-right');
+      icon.classList.add('bi-chevron-down');
+      if (container) container.classList.remove('tips-collapsed');
+    } else {
+      content.style.display = 'none';
+      icon.classList.remove('bi-chevron-down');
+      icon.classList.add('bi-chevron-right');
+      if (container) container.classList.add('tips-collapsed');
+    }
+  }
+};
 
