@@ -1327,9 +1327,9 @@ document.addEventListener('DOMContentLoaded', function () {
             showExperienceError("L'âge minimum ne peut pas être supérieur à l'âge maximum.");
             return;
           }
-          ageRangeString = `${ageMin} - ${ageMax} ans`;
+          ageRangeString = `${ageMin}-${ageMax}ans`;
         } else {
-          ageRangeString = `${ageMin} ans`;
+          ageRangeString = `${ageMin}ans`;
         }
       }
 
