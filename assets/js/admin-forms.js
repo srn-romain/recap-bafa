@@ -134,6 +134,12 @@ async function showAddExperienceModal() {
       const dateText = monthToFrenchText(this.value);
       document.getElementById('exp-date').value = dateText;
     });
+    // Ouvrir le calendrier au clic sur le champ entier
+    monthInput.addEventListener('click', function () {
+      if ('showPicker' in this) {
+        this.showPicker();
+      }
+    });
   }
 
   // Écouter les changements du type de séjour
@@ -916,6 +922,12 @@ function showAddFormationModal() {
     monthInput.addEventListener('change', function () {
       const dateText = monthToFrenchText(this.value);
       document.getElementById('form-date').value = dateText;
+    });
+    // Ouvrir le calendrier au clic sur le champ entier
+    monthInput.addEventListener('click', function () {
+      if ('showPicker' in this) {
+        this.showPicker();
+      }
     });
   }
 }
