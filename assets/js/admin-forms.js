@@ -1003,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Ajouter les lieux d'itinérance si nécessaire
       if (itineraryLocations && itineraryLocations.length > 0) {
-        data.itineraryLocations = itineraryLocations;
+        data.locations = itineraryLocations;
       }
 
       try {

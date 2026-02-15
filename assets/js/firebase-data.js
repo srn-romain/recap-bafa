@@ -49,12 +49,29 @@ function createExperienceRow(experience) {
   const tdLocation = document.createElement('td');
   if (Array.isArray(experience.locations)) {
     // Plusieurs lieux (itinérance)
+    const isLoggedIn = window.currentUser !== null && window.userRole !== null;
+
     experience.locations.forEach((loc, index) => {
       const locLink = document.createElement('a');
-      locLink.href = loc.url;
-      locLink.target = '_blank';
-      locLink.textContent = loc.name;
+
+      if (isLoggedIn && loc.url && loc.url !== '#') {
+        locLink.href = loc.url;
+        locLink.target = '_blank';
+        locLink.style.color = '#2563eb'; // Bleu lien standard
+      } else {
+        locLink.href = '#';
+        locLink.style.pointerEvents = 'none';
+        locLink.style.cursor = 'default';
+        locLink.style.color = '#333';
+        locLink.style.textDecoration = 'none';
+        if (loc.url && loc.url !== '#') {
+          locLink.title = 'Connectez-vous pour voir sur Google Maps';
+        }
+      }
+
+      locLink.textContent = loc.location || loc.name || 'Lieu inconnu';
       tdLocation.appendChild(locLink);
+
       if (index < experience.locations.length - 1) {
         tdLocation.appendChild(document.createTextNode(', '));
       }
@@ -269,7 +286,7 @@ async function loadExperiencesFromFirebase() {
         logoPath: data.logoPath || '',
         location: data.location || '',
         locationUrl: data.locationUrl || '#',
-        locations: data.locations || null,
+        locations: data.locations || data.itineraryLocations || null,
         country: data.country || null,
         stayType: data.stayType || '',
         position: data.position || '',
