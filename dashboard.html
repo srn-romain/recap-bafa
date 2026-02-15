@@ -400,6 +400,7 @@
                         <option value="Péri-scolaire">Péri-scolaire</option>
                         <option value="SNU">SNU (Service National Universel)</option>
                         <option value="Classe découverte">Classe découverte</option>
+                        <option value="Scout">Scout</option>
                         <option value="Autre">Autre</option>
                     </select>
                 </div>
@@ -631,7 +632,73 @@
                 </div>
                 <div class="form-group">
                     <label>Intitulé</label>
-                    <input type="text" id="form-title" placeholder="Ex: Formation générale BAFD">
+                    <select id="form-title" onchange="toggleFormTitleCustom()">
+                        <option value="">-- Sélectionner une formation --</option>
+
+                        <optgroup label="BAFA">
+                            <option value="Formation Générale BAFA">Formation Générale BAFA</option>
+                        </optgroup>
+
+                        <optgroup label="Approfondissement / Qualification BAFA">
+                            <option value="Appro BAFA : 6-12 ans">Appro BAFA : 6-12 ans</option>
+                            <option value="Appro BAFA : Accueil de loisirs">Approfondissement BAFA : Accueil
+                                de loisirs</option>
+                            <option value="Appro BAFA : Activités physiques et sportives">Approfondissement
+                                BAFA : Activités physiques et sportives</option>
+                            <option value="Appro BAFA : Activités scientifiques et techniques">
+Approfondissement BAFA : Activités scientifiques et techniques</option>
+                            <option value="Appro BAFA : Ados & préados">Approfondissement BAFA : Ados & préados</option>
+                            <option value="Appro BAFA : Animer à la mer">Approfondissement BAFA : Animer à la mer
+                            </option>
+                            <option value="Appro BAFA : Animer à la montagne">Approfondissement BAFA : Animer à la
+                                montagne</option>
+                            <option value="Appro BAFA : Animer en ville">Approfondissement BAFA : Animer en ville
+                            </option>
+                            <option value="Appro BAFA : Grands jeux & animation">Approfondissement BAFA : Grands jeux &
+                                animation</option>
+                            <option value="Appro BAFA : Jeux de plein air">Approfondissement BAFA : Jeux de
+                                plein air</option>
+                            <option value="Appro BAFA : Petite enfance">Approfondissement BAFA : Petite
+                                enfance</option>
+                            <option value="Appro BAFA : Publics en situation de handicap">Approfondissement
+                                BAFA : Publics en situation de handicap</option>
+                            <option value="Appro BAFA : Séjour à l'étranger">Approfondissement BAFA : Séjour
+                                à l'étranger</option>
+                            <option value="Appro BAFA : Séjour et environnement">Approfondissement BAFA :
+                                Séjour et environnement</option>
+                            <option value="Appro BAFA : Ski & Glisse">Approfondissement BAFA : Ski & Glisse</option>
+                            <option value="Appro BAFA : Spectacle et expression">Approfondissement BAFA :
+                                Spectacle et expression</option>
+                            <option value="Qualification BAFA : Canoë-Kayak">Qualification BAFA : Canoë-Kayak</option>
+                            <option value="Qualification BAFA : Surveillant de Baignade">Qualification BAFA :
+                                Surveillant de Baignade</option>
+                            <option value="Qualification BAFA : Surveillant de Baignade (Renouvellement)">Qualification
+                                BAFA : Surveillant de Baignade (Renouvellement)</option>
+                        </optgroup>
+
+                        <optgroup label="BAFD">
+                            <option value="Formation Générale BAFD">Formation Générale BAFD</option>
+                            <option value="Perfectionnement BAFD">Perfectionnement BAFD</option>
+                        </optgroup>
+
+                        <optgroup label="Formateur">
+                            <option value="Formation de formateur BAFA">Formation de Formateur BAFA</option>
+                            <option value="Formation de formateur BAFD">Formation de Formateur BAFD</option>
+                        </optgroup>
+
+                        <optgroup label="Secourisme & Aquatique">
+                            <option value="Brevet de Surveillance de Baignade">Brevet de Surveillance de Baignade
+                                (BSB)</option>
+                            <option value="PSC1">Prévention et Secours Civiques de niveau 1 (PSC1)</option>
+                            <option value="PSE2">Premiers Secours en Equipe de niveau 1 (PSE1)</option>
+                            <option value="PSE2">Premiers Secours en Equipe de niveau 2 (PSE2)</option>
+                            <option value="Formation SNU tuteur de maisonnée">Formation SNU tuteur de maisonnée</option>
+                        </optgroup>
+
+                        <option value="Autre">Autre (préciser)</option>
+                    </select>
+                    <input type="text" id="form-title-custom" placeholder="Précisez l'intitulé"
+                        style="display: none; margin-top: 10px;">
                 </div>
                 <div class="form-group">
                     <label>Lieu <span class="required-asterisk">*</span></label>

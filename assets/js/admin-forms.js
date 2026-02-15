@@ -907,10 +907,29 @@ function hideFormationError() {
   }
 }
 
+window.toggleFormTitleCustom = function () {
+  const select = document.getElementById('form-title');
+  const customInput = document.getElementById('form-title-custom');
+  if (select && customInput) {
+    if (select.value === 'Autre') {
+      customInput.style.display = 'block';
+      customInput.required = true;
+    } else {
+      customInput.style.display = 'none';
+      customInput.required = false;
+      // Ne pas vider la valeur si on bascule juste pour voir, mais bon UX standard : vider
+      // customInput.value = ''; 
+    }
+  }
+};
+
 // Afficher le modal d'ajout de formation
 function showAddFormationModal() {
   document.getElementById('formation-modal-title').textContent = 'Ajouter une formation';
   document.getElementById('formation-form').reset();
+  const customInput = document.getElementById('form-title-custom');
+  if (customInput) { customInput.style.display = 'none'; }
+
   hideFormationError();
   currentEditingRow = null;
   currentEditingDocId = null;
@@ -979,7 +998,36 @@ function showEditFormationModal(data, row) {
   }
   toggleFormationLogoInfo();
 
-  document.getElementById('form-title').value = data.title || '';
+  // Gérer l'intitulé (Select ou Custom)
+  const currentTitle = data.title || '';
+  const titleSelect = document.getElementById('form-title');
+  const customTitleInput = document.getElementById('form-title-custom');
+
+  // Vérifier si le titre existe dans les options
+  let optionExists = false;
+  if (titleSelect) {
+    for (let i = 0; i < titleSelect.options.length; i++) {
+      if (titleSelect.options[i].value === currentTitle) {
+        optionExists = true;
+        break;
+      }
+    }
+
+    if (optionExists) {
+      titleSelect.value = currentTitle;
+      if (customTitleInput) {
+        customTitleInput.value = '';
+        customTitleInput.style.display = 'none';
+      }
+    } else {
+      // Si n'existe pas, mettre "Autre" et remplir le champ custom
+      titleSelect.value = 'Autre';
+      if (customTitleInput) {
+        customTitleInput.value = currentTitle;
+        customTitleInput.style.display = 'block';
+      }
+    }
+  }
   const rawLocation = data.location || '';
   const locationMatch = rawLocation.match(/^(.*?)\s*\(([^)]+)\)$/);
   if (locationMatch) {
@@ -1201,7 +1249,10 @@ document.addEventListener('DOMContentLoaded', function () {
         })(),
         organismUrl: document.getElementById('form-organism-url').value || '',
         logoPath: logoPath,
-        title: document.getElementById('form-title').value || '',
+        title: (() => {
+          const selectVal = document.getElementById('form-title').value;
+          return selectVal === 'Autre' ? (document.getElementById('form-title-custom').value || '') : selectVal;
+        })(),
         location: (() => {
           const loc = document.getElementById('form-location').value.trim();
           const dept = document.getElementById('form-location-dept').value.trim();
