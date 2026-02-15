@@ -44,16 +44,20 @@ async function updatePositionLabels() {
   if (!positionSelect) return;
 
   // Charger le genre de l'utilisateur
-  let gender = '';
-  try {
-    if (window.currentUser && window.firebaseDb) {
-      const doc = await window.firebaseDb.collection('users').doc(window.currentUser.uid).get();
-      if (doc.exists) {
-        gender = doc.data().gender || '';
+  let gender = window.userGender || ''; // Utiliser le cache global si dispo
+
+  if (!gender) {
+    try {
+      if (window.currentUser && window.firebaseDb) {
+        const doc = await window.firebaseDb.collection('users').doc(window.currentUser.uid).get();
+        if (doc.exists) {
+          gender = doc.data().gender || '';
+          window.userGender = gender; // Mettre à jour le cache
+        }
       }
+    } catch (e) {
+      console.warn('Impossible de charger le genre:', e);
     }
-  } catch (e) {
-    console.warn('Impossible de charger le genre:', e);
   }
 
   // Définir les labels en fonction du genre
@@ -92,10 +96,11 @@ async function updatePositionLabels() {
   ];
 
   positions.forEach((pos, index) => {
-    const val = isFeminin ? pos.f : pos.m;
+    // Enregistrement TOUJOURS au masculin (pos.m)
+    // Affichage au masculin ou féminin selon le genre (text)
     if (options[index + 1]) {
-      options[index + 1].text = val;
-      options[index + 1].value = val;
+      options[index + 1].value = pos.m;
+      options[index + 1].text = isFeminin ? pos.f : pos.m;
     }
   });
 }

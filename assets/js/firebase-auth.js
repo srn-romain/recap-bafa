@@ -21,9 +21,16 @@ function initAuth() {
         lastLogin: new Date()
       }).catch(err => console.error("Erreur update lastLogin", err));
 
-      // Récupérer le rôle de l'utilisateur depuis Firestore (par UID)
+      // Récupérer le rôle et le genre de l'utilisateur depuis Firestore
       await getUserRole(user);
+
+      // Mettre à jour l'UI
       updateUI();
+
+      // Recharger les données pour appliquer les paramètres utilisateur (genre, liens...)
+      if (typeof loadDataFromFirebase === 'function') {
+        loadDataFromFirebase();
+      }
     } else {
       window.currentUser = null;
       window.userRole = null;
@@ -48,14 +55,17 @@ async function getUserRole(user) {
     if (userDoc.exists) {
       const data = userDoc.data();
       window.userRole = data.role || null;
-      console.log('Rôle récupéré:', window.userRole, 'pour UID:', user.uid);
+      window.userGender = data.gender || null; // Stocker le genre pour l'affichage
+      console.log('Rôle récupéré:', window.userRole, 'Genre:', window.userGender, 'pour UID:', user.uid);
     } else {
       window.userRole = null;
+      window.userGender = null;
       console.log('Aucun document trouvé pour UID:', user.uid);
     }
   } catch (error) {
     console.error("Erreur lors de la récupération du rôle:", error);
     window.userRole = null;
+    window.userGender = null;
   }
 }
 

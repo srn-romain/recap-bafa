@@ -168,6 +168,9 @@ async function openSettingsModal() {
     }
 
     const modal = document.getElementById('settings-modal');
+    // Réinitialiser le flag de changements
+    settingsChangesSaved = false;
+
     // Reset feedback
     const feedbackEl = document.getElementById(SETTINGS_FEEDBACK_ID);
     if (feedbackEl) feedbackEl.style.display = 'none';
@@ -235,6 +238,8 @@ async function openSettingsModal() {
 /**
  * Ferme la modale de paramètres avec vérification
  */
+let settingsChangesSaved = false;
+
 function closeSettingsModal() {
     if (hasUnsavedChanges()) {
         // Afficher la modale de confirmation personnalisée
@@ -248,6 +253,10 @@ function closeSettingsModal() {
     const modal = document.getElementById('settings-modal');
     if (modal) {
         modal.style.display = 'none';
+        // Si des changements importants ont été sauvegardés, on recharge
+        if (settingsChangesSaved) {
+            window.location.reload();
+        }
     }
 }
 
@@ -311,7 +320,6 @@ async function handleSettingsSubmit(event) {
             firstname: firstname,
             lastname: lastname,
             gender: gender,
-            displayName: `${firstname} ${lastname}`,
             linkedin: linkedin,
             publiclyVisible: publiclyVisible,
             emailVisible: emailVisible,
@@ -322,20 +330,16 @@ async function handleSettingsSubmit(event) {
             }
         });
 
+        // Mettre à jour le cache local immédiatement
+        window.userGender = gender;
+
         // Mettre à jour l'état initial pour éviter le warning si on ferme après save
         settingsInitialState = getSettingsState();
 
-        // Mettre à jour l'UI locale
-        if (typeof loadUserProfile === 'function') {
-            loadUserProfile(); // Recharger le titre
-        }
-
-        // Mettre à jour les labels des postes si la fonction existe
-        if (typeof updatePositionLabels === 'function') {
-            updatePositionLabels();
-        }
-
         showSettingsFeedback('success', "Profil mis à jour avec succès !");
+
+        // Marquer que des changements ont été sauvegardés pour recharger à la fermeture
+        settingsChangesSaved = true;
 
     } catch (error) {
         console.error("Erreur mise à jour profil", error);

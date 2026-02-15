@@ -4,6 +4,38 @@
 /**
  * Structure des données d'expérience
  */
+/**
+ * Structure des données d'expérience
+ */
+
+// Map des genres pour l'affichage (synchronisé avec admin-forms.js)
+const GENDER_MAP = [
+  { m: 'Animateur Stagiaire', f: 'Animatrice Stagiaire' },
+  { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)' },
+  { m: 'Animateur Ski', f: 'Animatrice Ski' },
+  { m: 'Animateur Snow', f: 'Animatrice Snow' },
+  { m: 'Animateur SB', f: 'Animatrice SB' },
+  { m: 'Animateur AS', f: 'Animatrice AS' },
+  { m: 'Animateur Référent Handicap', f: 'Animatrice Référente Handicap' },
+  { m: 'Responsable de Groupe', f: 'Responsable de Groupe' },
+  { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)' },
+  { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)' },
+  { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)' },
+  { m: 'Cuisinier', f: 'Cuisinière' },
+  { m: 'Directeur', f: 'Directrice' },
+  { m: 'Directeur Stagiaire', f: 'Directrice Stagiaire' },
+  { m: 'Directeur AS', f: 'Directrice AS' },
+  { m: 'Directeur SB', f: 'Directrice SB' },
+  { m: 'Directeur de Formation', f: 'Directrice de Formation' },
+  { m: 'Directeur de Structure', f: 'Directrice de Structure' },
+  { m: 'Directeur Adjoint', f: 'Directrice Adjointe' },
+  { m: 'Directeur Adjoint & SB', f: 'Directrice Adjointe & SB' },
+  { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
+  { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
+  { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
+  { m: 'Autre', f: 'Autre' }
+];
+
 function createExperienceRow(experience) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-type', experience.type);
@@ -108,7 +140,16 @@ function createExperienceRow(experience) {
 
   // Colonne Intitulé du poste
   const tdPosition = document.createElement('td');
-  tdPosition.textContent = experience.position;
+  let positionText = experience.position;
+
+  // Féminisation si nécessaire
+  if (window.userGender === 'feminin' && experience.position) {
+    const rawPos = experience.position.trim();
+    const mapped = GENDER_MAP.find(p => p.m === rawPos);
+    if (mapped) positionText = mapped.f;
+  }
+
+  tdPosition.textContent = positionText;
   tr.appendChild(tdPosition);
 
   // Colonne Tranche d'âge
@@ -279,12 +320,12 @@ async function loadExperiencesFromFirebase() {
         date: data.date || '',
         duration: data.duration || '',
         organizer: data.organizer || '',
-        organizerUrl: data.organizerUrl || '#',
+        organizerUrl: data.organizerUrl || '',
         logoPath: data.logoPath || '',
         location: data.location || '',
-        locationUrl: data.locationUrl || '#',
-        locations: data.locations || data.itineraryLocations || null,
-        country: data.country || null,
+        locationUrl: data.locationUrl || '',
+        locations: data.locations || null,
+        country: data.country || '',
         stayType: data.stayType || '',
         position: data.position || '',
         ageRange: data.ageRange || '',
