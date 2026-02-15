@@ -726,13 +726,29 @@ async function loadUserProfile() {
 
       // Mettre à jour les statistiques manuelles
       if (data.stats) {
-        const animEl = document.getElementById('stat-animators-count');
-        const dirEl = document.getElementById('stat-directors-count');
-        const trainEl = document.getElementById('stat-trainers-count');
+        const animators = data.stats.animators || 0;
+        const directors = data.stats.directors || 0;
+        const trainers = data.stats.trainers || 0;
 
-        if (animEl) animEl.textContent = data.stats.animators !== undefined ? data.stats.animators : 0;
-        if (dirEl) dirEl.textContent = data.stats.directors !== undefined ? data.stats.directors : 0;
-        if (trainEl) trainEl.textContent = data.stats.trainers !== undefined ? data.stats.trainers : 0;
+        const parts = [];
+        if (animators > 0) parts.push(`<span class="stat-value">${animators}</span> animateur${animators > 1 ? 's' : ''}`);
+        if (directors > 0) parts.push(`<span class="stat-value">${directors}</span> directeur${directors > 1 ? 's' : ''}`);
+        if (trainers > 0) parts.push(`<span class="stat-value">${trainers}</span> formateur${trainers > 1 ? 's' : ''}`);
+
+        const sentenceEl = document.getElementById('stat-colleagues-sentence');
+        if (sentenceEl && parts.length > 0) {
+          let sentence = "J'ai travaillé avec ";
+          if (parts.length === 1) {
+            sentence += parts[0];
+          } else if (parts.length > 0) {
+            const last = parts.pop();
+            sentence += parts.join(', ') + ' et ' + last;
+          }
+          sentenceEl.innerHTML = sentence;
+          sentenceEl.style.display = 'block';
+        } else if (sentenceEl) {
+          sentenceEl.style.display = 'none';
+        }
       }
     }
   } catch (e) {
