@@ -57,24 +57,24 @@ document.addEventListener("DOMContentLoaded", function () {
             <form id="login-form" onsubmit="handleLogin(event)">
                 <div id="register-fields" style="display: none;">
                     <div class="form-group">
-                        <label>Prénom *</label>
+                        <label>Prénom <span class="required-asterisk">*</span></label>
                         <input type="text" id="auth-firstname" placeholder="Ex: Jean">
                     </div>
                     <div class="form-group">
-                        <label>Nom *</label>
+                        <label>Nom <span class="required-asterisk">*</span></label>
                         <input type="text" id="auth-lastname" placeholder="Ex: Dupont">
                     </div>
                     <div class="form-group">
-                        <label>Lien LinkedIn (facultatif)</label>
+                        <label>Lien LinkedIn</label>
                         <input type="url" id="auth-linkedin" placeholder="https://www.linkedin.com/in/...">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Email *</label>
+                    <label>Email <span class="required-asterisk">*</span></label>
                     <input type="email" id="login-email" placeholder="votre@email.com" required>
                 </div>
                 <div class="form-group">
-                    <label>Mot de passe *</label>
+                    <label>Mot de passe <span class="required-asterisk">*</span></label>
                     <div class="password-input-wrapper">
                         <input type="password" id="login-password" placeholder="Votre mot de passe" required>
                         <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">

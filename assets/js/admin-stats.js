@@ -31,7 +31,7 @@ async function loadAdminStats() {
         // 3. Afficher les statistiques par défaut (Filtre "Tout")
         updateAdminStatsDisplay('all');
 
-        // 4. Initialiser la carte
+        // 4. Initialiser la carte (non-bloquant)
         initAdminMap();
 
     } catch (error) {
@@ -224,7 +224,72 @@ function updateFilterButtons(activeMode) {
 /**
  * Initialise la carte Leaflet
  */
-function initAdminMap() {
+/**
+ * Helper pour attendre (ms)
+ */
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+/**
+ * Résout un lien court Google Maps via un proxy CORS pour en extraire les coordonnées
+ */
+async function resolveShortUrl(url) {
+    try {
+        // Validation basique
+        if (!url || (!url.includes('maps.app.goo.gl') && !url.includes('goo.gl/maps'))) return null;
+
+        // Utilisation du proxy AllOrigins (gratuit et efficace)
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        const html = data.contents;
+
+        // Dans le HTML de Google Maps, l'URL finale est souvent dans les meta tags (og:url)
+        const match = html.match(/property="og:url" content="([^"]+)"/) ||
+            html.match(/href="([^"]+google\.com\/maps\/[^"]+)"/) ||
+            html.match(/url=([^"]+)/);
+
+        if (match && match[1]) {
+            const finalUrl = decodeURIComponent(match[1]);
+            return extractCoordsFromUrl(finalUrl);
+        }
+    } catch (e) {
+        console.warn("Échec de résolution du lien court:", url, e);
+    }
+    return null;
+}
+
+/**
+ * Géo-codage de secours via Nominatim (OpenStreetMap)
+ */
+async function geocodeLocation(locationName) {
+    if (!locationName || locationName.length < 3) return null;
+
+    // Cache local session
+    if (!window._geoCache) window._geoCache = {};
+    if (window._geoCache[locationName]) return window._geoCache[locationName];
+
+    try {
+        // On ajoute "France" pour limiter les erreurs si non précisé
+        let query = locationName;
+        if (!query.toLowerCase().includes('france') && !query.includes('(')) {
+            query += " France";
+        }
+
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+        const results = await resp.json();
+
+        if (results && results.length > 0) {
+            const coords = { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+            window._geoCache[locationName] = coords;
+            return coords;
+        }
+    } catch (e) {
+        console.warn("Échec géo-codage:", locationName, e);
+    }
+    return null;
+}
+
+async function initAdminMap() {
     const mapContainer = document.getElementById('adminRacesMap');
     if (!mapContainer || adminMap) return;
 
@@ -234,57 +299,89 @@ function initAdminMap() {
         // Centrer sur la France par défaut
         adminMap = L.map('adminRacesMap').setView([46.603354, 1.888334], 5);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+        }).addTo(adminMap);
+
+        // Ajout des étiquettes (villes, frontières) par-dessus le satellite pour plus de lisibilité
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            attribution: ''
         }).addTo(adminMap);
 
         // Ajouter les marqueurs
         let markerCount = 0;
         adminMarkers = [];
 
-        adminDataCache.experiences.forEach(exp => {
+        // Traiter les marqueurs de manière plus prudente (pas tout en parallèle strict pour le géo-codage)
+        for (let i = 0; i < adminDataCache.experiences.length; i++) {
+            const exp = adminDataCache.experiences[i];
             const d = exp.data;
             let coords = null;
 
             // 1. Tenter d'extraire de locationUrl (Google Maps)
             if (d.locationUrl) {
                 coords = extractCoordsFromUrl(d.locationUrl);
+
+                // 1b. Si c'est un lien court, tenter de le résoudre
+                if (!coords && (d.locationUrl.includes('maps.app.goo.gl') || d.locationUrl.includes('goo.gl/maps'))) {
+                    // Cache local de session pour les URLs
+                    if (!window._urlCache) window._urlCache = {};
+                    if (window._urlCache[d.locationUrl]) {
+                        coords = window._urlCache[d.locationUrl];
+                    } else {
+                        coords = await resolveShortUrl(d.locationUrl);
+                        if (coords) window._urlCache[d.locationUrl] = coords;
+                        await sleep(100); // Petit délai pour ne pas spammer le proxy
+                    }
+                }
             }
 
-            // 2. Tenter d'extraire des lieux d'itinérance
-            if (!coords && d.itineraryLocations && d.itineraryLocations.length > 0) {
-                for (const loc of d.itineraryLocations) {
+            // 2. Tenter d'extraire des lieux d'itinérance (correction du nom de propriété : locations)
+            if (!coords && d.locations && Array.isArray(d.locations) && d.locations.length > 0) {
+                for (const loc of d.locations) {
                     if (loc.url) {
                         coords = extractCoordsFromUrl(loc.url);
+                        if (!coords && (loc.url.includes('maps.app.goo.gl') || loc.url.includes('goo.gl/maps'))) {
+                            coords = await resolveShortUrl(loc.url);
+                        }
                         if (coords) break;
                     }
                 }
             }
 
+            // 3. Fallback : Géo-codage par le nom du lieu si toujours rien (très lent, donc cache indispensable)
+            if (!coords && d.location) {
+                coords = await geocodeLocation(d.location);
+                if (coords) await sleep(800); // Nominatim demande 1s entre les requêtes
+            }
+
             if (coords) {
                 const marker = L.marker([coords.lat, coords.lng])
                     .bindPopup(`
-                        <div style="font-family: Arial; font-size: 13px;">
-                            <strong style="color: #991b1b;">${exp.userName}</strong><br>
-                            <b>${d.organizer || 'Organisme inconnu'}</b><br>
-                            <span style="color: #666;">${d.date} - ${d.location}</span><br>
-                            <i>${d.position || ''}</i>
+                        <div style="font-family: Arial; font-size: 13px; min-width: 150px;">
+                            <strong style="color: #dc2626;">${exp.userName}</strong><br>
+                            <b style="font-size: 1.1em;">${d.organizer || 'Organisme inconnu'}</b><br>
+                            <span style="color: #666; display: block; margin: 4px 0;">
+                                <i class="bi bi-calendar3"></i> ${d.date} — ${d.location}<br>
+                                <i class="bi bi-geo-alt-fill"></i> ${d.stayType || ''}
+                            </span>
+                            <i style="color: #4b5563;">${d.position || ''}</i>
+                            ${d.locationUrl ? `<br><a href="${d.locationUrl}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.8rem; display: block; margin-top: 5px;">Voir sur Google Maps</a>` : ''}
                         </div>
-                    `)
-                    .addTo(adminMap);
+                    `);
                 adminMarkers.push(marker);
+                marker.addTo(adminMap);
                 markerCount++;
             }
-        });
+
+            // Mise à jour progressive du compteur dans l'UI si nécessaire
+            if (statusEl && i % 5 === 0) {
+                statusEl.textContent = `Chargement de la carte... (${markerCount} points trouvés)`;
+            }
+        }
 
         if (statusEl) {
             statusEl.textContent = `${markerCount} lieu(x) affiché(s) sur la carte.`;
-
-            // Notification si des liens courts sont présents (on ne peut pas extraire les coords sans API)
-            const hasShortLinks = adminDataCache.experiences.some(e => e.data.locationUrl && e.data.locationUrl.includes('maps.app.goo.gl'));
-            if (hasShortLinks) {
-                statusEl.innerHTML += "<br><span style='color: #d97706; font-size: 0.7rem;'><i class='bi bi-exclamation-triangle'></i> Certains liens 'maps.app.goo.gl' ne peuvent pas être affichés (utilisez l'URL complète).</span>";
-            }
         }
 
         // Si on a des marqueurs, ajuster la vue
