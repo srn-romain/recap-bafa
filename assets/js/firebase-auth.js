@@ -278,8 +278,8 @@ function updateUI() {
   const currentUid = window.currentUser ? window.currentUser.uid : null;
 
   // L'utilisateur est propriétaire si l'UID connecté correspond à l'UID cible
-  // Ou si c'est l'admin global (legacy)
-  const isOwner = (isLoggedIn && currentUid === targetUid) || (window.userRole === 'admin');
+  // L'admin ne peut pas modifier les données d'un autre utilisateur depuis son profil public
+  const isOwner = (isLoggedIn && targetUid) ? (currentUid === targetUid) : (isLoggedIn && window.userRole === 'admin');
 
   console.log('updateUI - targetUid:', targetUid, 'currentUid:', currentUid, 'isOwner:', isOwner);
 
@@ -555,6 +555,13 @@ function closeDeleteConfirmModal() {
 // Confirmer la suppression
 async function confirmDelete() {
   if (!currentDeletingRow || !currentDeletingType) return;
+
+  // Sécurité supplémentaire : vérifier l'autorisation via isOwner
+  if (typeof isOwner === 'function' && !isOwner()) {
+    alert("Action non autorisée : vous ne pouvez pas modifier ou supprimer les données de ce profil car vous n'en êtes pas le propriétaire.");
+    closeDeleteConfirmModal();
+    return;
+  }
 
   try {
     if (currentDeletingType === 'experience') {

@@ -15,11 +15,11 @@ function formatLocationName(str) {
   });
 }
 
-// Helper: Vérifier si l'utilisateur est propriétaire ou admin
+// Helper: Vérifier si l'utilisateur est propriétaire (uniquement le propriétaire peut modifier ses données)
 function isOwner() {
   // Si on est sur une page utilisateur spécifique
   if (window.targetUid) {
-    return (window.currentUser && window.currentUser.uid === window.targetUid) || window.userRole === 'admin';
+    return (window.currentUser && window.currentUser.uid === window.targetUid);
   }
   // Si on est sur la page générale (legacy), seul l'admin peut modifier
   return window.userRole === 'admin';
@@ -1545,12 +1545,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Ajouter une expérience à Firebase
 async function addExperienceToFirebase(data) {
+  if (!isOwner()) {
+    throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
+  }
   await getCollectionRef('experiences').add(data);
   console.log('Expérience ajoutée avec succès');
 }
 
 // Modifier une expérience dans Firebase
 async function updateExperienceInFirebase(data, row) {
+  if (!isOwner()) {
+    throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
+  }
   // Trouver le document correspondant dans Firebase
   // On va chercher par les données de la ligne
   const date = row.cells[1]?.textContent?.trim();
@@ -1573,12 +1579,18 @@ async function updateExperienceInFirebase(data, row) {
 
 // Ajouter une formation à Firebase
 async function addFormationToFirebase(data) {
+  if (!isOwner()) {
+    throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
+  }
   await getCollectionRef('formations').add(data);
   console.log('Formation ajoutée avec succès');
 }
 
 // Modifier une formation dans Firebase
 async function updateFormationInFirebase(data, row) {
+  if (!isOwner()) {
+    throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
+  }
   const date = row.cells[1]?.textContent?.trim();
   const organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
 
@@ -1599,6 +1611,9 @@ async function updateFormationInFirebase(data, row) {
 
 // Supprimer une expérience de Firebase
 async function deleteExperienceFromFirebase(row) {
+  if (!isOwner()) {
+    throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
+  }
   const date = row.cells[1]?.textContent?.trim();
   const organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
 
@@ -1619,6 +1634,9 @@ async function deleteExperienceFromFirebase(row) {
 
 // Supprimer une formation de Firebase
 async function deleteFormationFromFirebase(row) {
+  if (!isOwner()) {
+    throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
+  }
   const date = row.cells[1]?.textContent?.trim();
   const organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
 
