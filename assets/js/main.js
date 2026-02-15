@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
 /*--------------------------------------------------------------
 # Statistiques
 --------------------------------------------------------------*/
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Attendre que le DOM soit chargé pour calculer les statistiques
   setTimeout(calculateAllStatistics, 500);
 });
@@ -76,11 +76,49 @@ function calculateAllStatistics() {
   // Calculer les statistiques des expériences
   calculateExperienceStatistics();
 
-  // Calculer les statistiques des tranches d'âges
+  // Calculer les statistiques des tranches d'âges (qui font partie des expériences)
   calculateAgeGroupStatistics();
 
   // Calculer les statistiques des formations
   calculateFormationStatistics();
+
+  // Masquer la rubrique principale si aucune sous-section n'est visible
+  const expSection = document.getElementById('stats-section-experiences');
+  const formSection = document.getElementById('stats-section-formations');
+  const mainTitle = document.getElementById('statistiques');
+  const container = document.querySelector('.stats-container')?.parentElement;
+
+  const hasExperiences = expSection && expSection.style.display !== 'none';
+  const hasFormations = formSection && formSection.style.display !== 'none';
+
+  if (!hasExperiences && !hasFormations) {
+    if (mainTitle) mainTitle.style.display = 'none';
+    if (container) container.style.display = 'none';
+  } else {
+    if (mainTitle) mainTitle.style.display = 'block';
+    if (container) container.style.display = 'block';
+  }
+
+  // Mettre à jour la visibilité des liens de la navbar
+  if (typeof window.updateNavbarLinksVisibility === 'function') {
+    window.updateNavbarLinksVisibility();
+  }
+}
+
+// Fonction utilitaire pour mettre à jour une statistique et masquer sa phrase si la valeur est 0
+function updateStatWithVisibility(id, value) {
+  const element = document.getElementById(id);
+  if (!element) return;
+  element.textContent = value;
+  const sentence = element.closest('.stat-sentence');
+  if (sentence) {
+    // Si la valeur est 0 (nombre ou chaîne), on masque le paragraphe parent
+    if (value === 0 || value === '0' || value === '0.0' || value === 0.0) {
+      sentence.style.display = 'none';
+    } else {
+      sentence.style.display = 'block';
+    }
+  }
 }
 
 // Fonction pour calculer les statistiques des expériences
@@ -89,6 +127,16 @@ function calculateExperienceStatistics() {
   if (!experienceTable) return;
 
   const rows = experienceTable.querySelectorAll('tr[data-type]');
+  const totalExps = Math.max(0, rows.length - 1);
+
+  // Gérer la visibilité de la section entière
+  const section = document.getElementById('stats-section-experiences');
+  if (section) {
+    section.style.display = totalExps === 0 ? 'none' : 'block';
+  }
+
+  if (totalExps === 0) return;
+
   let totalDaysColo = 0;
   let totalDaysAlsh = 0;
   let totalYouth = 0;
@@ -137,11 +185,11 @@ function calculateExperienceStatistics() {
     totalYouth += youthCount;
   });
 
-  // Mettre à jour les valeurs dans le DOM
-  document.getElementById('total-days-colo').textContent = totalDaysColo;
-  document.getElementById('total-days-alsh').textContent = totalDaysAlsh;
-  document.getElementById('total-youth').textContent = totalYouth;
-  document.getElementById('total-experiences').textContent = rows.length - 1; // -1 pour l'en-tête
+  // Mettre à jour les valeurs dans le DOM avec gestion de la visibilité
+  updateStatWithVisibility('total-days-colo', totalDaysColo);
+  updateStatWithVisibility('total-days-alsh', totalDaysAlsh);
+  updateStatWithVisibility('total-youth', totalYouth);
+  updateStatWithVisibility('total-experiences', totalExps);
 
   // Créer le graphique pour les jours par organisme
   createChart('organizationChart', organizationDays, 'Nombre de jours par organisme');
@@ -153,6 +201,16 @@ function calculateFormationStatistics() {
   if (!formationTable) return;
 
   const rows = formationTable.querySelectorAll('tr[data-type]');
+  const totalFormations = Math.max(0, rows.length - 1);
+
+  // Gérer la visibilité de la section entière
+  const section = document.getElementById('stats-section-formations');
+  if (section) {
+    section.style.display = totalFormations === 0 ? 'none' : 'block';
+  }
+
+  if (totalFormations === 0) return;
+
   let totalDaysFormation = 0;
   let totalBafaFormations = 0;
   let totalBafdFormations = 0;
@@ -191,10 +249,10 @@ function calculateFormationStatistics() {
     }
   });
 
-  // Mettre à jour les valeurs dans le DOM
-  document.getElementById('total-days-formation').textContent = totalDaysFormation;
-  document.getElementById('total-bafa-formations').textContent = totalBafaFormations;
-  document.getElementById('total-bafd-formations').textContent = totalBafdFormations;
+  // Mettre à jour les valeurs dans le DOM avec gestion de la visibilité
+  updateStatWithVisibility('total-days-formation', totalDaysFormation);
+  updateStatWithVisibility('total-bafa-formations', totalBafaFormations);
+  updateStatWithVisibility('total-bafd-formations', totalBafdFormations);
 
   // Créer le graphique pour les jours par organisme de formation
   createChart('formationOrganizationChart', formationOrganizationDays, 'Nombre de jours par organisme de formation');
@@ -239,7 +297,7 @@ function createChart(canvasId, data, titleText) {
 
   // Trier les données par nombre de jours (décroissant)
   const sortedData = Object.entries(data)
-      .sort((a, b) => b[1] - a[1]);
+    .sort((a, b) => b[1] - a[1]);
 
   const labels = sortedData.map(entry => entry[0]);
   const values = sortedData.map(entry => entry[1]);
@@ -357,8 +415,8 @@ function calculateAgeGroupStatistics() {
       mostCommonAge = age;
     }
   }
-  document.getElementById('average-age').textContent = averageAge;
-  document.getElementById('most-common-age').textContent = mostCommonAge;
+  updateStatWithVisibility('average-age', averageAge);
+  updateStatWithVisibility('most-common-age', mostCommonAge);
   // Créer le graphique pour les âges individuels
   createAgeGroupChart(ageCounts);
 }
@@ -367,19 +425,19 @@ function calculateAgeGroupStatistics() {
 function createAgeGroupChart(data) {
   const canvas = document.getElementById('ageGroupChart');
   if (!canvas) return;
-  
+
   // Détruire le graphique existant s'il existe
   if (chartInstances['ageGroupChart']) {
     chartInstances['ageGroupChart'].destroy();
     chartInstances['ageGroupChart'] = null;
   }
-  
+
   // Labels de 3 à 17 ans avec "ans"
   const labels = Object.keys(data).map(age => age + ' ans');
   const values = Object.values(data);
   // Générer les couleurs
   const colors = generateColorGradient('#3498db', '#f39c12', labels.length);
-  
+
   // Créer et stocker le nouveau graphique
   chartInstances['ageGroupChart'] = new Chart(canvas, {
     type: 'bar',
@@ -406,7 +464,7 @@ function createAgeGroupChart(data) {
         title: { display: true, text: "Nombre d'expériences par âge" },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               // Récupère l'âge sans le " ans" pour l'affichage
               const age = context.label.replace(' ans', '');
               const nb = context.parsed.y;
@@ -474,7 +532,7 @@ function setupSearch(searchInputId, tableId) {
     table.querySelector('tbody').appendChild(noResultsRow);
   }
 
-  searchInput.addEventListener('keyup', function() {
+  searchInput.addEventListener('keyup', function () {
     const searchTerm = this.value.toLowerCase();
 
     if (searchTerm.length > 0) {
@@ -535,9 +593,9 @@ function setupSearch(searchInputId, tableId) {
       remplirNum(table);
 
       const visibleRows = Array.from(rows).filter(row =>
-          row.style.display !== "none" &&
-          !row.classList.contains('always-visible') &&
-          !row.classList.contains('no-results-row')
+        row.style.display !== "none" &&
+        !row.classList.contains('always-visible') &&
+        !row.classList.contains('no-results-row')
       );
 
       visibleRows.forEach((row, index) => {
@@ -585,9 +643,9 @@ function filterTable(type, tableId) {
     remplirNum(table);
 
     const visibleRows = Array.from(rows).filter(row =>
-        row.style.display !== "none" &&
-        !row.classList.contains('always-visible') &&
-        !row.classList.contains('no-results-row')
+      row.style.display !== "none" &&
+      !row.classList.contains('always-visible') &&
+      !row.classList.contains('no-results-row')
     );
 
     visibleRows.forEach((row, index) => {
@@ -608,7 +666,7 @@ function filterTable(type, tableId) {
 }
 
 // Initialiser la recherche pour les deux tableaux quand le DOM est chargé
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   setupSearch('search-experiences', 'table-experiences');
   setupSearch('search-formations', 'table-formations');
 
@@ -625,7 +683,7 @@ window.sortableTablesInitialized = false;
 function setupSortableTables() {
   // Éviter d'initialiser plusieurs fois
   if (window.sortableTablesInitialized) return;
-  
+
   // Configurer les en-têtes triables pour les deux tableaux
   setupSortableHeaders('table-experiences');
   setupSortableHeaders('table-formations');
@@ -647,173 +705,173 @@ function setupSortableTables() {
     // Force l'inversion pour avoir un tri descendant (plus récent en premier)
     sortTable(formationsTable, 1);
   }
-  
+
   window.sortableTablesInitialized = true;
 }
 
 function setupSortableHeaders(tableId) {
-    const table = document.getElementById(tableId);
-    if (!table || !table.querySelectorAll) return;
+  const table = document.getElementById(tableId);
+  if (!table || !table.querySelectorAll) return;
 
-    // Obtenir toutes les cellules d'en-tête sauf celle des logos
-    const headers = table.querySelectorAll('tr:first-child th');
+  // Obtenir toutes les cellules d'en-tête sauf celle des logos
+  const headers = table.querySelectorAll('tr:first-child th');
 
-    headers.forEach((header, index) => {
-        // Ignorer:
-        // - la colonne de numérotation (index 0)
-        // - la colonne des logos (index 4)
-        // - la colonne des tranches d'âge (index 8) pour le tableau des expériences
-        // - la colonne "Modifier" (colonne d'édition)
-        // - la colonne "Supprimer" (colonne de suppression)
-        const headerText = header.textContent.trim();
-        if (index === 0 || index === 4 || (tableId === 'table-experiences' && index === 8) || 
-            headerText === 'Modifier' || headerText === 'Supprimer' || 
-            header.classList.contains('edit-column') || header.classList.contains('delete-column')) return;
+  headers.forEach((header, index) => {
+    // Ignorer:
+    // - la colonne de numérotation (index 0)
+    // - la colonne des logos (index 4)
+    // - la colonne des tranches d'âge (index 8) pour le tableau des expériences
+    // - la colonne "Modifier" (colonne d'édition)
+    // - la colonne "Supprimer" (colonne de suppression)
+    const headerText = header.textContent.trim();
+    if (index === 0 || index === 4 || (tableId === 'table-experiences' && index === 8) ||
+      headerText === 'Modifier' || headerText === 'Supprimer' ||
+      header.classList.contains('edit-column') || header.classList.contains('delete-column')) return;
 
-        // Vérifier si l'indicateur de tri existe déjà pour éviter les doublons
-        if (header.querySelector('.sort-indicator')) return;
+    // Vérifier si l'indicateur de tri existe déjà pour éviter les doublons
+    if (header.querySelector('.sort-indicator')) return;
 
-        // Ajouter un indicateur de tri et un style de curseur
-        header.classList.add('sortable');
-        header.style.cursor = 'pointer';
+    // Ajouter un indicateur de tri et un style de curseur
+    header.classList.add('sortable');
+    header.style.cursor = 'pointer';
 
-        // Ajouter le triangle de tri (initialement neutre)
-        const originalText = header.textContent.trim();
-        header.innerHTML = `${originalText} <span class="sort-indicator">▼</span>`;
+    // Ajouter le triangle de tri (initialement neutre)
+    const originalText = header.textContent.trim();
+    header.innerHTML = `${originalText} <span class="sort-indicator">▼</span>`;
 
-        // Ajouter la classe pour le style initial du triangle
-        const indicator = header.querySelector('.sort-indicator');
-        if (indicator) {
-            indicator.classList.add('sort-neutral');
-        }
+    // Ajouter la classe pour le style initial du triangle
+    const indicator = header.querySelector('.sort-indicator');
+    if (indicator) {
+      indicator.classList.add('sort-neutral');
+    }
 
-        // Supprimer les anciens écouteurs d'événement s'ils existent
-        const newHeader = header.cloneNode(true);
-        header.parentNode.replaceChild(newHeader, header);
-        
-        // Ajouter un écouteur d'événement pour le clic
-        newHeader.addEventListener('click', function() {
-            sortTable(table, index);
-        });
+    // Supprimer les anciens écouteurs d'événement s'ils existent
+    const newHeader = header.cloneNode(true);
+    header.parentNode.replaceChild(newHeader, header);
+
+    // Ajouter un écouteur d'événement pour le clic
+    newHeader.addEventListener('click', function () {
+      sortTable(table, index);
     });
+  });
 }
 
 function updateSortIndicators(table, activeColumnIndex, direction) {
-    // Réinitialiser tous les indicateurs
-    const headers = table.querySelectorAll('th.sortable');
+  // Réinitialiser tous les indicateurs
+  const headers = table.querySelectorAll('th.sortable');
 
-    headers.forEach((header, index) => {
-        const indicator = header.querySelector('.sort-indicator');
-        if (indicator) {
-            // Réinitialiser l'indicateur
-            indicator.classList.remove('sort-asc', 'sort-desc');
-            indicator.classList.add('sort-neutral');
+  headers.forEach((header, index) => {
+    const indicator = header.querySelector('.sort-indicator');
+    if (indicator) {
+      // Réinitialiser l'indicateur
+      indicator.classList.remove('sort-asc', 'sort-desc');
+      indicator.classList.add('sort-neutral');
 
-            // Mettre à jour l'indicateur pour la colonne active
-            if (index === activeColumnIndex) {
-                indicator.classList.remove('sort-neutral');
-                indicator.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
-            }
-        }
-    });
+      // Mettre à jour l'indicateur pour la colonne active
+      if (index === activeColumnIndex) {
+        indicator.classList.remove('sort-neutral');
+        indicator.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+    }
+  });
 }
 
 function sortTable(table, columnIndex) {
-    // Vérifier que table est un élément DOM valide
-    if (!table || typeof table.querySelectorAll !== 'function') {
-        console.error('Table invalide pour le tri');
-        return;
-    }
-    
-    let rows, switching, i, x, y, shouldSwitch, direction, switchcount = 0;
-    switching = true;
-    // Définir la direction de tri à "ascending"
-    direction = "asc";
+  // Vérifier que table est un élément DOM valide
+  if (!table || typeof table.querySelectorAll !== 'function') {
+    console.error('Table invalide pour le tri');
+    return;
+  }
 
-    // Mettre à jour les indicateurs visuels
-    updateSortIndicators(table, columnIndex, direction);
+  let rows, switching, i, x, y, shouldSwitch, direction, switchcount = 0;
+  switching = true;
+  // Définir la direction de tri à "ascending"
+  direction = "asc";
 
-    // Boucle jusqu'à ce que le tri soit terminé
-    while (switching) {
-        switching = false;
-        rows = table.getElementsByTagName("tr");
+  // Mettre à jour les indicateurs visuels
+  updateSortIndicators(table, columnIndex, direction);
 
-        // Parcourir toutes les lignes sauf la première (en-tête)
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
+  // Boucle jusqu'à ce que le tri soit terminé
+  while (switching) {
+    switching = false;
+    rows = table.getElementsByTagName("tr");
 
-            // Obtenir les deux éléments à comparer
-            x = rows[i].getElementsByTagName("td")[columnIndex];
-            y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+    // Parcourir toutes les lignes sauf la première (en-tête)
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
 
-            if (!x || !y) continue;
+      // Obtenir les deux éléments à comparer
+      x = rows[i].getElementsByTagName("td")[columnIndex];
+      y = rows[i + 1].getElementsByTagName("td")[columnIndex];
 
-            let compareResult;
+      if (!x || !y) continue;
 
-            // Traitement spécial pour la colonne Durée (index 2)
-            if (columnIndex === 2) {
-                // Extraire le nombre de jours des textes comme "5 jours" ou "Tous les mercredis"
-                let xDays = extractDays(x.textContent);
-                let yDays = extractDays(y.textContent);
+      let compareResult;
 
-                compareResult = direction === "asc" ? xDays - yDays : yDays - xDays;
-            }
-            // Traitement pour les dates
-            else if (isDate(x.textContent) || isDate(y.textContent)) {
-                const xDate = parseFrenchDate(x.textContent);
-                const yDate = parseFrenchDate(y.textContent);
+      // Traitement spécial pour la colonne Durée (index 2)
+      if (columnIndex === 2) {
+        // Extraire le nombre de jours des textes comme "5 jours" ou "Tous les mercredis"
+        let xDays = extractDays(x.textContent);
+        let yDays = extractDays(y.textContent);
 
-                compareResult = direction === "asc" ? xDate - yDate : yDate - xDate;
-            }
-            // Traitement pour les valeurs numériques
-            else if (isNumeric(x.textContent) && isNumeric(y.textContent)) {
-                const xNum = parseFloat(x.textContent);
-                const yNum = parseFloat(y.textContent);
+        compareResult = direction === "asc" ? xDays - yDays : yDays - xDays;
+      }
+      // Traitement pour les dates
+      else if (isDate(x.textContent) || isDate(y.textContent)) {
+        const xDate = parseFrenchDate(x.textContent);
+        const yDate = parseFrenchDate(y.textContent);
 
-                compareResult = direction === "asc" ? xNum - yNum : yNum - xNum;
-            }
-            // Traitement par défaut pour les chaînes de texte
-            else {
-                const xText = x.textContent.toLowerCase();
-                const yText = y.textContent.toLowerCase();
+        compareResult = direction === "asc" ? xDate - yDate : yDate - xDate;
+      }
+      // Traitement pour les valeurs numériques
+      else if (isNumeric(x.textContent) && isNumeric(y.textContent)) {
+        const xNum = parseFloat(x.textContent);
+        const yNum = parseFloat(y.textContent);
 
-                compareResult = direction === "asc" ?
-                    xText.localeCompare(yText, 'fr') :
-                    yText.localeCompare(xText, 'fr');
-            }
+        compareResult = direction === "asc" ? xNum - yNum : yNum - xNum;
+      }
+      // Traitement par défaut pour les chaînes de texte
+      else {
+        const xText = x.textContent.toLowerCase();
+        const yText = y.textContent.toLowerCase();
 
-            if (compareResult > 0) {
-                shouldSwitch = true;
-                break;
-            }
-        }
+        compareResult = direction === "asc" ?
+          xText.localeCompare(yText, 'fr') :
+          yText.localeCompare(xText, 'fr');
+      }
 
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-            switchcount++;
-        } else if (switchcount === 0 && direction === "asc") {
-            direction = "desc";
-            updateSortIndicators(table, columnIndex, direction);
-            switching = true;
-            switchcount = 0;
-        }
+      if (compareResult > 0) {
+        shouldSwitch = true;
+        break;
+      }
     }
 
-    // Renuméroter les lignes après le tri
-    remplirNum(table);
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount++;
+    } else if (switchcount === 0 && direction === "asc") {
+      direction = "desc";
+      updateSortIndicators(table, columnIndex, direction);
+      switching = true;
+      switchcount = 0;
+    }
+  }
 
-    // Appliquer les styles alternés
-    const visibleRows = Array.from(table.getElementsByTagName('tr')).filter(row =>
-        row.style.display !== "none" &&
-        !row.classList.contains('always-visible') &&
-        !row.classList.contains('no-results-row')
-    );
+  // Renuméroter les lignes après le tri
+  remplirNum(table);
 
-    visibleRows.forEach((row, index) => {
-        row.classList.remove("even", "odd");
-        row.classList.add(index % 2 === 0 ? "even" : "odd");
-    });
+  // Appliquer les styles alternés
+  const visibleRows = Array.from(table.getElementsByTagName('tr')).filter(row =>
+    row.style.display !== "none" &&
+    !row.classList.contains('always-visible') &&
+    !row.classList.contains('no-results-row')
+  );
+
+  visibleRows.forEach((row, index) => {
+    row.classList.remove("even", "odd");
+    row.classList.add(index % 2 === 0 ? "even" : "odd");
+  });
 }
 
 // Fonction utilitaire pour vérifier si une chaîne est numérique

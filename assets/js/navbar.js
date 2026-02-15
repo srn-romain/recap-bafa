@@ -15,13 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             <!-- Liens Sommaire (visible sur Dashboard) -->
             <test id="nav-link-experiences" class="nav-item nav-toc-link" onclick="document.getElementById('experiences').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
-                <i class="bi bi-briefcase"></i> Expériences
+                <i class="bi bi-briefcase"></i> <span class="nav-text">Expériences</span>
             </test>
             <test id="nav-link-formations" class="nav-item nav-toc-link" onclick="document.getElementById('formations').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
-                <i class="bi bi-journal-text"></i> Formations
+                <i class="bi bi-journal-text"></i> <span class="nav-text">Formations</span>
             </test>
             <test id="nav-link-stats" class="nav-item nav-toc-link" onclick="document.getElementById('statistiques').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
-                <i class="bi bi-bar-chart-line"></i> Statistiques
+                <i class="bi bi-bar-chart-line"></i> <span class="nav-text">Statistiques</span>
             </test>
 
             <!-- LinkedIn (visible si connecté) -->

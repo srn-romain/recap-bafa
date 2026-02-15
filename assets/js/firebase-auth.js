@@ -447,12 +447,12 @@ function addEditColumns() {
     if (headerRow && !headerRow.querySelector('th.edit-column')) {
       const editHeader = document.createElement('th');
       editHeader.className = 'edit-column';
-      editHeader.textContent = 'Modifier';
+      editHeader.textContent = '✏️';
       headerRow.appendChild(editHeader);
 
       const deleteHeader = document.createElement('th');
       deleteHeader.className = 'delete-column';
-      deleteHeader.textContent = 'Supprimer';
+      deleteHeader.textContent = '❌';
       headerRow.appendChild(deleteHeader);
     }
 
@@ -488,12 +488,12 @@ function addEditColumns() {
     if (headerRow && !headerRow.querySelector('th.edit-column')) {
       const editHeader = document.createElement('th');
       editHeader.className = 'edit-column';
-      editHeader.textContent = 'Modifier';
+      editHeader.textContent = '✏️';
       headerRow.appendChild(editHeader);
 
       const deleteHeader = document.createElement('th');
       deleteHeader.className = 'delete-column';
-      deleteHeader.textContent = 'Supprimer';
+      deleteHeader.textContent = '❌';
       headerRow.appendChild(deleteHeader);
     }
 
