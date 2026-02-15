@@ -45,6 +45,18 @@ function showAddExperienceModal() {
   hideExperienceError();
   currentEditingRow = null;
   currentEditingDocId = null;
+
+  // Réinitialiser le message d'erreur du logo
+  const logoError = document.getElementById('exp-logo-error');
+  if (logoError) {
+    logoError.style.display = 'none';
+    logoError.textContent = '';
+  }
+
+  // Réinitialiser les champs de localisation
+  toggleLocationFields();
+  clearItineraryTable();
+
   document.getElementById('experience-modal').style.display = 'flex';
 
   // Écouter les changements du mois pour mettre à jour le texte
@@ -54,6 +66,100 @@ function showAddExperienceModal() {
       const dateText = monthToFrenchText(this.value);
       document.getElementById('exp-date').value = dateText;
     });
+  }
+
+  // Écouter les changements du type de séjour
+  const stayTypeSelect = document.getElementById('exp-stay-type');
+  if (stayTypeSelect) {
+    stayTypeSelect.addEventListener('change', toggleLocationFields);
+  }
+
+  // Afficher les messages d'info par défaut (pas de logo au départ)
+  toggleLogoInfoMessages();
+}
+
+// Toggle entre champs lieu unique et tableau itinérance
+function toggleLocationFields() {
+  const stayType = document.getElementById('exp-stay-type')?.value;
+  const singleFields = document.getElementById('single-location-fields');
+  const itineraryFields = document.getElementById('itinerary-locations');
+
+  if (stayType === 'Itinérance') {
+    if (singleFields) singleFields.style.display = 'none';
+    if (itineraryFields) itineraryFields.style.display = 'block';
+    // Désactiver le required sur le champ unique
+    const expLocation = document.getElementById('exp-location');
+    if (expLocation) expLocation.removeAttribute('required');
+  } else {
+    if (singleFields) singleFields.style.display = 'block';
+    if (itineraryFields) itineraryFields.style.display = 'none';
+    // Réactiver le required sur le champ unique
+    const expLocation = document.getElementById('exp-location');
+    if (expLocation) expLocation.setAttribute('required', 'required');
+  }
+}
+
+// Ajouter une ligne au tableau d'itinérance
+function addItineraryRow(location = '', url = '') {
+  const tbody = document.getElementById('itinerary-tbody');
+  if (!tbody) return;
+
+  const rowId = `itinerary-row-${Date.now()}`;
+  const row = document.createElement('tr');
+  row.id = rowId;
+  row.innerHTML = `
+    <td style="padding: 8px;">
+      <input type="text" class="itinerary-location" placeholder="Ex: Lyon" 
+        style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;" value="${location}">
+    </td>
+    <td style="padding: 8px;">
+      <input type="url" class="itinerary-url" placeholder="https://maps.app.goo.gl/..." 
+        style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;" value="${url}">
+    </td>
+    <td style="padding: 8px; text-align: center;">
+      <button type="button" onclick="removeItineraryRow('${rowId}')" 
+        style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2rem;"
+        title="Supprimer">
+        <i class="bi bi-trash"></i>
+      </button>
+    </td>
+  `;
+  tbody.appendChild(row);
+}
+
+// Supprimer une ligne du tableau
+function removeItineraryRow(rowId) {
+  const row = document.getElementById(rowId);
+  if (row) {
+    row.remove();
+  }
+}
+
+// Récupérer les lieux d'itinérance
+function getItineraryLocations() {
+  const locations = [];
+  const rows = document.querySelectorAll('#itinerary-tbody tr');
+
+  rows.forEach(row => {
+    const locationInput = row.querySelector('.itinerary-location');
+    const urlInput = row.querySelector('.itinerary-url');
+
+    if (locationInput && locationInput.value.trim()) {
+      locations.push({
+        location: locationInput.value.trim(),
+        url: urlInput ? urlInput.value.trim() : ''
+      });
+    }
+  });
+
+  return locations;
+}
+
+// Vider le tableau d'itinérance
+function clearItineraryTable() {
+  const tbody = document.getElementById('itinerary-tbody');
+  if (tbody) {
+    tbody.innerHTML = '';
   }
 }
 
@@ -149,10 +255,19 @@ async function autoDetectLogo() {
     const reader = new FileReader();
     reader.onloadend = function () {
       const base64data = reader.result;
+      const placeholder = document.getElementById('logo-placeholder');
+      const removeBtn = document.getElementById('remove-logo');
+
       logoInput.value = base64data;
       if (preview) {
         preview.src = base64data;
         preview.style.display = 'block';
+      }
+      if (placeholder) {
+        placeholder.style.display = 'none';
+      }
+      if (removeBtn) {
+        removeBtn.style.display = 'inline-block';
       }
     }
     reader.readAsDataURL(blob);
@@ -161,13 +276,217 @@ async function autoDetectLogo() {
     console.error("Erreur auto-détection logo", e);
     // Fallback: essayer Google Favicon si Clearbit échoue, ou juste laisser l'utilisateur faire
     const fallbackUrl = `https://www.google.com/s2/favicons?domain=${urlInput.value}&sz=64`;
+    const placeholder = document.getElementById('logo-placeholder');
+    const removeBtn = document.getElementById('remove-logo');
+
     logoInput.value = fallbackUrl; // On met l'URL car on ne peut pas toujours fetch google favicons en CORS strict
     if (preview) {
       preview.src = fallbackUrl;
       preview.style.display = 'block';
     }
+    if (placeholder) {
+      placeholder.style.display = 'none';
+    }
+    if (removeBtn) {
+      removeBtn.style.display = 'inline-block';
+    }
   }
 }
+
+// Version async de autoDetectLogo pour utilisation lors de la soumission
+async function autoDetectLogoAsync(organizerUrl) {
+  const logoInput = document.getElementById('exp-logo-path');
+  const preview = document.getElementById('logo-preview');
+  const placeholder = document.getElementById('logo-placeholder');
+  const removeBtn = document.getElementById('remove-logo');
+
+  if (!organizerUrl) {
+    throw new Error("URL de l'organisateur manquante");
+  }
+
+  try {
+    const url = new URL(organizerUrl);
+    const domain = url.hostname;
+    const logoUrl = `https://logo.clearbit.com/${domain}`;
+
+    const response = await fetch(logoUrl);
+    if (!response.ok) throw new Error("Logo non trouvé");
+
+    const blob = await response.blob();
+
+    // Convertir en Base64 avec Promise
+    const base64data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    if (logoInput) logoInput.value = base64data;
+    if (preview) {
+      preview.src = base64data;
+      preview.style.display = 'block';
+    }
+    if (placeholder) placeholder.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'inline-block';
+
+    toggleLogoInfoMessages();
+    return base64data;
+
+  } catch (e) {
+    console.warn("Échec Clearbit, essai avec Google Favicon", e);
+    // Fallback vers Google Favicon
+    const fallbackUrl = `https://www.google.com/s2/favicons?domain=${organizerUrl}&sz=64`;
+
+    if (logoInput) logoInput.value = fallbackUrl;
+    if (preview) {
+      preview.src = fallbackUrl;
+      preview.style.display = 'block';
+    }
+    if (placeholder) placeholder.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'inline-block';
+
+    toggleLogoInfoMessages();
+    return fallbackUrl;
+  }
+}
+
+// Constantes pour la validation des images
+const MAX_LOGO_SIZE_MB = 2;
+const MAX_LOGO_SIZE_BYTES = MAX_LOGO_SIZE_MB * 1024 * 1024;
+
+// Gestionnaire pour l'upload du fichier logo
+function initLogoFileUpload() {
+  const fileInput = document.getElementById('exp-logo-file');
+  const logoPathInput = document.getElementById('exp-logo-path');
+  const preview = document.getElementById('logo-preview');
+  const errorEl = document.getElementById('exp-logo-error');
+
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+
+    // Réinitialiser les erreurs
+    if (errorEl) {
+      errorEl.style.display = 'none';
+      errorEl.textContent = '';
+    }
+
+    if (!file) return;
+
+    // Vérifier la taille du fichier
+    if (file.size > MAX_LOGO_SIZE_BYTES) {
+      if (errorEl) {
+        errorEl.textContent = `⚠️ L'image est trop lourde (${(file.size / 1024 / 1024).toFixed(2)} Mo). Taille maximale : ${MAX_LOGO_SIZE_MB} Mo.`;
+        errorEl.style.display = 'block';
+      }
+      fileInput.value = ''; // Réinitialiser l'input
+      return;
+    }
+
+    // Vérifier que c'est une image
+    if (!file.type.startsWith('image/')) {
+      if (errorEl) {
+        errorEl.textContent = '⚠️ Le fichier doit être une image.';
+        errorEl.style.display = 'block';
+      }
+      fileInput.value = '';
+      return;
+    }
+
+    // Convertir l'image en Base64
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const base64data = reader.result;
+      const placeholder = document.getElementById('logo-placeholder');
+      const removeBtn = document.getElementById('remove-logo');
+
+      // Mettre à jour l'input hidden
+      if (logoPathInput) {
+        logoPathInput.value = base64data;
+      }
+
+      // Afficher le preview et cacher le placeholder
+      if (preview) {
+        preview.src = base64data;
+        preview.style.display = 'block';
+      }
+      if (placeholder) {
+        placeholder.style.display = 'none';
+      }
+      if (removeBtn) {
+        removeBtn.style.display = 'inline-block';
+      }
+
+      // Cacher les messages d'info auto-détection
+      toggleLogoInfoMessages();
+    };
+    reader.onerror = function () {
+      if (errorEl) {
+        errorEl.textContent = '⚠️ Erreur lors de la lecture du fichier.';
+        errorEl.style.display = 'block';
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Fonction pour afficher/masquer les messages d'info selon la présence du logo
+function toggleLogoInfoMessages() {
+  const logoPathInput = document.getElementById('exp-logo-path');
+  const preview = document.getElementById('logo-preview');
+  const infoSmall = document.getElementById('logo-auto-info-small');
+  const infoBox = document.getElementById('logo-auto-info-box');
+
+  // Vérifier si un logo est présent
+  const hasLogo = (logoPathInput && logoPathInput.value.trim()) ||
+    (preview && preview.style.display === 'block');
+
+  // Cacher les messages si un logo est présent, les afficher sinon
+  if (infoSmall) {
+    infoSmall.style.display = hasLogo ? 'none' : 'block';
+  }
+  if (infoBox) {
+    infoBox.style.display = hasLogo ? 'none' : 'block';
+  }
+}
+
+// Fonction pour supprimer le logo
+function removeLogo() {
+  const fileInput = document.getElementById('exp-logo-file');
+  const logoPathInput = document.getElementById('exp-logo-path');
+  const preview = document.getElementById('logo-preview');
+  const placeholder = document.getElementById('logo-placeholder');
+  const removeBtn = document.getElementById('remove-logo');
+  const errorEl = document.getElementById('exp-logo-error');
+
+  // Réinitialiser tous les éléments
+  if (fileInput) fileInput.value = '';
+  if (logoPathInput) logoPathInput.value = '';
+  if (preview) {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+  if (placeholder) {
+    placeholder.style.display = 'flex';
+  }
+  if (removeBtn) {
+    removeBtn.style.display = 'none';
+  }
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+
+  // Afficher les messages d'info puisqu'il n'y a plus de logo
+  toggleLogoInfoMessages();
+}
+
+// Initialiser le gestionnaire lors de l'ouverture de la modale
+document.addEventListener('DOMContentLoaded', function () {
+  initLogoFileUpload();
+});
 
 // Afficher le modal d'édition d'expérience
 function showEditExperienceModal(data, row) {
@@ -186,18 +505,61 @@ function showEditExperienceModal(data, row) {
   document.getElementById('exp-organizer').value = data.organizer || '';
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
 
-  // Extraire juste le nom du fichier pour le logo
-  document.getElementById('exp-logo-path').value = extractLogoFilename(data.logoPath || '');
+  // Gérer le logo
+  const logoPath = extractLogoFilename(data.logoPath || '');
+  document.getElementById('exp-logo-path').value = logoPath;
 
-  document.getElementById('exp-location').value = data.location || '';
-  document.getElementById('exp-location-url').value = data.locationUrl || '';
+  // Afficher le preview du logo si disponible
+  const preview = document.getElementById('logo-preview');
+  const placeholder = document.getElementById('logo-placeholder');
+  const removeBtn = document.getElementById('remove-logo');
+
+  if (logoPath) {
+    if (preview) {
+      preview.src = data.logoPath || '';
+      preview.style.display = 'block';
+    }
+    if (placeholder) placeholder.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'inline-block';
+  } else {
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (removeBtn) removeBtn.style.display = 'none';
+  }
+
+  // Gérer le type de séjour et les lieux
   document.getElementById('exp-stay-type').value = data.stayType || '';
+
+  // Basculer vers le bon mode (itinérance ou classique)
+  toggleLocationFields();
+
+  if (data.stayType === 'Itinérance' && data.itineraryLocations && data.itineraryLocations.length > 0) {
+    // Mode itinérance : pré-remplir le tableau
+    clearItineraryTable();
+    data.itineraryLocations.forEach(loc => {
+      addItineraryRow(loc.location, loc.url);
+    });
+  } else {
+    // Mode classique : pré-remplir les champs uniques
+    document.getElementById('exp-location').value = data.location || '';
+    document.getElementById('exp-location-url').value = data.locationUrl || '';
+  }
+
   document.getElementById('exp-position').value = data.position || '';
   document.getElementById('exp-age-range').value = data.ageRange || '';
   document.getElementById('exp-youth-count').value = data.youthCount || 0;
 
   currentEditingRow = row;
   currentEditingDocId = null;
+
+  // Ajouter l'event listener pour le changement de type de séjour
+  const stayTypeSelect = document.getElementById('exp-stay-type');
+  if (stayTypeSelect) {
+    stayTypeSelect.addEventListener('change', toggleLocationFields);
+  }
+
+  // Gérer l'affichage des messages d'info selon la présence du logo
+  toggleLogoInfoMessages();
 
   document.getElementById('experience-modal').style.display = 'flex';
 }
@@ -207,6 +569,19 @@ function closeExperienceModal() {
   document.getElementById('experience-modal').style.display = 'none';
   currentEditingRow = null;
   currentEditingDocId = null;
+
+  // Réinitialiser le message d'erreur du logo
+  const logoError = document.getElementById('exp-logo-error');
+  if (logoError) {
+    logoError.style.display = 'none';
+    logoError.textContent = '';
+  }
+
+  // Réinitialiser l'input file
+  const logoFileInput = document.getElementById('exp-logo-file');
+  if (logoFileInput) {
+    logoFileInput.value = '';
+  }
 }
 
 // Fermer la modale au clic extérieur
@@ -325,18 +700,56 @@ document.addEventListener('DOMContentLoaded', function () {
       const dateText = monthValue ? monthToFrenchText(monthValue) : '';
       document.getElementById('exp-date').value = dateText;
 
-      // Gérer le chemin du logo
-      const logoInputVal = document.getElementById('exp-logo-path').value.trim();
-      let logoPath = '';
+      const stayType = document.getElementById('exp-stay-type').value || '';
 
-      // Si c'est une URL absolue (http/https) ou du Base64 (data:image), on utilise tel quel
-      if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
-        logoPath = logoInputVal;
-      } else if (logoInputVal) {
-        // Sinon c'est un fichier local dans assets/img/
-        logoPath = `assets/img/${logoInputVal}`;
-        // (Optionnel) remettre le préfixe complet si besoin pour compatibilité
-        // logoPath = `https://srn-romain.github.io/recap-bafa/assets/img/${logoInputVal}`; 
+      // Gérer les lieux selon le type de séjour
+      let location = '';
+      let locationUrl = '';
+      let itineraryLocations = null;
+
+      if (stayType === 'Itinérance') {
+        // Mode itinérance : récupérer le tableau de lieux
+        itineraryLocations = getItineraryLocations();
+        if (itineraryLocations.length === 0) {
+          showExperienceError('Veuillez ajouter au moins un lieu pour l\'itinérance.');
+          return;
+        }
+        // Créer une string combinée pour "location" (rétrocompatibilité)
+        location = itineraryLocations.map(l => l.location).join(', ');
+      } else {
+        // Mode classique : un seul lieu
+        location = document.getElementById('exp-location').value;
+        locationUrl = document.getElementById('exp-location-url').value || '';
+      }
+
+      // Gérer le logo : si vide, tenter la détection automatique
+      let logoPath = '';
+      const logoInputVal = document.getElementById('exp-logo-path').value.trim();
+
+      if (!logoInputVal) {
+        // Pas de logo uploadé, tenter la détection automatique
+        const organizerUrl = document.getElementById('exp-organizer-url').value.trim();
+        if (organizerUrl) {
+          try {
+            // Appeler la détection automatique
+            await autoDetectLogoAsync(organizerUrl);
+            // Récupérer le logo après détection
+            const detectedLogo = document.getElementById('exp-logo-path').value.trim();
+            if (detectedLogo) {
+              logoPath = detectedLogo;
+            }
+          } catch (error) {
+            console.warn('Auto-détection du logo échouée:', error);
+            // Continuer sans logo
+          }
+        }
+      } else {
+        // Logo déjà uploadé/défini
+        if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
+          logoPath = logoInputVal;
+        } else {
+          logoPath = `assets/img/${logoInputVal}`;
+        }
       }
 
       const data = {
@@ -346,13 +759,18 @@ document.addEventListener('DOMContentLoaded', function () {
         organizer: document.getElementById('exp-organizer').value,
         organizerUrl: document.getElementById('exp-organizer-url').value || '',
         logoPath: logoPath,
-        location: document.getElementById('exp-location').value,
-        locationUrl: document.getElementById('exp-location-url').value || '',
-        stayType: document.getElementById('exp-stay-type').value || '',
+        location: location,
+        locationUrl: locationUrl,
+        stayType: stayType,
         position: document.getElementById('exp-position').value || '',
         ageRange: document.getElementById('exp-age-range').value || '',
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
       };
+
+      // Ajouter les lieux d'itinérance si nécessaire
+      if (itineraryLocations && itineraryLocations.length > 0) {
+        data.itineraryLocations = itineraryLocations;
+      }
 
       try {
         if (currentEditingRow) {

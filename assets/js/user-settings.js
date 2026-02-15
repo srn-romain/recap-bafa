@@ -22,6 +22,110 @@ function showSettingsFeedback(type, message) {
     }
 }
 
+// Variables pour l'image de fond
+let backgroundImageData = null;
+const MAX_IMAGE_SIZE_MB = 2;
+const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+
+/**
+ * Gère l'upload de l'image de fond
+ */
+document.addEventListener('DOMContentLoaded', function () {
+    const backgroundInput = document.getElementById('settings-background-image');
+    if (backgroundInput) {
+        backgroundInput.addEventListener('change', handleBackgroundImageUpload);
+    }
+});
+
+/**
+ * Traite l'image de fond sélectionnée
+ */
+function handleBackgroundImageUpload(event) {
+    const file = event.target.files[0];
+    const errorEl = document.getElementById('background-image-error');
+    const previewContainer = document.getElementById('background-preview');
+    const previewImg = document.getElementById('preview-background-img');
+
+    // Réinitialiser les erreurs
+    if (errorEl) {
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+    }
+
+    if (!file) return;
+
+    // Vérifier la taille du fichier
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        if (errorEl) {
+            errorEl.textContent = `⚠️ L'image est trop lourde (${(file.size / 1024 / 1024).toFixed(2)} Mo). Taille maximale : ${MAX_IMAGE_SIZE_MB} Mo.`;
+            errorEl.style.display = 'block';
+        }
+        event.target.value = ''; // Réinitialiser l'input
+        backgroundImageData = null;
+        if (previewContainer) previewContainer.style.display = 'none';
+        return;
+    }
+
+    // Lire et afficher l'image
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        backgroundImageData = e.target.result;
+
+        if (previewImg) {
+            previewImg.src = backgroundImageData;
+        }
+        if (previewContainer) {
+            previewContainer.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+/**
+ * Supprime l'image de fond
+ */
+function removeBackgroundImage() {
+    backgroundImageData = null;
+    const input = document.getElementById('settings-background-image');
+    const previewContainer = document.getElementById('background-preview');
+    const errorEl = document.getElementById('background-image-error');
+
+    if (input) input.value = '';
+    if (previewContainer) previewContainer.style.display = 'none';
+    if (errorEl) {
+        errorEl.style.display = 'none';
+        errorEl.textContent = '';
+    }
+}
+
+// État initial pour détection de changements
+let settingsInitialState = null;
+
+/**
+ * Récupère l'état actuel des champs du formulaire
+ */
+function getSettingsState() {
+    return {
+        firstname: document.getElementById('settings-firstname')?.value.trim() || '',
+        lastname: document.getElementById('settings-lastname')?.value.trim() || '',
+        linkedin: document.getElementById('settings-linkedin')?.value.trim() || '',
+        publiclyVisible: document.getElementById('settings-public-visibility')?.checked || false,
+        emailVisible: document.getElementById('settings-email-visibility')?.checked || false,
+        animators: document.getElementById('settings-animators-count')?.value || '',
+        directors: document.getElementById('settings-directors-count')?.value || '',
+        trainers: document.getElementById('settings-trainers-count')?.value || ''
+    };
+}
+
+/**
+ * Vérifie s'il y a des changements non enregistrés
+ */
+function hasUnsavedChanges() {
+    if (!settingsInitialState) return false;
+    const currentState = getSettingsState();
+    return JSON.stringify(currentState) !== JSON.stringify(settingsInitialState);
+}
+
 /**
  * Ouvre la modale de paramètres et pré-remplit les champs
  */
@@ -72,6 +176,9 @@ async function openSettingsModal() {
                 if (trainersInput) trainersInput.value = '';
             }
 
+            // Sauvegarder l'état initial
+            settingsInitialState = getSettingsState();
+
             // Remplir le lien de partage caché
             const shareLinkInput = document.getElementById('share-profile-link');
             if (shareLinkInput) {
@@ -91,14 +198,56 @@ async function openSettingsModal() {
 }
 
 /**
- * Ferme la modale de paramètres
+ * Ferme la modale de paramètres avec vérification
  */
 function closeSettingsModal() {
+    if (hasUnsavedChanges()) {
+        // Afficher la modale de confirmation personnalisée
+        const unsavedModal = document.getElementById('unsaved-changes-modal');
+        if (unsavedModal) {
+            unsavedModal.style.display = 'flex';
+        }
+        return;
+    }
+
     const modal = document.getElementById('settings-modal');
     if (modal) {
         modal.style.display = 'none';
     }
 }
+
+/**
+ * Confirme la fermeture sans sauvegarder
+ */
+function confirmCloseSettings() {
+    // Fermer les deux modales
+    const unsavedModal = document.getElementById('unsaved-changes-modal');
+    const settingsModal = document.getElementById('settings-modal');
+
+    if (unsavedModal) unsavedModal.style.display = 'none';
+    if (settingsModal) settingsModal.style.display = 'none';
+
+    // Réinitialiser l'état
+    settingsInitialState = null;
+}
+
+/**
+ * Annule la fermeture et retourne aux paramètres
+ */
+function cancelCloseSettings() {
+    const unsavedModal = document.getElementById('unsaved-changes-modal');
+    if (unsavedModal) {
+        unsavedModal.style.display = 'none';
+    }
+}
+
+// Fermer la modale si on clique en dehors
+window.addEventListener('click', function (event) {
+    const modal = document.getElementById('settings-modal');
+    if (event.target === modal) {
+        closeSettingsModal();
+    }
+});
 
 /**
  * Gère la soumission du formulaire de paramètres
@@ -135,6 +284,9 @@ async function handleSettingsSubmit(event) {
                 trainers: trainersCount ? parseInt(trainersCount) : 0
             }
         });
+
+        // Mettre à jour l'état initial pour éviter le warning si on ferme après save
+        settingsInitialState = getSettingsState();
 
         // Mettre à jour l'UI locale
         if (typeof loadUserProfile === 'function') {

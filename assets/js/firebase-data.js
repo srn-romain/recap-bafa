@@ -650,9 +650,12 @@ async function loadUserProfile() {
       const contactEmailParagraph = document.getElementById('contact-email-paragraph');
       const contactEmailLink = document.getElementById('contact-email-link');
 
+      console.log('Affichage email:', { visible: data.emailVisible, email: data.email });
+
       if (contactEmailParagraph && contactEmailLink) {
-        if (data.emailVisible === true && data.email) {
+        if (data.emailVisible && data.email) {
           contactEmailLink.href = `mailto:${data.email}`;
+          contactEmailLink.textContent = data.email; // Afficher l'email explicitement
           contactEmailParagraph.style.display = 'block';
         } else {
           contactEmailParagraph.style.display = 'none';

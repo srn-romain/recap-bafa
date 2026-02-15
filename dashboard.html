@@ -71,8 +71,8 @@
 
             <!-- Phrase de contact par email (Dynamique) -->
             <p id="contact-email-paragraph" style="display: none;">
-                N’hésitez pas à <a id="contact-email-link" href="#" style="color:#f39c12">me contacter</a> pour toute
-                question !
+                N’hésitez pas à me contacter à <a id="contact-email-link" href="#" style="color:#f39c12">l'adresse
+                    indiquée</a> pour toute question !
             </p>
 
             <div class="sommaire">
@@ -327,40 +327,94 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Logo (URL ou Base64)</label>
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <!-- Suppression du préfixe assets/img/ pour permettre les URL complètes -->
-                        <input type="text" id="exp-logo-path" placeholder="URL ou Base64 détecté..." style="flex: 1;">
-                        <img id="logo-preview" src=""
-                            style="width: 30px; height: 30px; object-fit: contain; border: 1px solid #ddd; display: none;">
-                    </div>
-                    <small style="color: #666; font-size: 0.8rem;">Cliquez sur la baguette magique pour tenter de
-                        récupérer le logo depuis l'URL.</small>
-                </div>
-                <div class="form-group">
-                    <label>Lieu <span class="required-asterisk">*</span></label>
-                    <input type="text" id="exp-location" placeholder="Ex: Nice (06)" required>
-                </div>
-                <div class="form-group">
-                    <label>URL Lieu</label>
-                    <input type="url" id="exp-location-url" placeholder="https://maps.app.goo.gl/...">
-                </div>
-                <div class="form-group">
                     <label>Type de séjour</label>
                     <select id="exp-stay-type">
                         <option value="">-- Sélectionner --</option>
                         <option value="Pension complète">Pension complète</option>
-                        <option value="Demi-pension">Demi-pension</option>
                         <option value="Gestion libre">Gestion libre</option>
                         <option value="Itinérance">Itinérance</option>
-                        <option value="Camping">Camping</option>
-                        <option value="ALSH">ALSH (Centre de loisirs)</option>
+                        <option value="Gestion libre / Camping">Gestion libre / Camping</option>
+                        <option value="ALSH">ALSH (Accueil de Loisirs Sans Hébergement)</option>
+                        <option value="Péri-scolaire">Péri-scolaire</option>
+                        <option value="SNU">SNU (Service National Universel)</option>
+                        <option value="Classe découverte">Classe découverte</option>
                         <option value="Autre">Autre</option>
                     </select>
                 </div>
+
+                <!-- Champs pour séjour classique (non itinérance) -->
+                <div id="single-location-fields">
+                    <div class="form-group">
+                        <label>Lieu <span class="required-asterisk">*</span></label>
+                        <input type="text" id="exp-location" placeholder="Ex: Nice (06)" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL Google Map</label>
+                        <input type="url" id="exp-location-url" placeholder="https://maps.app.goo.gl/...">
+                    </div>
+                </div>
+
+                <!-- Tableau pour itinérance (plusieurs lieux) -->
+                <div id="itinerary-locations" style="display: none;">
+                    <div class="form-group">
+                        <label>Lieux de l'itinérance <span class="required-asterisk">*</span></label>
+                        <div
+                            style="background: #f9fdf7; border: 1px solid #a6d866; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                            <table id="itinerary-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            style="text-align: left; padding: 8px; border-bottom: 2px solid #ddd; width: 40%;">
+                                            Lieu</th>
+                                        <th
+                                            style="text-align: left; padding: 8px; border-bottom: 2px solid #ddd; width: 50%;">
+                                            URL Google Map</th>
+                                        <th
+                                            style="text-align: center; padding: 8px; border-bottom: 2px solid #ddd; width: 10%;">
+                                            Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itinerary-tbody">
+                                    <!-- Les lignes seront ajoutées dynamiquement -->
+                                </tbody>
+                            </table>
+                            <button type="button" onclick="addItineraryRow()" class="submit-btn"
+                                style="margin-top: 10px; width: 100%; background: #27ae60;">
+                                <i class="bi bi-plus-circle"></i> Ajouter un lieu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Intitulé du poste</label>
-                    <input type="text" id="exp-position" placeholder="Ex: Directeur stagiaire">
+                    <select id="exp-position">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="Animateur stagiaire">Animateur stagiaire</option>
+                        <option value="Animateur">Animateur (diplômé)</option>
+                        <option value="Animateur Ski">Animateur Ski</option>
+                        <option value="Animateur Snow">Animateur Snow</option>
+                        <option value="Animateur SB">Animateur SB</option>
+                        <option value="Animateur AS">Animateur AS</option>
+                        <option value="Animateur Référent Handicap">Animateur Référent Handicap</option>
+                        <option value="Responsable de Groupe">Responsable de Groupe</option>
+                        <option value="Surveillant de Baignade">Surveillant de Baignade (non animateur)</option>
+                        <option value="Assistant Sanitaire">Assistant Sanitaire (non animateur)</option>
+                        <option value="Tuteur de Maisonnée">Tuteur de Maisonnée (SNU)</option>
+                        <option value="Cuisinier">Cuisinier(ère)</option>
+                        <option value="Directeur">Directeur</option>
+                        <option value="Directeur Stagiaire">Directeur Stagiaire</option>
+                        <option value="Directeur AS">Directeur AS</option>
+                        <option value="Directeur SB">Directeur SB</option>
+                        <option value="Directeur de Formation">Directeur de Formation</option>
+                        <option value="Directeur de Structure">Directeur de Structure</option>
+                        <option value="Directeur Adjoint">Directeur Adjoint</option>
+                        <option value="Directeur Adjoint & SB">Directeur Adjoint & SB</option>
+                        <option value="Directeur Adjoint & AS">Directeur Adjoint & AS</option>
+                        <option value="Formateur BAFA">Formateur BAFA</option>
+                        <option value="Formateur BAFD">Formateur BAFD</option>
+                        <option value="Autre">Autre</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Tranche d'âge</label>
@@ -369,6 +423,74 @@
                 <div class="form-group">
                     <label>Nombre de jeunes</label>
                     <input type="number" id="exp-youth-count" placeholder="Ex: 26" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Logo de l'organisme</label>
+                    <small id="logo-auto-info-small" style="color: #666; display: block; margin-bottom: 10px;">
+                        <i class="bi bi-info-circle"></i> Le logo sera recherché automatiquement lors de
+                        l'enregistrement
+                    </small>
+
+                    <!-- Zone d'upload style course.html -->
+                    <div style="border: 2px dashed #a6d866; border-radius: 8px; padding: 20px; text-align: center; background: #f9fdf7; transition: all 0.3s;"
+                        onmouseover="this.style.borderColor='#8ecf4e'" onmouseout="this.style.borderColor='#a6d866'">
+                        <input type="file" id="exp-logo-file" accept="image/*" style="display: none;">
+                        <label for="exp-logo-file" style="cursor: pointer; display: block;">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                style="margin: 0 auto; height: 48px; width: 48px; color: #a6d866;" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p style="margin-top: 8px; font-size: 0.9rem; color: #5a8f2e;">Cliquez ou déposez un logo
+                                ici</p>
+                        </label>
+
+                        <!-- Preview du logo -->
+                        <div id="logo-preview-container" style="margin-top: 15px;">
+                            <div id="logo-placeholder"
+                                style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px;">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    style="height: 64px; width: 64px; color: #d1d5db;" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p style="margin-top: 8px; font-size: 0.85rem; color: #9ca3af;">Aucune image
+                                    sélectionnée</p>
+                            </div>
+                            <img id="logo-preview" src=""
+                                style="display: none; margin: 0 auto; max-height: 160px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <button type="button" id="remove-logo" onclick="removeLogo()"
+                                style="display: none; margin-top: 10px; color: #e74c3c; font-size: 0.85rem; background: none; border: none; cursor: pointer; transition: color 0.2s;"
+                                onmouseover="this.style.color='#c0392b'" onmouseout="this.style.color='#e74c3c'">
+                                Supprimer
+                            </button>
+                        </div>
+
+                        <!-- Champ caché pour stocker l'URL/Base64 -->
+                        <input type="hidden" id="exp-logo-path">
+                    </div>
+
+                    <!-- Message d'erreur pour les fichiers trop lourds -->
+                    <p id="exp-logo-error" class="error-message"
+                        style="display: none; font-size: 0.85rem; margin: 8px 0 0 0;"></p>
+
+                    <!-- Bulle d'information -->
+                    <div id="logo-auto-info-box"
+                        style="background-color: #e3f2fd; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
+                        <div style="display: flex; align-items: start; gap: 8px;">
+                            <i class="bi bi-magic" style="color: #2196f3; font-size: 1.1rem; margin-top: 2px;"></i>
+                            <div style="color: #1976d2;">
+                                <p style="margin: 0; font-weight: 600;">Image automatique</p>
+                                <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: #555;">
+                                    Si vous n'ajoutez pas de logo, le programme tentera d'en récupérer un via le
+                                    <strong>site web de l'organisateur</strong> ou en recherchant à partir du
+                                    <strong>nom de l'organisme</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="submit-btn">Enregistrer</button>
             </form>
@@ -526,8 +648,6 @@
                     </div>
                 </div>
 
-
-
                 <button type="submit" class="submit-btn" style="width: 100%; margin-top: 15px;">Enregistrer</button>
 
                 <!-- Feedback Messages (moved here) -->
@@ -607,6 +727,27 @@
                         style="flex: 1; max-width: 150px; margin: 0;">Confirmer</button>
                     <button type="button" onclick="closeImportConfirmationModal()" class="secondary-action-btn"
                         style="flex: 1; max-width: 150px; margin: 0; ">Annuler</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmation pour modifications non enregistrées -->
+        <div id="unsaved-changes-modal" class="modal" style="display: none; z-index: 10000;">
+            <div class="modal-content">
+                <h2 style="margin-bottom: 15px;">
+                    <i class="bi bi-exclamation-triangle-fill" style="color: #f39c12;"></i>
+                    Modifications non enregistrées
+                </h2>
+                <p style="text-align: center; margin: 20px 0; color: #555;">
+                    Vous avez des modifications non enregistrées.<br>
+                    Voulez-vous vraiment fermer sans sauvegarder ?
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 25px;">
+                    <button type="button" onclick="confirmCloseSettings()" class="submit-btn"
+                        style="flex: 1; max-width: 180px; margin: 0; background-color: #e74c3c;">Fermer sans
+                        sauvegarder</button>
+                    <button type="button" onclick="cancelCloseSettings()" class="secondary-action-btn"
+                        style="flex: 1; max-width: 150px; margin: 0;">Annuler</button>
                 </div>
             </div>
         </div>
