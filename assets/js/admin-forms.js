@@ -781,8 +781,16 @@ async function showEditExperienceModal(data, row) {
       addItineraryRow();
     }
   } else {
-    // Mode classique : pré-remplir les champs uniques
-    document.getElementById('exp-location').value = data.location || '';
+    // Mode classique : pré-remplir les champs uniques (Nom + Dept)
+    const rawLocation = data.location || '';
+    const locationMatch = rawLocation.match(/^(.*?)\s*\(([^)]+)\)$/);
+    if (locationMatch) {
+      document.getElementById('exp-location').value = locationMatch[1].trim();
+      document.getElementById('exp-location-dept').value = locationMatch[2].trim();
+    } else {
+      document.getElementById('exp-location').value = rawLocation;
+      document.getElementById('exp-location-dept').value = '';
+    }
     document.getElementById('exp-location-url').value = data.locationUrl || '';
   }
 
@@ -926,7 +934,17 @@ function showEditFormationModal(data, row) {
   document.getElementById('form-date').value = data.date || '';
 
   document.getElementById('form-duration').value = data.duration || '';
-  document.getElementById('form-organism').value = data.organism || '';
+
+  const rawOrganism = data.organism || '';
+  // Matcher "Nom (Dept)"
+  const organismMatch = rawOrganism.match(/^(.*?)\s*\(([^)]+)\)$/);
+  if (organismMatch) {
+    document.getElementById('form-organism').value = organismMatch[1].trim();
+    document.getElementById('form-organism-dept').value = organismMatch[2].trim();
+  } else {
+    document.getElementById('form-organism').value = rawOrganism;
+    document.getElementById('form-organism-dept').value = '';
+  }
   document.getElementById('form-organism-url').value = data.organismUrl || '';
 
   // Gérer le logo
@@ -950,7 +968,15 @@ function showEditFormationModal(data, row) {
   toggleFormationLogoInfo();
 
   document.getElementById('form-title').value = data.title || '';
-  document.getElementById('form-location').value = data.location || '';
+  const rawLocation = data.location || '';
+  const locationMatch = rawLocation.match(/^(.*?)\s*\(([^)]+)\)$/);
+  if (locationMatch) {
+    document.getElementById('form-location').value = locationMatch[1].trim();
+    document.getElementById('form-location-dept').value = locationMatch[2].trim();
+  } else {
+    document.getElementById('form-location').value = rawLocation;
+    document.getElementById('form-location-dept').value = '';
+  }
   document.getElementById('form-location-url').value = data.locationUrl || '';
 
   currentEditingRow = row;
@@ -1005,7 +1031,9 @@ document.addEventListener('DOMContentLoaded', function () {
         locationUrl = null;
       } else {
         // Mode classique : un seul lieu
-        location = document.getElementById('exp-location').value;
+        const locName = document.getElementById('exp-location').value.trim();
+        const locDept = document.getElementById('exp-location-dept').value.trim();
+        location = locDept ? `${locName} (${locDept})` : locName;
         locationUrl = document.getElementById('exp-location-url').value || '';
         // itineraryLocations reste null
       }
@@ -1154,11 +1182,19 @@ document.addEventListener('DOMContentLoaded', function () {
         type: document.getElementById('form-type').value,
         date: dateText,
         duration: document.getElementById('form-duration').value || '',
-        organism: document.getElementById('form-organism').value,
+        organism: (() => {
+          const org = document.getElementById('form-organism').value.trim();
+          const dept = document.getElementById('form-organism-dept').value.trim();
+          return dept ? `${org} (${dept})` : org;
+        })(),
         organismUrl: document.getElementById('form-organism-url').value || '',
         logoPath: logoPath,
         title: document.getElementById('form-title').value || '',
-        location: document.getElementById('form-location').value,
+        location: (() => {
+          const loc = document.getElementById('form-location').value.trim();
+          const dept = document.getElementById('form-location-dept').value.trim();
+          return dept ? `${loc} (${dept})` : loc;
+        })(),
         locationUrl: document.getElementById('form-location-url').value || ''
       };
 
