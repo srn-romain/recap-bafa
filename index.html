@@ -181,6 +181,8 @@
     <div class="modal-content settings-modal-content">
       <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
       <h2>Paramètres du compte</h2>
+      <div id="settings-email-display"
+        style="color: #888; font-size: 0.9rem; margin-top: -5px; margin-bottom: 20px; font-weight: 500;"></div>
 
       <form id="settings-form" onsubmit="handleSettingsSubmit(event)">
         <h3 class="subsettings-title">Profil</h3>
@@ -611,11 +613,27 @@
     const pageSize = 20;
     let allPublicUsers = [];
 
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(async user => {
       const userListSection = document.getElementById('user-list-section');
       if (user) {
-        if (userListSection) userListSection.style.display = 'block';
-        loadPublicUsers();
+        try {
+          // Vérifier le rôle de l'utilisateur pour restreindre l'accès
+          const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
+          const userData = userDoc.data();
+
+          // Accessible uniquement si rôle 'guest' ou email contenant 'invite'
+          const isInviteProfile = (userData && userData.role === 'guest') || (user.email && user.email.toLowerCase().includes('invite'));
+
+          if (isInviteProfile) {
+            if (userListSection) userListSection.style.display = 'block';
+            loadPublicUsers();
+          } else {
+            if (userListSection) userListSection.style.display = 'none';
+          }
+        } catch (e) {
+          console.error("Erreur vérification rôle:", e);
+          if (userListSection) userListSection.style.display = 'none';
+        }
       } else {
         if (userListSection) userListSection.style.display = 'none';
       }

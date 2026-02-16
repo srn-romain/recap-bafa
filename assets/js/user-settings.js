@@ -175,6 +175,12 @@ async function openSettingsModal() {
     const feedbackEl = document.getElementById(SETTINGS_FEEDBACK_ID);
     if (feedbackEl) feedbackEl.style.display = 'none';
 
+    // Remplir l'email
+    const emailDisplay = document.getElementById('settings-email-display');
+    if (emailDisplay && window.currentUser && window.currentUser.email) {
+        emailDisplay.textContent = window.currentUser.email;
+    }
+
     // Charger les données actuelles
     try {
         const doc = await window.firebaseDb.collection('users').doc(window.currentUser.uid).get();
