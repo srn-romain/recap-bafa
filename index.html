@@ -527,13 +527,40 @@
             `;
         }
 
-        // Hero : Remplacer les boutons par "Accéder à mon espace"
+        // Hero : Remplacer les boutons par "Accéder à mon espace" + Bouton Partage
         if (heroBtns) {
           heroBtns.innerHTML = `
-                <button onclick="window.location.href='dashboard.html?uid=${user.uid}'" class="btn-large btn-orange">
-                    <i class="bi bi-speedometer2"></i> Accéder à mon espace
-                </button>
+                <test style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+                    <button onclick="window.location.href='dashboard.html?uid=${user.uid}'" class="btn-large btn-orange">
+                        <i class="bi bi-speedometer2"></i> Accéder à mon espace
+                    </button>
+                    <!-- Bouton de copie de lien rapide -->
+                    <button id="quick-copy-link-btn" onclick="copyProfileLink()"
+                        style="background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s;"
+                        onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
+                        <i class="bi bi-link-45deg" style="color: white; font-size: 1.2rem;"></i>
+                        <span id="quick-copy-text">Copier le lien de partage de mon profil</span>
+                    </button>
+                </test>
             `;
+
+          // Pré-remplir le lien de partage pour que le bouton fonctionne immédiatement
+          const shareLinkInput = document.getElementById('share-profile-link');
+          if (shareLinkInput) {
+            const currentUrl = new URL(window.location.href);
+            // Remplacer index.html par dashboard.html ou ajouter dashboard.html si on est à la racine
+            let newPath = currentUrl.pathname;
+            if (newPath.endsWith('index.html')) {
+              newPath = newPath.replace('index.html', 'dashboard.html');
+            } else if (newPath.endsWith('/')) {
+              newPath += 'dashboard.html';
+            } else {
+              // Cas où on est sur /foo/bar sans slash final ni extension (rare en static file serving simple mais possible)
+              // On assume qu'on remplace le dernier segment ou on ajoute
+              newPath = newPath.substring(0, newPath.lastIndexOf('/')) + '/dashboard.html';
+            }
+            shareLinkInput.value = `${currentUrl.origin}${newPath}?uid=${user.uid}`;
+          }
         }
       } else {
         window.targetUid = null;

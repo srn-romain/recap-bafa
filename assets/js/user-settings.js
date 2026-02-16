@@ -227,8 +227,21 @@ async function openSettingsModal() {
             const shareLinkInput = document.getElementById('share-profile-link');
             if (shareLinkInput) {
                 const currentUrl = new URL(window.location.href);
-                // On s'assure d'avoir l'UID
-                shareLinkInput.value = `${currentUrl.origin}${currentUrl.pathname}?uid=${window.currentUser.uid}`;
+                let path = currentUrl.pathname;
+
+                // Si on est sur l'accueil (index.html ou /), le lien doit pointer vers dashboard.html
+                if (path.endsWith('index.html') || path.endsWith('/')) {
+                    if (path.endsWith('index.html')) {
+                        path = path.replace('index.html', 'dashboard.html');
+                    } else {
+                        path += 'dashboard.html';
+                    }
+                } else if (!path.includes('dashboard.html')) {
+                    // Fallback générique : essayer de pointer vers dashboard.html dans le même dossier
+                    path = path.substring(0, path.lastIndexOf('/')) + '/dashboard.html';
+                }
+
+                shareLinkInput.value = `${currentUrl.origin}${path}?uid=${window.currentUser.uid}`;
             }
         }
     } catch (e) {
