@@ -286,6 +286,15 @@ function updateUI() {
   // Boutons de connexion/déconnexion en haut
   const authButtonTop = document.getElementById('auth-button-top');
   const logoutButtonTop = document.getElementById('logout-button-top');
+  const navConnectionStatus = document.getElementById('nav-connection-status');
+
+  if (navConnectionStatus) {
+    if (isLoggedIn && window.currentUser && window.currentUser.email) {
+      navConnectionStatus.textContent = `Connecté en tant que ${window.currentUser.email}`;
+    } else {
+      navConnectionStatus.textContent = "Vous n'êtes pas connecté";
+    }
+  }
 
   if (authButtonTop) {
     // Si connecté, on cache le bouton de connexion (car on affiche Logout)

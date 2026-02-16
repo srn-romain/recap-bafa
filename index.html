@@ -20,7 +20,8 @@
     <div class="nav-content" style="justify-content: space-between;">
       <test style="color: white; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center;">
         <span class="nav-title-mobile"><i class="bi bi-rocket-takeoff-fill"></i> BAFA & BAFD</span>
-        <span class="nav-title-desktop"><i class="bi bi-rocket-takeoff-fill"></i> Récapitulatif d'Expériences BAFA &
+        <span id="desktop-nav-title" class="nav-title-desktop"><i class="bi bi-rocket-takeoff-fill"></i> Récapitulatif
+          d'Expériences BAFA &
           BAFD</span>
       </test>
       <test id="navbar-auth-buttons" style="display: flex; gap: 10px;">
@@ -180,9 +181,10 @@
   <div id="settings-modal" class="modal" style="display: none;">
     <div class="modal-content settings-modal-content">
       <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
-      <h2>Paramètres du compte</h2>
-      <div id="settings-email-display"
-        style="color: #888; font-size: 0.9rem; margin-top: -5px; margin-bottom: 20px; font-weight: 500;"></div>
+      <div style="text-align: center; border-bottom: 1px solid #a6d866; margin-bottom: 15px; padding-bottom: 5px;">
+        <h2 style="margin-bottom: 5px; border: none;">Paramètres du compte</h2>
+        <div id="settings-email-display" style="color: #888; font-size: 0.85rem; font-weight: 500; margin: 0;"></div>
+      </div>
 
       <form id="settings-form" onsubmit="handleSettingsSubmit(event)">
         <h3 class="subsettings-title">Profil</h3>
@@ -527,6 +529,12 @@
             `;
         }
 
+        // Mettre à jour le titre desktop avec le statut de connexion
+        const desktopTitle = document.getElementById('desktop-nav-title');
+        if (desktopTitle) {
+          desktopTitle.innerHTML = `<i class="bi bi-rocket-takeoff-fill"></i><span style="color: white; font-weight: bold;">Connecté en tant que</span> <span style="color: #2c3e50; font-weight: bold;">${user.email}</span>`;
+        }
+
         // Hero : Remplacer les boutons par "Accéder à mon espace" + Bouton Partage
         if (heroBtns) {
           heroBtns.innerHTML = `
@@ -579,6 +587,12 @@
               <i class="bi bi-pencil-square"></i> Créer un compte
             </button>
           `;
+        }
+
+        // Remettre le titre par défaut
+        const desktopTitle = document.getElementById('desktop-nav-title');
+        if (desktopTitle) {
+          desktopTitle.innerHTML = `<i class="bi bi-rocket-takeoff-fill"></i> Récapitulatif d'Expériences BAFA & BAFD`;
         }
 
         if (heroBtns) {

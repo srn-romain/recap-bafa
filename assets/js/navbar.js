@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <a href="index.html" class="nav-item" title="Menu" id="nav-menu-btn">
                 <i class="bi bi-house-door-fill"></i> Accueil
             </a>
-
+            
             <!-- Liens Sommaire (visible sur Dashboard) -->
             <test id="nav-link-experiences" class="nav-item nav-toc-link" onclick="document.getElementById('experiences').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
                 <i class="bi bi-briefcase"></i> <span class="nav-text">Expériences</span>
