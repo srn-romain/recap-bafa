@@ -385,14 +385,6 @@
                     <input type="text" id="exp-duration" placeholder="Ex: 17 jours">
                 </div>
                 <div class="form-group">
-                    <label>Organisateur <span class="required-asterisk">*</span></label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="exp-organizer" placeholder="Ex: Temps-Jeunes" required style="flex: 1;">
-                        <input type="number" id="exp-dept" placeholder="Dép." style="width: 70px; text-align: center;"
-                            min="0" max="999">
-                    </div>
-                </div>
-                <div class="form-group">
                     <label>Type de séjour</label>
                     <select id="exp-stay-type">
                         <option value="">-- Sélectionner --</option>
@@ -401,6 +393,7 @@
                         <option value="Gestion libre">Gestion libre</option>
                         <option value="Gestion libre à l'étranger">Gestion libre à l'étranger</option>
                         <option value="Gestion libre / Camping">Gestion libre / Camping</option>
+                        <option value="Gestion libre">Gestion libre</option>
                         <option value="Itinérance">Itinérance</option>
                         <option value="Itinérance étranger">Itinérance étranger</option>
                         <option value="Pension complète">Pension complète</option>
@@ -549,10 +542,21 @@
                     </div>
                     <!-- Ancien champ caché pour compatibilité éventuelle ou supprimé si JS mis à jour -->
                 </div>
+
                 <div class="form-group">
                     <label>Nombre de jeunes</label>
                     <input type="number" id="exp-youth-count" placeholder="Ex: 26" min="0">
                 </div>
+
+                <div class="form-group">
+                    <label>Organisateur <span class="required-asterisk">*</span></label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="exp-organizer" placeholder="Ex: Temps-Jeunes" required style="flex: 1;">
+                        <input type="number" id="exp-dept" placeholder="Dép." style="width: 70px; text-align: center;"
+                               min="0" max="999">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Lien site internet de l'organisme</label>
                     <div style="display: flex; gap: 5px;">

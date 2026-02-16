@@ -252,6 +252,16 @@ window.toggleExpStayTypeCustom = function () {
       // Ne pas vider la valeur ici si on est en train de charger un edit
     }
   }
+
+  // Masquer le département du lieu si c'est à l'étranger
+  const locationDeptInput = document.getElementById('exp-location-dept');
+  if (select && locationDeptInput) {
+    if (select.value.toLowerCase().includes('étranger')) { // Casse et accent gérés par le .includes dans le HTML values
+      locationDeptInput.style.display = 'none';
+    } else {
+      locationDeptInput.style.display = ''; // Revenir au style par défaut (flex item)
+    }
+  }
 };
 
 // Toggle l'affichage du champ "Autre" pour l'intitulé du poste d'une expérience
