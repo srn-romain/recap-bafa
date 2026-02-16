@@ -634,12 +634,32 @@ function copyProfileLink() {
     // Le lien est dans un input caché
     navigator.clipboard.writeText(linkInput.value).then(() => {
         const btnText = document.getElementById('share-btn-text');
+
+        // Gestion du bouton rapide (Dashboard)
+        const quickBtnText = document.getElementById('quick-copy-text');
+        const quickBtn = document.getElementById('quick-copy-link-btn');
         const defaultText = "Copier le lien de mon profil";
+        const defaultQuickText = "Copier le lien de partage de mon profil";
 
         if (btnText) btnText.textContent = 'Lien copié !';
 
+        if (quickBtnText && quickBtn) {
+            // Figer la largeur actuelle pour éviter le redimensionnement
+            const currentWidth = quickBtn.getBoundingClientRect().width;
+            quickBtn.style.width = `${currentWidth}px`;
+            quickBtn.style.justifyContent = 'center'; // S'assurer que le contenu reste centré
+
+            quickBtnText.textContent = 'Lien copié !';
+        }
+
         setTimeout(() => {
             if (btnText) btnText.textContent = defaultText;
+
+            if (quickBtnText && quickBtn) {
+                quickBtnText.textContent = defaultQuickText;
+                // Relâcher la largeur (optionnel, ou on peut la laisser figée)
+                quickBtn.style.width = '';
+            }
         }, 2000);
     }).catch(err => {
         console.error('Erreur copie :', err);

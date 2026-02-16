@@ -38,7 +38,17 @@
                 aperçu de mes expériences sur le terrain, suivi d'une liste des formations que j'ai suivies, ainsi
                 qu'une section
                 statistiques pour visualiser mon parcours.
-            </p>
+            </p><br>
+
+            <!-- Bouton de copie de lien rapide (visible uniquement si propriétaire) -->
+            <test style="display: flex; justify-content: center; width: 100%;">
+                <button id="quick-copy-link-btn" onclick="copyProfileLink()"
+                    style="display: none; background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 0.9rem; align-items: center; gap: 8px; transition: background 0.2s;"
+                    onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
+                    <i class="bi bi-link-45deg" style="color: white; font-size: 1.2rem;"></i>
+                    <span id="quick-copy-text">Copier le lien de partage de mon profil</span>
+                </button>
+            </test>
 
             <div class="info-box">
                 <test id="tips-header" style="cursor: pointer; display: flex; align-items: center; gap: 10px;"
@@ -864,15 +874,12 @@
     <script src="assets/js/import-data.js"></script>
 
     <!-- Modal de paramètres -->
-    <!-- Modal de paramètres (Standard Design) -->
     <div id="settings-modal" class="modal" style="display: none;">
         <div class="modal-content settings-modal-content">
             <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
             <h2>Paramètres du compte</h2>
             <div id="settings-email-display"
                 style="color: #888; font-size: 0.9rem; margin-top: -5px; margin-bottom: 20px; font-weight: 500;"></div>
-
-
 
             <form id="settings-form" onsubmit="handleSettingsSubmit(event)">
                 <h3 class="subsettings-title">Profil</h3>

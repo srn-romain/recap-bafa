@@ -324,6 +324,12 @@ function updateUI() {
     settingsBtn.style.display = isOwner ? 'block' : 'none';
   }
 
+  // Gérer la visibilité du bouton de copie rapide
+  const quickCopyBtn = document.getElementById('quick-copy-link-btn');
+  if (quickCopyBtn) {
+    quickCopyBtn.style.display = isOwner ? 'flex' : 'none';
+  }
+
   // Afficher toutes les sections (Formations, Stats) pour tout le monde (Public Read)
   const formationsTitle = document.getElementById('formations');
   const formationsTableContainer = document.getElementById('table-formations')?.closest('.tabs');
