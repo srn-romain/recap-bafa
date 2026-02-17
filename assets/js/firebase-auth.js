@@ -56,16 +56,19 @@ async function getUserRole(user) {
       const data = userDoc.data();
       window.userRole = data.role || null;
       window.userGender = data.gender || null; // Stocker le genre pour l'affichage
+      window.userProfilePic = data.profilePic || null; // Stocker la photo de profil
       console.log('Rôle récupéré:', window.userRole, 'Genre:', window.userGender, 'pour UID:', user.uid);
     } else {
       window.userRole = null;
       window.userGender = null;
+      window.userProfilePic = null;
       console.log('Aucun document trouvé pour UID:', user.uid);
     }
   } catch (error) {
     console.error("Erreur lors de la récupération du rôle:", error);
     window.userRole = null;
     window.userGender = null;
+    window.userProfilePic = null;
   }
 }
 
@@ -204,6 +207,7 @@ async function signOut() {
     await firebase.auth().signOut();
     window.currentUser = null;
     window.userRole = null;
+    window.userProfilePic = null;
 
     // Vider les données des formations du tableau
     const formationsTable = document.getElementById('table-formations');
@@ -293,6 +297,19 @@ function updateUI() {
       navConnectionStatus.textContent = `Connecté en tant que ${window.currentUser.email}`;
     } else {
       navConnectionStatus.textContent = "Vous n'êtes pas connecté";
+    }
+  }
+
+  // Mettre à jour la photo de profil dans la navbar
+  const navProfilePicContainer = document.getElementById('nav-profile-pic-container');
+  const navProfilePic = document.getElementById('nav-profile-pic');
+
+  if (navProfilePicContainer && navProfilePic) {
+    if (isLoggedIn && window.userProfilePic) {
+      navProfilePic.src = window.userProfilePic;
+      navProfilePicContainer.style.display = 'block';
+    } else {
+      navProfilePicContainer.style.display = 'none';
     }
   }
 

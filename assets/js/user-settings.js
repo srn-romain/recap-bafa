@@ -54,20 +54,117 @@ function toggleLinkedinExplanation(event) {
     }
 }
 
-// Variables pour l'image de fond
+// Variables pour l'image de fond et de profil
 let backgroundImageData = null;
+let profilePicData = null; // New variable for profile picture
 const MAX_IMAGE_SIZE_MB = 2;
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
 /**
- * Gère l'upload de l'image de fond
+ * Gère l'upload de l'image de fond et de profil
  */
 document.addEventListener('DOMContentLoaded', function () {
     const backgroundInput = document.getElementById('settings-background-image');
     if (backgroundInput) {
         backgroundInput.addEventListener('change', handleBackgroundImageUpload);
     }
+
+    // Listener pour la photo de profil
+    const profileInput = document.getElementById('settings-profile-pic');
+    if (profileInput) {
+        profileInput.addEventListener('change', handleProfilePicUpload);
+    }
 });
+
+/**
+ * Traite la photo de profil sélectionnée
+ */
+function handleProfilePicUpload(event) {
+    const file = event.target.files[0];
+    const previewImg = document.getElementById('preview-profile-pic');
+
+    // Note: On utilise le même conteneur d'erreur ou un spécifique si on veut
+    // Pour l'instant on alerte simple ou reuse errorEl global de la modale feedback si besoin
+    // Mais restons simple : check taille
+
+    if (!file) return;
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        showSettingsFeedback('error', `L'image est trop lourde (${(file.size / 1024 / 1024).toFixed(2)} Mo). Max : ${MAX_IMAGE_SIZE_MB} Mo.`);
+        event.target.value = '';
+        profilePicData = null;
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+        profilePicData = e.target.result;
+
+        // Afficher la preview
+        if (previewImg) {
+            previewImg.src = profilePicData;
+            previewImg.style.display = 'block';
+        }
+
+        // Sauvegarde immédiate
+        try {
+            await window.firebaseDb.collection('users').doc(window.currentUser.uid).update({
+                profilePic: profilePicData
+            });
+
+            // Update global vars
+            window.userProfilePic = profilePicData;
+
+            // Update UI immédiate si fonction updateUI existe (navbar)
+            if (typeof updateUI === 'function') {
+                updateUI();
+            }
+
+            showSettingsFeedback('success', "Photo de profil mise à jour !");
+            settingsChangesSaved = true; // Marquer pour reload si besoin
+
+        } catch (error) {
+            console.error("Erreur sauvegarde photo profil", error);
+            showSettingsFeedback('error', "Erreur sauvegarde photo : " + error.message);
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+/**
+ * Supprime la photo de profil
+ */
+async function removeProfilePic() {
+    profilePicData = null;
+    const input = document.getElementById('settings-profile-pic');
+    const previewImg = document.getElementById('preview-profile-pic');
+
+    try {
+        await window.firebaseDb.collection('users').doc(window.currentUser.uid).update({
+            profilePic: firebase.firestore.FieldValue.delete()
+        });
+
+        // Update UI
+        if (input) input.value = '';
+        if (previewImg) {
+            previewImg.src = '';
+            previewImg.style.display = 'none';
+        }
+
+        // Global state
+        window.userProfilePic = null;
+        if (typeof updateUI === 'function') {
+            updateUI();
+        }
+
+        showSettingsFeedback('success', "Photo de profil supprimée.");
+        settingsChangesSaved = true;
+
+    } catch (error) {
+        console.error("Erreur suppression photo", error);
+        showSettingsFeedback('error', "Erreur suppression : " + error.message);
+    }
+}
 
 /**
  * Traite l'image de fond sélectionnée
@@ -223,6 +320,20 @@ async function openSettingsModal() {
             // Sauvegarder l'état initial
             settingsInitialState = getSettingsState();
 
+            // Remplir la photo de profil
+            const profilePreview = document.getElementById('preview-profile-pic');
+            if (profilePreview) {
+                if (data.profilePic) {
+                    profilePreview.src = data.profilePic;
+                    profilePreview.style.display = 'block';
+                    profilePicData = data.profilePic; // Stocker pour pas la perdre si on change rien
+                } else {
+                    profilePreview.src = '';
+                    profilePreview.style.display = 'none';
+                    profilePicData = null;
+                }
+            }
+
             // Remplir le lien de partage caché
             const shareLinkInput = document.getElementById('share-profile-link');
             if (shareLinkInput) {
@@ -349,7 +460,7 @@ async function handleSettingsSubmit(event) {
             }
         });
 
-        // Mettre à jour le cache local immédiatement
+        // Update local status immediately if needed
         window.userGender = gender;
 
         // Mettre à jour l'état initial pour éviter le warning si on ferme après save

@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const navbarHTML = `
     <nav id="sticky-navbar">
         <div class="nav-content">
+            <!-- Profile Pic (Dynamic) -->
+            <test id="nav-profile-pic-container" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid white; display: none; margin-right: 10px;">
+                <img id="nav-profile-pic" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+            </test>
+
             <!-- Home Icon (Mobile) -->
             <a href="index.html" class="nav-item home-btn" title="Accueil" id="nav-home-btn">
                 <i class="bi bi-house-door-fill"></i>

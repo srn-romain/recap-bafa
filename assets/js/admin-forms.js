@@ -1330,7 +1330,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const locName = formatLocationName(document.getElementById('exp-location').value.trim());
         const locDept = document.getElementById('exp-location-dept').value.trim();
         location = locDept ? `${locName} (${locDept})` : locName;
-        locationUrl = document.getElementById('exp-location-url').value || '';
+        const rawLocUrl = document.getElementById('exp-location-url').value;
+        locationUrl = rawLocUrl ? rawLocUrl : null;
         // itineraryLocations reste null
       }
 
@@ -1515,7 +1516,10 @@ document.addEventListener('DOMContentLoaded', function () {
           const dept = document.getElementById('form-location-dept').value.trim();
           return dept ? `${loc} (${dept})` : loc;
         })(),
-        locationUrl: document.getElementById('form-location-url').value || ''
+        locationUrl: (() => {
+          const u = document.getElementById('form-location-url').value;
+          return u ? u : null;
+        })()
       };
 
       try {
