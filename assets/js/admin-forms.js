@@ -1330,19 +1330,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const locName = formatLocationName(document.getElementById('exp-location').value.trim());
         const locDept = document.getElementById('exp-location-dept').value.trim();
         location = locDept ? `${locName} (${locDept})` : locName;
+
+        // Générer lien Google Maps si vide
         const rawLocUrl = document.getElementById('exp-location-url').value;
-        locationUrl = rawLocUrl ? rawLocUrl : null;
+        if (rawLocUrl) {
+          locationUrl = rawLocUrl;
+        } else if (location) {
+          locationUrl = `https://www.google.fr/maps/search/${encodeURIComponent(location)}`;
+        } else {
+          locationUrl = null;
+        }
         // itineraryLocations reste null
       }
 
       // Gérer le logo : si vide, tenter la détection automatique
       let logoPath = '';
       const logoInputVal = document.getElementById('exp-logo-path').value.trim();
+      const rawOrganizerUrl = document.getElementById('exp-organizer-url').value.trim();
 
       if (!logoInputVal) {
         // Pas de logo uploadé, tenter la détection automatique
-        const organizerUrl = document.getElementById('exp-organizer-url').value.trim();
-        if (organizerUrl) {
+        // Utiliser l'URL de l'organisateur si fournie, sinon rien (on ne use pas le lien google search généré pour ça)
+        if (rawOrganizerUrl) {
           try {
             // Appeler la détection automatique
             await autoDetectLogoAsync(organizerUrl);
@@ -1393,7 +1402,19 @@ document.addEventListener('DOMContentLoaded', function () {
           const dept = document.getElementById('exp-dept').value.trim();
           return dept ? `${org} (${dept})` : org;
         })(),
-        organizerUrl: document.getElementById('exp-organizer-url').value || '',
+        organizerUrl: (() => {
+          const rawUrl = document.getElementById('exp-organizer-url').value.trim();
+          if (rawUrl) return rawUrl;
+
+          const org = document.getElementById('exp-organizer').value.trim();
+          const dept = document.getElementById('exp-dept').value.trim();
+          const fullOrg = org + (dept ? ` ${dept}` : ''); // Use space for cleaner search query
+
+          if (fullOrg) {
+            return `https://www.google.com/search?q=${encodeURIComponent(fullOrg)}`;
+          }
+          return '';
+        })(),
         logoPath: logoPath,
         location: location,
         locationUrl: locationUrl,
@@ -1505,7 +1526,19 @@ document.addEventListener('DOMContentLoaded', function () {
           const dept = document.getElementById('form-organism-dept').value.trim();
           return dept ? `${org} (${dept})` : org;
         })(),
-        organismUrl: document.getElementById('form-organism-url').value || '',
+        organismUrl: (() => {
+          const rawUrl = document.getElementById('form-organism-url').value.trim();
+          if (rawUrl) return rawUrl;
+
+          const org = document.getElementById('form-organism').value.trim();
+          const dept = document.getElementById('form-organism-dept').value.trim();
+          const fullOrg = org + (dept ? ` ${dept}` : '');
+
+          if (fullOrg) {
+            return `https://www.google.com/search?q=${encodeURIComponent(fullOrg)}`;
+          }
+          return '';
+        })(),
         logoPath: logoPath,
         title: (() => {
           const selectVal = document.getElementById('form-title').value;
@@ -1517,8 +1550,18 @@ document.addEventListener('DOMContentLoaded', function () {
           return dept ? `${loc} (${dept})` : loc;
         })(),
         locationUrl: (() => {
-          const u = document.getElementById('form-location-url').value;
-          return u ? u : null;
+          const rawUrl = document.getElementById('form-location-url').value.trim();
+          if (rawUrl) return rawUrl;
+
+          const loc = formatLocationName(document.getElementById('form-location').value.trim());
+          const dept = document.getElementById('form-location-dept').value.trim();
+          // Construct location string for search
+          const fullLoc = loc + (dept ? ` ${dept}` : '');
+
+          if (fullLoc) {
+            return `https://www.google.fr/maps/search/${encodeURIComponent(fullLoc)}`;
+          }
+          return null;
         })()
       };
 
