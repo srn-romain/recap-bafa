@@ -362,6 +362,7 @@ async function openSettingsModal() {
 
     if (modal) {
         modal.style.display = 'flex';
+        document.body.classList.add('modal-open');
     }
 }
 
@@ -383,6 +384,7 @@ function closeSettingsModal() {
     const modal = document.getElementById('settings-modal');
     if (modal) {
         modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
         // Si des changements importants ont été sauvegardés, on recharge
         if (settingsChangesSaved) {
             window.location.reload();
@@ -400,6 +402,7 @@ function confirmCloseSettings() {
 
     if (unsavedModal) unsavedModal.style.display = 'none';
     if (settingsModal) settingsModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
 
     // Réinitialiser l'état
     settingsInitialState = null;
@@ -664,7 +667,10 @@ async function importData(input) {
             }
 
             const modal = document.getElementById('import-confirmation-modal');
-            if (modal) modal.style.display = 'flex';
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }
 
         } catch (error) {
             console.error("Erreur lecture import :", error);
@@ -681,7 +687,14 @@ async function importData(input) {
  */
 function closeImportConfirmationModal() {
     const modal = document.getElementById('import-confirmation-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.style.display = 'none';
+        // Only remove scroll lock if the main settings modal is also closed
+        const settingsModal = document.getElementById('settings-modal');
+        if (!settingsModal || settingsModal.style.display === 'none') {
+            document.body.classList.remove('modal-open');
+        }
+    }
 
     // Reset
     pendingImportData = null;

@@ -147,8 +147,8 @@ async function showAddExperienceModal() {
   if (autoLogoCheck) autoLogoCheck.checked = true;
 
   // Réinitialiser les champs de localisation
-  toggleLocationFields();
   clearItineraryTable();
+  toggleLocationFields();
 
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
@@ -304,7 +304,6 @@ function toggleLocationFields() {
     // Initialiser avec une ligne si vide
     if (tbody && tbody.children.length === 0) {
       addItineraryRow();
-      addItineraryRow();
     }
 
     updateItineraryRemoveButton();
@@ -367,7 +366,7 @@ function updateItineraryRemoveButton() {
   const tbody = document.getElementById('itinerary-tbody');
   const removeBtn = document.getElementById('remove-itinerary-btn');
   if (tbody && removeBtn) {
-    if (tbody.children.length > 2) {
+    if (tbody.children.length > 1) {
       removeBtn.style.display = 'flex';
     } else {
       removeBtn.style.display = 'none';
