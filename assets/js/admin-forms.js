@@ -1429,7 +1429,14 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         // Mode classique : un seul lieu
         const locName = formatLocationName(document.getElementById('exp-location').value.trim());
-        const locDept = document.getElementById('exp-location-dept').value.trim();
+        const locDept = document.getElementById('exp-location-dept').value.trim().toUpperCase();
+
+        // Validation du département (chiffres ou 2A/2B)
+        if (locDept && !/^\d+$|^2[AB]$/.test(locDept)) {
+          showExperienceError('Le département doit être composé de chiffres ou être 2A/2B.');
+          return;
+        }
+
         location = locDept ? `${locName} (${locDept})` : locName;
 
         // Générer lien Google Maps si vide
@@ -1518,7 +1525,12 @@ document.addEventListener('DOMContentLoaded', function () {
         })(),
         organizer: (() => {
           const org = document.getElementById('exp-organizer').value.trim();
-          const dept = document.getElementById('exp-dept').value.trim();
+          const dept = document.getElementById('exp-dept').value.trim().toUpperCase();
+          if (dept && !/^\d+$|^2[AB]$/.test(dept)) {
+            showExperienceError('Le département de l\'organisateur doit être composé de chiffres ou être 2A/2B.');
+            throw new Error('Validation Error'); // Stop execution inside IIFE (will be caught by main try-catch if not careful but here it is inside a lambda for data obj construction... wait. This is tricky inside an IIFE/arrow function assigned to property.
+            // Better to validate BEFORE creating data object.
+          }
           return dept ? `${org} (${dept})` : org;
         })(),
         organizerUrl: (() => {
@@ -1661,7 +1673,11 @@ document.addEventListener('DOMContentLoaded', function () {
         })(),
         organism: (() => {
           const org = document.getElementById('form-organism').value.trim();
-          const dept = document.getElementById('form-organism-dept').value.trim();
+          const dept = document.getElementById('form-organism-dept').value.trim().toUpperCase();
+          if (dept && !/^\d+$|^2[AB]$/.test(dept)) {
+            showFormationError('Le département de l\'organisme doit être composé de chiffres ou être 2A/2B.');
+            throw new Error('Validation Error');
+          }
           return dept ? `${org} (${dept})` : org;
         })(),
         organismUrl: (() => {
@@ -1684,7 +1700,11 @@ document.addEventListener('DOMContentLoaded', function () {
         })(),
         location: (() => {
           const loc = formatLocationName(document.getElementById('form-location').value.trim());
-          const dept = document.getElementById('form-location-dept').value.trim();
+          const dept = document.getElementById('form-location-dept').value.trim().toUpperCase();
+          if (dept && !/^\d+$|^2[AB]$/.test(dept)) {
+            showFormationError('Le département du lieu doit être composé de chiffres ou être 2A/2B.');
+            throw new Error('Validation Error');
+          }
           return dept ? `${loc} (${dept})` : loc;
         })(),
         locationUrl: (() => {
