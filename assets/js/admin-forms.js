@@ -586,7 +586,7 @@ async function autoDetectLogoAsync(organizerUrl, modalType = 'exp', organizerNam
     }
   };
 
-  // 1. Essayer avec l'URL si présente (Clearbit Domain Logo API)
+  // 1. Essayer avec l'URL si présente : Google Favicon (Le plus robuste pour "via le site")
   if (organizerUrl) {
     try {
       let domain = '';
@@ -597,13 +597,35 @@ async function autoDetectLogoAsync(organizerUrl, modalType = 'exp', organizerNam
         domain = organizerUrl;
       }
 
+      // Essai 1: Google Favicon (128px)
+      const googleUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+
+      // Tenter de le convertir en Base64 (CORS peut bloquer)
+      try {
+        const base64 = await urlToBase64(googleUrl);
+        updateUI(base64);
+        return base64;
+      } catch (corsErr) {
+        // Si CORS bloque, on utilise l'URL directement (ça marche dans <img src=...>)
+        updateUI(googleUrl);
+        return googleUrl;
+      }
+    } catch (e) {
+      // Continue vers Clearbit si échec total (rare pour Google)
+    }
+  }
+
+  // 1b. Clearbit par Domaine (fallback qualité)
+  if (organizerUrl) {
+    try {
+      let domain = '';
+      try { domain = new URL(organizerUrl).hostname; } catch (e) { domain = organizerUrl; }
+
       const logoUrl = `https://logo.clearbit.com/${domain}`;
       const base64 = await urlToBase64(logoUrl);
       updateUI(base64);
       return base64;
-    } catch (e) {
-      // Continue
-    }
+    } catch (e) { }
   }
 
   // 2. Essayer de trouver le VRAI LOGO par le NOM (via Clearbit Autocomplete)
