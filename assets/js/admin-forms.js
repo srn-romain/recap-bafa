@@ -139,12 +139,8 @@ async function showAddExperienceModal() {
   currentEditingRow = null;
   currentEditingDocId = null;
 
-  // Réinitialiser le message d'erreur du logo
-  const logoError = document.getElementById('exp-logo-error');
-  if (logoError) {
-    logoError.style.display = 'none';
-    logoError.textContent = '';
-  }
+  // Réinitialiser le logo (image, input, erreurs)
+  removeLogo();
 
   // Réinitialiser les champs de localisation
   toggleLocationFields();
@@ -1422,22 +1418,26 @@ document.addEventListener('DOMContentLoaded', function () {
       const rawOrganizerUrl = document.getElementById('exp-organizer-url').value.trim();
 
       if (!logoInputVal) {
-        // Pas de logo uploadé, tenter la détection automatique
-        const organizerName = document.getElementById('exp-organizer').value.trim();
+        // Pas de logo uploadé, vérifier checkbox
+        const autoLogoChecked = document.getElementById('exp-auto-logo-check') ? document.getElementById('exp-auto-logo-check').checked : true;
 
-        // On tente si on a une URL OU un nom
-        if (rawOrganizerUrl || organizerName) {
-          try {
-            // Appeler la détection automatique
-            await autoDetectLogoAsync(rawOrganizerUrl, 'exp', organizerName);
-            // Récupérer le logo après détection
-            const detectedLogo = document.getElementById('exp-logo-path').value.trim();
-            if (detectedLogo) {
-              logoPath = detectedLogo;
+        if (autoLogoChecked) {
+          const organizerName = document.getElementById('exp-organizer').value.trim();
+
+          // On tente si on a une URL OU un nom
+          if (rawOrganizerUrl || organizerName) {
+            try {
+              // Appeler la détection automatique
+              await autoDetectLogoAsync(rawOrganizerUrl, 'exp', organizerName);
+              // Récupérer le logo après détection
+              const detectedLogo = document.getElementById('exp-logo-path').value.trim();
+              if (detectedLogo) {
+                logoPath = detectedLogo;
+              }
+            } catch (error) {
+              console.warn('Auto-détection du logo échouée:', error);
+              // Continuer sans logo
             }
-          } catch (error) {
-            console.warn('Auto-détection du logo échouée:', error);
-            // Continuer sans logo
           }
         }
       } else {
@@ -1579,7 +1579,10 @@ document.addEventListener('DOMContentLoaded', function () {
       const organismName = document.getElementById('form-organism').value.trim();
 
       if (!logoInputVal) {
-        if (organismUrl || organismName) {
+        // Vérifier checkbox
+        const autoLogoChecked = document.getElementById('form-auto-logo-check') ? document.getElementById('form-auto-logo-check').checked : true;
+
+        if (autoLogoChecked && (organismUrl || organismName)) {
           try {
             // Auto-détection
             const detected = await autoDetectLogoAsync(organismUrl, 'form', organismName);

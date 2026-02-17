@@ -573,9 +573,19 @@
 
                     <!-- Bulle d'information -->
                     <div id="logo-auto-info-box"
-                        style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
-                        <i class="bi bi-info-circle"></i> Si vous n'ajoutez pas de logo, le programme tentera d'en
-                        rechercher automatiquement un lors de l'enregistrement.
+                        style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem; display: flex; align-items: start; gap: 10px;">
+                        <i class="bi bi-info-circle" style="color: #1976d2; margin-top: 2px;"></i>
+                        <test>
+                            Si vous n'ajoutez pas de logo, le programme tentera d'en rechercher un automatiquement lors
+                            de l'enregistrement.
+                            <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="exp-auto-logo-check" checked
+                                    style="width: auto; margin: 0; cursor: pointer;">
+                                <label for="exp-auto-logo-check"
+                                    style="margin: 0; cursor: pointer; color: #1565c0; font-weight: 500;">Activer la
+                                    recherche automatique</label>
+                            </div>
+                        </test>
                     </div>
 
                     <!-- Zone d'upload style course.html -->
@@ -799,11 +809,22 @@
                 </div>
                 <div class="form-group">
                     <label>Logo de l'organisme</label>
-                    <small id="form-logo-auto-info-small"
-                        style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem;">
-                        <i class="bi bi-info-circle"></i> Si vous n'ajoutez pas de logo, le programme tentera d'en
-                        rechercher automatiquement un lors de l'enregistrement.
-                    </small>
+                    <div id="form-logo-auto-info-box"
+                        style="background-color: #e3f2fd; margin-bottom: 10px; border: 1px solid #90caf9; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.85rem; display: flex; align-items: start; gap: 10px;">
+                        <i class="bi bi-info-circle" style="color: #1976d2; margin-top: 2px;"></i>
+                        <div>
+                            <span style="font-weight: 500; color: #0d47a1;">Recherche automatique :</span><br>
+                            Si vous n'ajoutez pas de logo, le programme tentera d'en rechercher un automatiquement lors
+                            de l'enregistrement.
+                            <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="form-auto-logo-check" checked
+                                    style="width: auto; margin: 0; cursor: pointer;">
+                                <label for="form-auto-logo-check"
+                                    style="margin: 0; cursor: pointer; color: #1565c0; font-weight: 500;">Activer la
+                                    recherche automatique</label>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Zone d'upload style course.html -->
                     <div style="border: 2px dashed #a6d866; border-radius: 8px; padding: 20px; text-align: center; background: #f9fdf7; transition: all 0.3s;"
