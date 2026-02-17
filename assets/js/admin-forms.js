@@ -167,11 +167,7 @@ async function showAddExperienceModal() {
     });
   }
 
-  // Écouter les changements du type de séjour
-  const stayTypeSelect = document.getElementById('exp-stay-type');
-  if (stayTypeSelect) {
-    stayTypeSelect.addEventListener('change', toggleLocationFields);
-  }
+  // Listeners are now global to avoid accumulation
 
   // Afficher les messages d'info par défaut (pas de logo au départ)
   toggleLogoInfoMessages();
@@ -304,14 +300,13 @@ function toggleLocationFields() {
     const expLocation = document.getElementById('exp-location');
     if (expLocation) expLocation.removeAttribute('required');
 
-    // Initialiser avec une ligne si vide SEULEMENT si on n'est pas en train de charger des données via edit
-    // On laisse showEditExperienceModal gérer le remplissage ou l'ajout si vide.
-    // Pour showAddExperienceModal, on l'appellera explicitement.
-    /*
+    // Initialiser avec une ligne si vide
     if (tbody && tbody.children.length === 0) {
       addItineraryRow();
+      addItineraryRow();
     }
-    */
+
+    updateItineraryRemoveButton();
   } else {
     if (singleFields) singleFields.style.display = 'block';
     if (itineraryFields) itineraryFields.style.display = 'none';
@@ -371,7 +366,7 @@ function updateItineraryRemoveButton() {
   const tbody = document.getElementById('itinerary-tbody');
   const removeBtn = document.getElementById('remove-itinerary-btn');
   if (tbody && removeBtn) {
-    if (tbody.children.length > 1) {
+    if (tbody.children.length > 2) {
       removeBtn.style.display = 'flex';
     } else {
       removeBtn.style.display = 'none';
@@ -1388,6 +1383,15 @@ function closeFormationModal() {
   currentEditingRow = null;
   currentEditingDocId = null;
 }
+
+// Initialisation des Event Listeners globaux
+document.addEventListener('DOMContentLoaded', function () {
+  // Listener pour le changement de type de séjour (Expérience)
+  const expStaySelect = document.getElementById('exp-stay-type');
+  if (expStaySelect) {
+    expStaySelect.addEventListener('change', toggleLocationFields);
+  }
+});
 
 // Gérer la soumission du formulaire d'expérience
 document.addEventListener('DOMContentLoaded', function () {
