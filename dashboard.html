@@ -366,6 +366,8 @@
         <div class="modal-content large-modal">
             <span class="close-modal" onclick="closeExperienceModal()">&times;</span>
             <h2 id="experience-modal-title">Ajouter une expérience</h2>
+            <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 20px;">Les champs marqués
+                d'un <span style="color: red;">*</span> sont obligatoires.</p>
             <form id="experience-form">
                 <div class="form-group">
                     <label>Type <span class="required-asterisk">*</span></label>
@@ -664,6 +666,8 @@
         <div class="modal-content large-modal">
             <span class="close-modal" onclick="closeFormationModal()">&times;</span>
             <h2 id="formation-modal-title">Ajouter une formation</h2>
+            <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 20px;">Les champs marqués
+                d'un <span style="color: red;">*</span> sont obligatoires.</p>
             <div id="formation-error-message" class="error-message" style="display: none;"></div>
             <form id="formation-form">
                 <div class="form-group">
@@ -910,6 +914,8 @@
             </div>
 
             <form id="settings-form" onsubmit="handleSettingsSubmit(event)">
+                <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 20px;">Les champs
+                    marqués d'un <span style="color: red;">*</span> sont obligatoires.</p>
                 <h3 class="subsettings-title">Profil</h3>
 
                 <!-- Photo de profil -->
@@ -938,13 +944,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Prénom</label>
-                    <input type="text" id="settings-firstname" placeholder="Prénom">
+                    <label>Prénom <span style="color: red;">*</span></label>
+                    <input type="text" id="settings-firstname" placeholder="Prénom" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Nom</label>
-                    <input type="text" id="settings-lastname" placeholder="Nom">
+                    <label>Nom <span style="color: red;">*</span></label>
+                    <input type="text" id="settings-lastname" placeholder="Nom" required>
                 </div>
 
                 <div class="form-group">
