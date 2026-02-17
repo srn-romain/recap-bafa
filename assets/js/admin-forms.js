@@ -943,7 +943,14 @@ async function showEditExperienceModal(data, row) {
   document.getElementById('exp-date-month').value = monthValue;
   document.getElementById('exp-date').value = data.date || '';
 
-  document.getElementById('exp-duration').value = data.duration || '';
+  // Parser la durée pour enlever " jours" ou " jour"
+  let durationVal = data.duration || '';
+  const durationMatch = durationVal.match(/^(\d+)/);
+  if (durationMatch) {
+    document.getElementById('exp-duration').value = durationMatch[1];
+  } else {
+    document.getElementById('exp-duration').value = '';
+  }
   const rawOrganizer = data.organizer || '';
   // Matcher "Nom (Dept)"
   const organizerMatch = rawOrganizer.match(/^(.*?)\s*\(([^)]+)\)$/);
@@ -1265,7 +1272,14 @@ function showEditFormationModal(data, row) {
   document.getElementById('form-date-month').value = monthValue;
   document.getElementById('form-date').value = data.date || '';
 
-  document.getElementById('form-duration').value = data.duration || '';
+  // Parser la durée pour enlever " jours" ou " jour"
+  let durationVal = data.duration || '';
+  const durationMatch = durationVal.match(/^(\d+)/);
+  if (durationMatch) {
+    document.getElementById('form-duration').value = durationMatch[1];
+  } else {
+    document.getElementById('form-duration').value = '';
+  }
 
   const rawOrganism = data.organism || '';
   // Matcher "Nom (Dept)"
@@ -1471,7 +1485,12 @@ document.addEventListener('DOMContentLoaded', function () {
       const data = {
         type: document.getElementById('exp-type').value,
         date: dateText,
-        duration: document.getElementById('exp-duration').value || '',
+        duration: (() => {
+          const val = document.getElementById('exp-duration').value;
+          if (!val) return '';
+          const days = parseInt(val, 10);
+          return days > 1 ? `${days} jours` : `${days} jour`;
+        })(),
         organizer: (() => {
           const org = document.getElementById('exp-organizer').value.trim();
           const dept = document.getElementById('exp-dept').value.trim();
@@ -1602,7 +1621,12 @@ document.addEventListener('DOMContentLoaded', function () {
       const data = {
         type: document.getElementById('form-type').value,
         date: dateText,
-        duration: document.getElementById('form-duration').value || '',
+        duration: (() => {
+          const val = document.getElementById('form-duration').value;
+          if (!val) return '';
+          const days = parseInt(val, 10);
+          return days > 1 ? `${days} jours` : `${days} jour`;
+        })(),
         organism: (() => {
           const org = document.getElementById('form-organism').value.trim();
           const dept = document.getElementById('form-organism-dept').value.trim();
