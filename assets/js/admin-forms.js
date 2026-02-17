@@ -142,6 +142,10 @@ async function showAddExperienceModal() {
   // Réinitialiser le logo (image, input, erreurs)
   removeLogo();
 
+  // Activer la recherche automatique par défaut en ajout
+  const autoLogoCheck = document.getElementById('exp-auto-logo-check');
+  if (autoLogoCheck) autoLogoCheck.checked = true;
+
   // Réinitialiser les champs de localisation
   toggleLocationFields();
   clearItineraryTable();
@@ -983,6 +987,10 @@ async function showEditExperienceModal(data, row) {
     if (preview) preview.style.display = 'none';
     if (placeholder) placeholder.style.display = 'flex';
     if (removeBtn) removeBtn.style.display = 'none';
+
+    // Désactiver la recherche automatique par défaut en modification si pas de logo
+    const autoLogoCheck = document.getElementById('exp-auto-logo-check');
+    if (autoLogoCheck) autoLogoCheck.checked = false;
   }
 
   // Gérer le type de séjour et les lieux
@@ -1239,6 +1247,10 @@ function showAddFormationModal() {
   removeFormationLogo();
   toggleFormationLogoInfo();
 
+  // Activer la recherche automatique par défaut en ajout
+  const autoLogoCheck = document.getElementById('form-auto-logo-check');
+  if (autoLogoCheck) autoLogoCheck.checked = true;
+
   currentEditingRow = null;
   currentEditingDocId = null;
   document.getElementById('formation-modal').style.display = 'flex';
@@ -1312,6 +1324,12 @@ function showEditFormationModal(data, row) {
     removeFormationLogo();
   }
   toggleFormationLogoInfo();
+
+  // Désactiver la recherche automatique par défaut en modification si pas de logo
+  if (!logoPath) {
+    const autoLogoCheck = document.getElementById('form-auto-logo-check');
+    if (autoLogoCheck) autoLogoCheck.checked = false;
+  }
 
   // Gérer l'intitulé (Select ou Custom)
   const currentTitle = data.title || '';
@@ -1461,6 +1479,13 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           logoPath = `assets/img/${logoInputVal}`;
         }
+      }
+
+      // Illustration aléatoire si aucun logo n'est défini
+      if (!logoPath) {
+        const randomImages = ['random1.png', 'random2.png', 'random3.png'];
+        const randomImage = randomImages[Math.floor(Math.random() * randomImages.length)];
+        logoPath = `assets/img/${randomImage}`;
       }
 
       // Valider et formater l'âge
@@ -1616,6 +1641,13 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           logoPath = `assets/img/${logoInputVal}`;
         }
+      }
+
+      // Illustration aléatoire si aucun logo n'est défini
+      if (!logoPath) {
+        const randomImages = ['random1.png', 'random2.png', 'random3.png'];
+        const randomImage = randomImages[Math.floor(Math.random() * randomImages.length)];
+        logoPath = `assets/img/${randomImage}`;
       }
 
       const data = {
