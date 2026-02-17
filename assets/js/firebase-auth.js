@@ -453,6 +453,7 @@ function showAuthModal() {
   const modal = document.getElementById('auth-modal');
   if (modal) {
     modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
     // Réinitialiser le formulaire et masquer les erreurs
     hideAuthError();
     const form = document.getElementById('login-form');
@@ -467,6 +468,7 @@ function closeAuthModal() {
   const modal = document.getElementById('auth-modal');
   if (modal) {
     modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
   }
 }
 
@@ -571,6 +573,7 @@ function showDeleteConfirmModal(row, type) {
   const modal = document.getElementById('delete-confirm-modal');
   if (modal) {
     modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
   }
 }
 
@@ -579,6 +582,7 @@ function closeDeleteConfirmModal() {
   const modal = document.getElementById('delete-confirm-modal');
   if (modal) {
     modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
   }
   currentDeletingRow = null;
   currentDeletingType = null;

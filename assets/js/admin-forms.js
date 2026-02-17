@@ -151,6 +151,7 @@ async function showAddExperienceModal() {
   clearItineraryTable();
 
   document.getElementById('experience-modal').style.display = 'flex';
+  document.body.classList.add('modal-open');
 
   // Écouter les changements du mois pour mettre à jour le texte
   const monthInput = document.getElementById('exp-date-month');
@@ -1146,11 +1147,13 @@ async function showEditExperienceModal(data, row) {
   toggleLogoInfoMessages();
 
   document.getElementById('experience-modal').style.display = 'flex';
+  document.body.classList.add('modal-open');
 }
 
 // Fermer le modal d'expérience
 function closeExperienceModal() {
   document.getElementById('experience-modal').style.display = 'none';
+  document.body.classList.remove('modal-open');
   currentEditingRow = null;
   currentEditingDocId = null;
 
@@ -1249,6 +1252,7 @@ function showAddFormationModal() {
   currentEditingRow = null;
   currentEditingDocId = null;
   document.getElementById('formation-modal').style.display = 'flex';
+  document.body.classList.add('modal-open');
 
   // Écouter les changements du mois pour mettre à jour le texte
   const monthInput = document.getElementById('form-date-month');
@@ -1375,11 +1379,13 @@ function showEditFormationModal(data, row) {
   currentEditingDocId = null;
 
   document.getElementById('formation-modal').style.display = 'flex';
+  document.body.classList.add('modal-open');
 }
 
 // Fermer le modal de formation
 function closeFormationModal() {
   document.getElementById('formation-modal').style.display = 'none';
+  document.body.classList.remove('modal-open');
   currentEditingRow = null;
   currentEditingDocId = null;
 }
