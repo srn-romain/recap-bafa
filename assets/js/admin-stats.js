@@ -49,18 +49,44 @@ function updateUserStats() {
     setText('adminStatTotalUsers', totalUsers);
     setText('adminStatUnlistedProfiles', unlistedProfiles);
 
-    // Dernière connexion globale
-    const sortedByLogin = [...adminDataCache.users].sort((a, b) => {
-        const dateA = a.lastLogin ? (a.lastLogin.seconds || 0) : 0;
-        const dateB = b.lastLogin ? (b.lastLogin.seconds || 0) : 0;
-        return dateB - dateA;
-    });
+    // 5 dernières connexions (hors admin actuel)
+    const currentUid = window.currentUser ? window.currentUser.uid : null;
 
-    if (sortedByLogin.length > 0 && sortedByLogin[0].lastLogin) {
-        const u = sortedByLogin[0];
-        const date = u.lastLogin.toDate ? u.lastLogin.toDate() : new Date(u.lastLogin.seconds * 1000);
-        const name = u.displayName || `${u.firstname || ''} ${u.lastname || ''}`.trim() || u.email;
-        setText('adminStatLastLogin', `${name} - ${date.toLocaleString('fr-FR')}`);
+    // Filtrage et tri
+    const lastLogins = adminDataCache.users
+        .filter(u => u.id !== currentUid && u.lastLogin)
+        .sort((a, b) => {
+            const dateA = a.lastLogin.seconds || 0;
+            const dateB = b.lastLogin.seconds || 0;
+            return dateB - dateA;
+        })
+        .slice(0, 5);
+
+    const listContainer = document.getElementById('adminStatLastLoginList');
+    if (listContainer) {
+        listContainer.innerHTML = '';
+
+        if (lastLogins.length === 0) {
+            listContainer.innerHTML = '<p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Aucun historique récent.</p>';
+        } else {
+            lastLogins.forEach(u => {
+                const date = u.lastLogin.toDate ? u.lastLogin.toDate() : new Date(u.lastLogin.seconds * 1000);
+                const name = u.displayName || `${u.firstname || ''} ${u.lastname || ''}`.trim() || u.email;
+
+                const item = document.createElement('div');
+                item.style.display = 'flex';
+                item.style.justifyContent = 'space-between';
+                item.style.padding = '4px 8px';
+                item.style.background = '#f9fafb';
+                item.style.borderRadius = '4px';
+                item.style.border = '1px solid #f3f4f6';
+                item.innerHTML = `
+                    <span style="font-weight: 600; color: #374151; font-size: 0.8rem;">${name}</span>
+                    <span style="color: #6b7280; font-size: 0.75rem;">${date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
     }
 }
 

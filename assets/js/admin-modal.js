@@ -107,9 +107,11 @@ function createAdminModal() {
                         <p class="admin-stat-value" style="color: #0891b2;" id="adminStatTotalOrgs">0</p>
                         <p class="admin-stat-label">Organismes</p>
                     </div>
-                    <div class="admin-stat-card admin-stat-full">
-                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin: 0;" id="adminStatLastLogin">-</p>
-                        <p class="admin-stat-label">Dernière connexion enregistrée</p>
+                    <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start;">
+                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center;">Dernières connexions (hors vous)</p>
+                        <div id="adminStatLastLoginList" style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
+                            <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Chargement...</p>
+                        </div>
                     </div>
                 </div>
             </div>
