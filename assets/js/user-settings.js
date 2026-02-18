@@ -371,12 +371,22 @@ async function openSettingsModal() {
  */
 let settingsChangesSaved = false;
 
-function closeSettingsModal() {
+window.closeSettingsModal = function (force = false) {
+    // Si on force la fermeture (ex: depuis la modale de confirmation)
+    if (force) {
+        confirmCloseSettings();
+        return;
+    }
+
     if (hasUnsavedChanges()) {
-        // Afficher la modale de confirmation personnalisée
         const unsavedModal = document.getElementById('unsaved-changes-modal');
         if (unsavedModal) {
             unsavedModal.style.display = 'flex';
+        } else {
+            // Fallback si la modale de confirmation n'existe pas
+            if (confirm("Vous avez des modifications non enregistrées. Voulez-vous vraiment fermer sans sauvegarder ?")) {
+                confirmCloseSettings();
+            }
         }
         return;
     }
@@ -390,7 +400,7 @@ function closeSettingsModal() {
             window.location.reload();
         }
     }
-}
+};
 
 /**
  * Confirme la fermeture sans sauvegarder

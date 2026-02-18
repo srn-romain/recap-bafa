@@ -152,10 +152,19 @@ function updateAdminStatsDisplay(filterMode) {
 
     // Fonction locale pour extraire le nombre de jours si window.extractDays n'est pas dispo
     const getDays = (durationStr) => {
-        if (typeof window.extractDays === 'function') return window.extractDays(durationStr);
         if (!durationStr) return 0;
-        const match = durationStr.match(/(\d+)/);
-        return match ? parseInt(match[1], 10) : 0;
+
+        // Cas spécial "Tous les mercredis" - Identique à main.js
+        if (durationStr.includes('mercredis')) {
+            return 36;
+        }
+
+        const match = durationStr.match(/(\d+)\s*jour/i);
+        if (match) return parseInt(match[1], 10);
+
+        // Fallback: chercher juste un nombre s'il n'y a pas "jour" (compatibilité)
+        const simpleMatch = durationStr.match(/(\d+)/);
+        return simpleMatch ? parseInt(simpleMatch[1], 10) : 0;
     };
 
     filteredExps.forEach(exp => {
