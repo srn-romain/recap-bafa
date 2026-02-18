@@ -247,7 +247,8 @@ async function handleLogin(event) {
       // Inscription
       const firstName = document.getElementById('auth-firstname').value;
       const lastName = document.getElementById('auth-lastname').value;
-      const linkedin = document.getElementById('auth-linkedin').value;
+      const linkedinInput = document.getElementById('auth-linkedin');
+      const linkedin = linkedinInput ? linkedinInput.value : '';
 
       if (!firstName || !lastName) {
         showAuthError("Veuillez remplir votre nom et prénom.");

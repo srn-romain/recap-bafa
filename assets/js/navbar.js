@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div id="auth-error-message" class="error-message" style="display: none;"></div>
             <form id="login-form" onsubmit="handleLogin(event)">
                 <div id="register-fields" style="display: none;">
+                    <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Les champs marqués d'un <span style="color: red;">*</span> sont obligatoires.</p>
                     <div class="form-group">
                         <label>Prénom <span class="required-asterisk">*</span></label>
                         <input type="text" id="auth-firstname" placeholder="Ex: Jean">
@@ -103,10 +104,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="form-group">
                         <label>Nom <span class="required-asterisk">*</span></label>
                         <input type="text" id="auth-lastname" placeholder="Ex: Dupont">
-                    </div>
-                    <div class="form-group">
-                        <label>Lien LinkedIn</label>
-                        <input type="url" id="auth-linkedin" placeholder="https://www.linkedin.com/in/...">
                     </div>
                 </div>
                 <div class="form-group">
@@ -129,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div id="crit-upper" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Une majuscule</div>
                         <div id="crit-lower" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Une minuscule</div>
                         <div id="crit-number" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Un chiffre</div>
-                        <div id="crit-special"><i class="bi bi-circle"></i> Un caractère spécial (@$!%*?&)</div>
+                        <div id="crit-special"><i class="bi bi-circle"></i> Un caractère spécial</div>
                     </div>
                 </div>
                 <button type="submit" class="auth-option-btn admin-btn" style="width: 100%;">
