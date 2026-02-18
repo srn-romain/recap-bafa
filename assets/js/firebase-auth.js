@@ -447,7 +447,7 @@ function showUserMenu() {
 }
 
 // Afficher le modal d'authentification
-function showAuthModal() {
+function showAuthModal(mode) {
   const modal = document.getElementById('auth-modal');
   if (modal) {
     modal.style.display = 'flex';
@@ -457,6 +457,16 @@ function showAuthModal() {
     const form = document.getElementById('login-form');
     if (form) {
       form.reset();
+    }
+
+    // Gérer le mode (connexion ou inscription)
+    if (mode) {
+      const modeInput = document.getElementById('auth-mode');
+      if (modeInput && modeInput.value !== mode) {
+        if (typeof toggleAuthMode === 'function') {
+          toggleAuthMode();
+        }
+      }
     }
   }
 }

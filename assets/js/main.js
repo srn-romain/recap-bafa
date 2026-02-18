@@ -269,7 +269,11 @@ function extractDays(text) {
   }
 
   const match = text.match(/(\d+)\s*jour/i);
-  return match ? parseInt(match[1], 10) : 0;
+  if (match) return parseInt(match[1], 10);
+
+  // Fallback pour les nombres seuls (si "jour" est absent)
+  const simpleMatch = text.match(/(\d+)/);
+  return simpleMatch ? parseInt(simpleMatch[1], 10) : 0;
 }
 
 // Fonction utilitaire pour extraire un nombre
