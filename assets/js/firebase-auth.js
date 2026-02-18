@@ -424,7 +424,6 @@ function updateUI() {
     removeEditColumns();
   }
 
-  // Gérer la visibilité de la section statistiques admin
   // Gérer la visibilité du bouton de statistiques admin
   const adminStatsBtn = document.getElementById('admin-stats-btn');
   if (adminStatsBtn) {
@@ -434,12 +433,6 @@ function updateUI() {
     } else {
       adminStatsBtn.style.display = 'none';
     }
-  }
-
-  // Ancienne logique (pour compatibilité si section existe encore)
-  const adminStatsSection = document.getElementById('admin-stats-section');
-  if (adminStatsSection) {
-    adminStatsSection.style.display = 'none'; // On cache la section par défaut maintenant qu'il y a la modale
   }
 
   updateSectionNumbers();

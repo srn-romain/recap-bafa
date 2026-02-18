@@ -140,12 +140,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Appeler une première fois (pour l'initialisation sync)
     // Utiliser setTimeout pour laisser le temps au CSS/DOM de se stabiliser
-    /*setTimeout(() => {
+    setTimeout(() => {
         window.updateNavbarLinksVisibility();
         if (typeof window.updateUI === 'function') {
             window.updateUI();
         }
-    }, 100);*/
+    }, 100);
 
     // Scroll Spy pour activer les liens au défilement
     function setupScrollSpy() {

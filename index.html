@@ -514,7 +514,6 @@
   <script src="assets/js/user-settings.js"></script>
   <script src="assets/js/admin-stats.js"></script>
   <script src="assets/js/admin-modal.js"></script>
-  <script src="assets/js/navbar.js"></script>
 
   <script>
     // Logique spécifique à l'accueil
@@ -568,6 +567,11 @@
         // Navbar : Remplacer les boutons par "Accéder à mon espace" + "Se déconnecter"
         if (navbarBtns) {
           navbarBtns.innerHTML = `
+                <button id="admin-stats-btn" onclick="openAdminStatsModal()" class="nav-item" title="Statistiques Admin"
+                style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: white; display: flex;
+                align-items: center;">
+                <i class="bi bi-bar-chart-fill"></i>
+                </button>
                 <!-- Bouton Paramètres (Gear) -->
                 <button onclick="openSettingsModal()" class="nav-item" title="Paramètres du compte"
                   style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: white; display: flex; align-items: center;">
@@ -587,8 +591,44 @@
 
         // Mettre à jour le titre desktop avec le statut de connexion
         const desktopTitle = document.getElementById('desktop-nav-title');
+
+        // Fonction pour mettre à jour le titre avec la photo
+        async function updateDesktopTitleWithProfile(user) {
+          if (!desktopTitle) return;
+
+          let picSrc = window.userProfilePic || '';
+
+          // Si pas de photo globale, on essaie de la récupérer de Firestore
+          if (!picSrc && window.firebaseDb) {
+            try {
+              const doc = await window.firebaseDb.collection('users').doc(user.uid).get();
+              if (doc.exists && doc.data().profilePic) {
+                picSrc = doc.data().profilePic;
+                window.userProfilePic = picSrc; // Mise à jour globale
+              }
+            } catch (e) {
+              console.error("Erreur récup photo profil index", e);
+            }
+          }
+
+          const picDisplay = picSrc ? 'flex' : 'none';
+          // Layout propre : flex row
+          desktopTitle.innerHTML = `
+            <test style="display: flex; align-items: center; gap: 10px;">
+                <test id="nav-profile-pic-container-inline" style="display: ${picDisplay}; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid white;">
+                    <img src="${picSrc}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                </test>
+                <test style="display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                    <i class="bi bi-rocket-takeoff-fill"></i>
+                    <span style="color: white; font-weight: bold;">Connecté :</span>
+                    <span style="color: #2c3e50; font-weight: bold;">${user.email}</span>
+                </test>
+            </test>`;
+        }
+
         if (desktopTitle) {
-          desktopTitle.innerHTML = `<i class="bi bi-rocket-takeoff-fill"></i><span style="color: white; font-weight: bold;">Connecté en tant que</span> <span style="color: #2c3e50; font-weight: bold;">${user.email}</span>`;
+          // Afficher une version initiale (peut-être sans photo) puis mettre à jour
+          updateDesktopTitleWithProfile(user);
         }
 
         // Hero : Remplacer les boutons par "Accéder à mon espace" + Bouton Partage

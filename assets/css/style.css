@@ -1451,16 +1451,18 @@ th.sortable:hover .sort-indicator.sort-neutral {
 
 /* .large-modal est géré spécifiquement pour chaque cas */
 .large-modal {
-  /* max-width retirée ici pour laisser la priorité aux styles inline ou spécifiques */
+    max-width: 450px;
 }
 
 @media (min-width: 769px) {
-  .modal-content {
-    max-width: 400px;
-    padding: 18px;
-  }
+    .modal-content {
+        max-width: 400px;
+        padding: 18px;
+    }
 
-
+    .large-modal {
+        max-width: 480px;
+    }
 }
 
 .close-modal {
