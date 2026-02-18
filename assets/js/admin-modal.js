@@ -6,70 +6,111 @@ document.addEventListener('DOMContentLoaded', function () {
 function createAdminModal() {
     const modalHTML = `
     <div id="admin-stats-modal" class="modal" style="display: none; z-index: 1000;">
+        <style>
+            .admin-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 12px;
+                width: 100%;
+            }
+            .admin-stat-card {
+                background: white;
+                border-radius: 8px;
+                padding: 1rem;
+                text-align: center;
+                border: 1px solid #fee2e2;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            }
+            .admin-stat-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin: 0;
+            }
+            .admin-stat-label {
+                font-size: 0.75rem;
+                color: #4b5563;
+                margin-top: 0.25rem;
+                line-height: 1.2;
+            }
+            .admin-stat-full {
+                grid-column: 1 / -1;
+            }
+            @media (max-width: 900px) {
+                .admin-stats-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (max-width: 600px) {
+                .admin-stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                .admin-stat-value {
+                    font-size: 1.2rem;
+                }
+            }
+            @media (max-width: 400px) {
+                .admin-stats-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
         <div class="modal-content" style="max-width: 900px;">
             <span class="close-modal" onclick="closeAdminStatsModal()" style="z-index: 1001; margin-top: 13px; margin-right: 13px">&times;</span>
             <div style="background-color: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; text-align: center;">
                     <i class="bi bi-shield-lock-fill" style="color: #dc2626; font-size: 1.5rem; margin-right: 0.75rem;"></i>
                     <h3 style="font-size: 1.25rem; font-weight: 700; color: #991b1b; margin: 0;">Statistiques Administrateur</h3>
                 </div>
 
-                <div style="overflow-x: auto; margin-bottom: 2rem;">
-                    <table style="width: 100%; border-collapse: separate; border-spacing: 12px; table-layout: fixed;">
-                        <!-- Ligne 1 -->
-                        <tr>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin: 0;" id="adminStatTotalUsers">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Utilisateurs totaux</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #16a34a; margin: 0;" id="adminStatActiveUsers">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Utilisateurs actifs</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #7c3aed; margin: 0;" id="adminStatTotalExps">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Expériences totales</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #d97706; margin: 0;" id="adminStatUpcomingExps">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Exps. à venir</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #4f46e5; margin: 0;" id="adminStatPastExps">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Exps. passées</p>
-                            </td>
-                        </tr>
-                        <!-- Ligne 2 -->
-                        <tr>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #059669; margin: 0;" id="adminStatTotalForms">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Formations totales</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #d97706; margin: 0;" id="adminStatUpcomingForms">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Forms. à venir</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #4f46e5; margin: 0;" id="adminStatPastForms">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Forms. passées</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #ea580c; margin: 0;" id="adminStatTotalDays">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Jours cumulés</p>
-                            </td>
-                            <td style="background: white; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #0891b2; margin: 0;" id="adminStatTotalOrgs">0</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Organismes</p>
-                            </td>
-                        </tr>
-                        <!-- Ligne 3 (Pleine largeur) -->
-                        <tr>
-                            <td colspan="5" style="background: white; border-radius: 8px; padding: 0.75rem; text-align: center; border: 1px solid #fee2e2; vertical-align: middle;">
-                                <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin: 0;" id="adminStatLastLogin">-</p>
-                                <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.25rem;">Dernière connexion enregistrée</p>
-                            </td>
-                        </tr>
-                    </table>
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #1f2937;" id="adminStatTotalUsers">0</p>
+                        <p class="admin-stat-label">Utilisateurs totaux</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #16a34a;" id="adminStatActiveUsers">0</p>
+                        <p class="admin-stat-label">Utilisateurs actifs</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #7c3aed;" id="adminStatTotalExps">0</p>
+                        <p class="admin-stat-label">Expériences totales</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #d97706;" id="adminStatUpcomingExps">0</p>
+                        <p class="admin-stat-label">Exps. à venir</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #4f46e5;" id="adminStatPastExps">0</p>
+                        <p class="admin-stat-label">Exps. passées</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #059669;" id="adminStatTotalForms">0</p>
+                        <p class="admin-stat-label">Formations totales</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #d97706;" id="adminStatUpcomingForms">0</p>
+                        <p class="admin-stat-label">Forms. à venir</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #4f46e5;" id="adminStatPastForms">0</p>
+                        <p class="admin-stat-label">Forms. passées</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #ea580c;" id="adminStatTotalDays">0</p>
+                        <p class="admin-stat-label">Jours cumulés</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <p class="admin-stat-value" style="color: #0891b2;" id="adminStatTotalOrgs">0</p>
+                        <p class="admin-stat-label">Organismes</p>
+                    </div>
+                    <div class="admin-stat-card admin-stat-full">
+                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin: 0;" id="adminStatLastLogin">-</p>
+                        <p class="admin-stat-label">Dernière connexion enregistrée</p>
+                    </div>
                 </div>
             </div>
 
@@ -78,7 +119,7 @@ function createAdminModal() {
                 <h4 style="font-size: 0.875rem; font-weight: 700; color: #991b1b; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="bi bi-geo-alt-fill"></i> Carte des lieux d'expériences (BAFA/BAFD)
                 </h4>
-                <p id="mapLoadingStatus" style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; font-style: italic;">
+                <p id="mapLoadingStatus" style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; font-style: italic; text-align: center;">
                     Initialisation de la carte...</p>
                 <div id="adminRacesMap" style="width: 100%; height: 350px; border-radius: 8px; background-color: #f3f4f6; border: 1px solid #e5e7eb; z-index: 1;">
                 </div>
