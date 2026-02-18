@@ -1451,39 +1451,42 @@ th.sortable:hover .sort-indicator.sort-neutral {
 
 /* .large-modal est géré spécifiquement pour chaque cas */
 .large-modal {
-    max-width: 450px;
+  max-width: 450px;
 }
 
 @media (min-width: 769px) {
-    .modal-content {
-        max-width: 400px;
-        padding: 18px;
-    }
+  .modal-content {
+    max-width: 400px;
+    padding: 18px;
+  }
 
-    .large-modal {
-        max-width: 480px;
-    }
+  .large-modal {
+    max-width: 480px;
+  }
 }
 
 .close-modal {
   position: absolute;
-  right: 10px;
-  top: 10px;
-  font-size: 20px;
+  right: 8px;
+  top: 8px;
+  font-size: 28px;
   font-weight: bold;
   color: #aaa;
   cursor: pointer;
-  transition: color 0.2s;
-  width: 24px;
-  height: 24px;
+  transition: all 0.2s;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  z-index: 10;
+  border-radius: 50%;
 }
 
 .close-modal:hover {
   color: #e74c3c;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .auth-option-btn {
