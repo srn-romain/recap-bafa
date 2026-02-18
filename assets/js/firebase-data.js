@@ -31,6 +31,8 @@ const GENDER_MAP = [
   { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
   { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
   { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
+  { m: 'Respons Scout', f: 'Respons Scout' },
+  { m: 'Chef Scout', f: 'Cheffe Scout' },
   { m: 'Autre (préciser)', f: 'Autre (préciser)' }
 ];
 

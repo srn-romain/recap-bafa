@@ -104,6 +104,8 @@ async function updatePositionLabels() {
     { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
     { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
     { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
+    { m: 'Respons Scout', f: 'Respons Scout' },
+    { m: 'Chef Scout', f: 'Cheffe Scout' },
     { m: 'Autre (préciser)', f: 'Autre (préciser)' }
   ];
 
@@ -266,7 +268,9 @@ window.toggleExpPositionCustom = function () {
   const select = document.getElementById('exp-position');
   const customInput = document.getElementById('exp-position-custom');
   if (select && customInput) {
-    if (select.value === 'Autre') {
+    const val = select.value;
+    // Vérifier "Autre", "autre", ou "Autre (préciser)"
+    if (val === 'Autre' || val === 'autre' || val === 'Autre (préciser)') {
       customInput.style.display = 'block';
       customInput.required = true;
     } else {
@@ -303,6 +307,7 @@ function toggleLocationFields() {
 
     // Initialiser avec une ligne si vide
     if (tbody && tbody.children.length === 0) {
+      addItineraryRow();
       addItineraryRow();
     }
 
@@ -355,7 +360,7 @@ function addItineraryRow(location = '', url = '') {
 function removeLastItineraryRow() {
   const tbody = document.getElementById('itinerary-tbody');
   // Ne supprimer que s'il reste plus d'une ligne
-  if (tbody && tbody.children.length > 1) {
+  if (tbody && tbody.children.length > 2) {
     tbody.lastElementChild.remove();
     updateItineraryRemoveButton();
   }
@@ -366,7 +371,7 @@ function updateItineraryRemoveButton() {
   const tbody = document.getElementById('itinerary-tbody');
   const removeBtn = document.getElementById('remove-itinerary-btn');
   if (tbody && removeBtn) {
-    if (tbody.children.length > 1) {
+    if (tbody.children.length > 2) {
       removeBtn.style.display = 'flex';
     } else {
       removeBtn.style.display = 'none';
@@ -1560,7 +1565,7 @@ document.addEventListener('DOMContentLoaded', function () {
         locationUrl: locationUrl,
         stayType: (() => {
           const selectVal = document.getElementById('exp-stay-type').value;
-          if (selectVal === 'Autre') {
+          if (['Autre', 'autre', 'Autre (préciser)'].includes(selectVal)) {
             return document.getElementById('exp-stay-type-custom').value.trim();
           }
           return selectVal;
@@ -1572,9 +1577,11 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           return null;
         })(),
+        // Position du poste : si "Autre" est sélectionné, prendre la valeur du champ texte
         position: (() => {
           const selectVal = document.getElementById('exp-position').value;
-          if (selectVal === 'Autre') {
+          // Vérifier si la valeur correspond à une des variantes de "Autre"
+          if (['Autre', 'autre', 'Autre (préciser)'].includes(selectVal)) {
             return document.getElementById('exp-position-custom').value.trim();
           }
           return selectVal;
