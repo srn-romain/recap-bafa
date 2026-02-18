@@ -683,7 +683,7 @@ table tr.even {
   }
 }
 
-@media only screen and (max-width: 1040px) {
+@media only screen and (max-width: 770px) {
   #mobile-message {
     display: block;
     background-color: #f8d7da;
