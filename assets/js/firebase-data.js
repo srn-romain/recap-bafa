@@ -693,7 +693,9 @@ async function loadUserProfile() {
 
       // Mettre à jour le titre
       if (title) {
-        title.innerHTML = `Détails des expériences BAFA & BAFD de <orange>${fullName}</orange>`;
+        const isDirlo = data.role === 'dirlo';
+        const experiencesText = isDirlo ? 'BAFA & BAFD' : 'BAFA';
+        title.innerHTML = `Détails des expériences ${experiencesText} de <orange>${fullName}</orange>`;
       }
 
       // Gérer l'icône LinkedIn et le positionnement du bouton paramètres

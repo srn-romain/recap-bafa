@@ -112,13 +112,13 @@
         </test>
       </test>
 
-        <button style="background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s;"
-                onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
-            Demander un accès <strong>directeur</strong>
-        </button>
+      <button id="request-director-btn" onclick="openDirectorRequestModal()" class="admin-btn"
+        style="display: none; margin: 0 auto 10px; font-size: 0.85rem; padding: 10px 20px; width: fit-content; border-radius: 20px; border: none;">
+        Demander un accès directeur
+      </button>
 
       <!-- Section Recherche Profil -->
-      <section id="search-section" style="text-align: center; margin-top: 60px; padding: 40px 20px;">
+      <section id="search-section" style="text-align: center; padding: 40px 20px;">
         <h2 style="color: #333; margin-bottom: 10px;"><i class="bi bi-search"></i> Rechercher un animateur</h2>
         <p style="color: #666; margin-bottom: 25px;">Recherchez le nom d’un animateur dans la section ci-dessous. S’il
           est inscrit sur la plateforme
@@ -151,13 +151,14 @@
           <a href="https://www.instagram.com/romain_colo/" target="_blank"
             style="color:#f39c12; font-weight:bold; text-decoration:underline;">ici</a>
         </p>
+
       </test>
     </test>
 
-    <!-- Zone Liste des Utilisateurs (Visible si connecté) -->
+    <!-- Section directeur -->
     <section id="user-list-section" style="display: none; margin-top: 40px; padding: 20px; border-top: 2px solid #eee;">
       <h2 style="color: #333; margin-bottom: 20px; text-align: center;">
-        <i class="bi bi-people-fill"></i> Explorer les profils publics
+        <i class="bi bi-people-fill"></i> Explorer les profils publics d'animateurs inscrits
       </h2>
       <div id="user-list-container" class="user-list-grid">
         <!-- Rempli par JS -->
@@ -183,6 +184,27 @@
         style="color:#f39c12; font-weight:bold;">@romain_colo</a>
     </p>
   </footer>
+
+  <!-- Modal de demande d'accès directeur -->
+  <div id="director-request-modal" class="modal" style="display: none; z-index: 9999;">
+    <div class="modal-content" style="max-width: 500px; text-align: center; padding: 30px;">
+      <span class="close-modal" onclick="closeDirectorRequestModal()">&times;</span>
+      <h2 style="margin-bottom: 20px; border: none;">Demander un accès directeur</h2>
+      <p style="text-align: center; margin-bottom: 20px; color: #555; line-height: 1.6; font-size: 0.95rem;">
+        En demandant un accès directeur vous pourrez, sans connaître le prénom/nom d'un animateur, rechercher dans
+        la
+        base publique des animateurs inscrits et avoir accès à leur lien personnalisé selon leurs paramètres de
+        confidentialité établis.
+      </p>
+      <button type="button" class="submit-btn" style="width: 100%; margin: 10px 0; background-color: #50644c;">
+        Demander l'accès à l'administrateur
+      </button>
+      <p style="font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic;">
+        En demandant l'accès à l'admin vous acceptez d'être contacté par mail afin de prouver votre diplôme de
+        directeur.
+      </p>
+    </div>
+  </div>
 
   <!-- Modal de paramètres (Standard Design) -->
   <div id="settings-modal" class="modal" style="display: none;">
@@ -687,6 +709,8 @@
 
     firebase.auth().onAuthStateChanged(async user => {
       const userListSection = document.getElementById('user-list-section');
+      const directorBtn = document.getElementById('request-director-btn');
+
       if (user) {
         try {
           // Vérifier le rôle de l'utilisateur pour restreindre l'accès
@@ -702,12 +726,46 @@
           } else {
             if (userListSection) userListSection.style.display = 'none';
           }
+
+          // Gérer la visibilité du bouton de demande d'accès directeur
+          if (userData && (userData.role === 'user' || !userData.role)) {
+            if (directorBtn) directorBtn.style.display = 'block';
+          } else {
+            if (directorBtn) directorBtn.style.display = 'none';
+          }
         } catch (e) {
           console.error("Erreur vérification rôle:", e);
           if (userListSection) userListSection.style.display = 'none';
+          if (directorBtn) directorBtn.style.display = 'none';
         }
       } else {
         if (userListSection) userListSection.style.display = 'none';
+        if (directorBtn) directorBtn.style.display = 'none';
+      }
+    });
+
+    // Fonctions pour le modal de demande d'accès directeur
+    window.openDirectorRequestModal = function () {
+      const modal = document.getElementById('director-request-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.classList.add('modal-open');
+      }
+    };
+
+    window.closeDirectorRequestModal = function () {
+      const modal = document.getElementById('director-request-modal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+      }
+    };
+
+    // Fermer au clic extérieur
+    window.addEventListener('click', function (event) {
+      const modal = document.getElementById('director-request-modal');
+      if (event.target === modal) {
+        closeDirectorRequestModal();
       }
     });
 
