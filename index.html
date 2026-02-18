@@ -568,7 +568,7 @@
         if (navbarBtns) {
           navbarBtns.innerHTML = `
                 <button id="admin-stats-btn" onclick="openAdminStatsModal()" class="nav-item" title="Statistiques Admin"
-                style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: white; display: flex;
+                style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: white; display: none;
                 align-items: center;">
                 <i class="bi bi-bar-chart-fill"></i>
                 </button>
@@ -587,6 +587,28 @@
                     <i class="bi bi-box-arrow-right"></i>
                 </button>
             `;
+
+          // Récupérer les données utilisateur (Rôle + Photo)
+          if (window.firebaseDb) {
+            window.firebaseDb.collection('users').doc(user.uid).get().then(doc => {
+              if (doc.exists) {
+                const data = doc.data();
+                window.userRole = data.role;
+                window.userProfilePic = data.profilePic;
+
+                // Afficher bouton admin si admin
+                if (data.role === 'admin') {
+                  const adminBtn = document.getElementById('admin-stats-btn');
+                  if (adminBtn) adminBtn.style.display = 'flex';
+                }
+
+                // Mettre à jour titre avec photo (si dispo)
+                if (typeof updateDesktopTitleWithProfile === 'function') {
+                  updateDesktopTitleWithProfile(user);
+                }
+              }
+            }).catch(err => console.error("Erreur fetch user index:", err));
+          }
         }
 
         // Mettre à jour le titre desktop avec le statut de connexion
