@@ -101,7 +101,9 @@ function toggleAuthMode() {
     firstNameInput.required = true;
     lastNameInput.required = true;
 
-    // Afficher les critères immédiatement
+    // Afficher les critères et la mention de confidentialité immédiatement
+    const privacyNotice = document.getElementById('auth-privacy-notice');
+    if (privacyNotice) privacyNotice.style.display = 'block';
     setTimeout(updatePasswordStrengthUI, 0);
   } else {
     // Passer en mode connexion
@@ -113,10 +115,11 @@ function toggleAuthMode() {
     firstNameInput.required = false;
     lastNameInput.required = false;
 
-    // Cacher la barre de force en mode connexion
-    // Cacher la liste des critères en mode connexion
+    // Cacher la liste des critères et la mention de confidentialité en mode connexion
     const criteriaContainer = document.getElementById('password-criteria-container');
+    const privacyNotice = document.getElementById('auth-privacy-notice');
     if (criteriaContainer) criteriaContainer.style.display = 'none';
+    if (privacyNotice) privacyNotice.style.display = 'none';
   }
 }
 

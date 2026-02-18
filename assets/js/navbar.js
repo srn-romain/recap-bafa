@@ -139,6 +139,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 onclick="toggleAuthMode()">
                 <span id="auth-toggle-text">Pas encore de compte ? Créer un compte</span>
             </p>
+            <p id="auth-privacy-notice" style="display: none; font-size: 0.75rem; color: #888; text-align: center; margin-top: 15px; line-height: 1.4; font-style: italic;">
+                Vos informations personnelles sont collectées dans l'unique but de sécuriser votre accès et de permettre aux recruteurs de vous identifier de manière unique. 
+                En aucun cas vos données ne seront utilisées à des fins commerciales. Nous ne vous contacterons jamais et vos données ne seront jamais cédées.
+            </p>
         </div>
     </div>
     `;
