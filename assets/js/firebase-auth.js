@@ -1,5 +1,5 @@
 // Gestion de l'authentification Firebase
-// Rôles : 'guest' (invité) ou 'admin' (administrateur)
+// Rôles : 'dirlo' (directeur) ou 'admin' (administrateur)
 
 window.currentUser = null;
 window.userRole = null;
@@ -138,8 +138,8 @@ async function handleLogin(event) {
     return;
   }
 
-  // Si l'identifiant contient 'invite', ajouter automatiquement '@gmail.com' (Legacy)
-  if (email.toLowerCase().includes('invite') && !email.includes('@')) {
+  // Si l'identifiant contient 'dirlo', ajouter automatiquement '@gmail.com' (Legacy)
+  if (email.toLowerCase().includes('dirlo') && !email.includes('@')) {
     email = email + '@gmail.com';
     document.getElementById('login-email').value = email;
   }

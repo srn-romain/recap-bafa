@@ -110,13 +110,20 @@
           <p style="color: #666; font-size: 0.95rem;">Consultez vos données à tout moment, sur mobile, tablette ou
             ordinateur.</p>
         </test>
-
       </test>
 
-      <!-- Nouvelle Section Recherche Profil -->
+        <button style="background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s;"
+                onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
+            Demander un accès <strong>directeur</strong>
+        </button>
+
+      <!-- Section Recherche Profil -->
       <section id="search-section" style="text-align: center; margin-top: 60px; padding: 40px 20px;">
         <h2 style="color: #333; margin-bottom: 10px;"><i class="bi bi-search"></i> Rechercher un animateur</h2>
-        <p style="color: #666; margin-bottom: 25px;">Retrouvez le CV d'animation public d'un utilisateur.</p>
+        <p style="color: #666; margin-bottom: 25px;">Recherchez le nom d’un animateur dans la section ci-dessous. S’il
+          est inscrit sur la plateforme
+          et selon ses paramètres de confidentialité, vous pourrez accéder à son lien personnalisé et découvrir
+          son parcours d’animation.</p>
 
         <div class="search-form"
           style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 500px; margin: 0 auto;">
@@ -143,10 +150,7 @@
           Contactez-moi sur mon Instagram dédié à l'animation :
           <a href="https://www.instagram.com/romain_colo/" target="_blank"
             style="color:#f39c12; font-weight:bold; text-decoration:underline;">ici</a>
-        </p><br>
-          <i style="margin:0;">
-              Demander un accès directeur sur votre compte pour pouvoir visualiser les profils d'animateurs<br>
-          </i>
+        </p>
       </test>
     </test>
 
@@ -689,10 +693,10 @@
           const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
           const userData = userDoc.data();
 
-          // Accessible uniquement si rôle 'guest' ou email contenant 'invite'
-          const isInviteProfile = (userData && userData.role === 'guest') || (user.email && user.email.toLowerCase().includes('invite'));
+          // Accessible uniquement si rôle 'dirlo' ou email contenant 'dirlo'
+          const isDirloProfile = (userData && userData.role === 'dirlo') || (user.email && user.email.toLowerCase().includes('dirlo'));
 
-          if (isInviteProfile) {
+          if (isDirloProfile) {
             if (userListSection) userListSection.style.display = 'block';
             loadPublicUsers();
           } else {
