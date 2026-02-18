@@ -1433,8 +1433,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (stayType && stayType.includes('Itinérance')) {
         // Mode itinérance : récupérer le tableau de lieux
         itineraryLocations = getItineraryLocations();
-        if (itineraryLocations.length === 0) {
-          showExperienceError('Veuillez ajouter au moins un lieu pour l\'itinérance.');
+        if (itineraryLocations.length === 0 || itineraryLocations.length === 1) {
+          showExperienceError('Veuillez remplir au moins deux lieux pour l\'itinérance.');
           return;
         }
         // En itinérance, on vide explicitement les champs location et locationUrl
