@@ -100,6 +100,9 @@ function toggleAuthMode() {
     registerFields.style.display = 'block';
     firstNameInput.required = true;
     lastNameInput.required = true;
+
+    // Afficher les critères immédiatement
+    setTimeout(updatePasswordStrengthUI, 0);
   } else {
     // Passer en mode connexion
     modeInput.value = 'login';
