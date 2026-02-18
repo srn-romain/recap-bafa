@@ -425,16 +425,21 @@ function updateUI() {
   }
 
   // Gérer la visibilité de la section statistiques admin
+  // Gérer la visibilité du bouton de statistiques admin
+  const adminStatsBtn = document.getElementById('admin-stats-btn');
+  if (adminStatsBtn) {
+    if (window.userRole === 'admin') {
+      // Afficher le bouton pour l'admin
+      adminStatsBtn.style.display = 'flex'; // ou block selon le style navbar
+    } else {
+      adminStatsBtn.style.display = 'none';
+    }
+  }
+
+  // Ancienne logique (pour compatibilité si section existe encore)
   const adminStatsSection = document.getElementById('admin-stats-section');
   if (adminStatsSection) {
-    if (window.userRole === 'admin') {
-      adminStatsSection.style.display = 'block';
-      if (typeof loadAdminStats === 'function') {
-        loadAdminStats();
-      }
-    } else {
-      adminStatsSection.style.display = 'none';
-    }
+    adminStatsSection.style.display = 'none'; // On cache la section par défaut maintenant qu'il y a la modale
   }
 
   updateSectionNumbers();

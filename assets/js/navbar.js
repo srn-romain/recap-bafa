@@ -34,6 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 <i class="bi bi-linkedin"></i>
             </a>
 
+            <!-- Statistiques Admin (visible si admin) -->
+            <button id="admin-stats-btn" onclick="openAdminStatsModal()" class="nav-item" title="Statistiques Admin" style="display: none;">
+                <i class="bi bi-bar-chart-fill"></i>
+            </button>
+
             <!-- Paramètres (visible si propriétaire/admin) -->
             <button id="settings-btn" onclick="openSettingsModal()" class="nav-item" title="Paramètres" style="display: none;">
                 <i class="bi bi-gear-fill"></i>
@@ -135,7 +140,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Appeler une première fois (pour l'initialisation sync)
     // Utiliser setTimeout pour laisser le temps au CSS/DOM de se stabiliser
-    setTimeout(window.updateNavbarLinksVisibility, 100);
+    /*setTimeout(() => {
+        window.updateNavbarLinksVisibility();
+        if (typeof window.updateUI === 'function') {
+            window.updateUI();
+        }
+    }, 100);*/
 
     // Scroll Spy pour activer les liens au défilement
     function setupScrollSpy() {

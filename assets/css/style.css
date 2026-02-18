@@ -1411,7 +1411,7 @@ th.sortable:hover .sort-indicator.sort-neutral {
   background: #ffffff;
   padding: 15px;
   border-radius: 8px;
-  max-width: 400px;
+  max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
@@ -1420,7 +1420,6 @@ th.sortable:hover .sort-indicator.sort-neutral {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border: 1px solid #e0e0e0;
   margin: 0 !important;
-  max-width: 400px !important;
 }
 
 /* Scrollbar simple et basique pour les modales */
@@ -1450,8 +1449,9 @@ th.sortable:hover .sort-indicator.sort-neutral {
   border-bottom: 1px solid #a6d866;
 }
 
+/* .large-modal est géré spécifiquement pour chaque cas */
 .large-modal {
-  max-width: 450px;
+  /* max-width retirée ici pour laisser la priorité aux styles inline ou spécifiques */
 }
 
 @media (min-width: 769px) {
@@ -1460,9 +1460,7 @@ th.sortable:hover .sort-indicator.sort-neutral {
     padding: 18px;
   }
 
-  .large-modal {
-    max-width: 480px;
-  }
+
 }
 
 .close-modal {
