@@ -121,6 +121,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             <i class="bi bi-eye" id="password-eye-icon"></i>
                         </button>
                     </div>
+                    <!-- Barre de complexité du mot de passe -->
+                    <!-- Liste des critères de complexité -->
+                    <div id="password-criteria-container" style="display: none; margin-top: 10px; font-size: 0.8rem; color: #666;">
+                        <p style="margin: 0 0 5px 0; font-weight: 500;">Sécurité du mot de passe :</p>
+                        <div id="crit-length" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> 8 caractères minimum</div>
+                        <div id="crit-upper" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Une majuscule</div>
+                        <div id="crit-lower" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Une minuscule</div>
+                        <div id="crit-number" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Un chiffre</div>
+                        <div id="crit-special"><i class="bi bi-circle"></i> Un caractère spécial (@$!%*?&)</div>
+                    </div>
                 </div>
                 <button type="submit" class="auth-option-btn admin-btn" style="width: 100%;">
                     <i class="bi bi-box-arrow-in-right"></i> <span id="auth-submit-text">Se connecter</span>

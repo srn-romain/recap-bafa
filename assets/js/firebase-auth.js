@@ -109,8 +109,92 @@ function toggleAuthMode() {
     registerFields.style.display = 'none';
     firstNameInput.required = false;
     lastNameInput.required = false;
+
+    // Cacher la barre de force en mode connexion
+    // Cacher la liste des critères en mode connexion
+    const criteriaContainer = document.getElementById('password-criteria-container');
+    if (criteriaContainer) criteriaContainer.style.display = 'none';
   }
 }
+
+// Vérifier la force du mot de passe
+// Vérifier la force du mot de passe (Retourne le détail des critères)
+function checkPasswordStrength(password) {
+  if (!password) return {
+    length: false,
+    upper: false,
+    lower: false,
+    number: false,
+    special: false,
+    isValid: false
+  };
+
+  const criteria = {
+    length: password.length >= 8,
+    upper: /[A-Z]/.test(password),
+    lower: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password)
+  };
+
+  criteria.isValid = criteria.length && criteria.upper && criteria.lower && criteria.number && criteria.special;
+  return criteria;
+}
+
+// Mettre à jour l'UI des critères de mot de passe
+function updatePasswordStrengthUI() {
+  const passwordInput = document.getElementById('login-password');
+  const container = document.getElementById('password-criteria-container');
+  const mode = document.getElementById('auth-mode').value;
+
+  if (!passwordInput || !container) return;
+
+  // Afficher seulement en mode inscription
+  if (mode !== 'register') {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  const password = passwordInput.value || '';
+  const results = checkPasswordStrength(password);
+
+  updateCriterion('crit-length', results.length);
+  updateCriterion('crit-upper', results.upper);
+  updateCriterion('crit-lower', results.lower);
+  updateCriterion('crit-number', results.number);
+  updateCriterion('crit-special', results.special);
+}
+
+function updateCriterion(id, isValid) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const icon = el.querySelector('i');
+
+  if (isValid) {
+    el.style.color = '#2ecc71'; // Vert
+    el.style.fontWeight = 'bold';
+    if (icon) {
+      icon.className = 'bi bi-check-circle-fill';
+    }
+  } else {
+    el.style.color = '#95a5a6'; // Gris
+    el.style.fontWeight = 'normal';
+    if (icon) {
+      icon.className = 'bi bi-circle';
+    }
+  }
+}
+
+// Initialiser les écouteurs pour le mot de passe
+document.addEventListener('DOMContentLoaded', () => {
+  const pwdInput = document.getElementById('login-password');
+  if (pwdInput) {
+    pwdInput.addEventListener('input', updatePasswordStrengthUI);
+  }
+});
 
 // Masquer le message d'erreur d'authentification
 function hideAuthError() {
@@ -148,6 +232,15 @@ async function handleLogin(event) {
     let result;
 
     if (mode === 'register') {
+      // Vérification stricte du mot de passe
+      // Vérification stricte du mot de passe
+      const securityCheck = checkPasswordStrength(password);
+      if (!securityCheck.isValid) {
+        showAuthError("Le mot de passe ne respecte pas tous les critères de sécurité.");
+        return;
+      }
+
+      // Inscription
       // Inscription
       const firstName = document.getElementById('auth-firstname').value;
       const lastName = document.getElementById('auth-lastname').value;
