@@ -1,3 +1,33 @@
+// Variables globales pour le viewer
+window.imageViewerInitialized = false;
+
+window.openImageViewer = function (src) {
+    if (!src) return;
+
+    // Lazy initialization si le modal n'existe pas encore
+    if (!document.getElementById('image-viewer-modal')) {
+        const imageViewerHTML = `
+        <div id="image-viewer-modal" class="modal" style="display: none; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.9); z-index: 10002;" onclick="window.closeImageViewer()">
+            <span class="close-modal" onclick="window.closeImageViewer()" style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer;">&times;</span>
+            <img id="image-viewer-img" style="max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 0 20px rgba(255,255,255,0.1);">
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', imageViewerHTML);
+    }
+
+    const modal = document.getElementById('image-viewer-modal');
+    const img = document.getElementById('image-viewer-img');
+    if (modal && img) {
+        img.src = src;
+        modal.style.display = 'flex';
+    }
+};
+
+window.closeImageViewer = function () {
+    const modal = document.getElementById('image-viewer-modal');
+    if (modal) modal.style.display = 'none';
+};
+
 document.addEventListener("DOMContentLoaded", function () {
     // Generate Navbar HTML
     const navbarHTML = `
@@ -108,6 +138,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Insert navbar
     document.body.insertAdjacentHTML('afterbegin', navbarHTML);
+
+    // Initialisation Viewer Image (Triggered lazily now, but setup nav click)
+    // Click event for Navbar Profile Pic
+    const navPic = document.getElementById('nav-profile-pic');
+    if (navPic) {
+        navPic.style.cursor = 'pointer';
+        navPic.onclick = function () {
+            window.openImageViewer(this.src);
+        };
+    }
 
     // Insert modal if not exists
     if (!document.getElementById('auth-modal')) {
