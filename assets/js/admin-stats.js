@@ -150,9 +150,17 @@ function updateAdminStatsDisplay(filterMode) {
             .replace(/\s+/g, " ");
     };
 
+    // Fonction locale pour extraire le nombre de jours si window.extractDays n'est pas dispo
+    const getDays = (durationStr) => {
+        if (typeof window.extractDays === 'function') return window.extractDays(durationStr);
+        if (!durationStr) return 0;
+        const match = durationStr.match(/(\d+)/);
+        return match ? parseInt(match[1], 10) : 0;
+    };
+
     filteredExps.forEach(exp => {
         const d = exp.data;
-        totalDays += (typeof window.extractDays === 'function') ? window.extractDays(d.duration) : 0;
+        totalDays += getDays(d.duration);
         if (d.organizer) orgs.add(cleanOrg(d.organizer));
 
         const sortable = (typeof window.frenchTextToMonth === 'function') ? window.frenchTextToMonth(d.date) : '';
@@ -168,7 +176,7 @@ function updateAdminStatsDisplay(filterMode) {
         const isPast = sortable && sortable <= currentSortable;
 
         if (filterMode === 'all' || isPast) {
-            totalDays += (typeof window.extractDays === 'function') ? window.extractDays(d.duration) : 0;
+            totalDays += getDays(d.duration);
             if (d.organism) orgs.add(cleanOrg(d.organism));
         }
 
@@ -198,8 +206,6 @@ function updateAdminStatsDisplay(filterMode) {
  */
 window.updateAdminStatsFilter = function (mode) {
     updateAdminStatsDisplay(mode);
-    // Optionnel : filtrer la carte aussi ? 
-    // Pour l'instant on garde tous les points sur la carte pour une vision globale
 };
 
 function updateFilterButtons(activeMode) {
@@ -221,46 +227,8 @@ function updateFilterButtons(activeMode) {
     }
 }
 
-/**
- * Initialise la carte Leaflet
- */
-/**
- * Helper pour attendre (ms)
- */
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-/**
- * Résout un lien court Google Maps via un proxy CORS pour en extraire les coordonnées
- */
-async function resolveShortUrl(url) {
-    try {
-        // Validation basique
-        if (!url || (!url.includes('maps.app.goo.gl') && !url.includes('goo.gl/maps'))) return null;
-
-        // Utilisation du proxy AllOrigins (gratuit et efficace)
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        const html = data.contents;
-
-        // Dans le HTML de Google Maps, l'URL finale est souvent dans les meta tags (og:url)
-        const match = html.match(/property="og:url" content="([^"]+)"/) ||
-            html.match(/href="([^"]+google\.com\/maps\/[^"]+)"/) ||
-            html.match(/url=([^"]+)/);
-
-        if (match && match[1]) {
-            const finalUrl = decodeURIComponent(match[1]);
-            return extractCoordsFromUrl(finalUrl);
-        }
-    } catch (e) {
-        console.warn("Échec de résolution du lien court:", url, e);
-    }
-    return null;
-}
-
-/**
- * Géo-codage de secours via Nominatim (OpenStreetMap)
- */
 async function geocodeLocation(locationName) {
     if (!locationName || locationName.length < 3) return null;
 
@@ -269,11 +237,18 @@ async function geocodeLocation(locationName) {
     if (window._geoCache[locationName]) return window._geoCache[locationName];
 
     try {
-        // On ajoute "France" pour limiter les erreurs si non précisé
         let query = locationName;
-        if (!query.toLowerCase().includes('france') && !query.includes('(')) {
-            query += " France";
+        // Détection d'un numéro de département : "Nice (06)" ou "Lyon 69"
+        // Regex cherche 2 ou 3 chiffres entre parenthèses OU à la fin du string
+        const deptRegex = /\(\d{2,3}\)|\s\d{2,3}$/;
+
+        if (deptRegex.test(locationName)) {
+            // Si département présent, on force France pour éviter les homonymes (Nice USA vs Nice 06)
+            if (!query.toLowerCase().includes('france')) {
+                query += ", France";
+            }
         }
+        // Sinon, on laisse tel quel pour permettre les lieux étrangers (ex: "Londres", "New York")
 
         const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
         const results = await resp.json();
