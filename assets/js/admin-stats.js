@@ -291,7 +291,13 @@ async function geocodeLocation(locationName) {
 
 async function initAdminMap() {
     const mapContainer = document.getElementById('adminRacesMap');
-    if (!mapContainer || adminMap) return;
+    if (!mapContainer) return;
+
+    // Toujours détruire la carte existante pour éviter les doublons/vieux marqueurs
+    if (adminMap) {
+        adminMap.remove();
+        adminMap = null;
+    }
 
     const statusEl = document.getElementById('mapLoadingStatus');
 
@@ -300,100 +306,91 @@ async function initAdminMap() {
         adminMap = L.map('adminRacesMap').setView([46.603354, 1.888334], 5);
 
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+            attribution: 'Tiles &copy; Esri'
         }).addTo(adminMap);
 
-        // Ajout des étiquettes (villes, frontières) par-dessus le satellite pour plus de lisibilité
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-            attribution: ''
-        }).addTo(adminMap);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}').addTo(adminMap);
 
         // Ajouter les marqueurs
         let markerCount = 0;
         adminMarkers = [];
 
-        // Traiter les marqueurs de manière plus prudente (pas tout en parallèle strict pour le géo-codage)
-        for (let i = 0; i < adminDataCache.experiences.length; i++) {
-            const exp = adminDataCache.experiences[i];
-            const d = exp.data;
+        // Pour accélérer : On se base UNIQUEMENT sur le nom du lieu (Nominatim avec cache)
+        // On lance les requêtes en parallèle par petits lots pour ne pas bloquer mais aller plus vite que séquentiel
+
+        // Dédoublonnage des lieux pour éviter de géo-coder 50 fois "Paris"
+        const uniqueLocations = {}; // { "Paris": [exp1, exp2], "Lyon": [exp3] }
+
+        adminDataCache.experiences.forEach(exp => {
+            const locName = exp.data.location ? exp.data.location.trim() : null;
+            if (locName && locName.length > 2) {
+                if (!uniqueLocations[locName]) uniqueLocations[locName] = [];
+                uniqueLocations[locName].push(exp);
+            }
+        });
+
+        const locationNames = Object.keys(uniqueLocations);
+        if (statusEl) statusEl.textContent = `Traitement de ${locationNames.length} lieux uniques...`;
+
+        // Traitement par lots de 5 pour respecter rate limits (1 req/s pour Nominatim officiellement, mais on peut tenter un peu plus agressif ou cache)
+        for (let i = 0; i < locationNames.length; i++) {
+            const locName = locationNames[i];
             let coords = null;
 
-            // 1. Tenter d'extraire de locationUrl (Google Maps)
-            if (d.locationUrl) {
-                coords = extractCoordsFromUrl(d.locationUrl);
-
-                // 1b. Si c'est un lien court, tenter de le résoudre
-                if (!coords && (d.locationUrl.includes('maps.app.goo.gl') || d.locationUrl.includes('goo.gl/maps'))) {
-                    // Cache local de session pour les URLs
-                    if (!window._urlCache) window._urlCache = {};
-                    if (window._urlCache[d.locationUrl]) {
-                        coords = window._urlCache[d.locationUrl];
-                    } else {
-                        coords = await resolveShortUrl(d.locationUrl);
-                        if (coords) window._urlCache[d.locationUrl] = coords;
-                        await sleep(100); // Petit délai pour ne pas spammer le proxy
-                    }
-                }
-            }
-
-            // 2. Tenter d'extraire des lieux d'itinérance (correction du nom de propriété : locations)
-            if (!coords && d.locations && Array.isArray(d.locations) && d.locations.length > 0) {
-                for (const loc of d.locations) {
-                    if (loc.url) {
-                        coords = extractCoordsFromUrl(loc.url);
-                        if (!coords && (loc.url.includes('maps.app.goo.gl') || loc.url.includes('goo.gl/maps'))) {
-                            coords = await resolveShortUrl(loc.url);
-                        }
-                        if (coords) break;
-                    }
-                }
-            }
-
-            // 3. Fallback : Géo-codage par le nom du lieu si toujours rien (très lent, donc cache indispensable)
-            if (!coords && d.location) {
-                coords = await geocodeLocation(d.location);
-                if (coords) await sleep(800); // Nominatim demande 1s entre les requêtes
+            // Vérif cache session
+            if (window._geoCache && window._geoCache[locName]) {
+                coords = window._geoCache[locName];
+            } else {
+                // Appel API
+                coords = await geocodeLocation(locName);
+                if (coords) await sleep(600); // 600ms pause min entre appels API
             }
 
             if (coords) {
-                const marker = L.marker([coords.lat, coords.lng])
-                    .bindPopup(`
-                        <div style="font-family: Arial; font-size: 13px; min-width: 150px;">
-                            <strong style="color: #dc2626;">${exp.userName}</strong><br>
-                            <b style="font-size: 1.1em;">${d.organizer || 'Organisme inconnu'}</b><br>
-                            <span style="color: #666; display: block; margin: 4px 0;">
-                                <i class="bi bi-calendar3"></i> ${d.date} — ${d.location}<br>
-                                <i class="bi bi-geo-alt-fill"></i> ${d.stayType || ''}
-                            </span>
-                            <i style="color: #4b5563;">${d.position || ''}</i>
-                            ${d.locationUrl ? `<br><a href="${d.locationUrl}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.8rem; display: block; margin-top: 5px;">Voir sur Google Maps</a>` : ''}
+                // Ajouter un marqueur pour chaque expérience à ce lieu (légèrement décalé si besoin ou popup groupé)
+                // Ici on groupe tout dans une seule popup liste si plusieurs
+                const expsAtLoc = uniqueLocations[locName];
+
+                let popupContent = `<div style="font-family: Arial, sans-serif; font-size: 13px; max-height:200px; overflow-y:auto;">
+                    <strong style="font-size: 1.1em; color: #1f2937; display:block; margin-bottom:5px;">${locName}</strong>`;
+
+                expsAtLoc.forEach(exp => {
+                    popupContent += `
+                    <div style="border-top: 1px solid #eee; padding: 6px 0;">
+                        <div style="display: flex; align-items: center;">
+                            <i class="bi bi-person-fill" style="color: #dc2626; margin-right: 5px;"></i>
+                            <strong>${exp.userName}</strong>
                         </div>
-                    `);
+                        <div style="color: #666; font-size: 0.9em; margin-left: 18px;">
+                            ${exp.data.date}
+                        </div>
+                    </div>`;
+                });
+                popupContent += `</div>`;
+
+                const marker = L.marker([coords.lat, coords.lng]).bindPopup(popupContent);
                 adminMarkers.push(marker);
                 marker.addTo(adminMap);
-                markerCount++;
+                markerCount += expsAtLoc.length;
             }
 
-            // Mise à jour progressive du compteur dans l'UI si nécessaire
-            if (statusEl && i % 5 === 0) {
-                statusEl.textContent = `Chargement de la carte... (${markerCount} points trouvés)`;
+            if (statusEl && i % 2 === 0) {
+                statusEl.textContent = `Chargement carte... (${Math.round((i / locationNames.length) * 100)}%)`;
             }
         }
 
         if (statusEl) {
-            statusEl.textContent = `${markerCount} lieu(x) affiché(s) sur la carte.`;
+            statusEl.textContent = `${markerCount} expériences affichées sur ${adminMarkers.length} lieux.`;
         }
 
-        // Si on a des marqueurs, ajuster la vue
+        // Ajuster la vue
         if (adminMarkers.length > 0) {
             const group = new L.featureGroup(adminMarkers);
-            // Attendre un peu que le DOM soit stable pour le calcul des domaines (bounds)
             setTimeout(() => {
                 adminMap.invalidateSize();
                 adminMap.fitBounds(group.getBounds().pad(0.1));
             }, 500);
         } else {
-            // Forcer le redimensionnement même sans marqueurs
             setTimeout(() => adminMap.invalidateSize(), 500);
         }
 

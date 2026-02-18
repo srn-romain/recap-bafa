@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
 // Creates the admin stats modal structure and injects it into the body
 function createAdminModal() {
     const modalHTML = `
-    <div id="admin-stats-modal" class="modal" style="display: none; z-index: 10001;">
+    <div id="admin-stats-modal" class="modal" style="display: none; z-index: 1000;">
         <div class="modal-content" style="max-width: 900px;">
-            <span class="close-modal" onclick="closeAdminStatsModal()">&times;</span>
+            <span class="close-modal" onclick="closeAdminStatsModal()" style="z-index: 1001; margin-top: 13px; margin-right: 13px">&times;</span>
             <div style="background-color: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
                 <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
                     <i class="bi bi-shield-lock-fill" style="color: #dc2626; font-size: 1.5rem; margin-right: 0.75rem;"></i>
