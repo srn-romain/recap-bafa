@@ -899,6 +899,12 @@ function parseFrenchDate(dateStr) {
     return new Date(3000, 0, 1); // Date future très éloignée
   }
 
+  // Gérer le cas spécial "Septembre YYYY - Juin YYYY"
+  const mercredisMatch = dateStr.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/i);
+  if (mercredisMatch) {
+    return new Date(parseInt(mercredisMatch[1], 10), 8, 1); // 1er Septembre de l'année de début
+  }
+
   // Gérer les périodes comme "2023-2024"
   if (/^\d{4}-\d{4}$/.test(dateStr)) {
     return new Date(parseInt(dateStr.split('-')[0], 10), 0, 1);
@@ -1043,9 +1049,46 @@ function generatePDF(tableId, title) {
   });
 
 
+  // Récupérer le nom de l'utilisateur pour le nom de fichier et l'en-tête
+  let userName = "Animateur";
+  const titleH2 = document.querySelector('h2');
+  if (titleH2) {
+    const orangeSpan = titleH2.querySelector('orange');
+    if (orangeSpan) {
+      userName = orangeSpan.textContent.trim();
+    }
+  }
+
+  // Générer un nom de fichier propre
+  // Format: type_nom_prenom_numero
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+  // Création du timestamp pour le fichier (YYYYMMDD_HHMM)
+  const pad = (num) => num.toString().padStart(2, '0');
+  const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+
+  // Nettoyage du nom (accents, espaces -> underscores, minuscules)
+  const cleanName = userName
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Enlever les accents
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_") // Remplacer tout ce qui n'est pas alphanum par underscore
+    .replace(/_+/g, "_"); // Éviter les doubles underscores
+
+  // Déterminer le type (experience ou formation)
+  let typePrefix = "document";
+  if (tableId.includes("experience")) {
+    typePrefix = "experience";
+  } else if (tableId.includes("formation")) {
+    typePrefix = "formation";
+  }
+
+  const filename = `${typePrefix}_${cleanName}_${timestamp}.pdf`;
+
   const opt = {
     margin: [1, 10, 10, 10], // top, left, bottom, right (Marge haute réduite)
-    filename: `${title}.pdf`,
+    filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
       scale: 2,
@@ -1064,20 +1107,6 @@ function generatePDF(tableId, title) {
   container.style.fontFamily = 'Arial, sans-serif';
   container.style.width = '100%'; // Forcer la largeur
 
-  // Récupérer le nom de l'utilisateur
-  // Essayer de trouver le nom dans le titre h2, ou fallback
-  let userName = "Animateur";
-  const titleH2 = document.querySelector('h2');
-  if (titleH2) {
-    const orangeSpan = titleH2.querySelector('orange');
-    if (orangeSpan) {
-      userName = orangeSpan.textContent.trim();
-    }
-  }
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
   // En-tête personnalisé (Nom de l'utilisateur) - TOUT EN HAUT
   const header = document.createElement('div');
@@ -1145,12 +1174,11 @@ function generatePDF(tableId, title) {
     originalBtn.disabled = true;
   }
 
-  html2pdf().set(opt).from(container).toPdf().get('pdf').then(function (pdf) {
+  html2pdf().set(opt).from(container).save().then(() => {
     if (originalBtn) {
       originalBtn.innerHTML = originalText;
       originalBtn.disabled = false;
     }
-    window.open(pdf.output('bloburl'), '_blank');
   }).catch(err => {
     console.error("Erreur génération PDF:", err);
     alert("Erreur lors de la génération du PDF.");

@@ -317,10 +317,47 @@
                         <option value="autre">Autre</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="date-group">
                     <label>Date <span class="required-asterisk">*</span></label>
-                    <input type="month" id="exp-date-month" required>
-                    <input type="hidden" id="exp-date">
+
+                    <!-- Options pour ALSH (Centre de loisir) -->
+                    <div id="alsh-options" style="display: none; margin-bottom: 10px;">
+                        <div
+                            style="display: flex; flex-direction: row; align-items: center; gap: 20px; flex-wrap: nowrap; margin-bottom: 5px;">
+                            <label
+                                style="display: inline-flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer; margin: 0; white-space: nowrap;">
+                                <input type="radio" name="alsh-duration-type" value="ponctuel" checked
+                                    onchange="toggleAlshDateFields()" style="margin: 0;">
+                                Durée ponctuelle
+                            </label>
+                            <label
+                                style="display: inline-flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer; margin: 0; white-space: nowrap;">
+                                <input type="radio" name="alsh-duration-type" value="mercredis"
+                                    onchange="toggleAlshDateFields()" style="margin: 0;">
+                                Tous les mercredis
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Champ Date Classique -->
+                    <div id="standard-date-container">
+                        <input type="month" id="exp-date-month">
+                        <input type="hidden" id="exp-date">
+                    </div>
+
+                    <!-- Champs pour "Tous les mercredis" -->
+                    <div id="mercredis-date-container" style="display: none;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 500;">Septembre</span>
+                            <input type="number" id="mercredis-year-start" placeholder="AAAA" style="width: 80px;"
+                                min="2000" max="2100" oninput="updateMercredisYearEnd()">
+                            <span style="font-weight: 500;">- Juin <span id="mercredis-year-end">AAAA</span></span>
+                        </div>
+                        <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 5px; font-style: italic;">
+                            <i class="bi bi-info-circle"></i> 36 jours seront comptabilisés sur cette année scolaire
+                            des mercredis de l'année <span id="mercredis-period-display">XXXX-YYYY</span>.
+                        </p>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Durée</label>

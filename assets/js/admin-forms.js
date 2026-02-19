@@ -4,6 +4,87 @@ let currentEditingRow = null;
 let currentEditingDocId = null;
 
 /**
+ * Gère l'affichage des champs de date selon le type d'expérience (ALSH vs autres)
+ * et le mode (Ponctuel vs Tous les mercredis)
+ */
+function toggleAlshDateFields() {
+  const expType = document.getElementById('exp-type').value;
+  const alshOptions = document.getElementById('alsh-options');
+  const standardDateContainer = document.getElementById('standard-date-container');
+  const mercredisDateContainer = document.getElementById('mercredis-date-container');
+  const durationInput = document.getElementById('exp-duration'); // Champ durée
+
+  // Si c'est un ALSH, on montre les options radio
+  if (expType === 'alsh') {
+    alshOptions.style.display = 'block';
+
+    // Vérifier quel radio est coché
+    const isMercredis = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
+
+    if (isMercredis) {
+      // Mode "Tous les mercredis"
+      standardDateContainer.style.display = 'none';
+      mercredisDateContainer.style.display = 'block';
+
+      // Masquer le champ durée standard car géré automatiquement (36j)
+      // Mais on peut vouloir laisser l'info visible en lecture seule ou hidden logic
+      // L'utilisateur demande "dans le champ durée 'Tous les mercredis'"
+      if (durationInput) {
+        durationInput.type = "text";
+        durationInput.value = "Tous les mercredis";
+        durationInput.disabled = true; // Empêcher modif manuelle
+      }
+    } else {
+      // Mode "Ponctuel" (comportement classique)
+      standardDateContainer.style.display = 'block';
+      mercredisDateContainer.style.display = 'none';
+
+      if (durationInput) {
+        durationInput.type = "number";
+        durationInput.value = ""; // Reset ou laisser valeur précédente ?
+        durationInput.disabled = false;
+        durationInput.placeholder = "Ex: 17";
+      }
+    }
+  } else {
+    // Pas ALSH (Colo, Autre) -> comportement classique
+    alshOptions.style.display = 'none';
+    standardDateContainer.style.display = 'block';
+    mercredisDateContainer.style.display = 'none';
+
+    if (durationInput) {
+      durationInput.type = "number";
+      durationInput.disabled = false;
+      durationInput.placeholder = "Ex: 17";
+    }
+  }
+}
+
+/**
+ * Met à jour l'année de fin et le texte informatif pour "Tous les mercredis"
+ */
+function updateMercredisYearEnd() {
+  const startYearInput = document.getElementById('mercredis-year-start');
+  const endYearSpan = document.getElementById('mercredis-year-end');
+  const periodDisplay = document.getElementById('mercredis-period-display');
+
+  const startYear = parseInt(startYearInput.value);
+
+  if (startYear && startYear > 1900 && startYear < 2200) {
+    const endYear = startYear + 1;
+    endYearSpan.textContent = endYear;
+    periodDisplay.textContent = `${startYear}-${endYear}`;
+  } else {
+    endYearSpan.textContent = 'AAAA';
+    periodDisplay.textContent = 'XXXX-YYYY';
+  }
+}
+
+// Exposer les fonctions globalement pour les attributs onchange/oninput HTML
+window.toggleAlshDateFields = toggleAlshDateFields;
+window.updateMercredisYearEnd = updateMercredisYearEnd;
+
+/**
  * Formate un nom (lieu ou pays) : 
  * Première lettre en majuscule, le reste en minuscule.
  * Après un espace ou un tiret, la lettre suivante est mise en majuscule.
@@ -151,6 +232,9 @@ async function showAddExperienceModal() {
   // Réinitialiser les champs de localisation
   clearItineraryTable();
   toggleLocationFields();
+
+  // Initialiser l'affichage des champs ALSH
+  toggleAlshDateFields();
 
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
@@ -420,25 +504,38 @@ function monthToFrenchText(monthValue) {
 }
 
 // Convertir un texte français en mois (YYYY-MM)
+// Convertir un texte français en mois (YYYY-MM)
 function frenchTextToMonth(dateText) {
   if (!dateText) return '';
+  const lowerText = dateText.toLowerCase();
+
+  // Cas spécifique : Septembre 2023 - Juin 2024
+  const alshMatch = lowerText.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/);
+  if (alshMatch) {
+    return `${alshMatch[1]}-09`;
+  }
+
   const months = {
     'janvier': '01', 'janv': '01', 'février': '02', 'févr': '02', 'mars': '03',
     'avril': '04', 'avr': '04', 'mai': '05', 'juin': '06',
     'juillet': '07', 'juil': '07', 'août': '08', 'septembre': '09', 'sept': '09',
     'octobre': '10', 'oct': '10', 'novembre': '11', 'nov': '11', 'décembre': '12', 'déc': '12'
   };
-  const lowerText = dateText.toLowerCase();
+
   const yearMatch = lowerText.match(/\d{4}/);
   const year = yearMatch ? yearMatch[0] : '';
   let month = '01';
+
+  // Si pas d'année, on ne peut pas former YYYY-MM valide pour le tri
+  if (!year) return '';
+
   for (const [monthName, monthNum] of Object.entries(months)) {
     if (lowerText.includes(monthName)) {
       month = monthNum;
       break;
     }
   }
-  return year ? `${year}-${month}` : '';
+  return `${year}-${month}`;
 }
 
 // Extraire le nom du fichier ou retourner l'URL/Base64 tel quel
@@ -1401,6 +1498,13 @@ document.addEventListener('DOMContentLoaded', function () {
   if (expStaySelect) {
     expStaySelect.addEventListener('change', toggleLocationFields);
   }
+
+  // Écouter le changement de type d'expérience pour afficher/masquer les options ALSH
+  const expTypeSelect = document.getElementById('exp-type');
+  if (expTypeSelect) {
+    expTypeSelect.addEventListener('change', toggleAlshDateFields);
+  }
+
 });
 
 // Gérer la soumission du formulaire d'expérience
@@ -1417,10 +1521,54 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      // Convertir le mois sélectionné en texte français
-      const monthValue = document.getElementById('exp-date-month').value;
-      const dateText = monthValue ? monthToFrenchText(monthValue) : '';
-      document.getElementById('exp-date').value = dateText;
+      // Logique de validation et construction de date selon le mode
+      let finalDate = '';
+      let finalDuration = '';
+
+      const expType = document.getElementById('exp-type').value;
+      const isAlsh = expType === 'alsh';
+      const isMercredis = isAlsh && document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
+
+      if (isMercredis) {
+        // Validation année
+        const startYear = document.getElementById('mercredis-year-start').value;
+        if (!startYear || startYear < 2000 || startYear > 2100) {
+          showExperienceError("Veuillez saisir une année de départ valide.");
+          return;
+        }
+        const endYear = parseInt(startYear) + 1;
+        finalDate = `Septembre ${startYear} - Juin ${endYear}`;
+
+        // La durée est fixée à "Tous les mercredis"
+        // Note : on sauvegarde "Tous les mercredis" en string. 
+        // Le calcul de stats (36 jours) se fera à la lecture.
+        finalDuration = "Tous les mercredis";
+      } else {
+        // Mode classique (Ponctuel ou Colo/Autre)
+        const monthValue = document.getElementById('exp-date-month').value;
+        if (!monthValue) {
+          showExperienceError("Veuillez saisir une date.");
+          return;
+        }
+        finalDate = monthToFrenchText(monthValue);
+
+        // Si le champ durée est désactivé (bug potentiel de transition), on prend la valeur
+        // Si c'est ponctuel, l'utilisateur saisit un nombre
+        const durationInput = document.getElementById('exp-duration');
+        // On s'assure de récupérer la valeur même si on vient de repasser "type text" à "number" ou inversement
+        // Normalement toggleAlshDateFields gère l'input type
+        finalDuration = durationInput.value;
+        if (!finalDuration && durationInput.type === 'number') {
+          // Durée optionnelle ? Le placeholder dit Ex: 17, mais label n'a pas *. 
+          // On laisse vide si vide.
+        }
+      }
+
+      // On met la date formatée dans le champ hidden pour qu'elle soit récupérée par getFormData ou la suite
+      document.getElementById('exp-date').value = finalDate;
+      // Pour la durée, il faudra peut-être l'injecter manuellement dans l'objet `data` plus bas 
+      // car le champ input standard pourrait être ignoré ou avoir une valeur "Tous les mercredis"
+
 
       const stayType = document.getElementById('exp-stay-type').value || '';
 
@@ -1530,11 +1678,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const data = {
         type: document.getElementById('exp-type').value,
-        date: dateText,
+        date: finalDate, // Utiliser la date calculée plus haut (gère Mercredis et Mois standard)
         duration: (() => {
-          const val = document.getElementById('exp-duration').value;
-          if (!val) return '';
-          const days = parseInt(val, 10);
+          if (finalDuration === "Tous les mercredis") return "Tous les mercredis";
+          // Sinon logique standard avec jours
+          if (!finalDuration) return '';
+          const days = parseInt(finalDuration, 10);
           return days > 1 ? `${days} jours` : `${days} jour`;
         })(),
         organizer: (() => {
