@@ -365,7 +365,16 @@ function updateSectionNumbers() {
       if (isVisible) {
         // Extraire le titre original si présent dans data-section
         const sectionTitle = element.getAttribute('data-section-title') || section.title;
-        element.textContent = `${number}- ${sectionTitle}`;
+        const newText = `${number}- ${sectionTitle}`;
+
+        // Cibler spécifiquement le span du titre s'il existe (pour ne pas écraser le bouton PDF)
+        const titleSpan = element.querySelector('.section-title-text');
+        if (titleSpan) {
+          titleSpan.textContent = newText;
+        } else {
+          // Fallback si pas de span structuré (garde la compatibilité)
+          element.textContent = newText;
+        }
         number++;
       }
     }

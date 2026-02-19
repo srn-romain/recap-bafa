@@ -940,3 +940,111 @@ function parseFrenchDate(dateStr) {
 
   return new Date(year, month, 1);
 }
+
+/*--------------------------------------------------------------
+# Génération de PDF
+--------------------------------------------------------------*/
+function generatePDF(tableId, title) {
+  const originalTable = document.getElementById(tableId);
+  if (!originalTable) {
+    console.error("Tableau non trouvé:", tableId);
+    return;
+  }
+
+  const element = originalTable.cloneNode(true);
+
+  // Supprimer les colonnes d'action (édition/suppression) pour le propre PDF
+  const headers = element.querySelectorAll('th');
+  const rows = element.querySelectorAll('tr');
+
+  let indicesToRemove = [];
+  headers.forEach((th, index) => {
+    if (th.classList.contains('edit-column') || th.classList.contains('delete-column')) {
+      indicesToRemove.push(index);
+    }
+  });
+
+  // Trier par ordre décroissant pour ne pas décaler les index lors de la suppression
+  indicesToRemove.sort((a, b) => b - a).forEach(index => {
+    rows.forEach(row => {
+      if (row.cells[index]) {
+        row.deleteCell(index);
+      }
+    });
+  });
+
+  // Pour un meilleur rendu PDF : forcer les styles sur la copie
+  element.style.width = '100%';
+  element.style.borderCollapse = 'collapse';
+  element.style.fontSize = '10px';
+  element.style.fontFamily = 'Arial, sans-serif';
+  element.style.backgroundColor = '#ffffff';
+  element.style.color = '#333333';
+
+  element.querySelectorAll('td, th').forEach(cell => {
+    cell.style.border = '1px solid #ddd';
+    cell.style.padding = '8px';
+    cell.style.textAlign = 'left';
+    // S'assurer que les images ne débordent pas
+    const img = cell.querySelector('img');
+    if (img) {
+      img.style.maxWidth = '35px';
+      img.style.height = 'auto';
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+    }
+    // Nettoyer les liens pour qu'ils ne soient pas bleus soulignés si on veut un look propre
+    const links = cell.querySelectorAll('a');
+    links.forEach(link => {
+      link.style.color = '#333';
+      link.style.textDecoration = 'none';
+    });
+  });
+
+  // masquer les lignes vides ou message "Aucune donnée"
+  rows.forEach(row => {
+    if (row.textContent.includes("Aucune donnée")) {
+      row.style.display = 'none';
+    }
+  });
+
+  const opt = {
+    margin: [15, 10, 15, 10], // top, left, bottom, right
+    filename: `${title}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      letterRendering: true
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+  };
+
+  // Création d'un wrapper pour le rendu PDF
+  const container = document.createElement('div');
+  container.style.padding = '10px';
+  container.style.backgroundColor = '#ffffff';
+
+  const h1 = document.createElement('h1');
+  h1.textContent = title;
+  h1.style.textAlign = 'center';
+  h1.style.marginBottom = '20px';
+  h1.style.color = '#2c3e50';
+  h1.style.fontSize = '24px';
+  h1.style.fontFamily = 'Arial, sans-serif';
+
+  container.appendChild(h1);
+  container.appendChild(element);
+
+  // Exécution de html2pdf
+  if (typeof html2pdf === 'undefined') {
+    alert("Le module de génération PDF n'est pas encore chargé. Veuillez réessayer dans quelques secondes.");
+    return;
+  }
+
+  html2pdf().set(opt).from(container).save().catch(err => {
+    console.error("Erreur génération PDF:", err);
+    alert("Erreur lors de la génération du PDF.");
+  });
+}
