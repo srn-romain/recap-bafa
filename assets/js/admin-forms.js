@@ -14,8 +14,8 @@ function toggleAlshDateFields() {
   const mercredisDateContainer = document.getElementById('mercredis-date-container');
   const durationInput = document.getElementById('exp-duration'); // Champ durée
 
-  // Si c'est un ALSH, on montre les options radio
-  if (expType === 'alsh') {
+  // Si c'est un ALSH ou Scout, on montre les options radio
+  if (expType === 'alsh' || expType === 'scout') {
     alshOptions.style.display = 'block';
 
     // Vérifier quel radio est coché
@@ -25,6 +25,11 @@ function toggleAlshDateFields() {
       // Mode "Tous les mercredis"
       standardDateContainer.style.display = 'none';
       mercredisDateContainer.style.display = 'block';
+
+      const dayTypeSpan = document.getElementById('alsh-day-type');
+      if (dayTypeSpan) {
+        dayTypeSpan.textContent = (expType === 'scout') ? 'des samedis' : 'des mercredis';
+      }
 
       // Masquer le champ durée standard car géré automatiquement (36j)
       // Mais on peut vouloir laisser l'info visible en lecture seule ou hidden logic
@@ -1040,7 +1045,7 @@ async function showEditExperienceModal(data, row) {
   document.getElementById('exp-type').value = data.type || 'colo';
 
   // Gestion spécifique ALSH (Mercredis vs Ponctuel)
-  const isAlsh = (data.type === 'alsh');
+  const isAlsh = (data.type === 'alsh' || data.type === 'scout');
   // On vérifie si la durée contient "Tous les mercredis" (comparaison souple ou stricte)
   const isMercredis = (data.duration === 'Tous les mercredis') || ((data.duration || '').toLowerCase().includes('mercredis'));
 

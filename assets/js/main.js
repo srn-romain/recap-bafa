@@ -629,9 +629,21 @@ function filterTable(type, tableId) {
       visibleCount++;
     } else {
       const rowType = row.getAttribute('data-type');
-      if (rowType && rowType.includes(type)) {
-        row.style.display = '';
-        visibleCount++;
+      if (rowType) {
+        if (type === 'autre') {
+          // Inclure 'scout' dans la catégorie 'autre'
+          if (rowType.includes('autre') || rowType.includes('scout')) {
+            row.style.display = '';
+            visibleCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        } else if (rowType.includes(type)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
       } else {
         row.style.display = 'none';
       }
