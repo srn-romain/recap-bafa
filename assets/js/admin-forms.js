@@ -28,11 +28,11 @@ function toggleAlshDateFields() {
 
       // Masquer le champ durée standard car géré automatiquement (36j)
       // Mais on peut vouloir laisser l'info visible en lecture seule ou hidden logic
-      // L'utilisateur demande "dans le champ durée 'Tous les mercredis'"
+      // L'utilisateur demande "dans le champ durée '36' et disabled"
       if (durationInput) {
-        durationInput.type = "text";
-        durationInput.value = "Tous les mercredis";
-        durationInput.disabled = true; // Empêcher modif manuelle
+        durationInput.type = "number";
+        durationInput.value = "36";
+        durationInput.disabled = true;
       }
     } else {
       // Mode "Ponctuel" (comportement classique)
@@ -41,7 +41,7 @@ function toggleAlshDateFields() {
 
       if (durationInput) {
         durationInput.type = "number";
-        durationInput.value = ""; // Reset ou laisser valeur précédente ?
+        durationInput.value = ""; // Reset quand on repasse en ponctuel (comportement par défaut au clic)
         durationInput.disabled = false;
         durationInput.placeholder = "Ex: 17";
       }
@@ -1088,7 +1088,12 @@ async function showEditExperienceModal(data, row) {
   if (durationMatch) {
     document.getElementById('exp-duration').value = durationMatch[1];
   } else {
-    document.getElementById('exp-duration').value = '';
+    // Si pas de match (ex: "Tous les mercredis"), on ne vide le champ QUE si on n'est pas en mode Mercredis
+    // En mode Mercredis, toggleAlshDateFields a déjà mis "36"
+    const isMercredisMode = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
+    if (!isMercredisMode) {
+      document.getElementById('exp-duration').value = '';
+    }
   }
   const rawOrganizer = data.organizer || '';
   // Matcher "Nom (Dept)"
