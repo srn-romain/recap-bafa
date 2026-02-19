@@ -621,6 +621,15 @@ function closeDirectorRequestModal() {
   }
 }
 
+// Expose functions to window for HTML access
+window.openDirectorRequestModal = openDirectorRequestModal;
+window.closeDirectorRequestModal = closeDirectorRequestModal;
+window.requestDirectorAccess = requestDirectorAccess;
+window.checkDirectorRequestStatus = checkDirectorRequestStatus;
+window.fetchDirectorRequests = fetchDirectorRequests;
+window.approveDirectorRequest = approveDirectorRequest;
+window.rejectDirectorRequest = rejectDirectorRequest;
+
 // Envoyer une demande d'accès directeur
 async function requestDirectorAccess() {
   if (!window.currentUser) return;
