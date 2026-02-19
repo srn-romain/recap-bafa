@@ -2061,8 +2061,26 @@ async function deleteExperienceFromFirebase(row) {
   if (!isOwner()) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
-  const date = row.cells[1]?.textContent?.trim();
-  const organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
+  // Utiliser les données stockées dans l'attribut data-experience
+  let date, organizer;
+
+  if (row.dataset.experience) {
+    try {
+      const originalData = JSON.parse(row.dataset.experience);
+      date = originalData.date;
+      organizer = originalData.organizer;
+    } catch (e) {
+      console.error("Erreur parsing data-experience", e);
+    }
+  }
+
+  // Fallback
+  if (!date) {
+    date = row.cells[1]?.textContent?.trim();
+  }
+  if (!organizer) {
+    organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
+  }
 
   const snapshot = await getCollectionRef('experiences')
     .where('date', '==', date)
