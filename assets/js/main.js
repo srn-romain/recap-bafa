@@ -262,9 +262,9 @@ function calculateFormationStatistics() {
 function extractDays(text) {
   if (!text) return 0;
 
-  // Cas spécial "Tous les mercredis"
-  if (text.includes('mercredis')) {
-    // Estimation: environ 36 mercredis dans une année scolaire
+  // Cas spécial "Tous les mercredis" ou "Tous les samedis"
+  if (text.includes('mercredis') || text.includes('samedis')) {
+    // Estimation: environ 36 jours dans une année scolaire
     return 36;
   }
 

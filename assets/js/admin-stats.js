@@ -181,7 +181,7 @@ function updateAdminStatsDisplay(filterMode) {
         if (!durationStr) return 0;
 
         // Cas spécial "Tous les mercredis" - Identique à main.js
-        if (durationStr.includes('mercredis')) {
+        if (durationStr.includes('mercredis') || durationStr.includes('samedis')) {
             return 36;
         }
 

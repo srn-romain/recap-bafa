@@ -50,14 +50,18 @@ function createExperienceRow(experience) {
 
   // Colonne Date
   const tdDate = document.createElement('td');
-  // Vérification pour le format spécifique ALSH "Tous les mercredis"
+  // Vérification pour format spécifique ALSH/Scout "Tous les mercredis/samedis"
   // On veut afficher seulement "AAAA-AAAA" mais garder le tri correct
-  if (experience.type === 'alsh' && typeof experience.duration === 'string' && experience.duration.includes('mercredis')) {
-    const mercredisMatch = experience.date.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/i);
-    if (mercredisMatch) {
+  const isPeriodic = (experience.type === 'alsh' || experience.type === 'scout') &&
+    typeof experience.duration === 'string' &&
+    (experience.duration.includes('mercredis') || experience.duration.includes('samedis'));
+
+  if (isPeriodic) {
+    const periodMatch = experience.date.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/i);
+    if (periodMatch) {
       // Astuce : on inclut la date complète en masqué pour que le tri fonctionne toujours sur "Septembre..."
       // et on affiche visuellement la période "AAAA-AAAA"
-      tdDate.innerHTML = `<span style="display:none;">${experience.date}</span>${mercredisMatch[1]}-${mercredisMatch[2]}`;
+      tdDate.innerHTML = `<span style="display:none;">${experience.date}</span>${periodMatch[1]}-${periodMatch[2]}`;
     } else {
       tdDate.textContent = experience.date;
     }

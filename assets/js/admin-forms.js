@@ -1574,8 +1574,8 @@ document.addEventListener('DOMContentLoaded', function () {
       let finalDuration = '';
 
       const expType = document.getElementById('exp-type').value;
-      const isAlsh = expType === 'alsh';
-      const isMercredis = isAlsh && document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
+      const isAlshOrScout = (expType === 'alsh' || expType === 'scout');
+      const isMercredis = isAlshOrScout && document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
 
       if (isMercredis) {
         // Validation année
@@ -1587,10 +1587,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const endYear = parseInt(startYear) + 1;
         finalDate = `Septembre ${startYear} - Juin ${endYear}`;
 
-        // La durée est fixée à "Tous les mercredis"
-        // Note : on sauvegarde "Tous les mercredis" en string. 
-        // Le calcul de stats (36 jours) se fera à la lecture.
-        finalDuration = "Tous les mercredis";
+        // La durée est fixée à "Tous les mercredis" ou "Tous les samedis"
+        finalDuration = (expType === 'scout') ? "Tous les samedis" : "Tous les mercredis";
       } else {
         // Mode classique (Ponctuel ou Colo/Autre)
         const monthValue = document.getElementById('exp-date-month').value;
@@ -1728,7 +1726,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: document.getElementById('exp-type').value,
         date: finalDate, // Utiliser la date calculée plus haut (gère Mercredis et Mois standard)
         duration: (() => {
-          if (finalDuration === "Tous les mercredis") return "Tous les mercredis";
+          if (finalDuration === "Tous les mercredis" || finalDuration === "Tous les samedis") return finalDuration;
           // Sinon logique standard avec jours
           if (!finalDuration) return '';
           const days = parseInt(finalDuration, 10);
@@ -1986,9 +1984,29 @@ async function updateExperienceInFirebase(data, row) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
   // Trouver le document correspondant dans Firebase
-  // On va chercher par les données de la ligne
-  const date = row.cells[1]?.textContent?.trim();
-  const organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
+  // Utiliser les données stockées dans l'attribut data-experience pour retrouver les valeurs originales
+  let date, organizer;
+
+  if (row.dataset.experience) {
+    try {
+      const originalData = JSON.parse(row.dataset.experience);
+      date = originalData.date;
+      organizer = originalData.organizer;
+    } catch (e) {
+      console.error("Erreur parsing data-experience", e);
+    }
+  }
+
+  // Fallback (pour compatibilité)
+  if (!date) {
+    // Attention : textContent peut contenir du texte masqué pour le tri
+    // On essaie de nettoyer si on détecte le format ALSH concaténé
+    let rawDate = row.cells[1]?.textContent?.trim();
+    // Si la date est "longue" et semble dupliquée (cas du fix précédent)
+    // Mais le plus sûr est le dataset.
+    date = rawDate;
+  }
+  if (!organizer) organizer = row.cells[3]?.querySelector('a')?.textContent?.trim();
 
   const snapshot = await getCollectionRef('experiences')
     .where('date', '==', date)
