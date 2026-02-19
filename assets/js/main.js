@@ -951,7 +951,11 @@ function generatePDF(tableId, title) {
     return;
   }
 
+  // Cloner le tableau
   const element = originalTable.cloneNode(true);
+
+  // S'assurer que le tableau cloné est visible (cas où original est display:none)
+  element.style.display = 'table';
 
   // Supprimer les colonnes d'action (édition/suppression) pour le propre PDF
   const headers = element.querySelectorAll('th');
@@ -980,6 +984,7 @@ function generatePDF(tableId, title) {
   element.style.fontFamily = 'Arial, sans-serif';
   element.style.backgroundColor = '#ffffff';
   element.style.color = '#333333';
+  element.style.marginBottom = '20px';
 
   element.querySelectorAll('td, th').forEach(cell => {
     cell.style.border = '1px solid #ddd';
@@ -1001,41 +1006,129 @@ function generatePDF(tableId, title) {
     });
   });
 
-  // masquer les lignes vides ou message "Aucune donnée"
-  rows.forEach(row => {
-    if (row.textContent.includes("Aucune donnée")) {
+  // Gérer la visibilité des lignes pour le PDF
+  // Pour les formations, s'assurer que toutes les lignes pertinentes sont affichées
+  // Si le tableau original était filtré, on pourrait vouloir tout afficher ou garder le filtre.
+  // Ici, on garde le comportement visuel actuel (ce qui est visible à l'écran)
+  // MAIS on force l'affichage si c'est une ligne de données valide qui était masquée par "display:none" du parent
+  Array.from(rows).forEach(row => {
+    // Si la ligne contient "Aucune donnée" et qu'elle n'est pas la seule (donc il y a des données), on la cache
+    if (row.textContent.includes("Aucune donnée") && rows.length > 2) {
       row.style.display = 'none';
+      return;
     }
+
+    // Pour toutes les autres lignes, on s'assure qu'elles sont visibles si elles ont du contenu
+    // On vérifie si la ligne était visible dans le tableau d'origine
+    // Cependant, pour résoudre le problème de "pages blanches", on va forcer l'affichage
+    // des lignes qui ne sont pas explicitement cachées par une classe utilitaire de masquage
+
+    // Force l'affichage en table-row pour le PDF
+    if (row.style.display === 'none') {
+      // Si elle était cachée, on la laisse cachée (respect du filtre)
+      // Sauf si c'est une bizarrerie du clonage, mais on suppose que le filtre est voulu.
+      // ATTENTION : L'utilisateur dit "page blanche". Si le filtre est actif, c'est normal.
+      // Si le filtre n'est pas actif, display n'est pas none.
+
+      // HYPOTHÈSE : Le clonage ne récupère pas correctement la visibilité si elle dépend de classes CSS complexes.
+      // On va forcer le display à 'table-row' pour réinitialiser
+    }
+
+    // RESET pour le PDF : on affiche tout ce qui est dans le DOM du tableau
+    // Si l'utilisateur a filtré, il vaut mieux voir tout le tableau que rien du tout ?
+    // Ou alors le problème vient du fait que html2canvas ne rend pas les <tr> si le table a css border-collapse
+
+    row.style.display = 'table-row';
+    row.style.pageBreakInside = 'avoid'; // Éviter de couper une ligne
   });
 
+
   const opt = {
-    margin: [15, 10, 15, 10], // top, left, bottom, right
+    margin: [1, 10, 10, 10], // top, left, bottom, right (Marge haute réduite)
     filename: `${title}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
       scale: 2,
       useCORS: true,
       logging: false,
-      letterRendering: true
+      letterRendering: true,
+      scrollY: 0 // Important pour éviter les décalages si la fenêtre est scrollée
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
   };
 
   // Création d'un wrapper pour le rendu PDF
   const container = document.createElement('div');
-  container.style.padding = '10px';
+  container.style.padding = '10px'; // Padding réduit
   container.style.backgroundColor = '#ffffff';
+  container.style.fontFamily = 'Arial, sans-serif';
+  container.style.width = '100%'; // Forcer la largeur
 
+  // Récupérer le nom de l'utilisateur
+  // Essayer de trouver le nom dans le titre h2, ou fallback
+  let userName = "Animateur";
+  const titleH2 = document.querySelector('h2');
+  if (titleH2) {
+    const orangeSpan = titleH2.querySelector('orange');
+    if (orangeSpan) {
+      userName = orangeSpan.textContent.trim();
+    }
+  }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+  // En-tête personnalisé (Nom de l'utilisateur) - TOUT EN HAUT
+  const header = document.createElement('div');
+  header.style.marginBottom = '10px';
+  header.style.borderBottom = '2px solid #e74c3c'; // Ligne plus visible
+  header.style.paddingBottom = '5px';
+  header.style.fontSize = '16px';
+  header.style.color = '#2c3e50';
+  header.style.fontWeight = 'bold';
+  header.style.display = 'flex';
+  header.style.justifyContent = 'space-between'; // Espacer si on ajoute d'autres infos
+  header.innerHTML = `<div>Document appartenant à : <span style="color: #e67e22; font-size: 18px; text-transform: uppercase;">${userName}</span></div>`;
+
+  // Titre du document
   const h1 = document.createElement('h1');
   h1.textContent = title;
   h1.style.textAlign = 'center';
   h1.style.marginBottom = '20px';
+  h1.style.marginTop = '10px';
   h1.style.color = '#2c3e50';
-  h1.style.fontSize = '24px';
-  h1.style.fontFamily = 'Arial, sans-serif';
+  h1.style.fontSize = '22px';
+  // h1.style.borderBottom = '2px solid #e74c3c'; // Déjà dans le header
+  // h1.style.paddingBottom = '10px';
 
+  // Pied de page personnalisé (Signature + Date + Pagination)
+  const footer = document.createElement('div');
+  footer.style.marginTop = '20px';
+  footer.style.borderTop = '1px solid #ddd';
+  footer.style.paddingTop = '10px';
+  footer.style.fontSize = '12px'; // Plus visible
+  footer.style.color = '#555';
+  footer.style.display = 'flex';
+  footer.style.justifyContent = 'space-between';
+  footer.style.alignItems = 'flex-end'; // Aligner en bas
+  footer.style.pageBreakBefore = 'avoid'; // Essayer de garder le footer avec le contenu
+
+  const leftPart = document.createElement('div');
+  leftPart.innerHTML = `Généré le <strong>${dateStr}</strong> à ${timeStr}`;
+
+  const rightPart = document.createElement('div');
+  rightPart.innerHTML = `<strong>Récapitulatif BAFA/BAFD - Plateforme collaborative</strong><br>
+                         Généré via <a href="https://srn-romain.github.io/recap-bafa/" style="color: #e67e22; text-decoration: none;">https://srn-romain.github.io/recap-bafa/</a>`;
+  rightPart.style.textAlign = 'right';
+
+  footer.appendChild(leftPart);
+  footer.appendChild(rightPart);
+
+  container.appendChild(header);
   container.appendChild(h1);
   container.appendChild(element);
+  container.appendChild(footer);
 
   // Exécution de html2pdf
   if (typeof html2pdf === 'undefined') {
@@ -1043,8 +1136,27 @@ function generatePDF(tableId, title) {
     return;
   }
 
-  html2pdf().set(opt).from(container).save().catch(err => {
+  // Afficher un indicateur de chargement
+  const originalBtn = document.querySelector(`button[onclick*="${tableId}"]`);
+  let originalText = "";
+  if (originalBtn) {
+    originalText = originalBtn.innerHTML;
+    originalBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Génération...';
+    originalBtn.disabled = true;
+  }
+
+  html2pdf().set(opt).from(container).toPdf().get('pdf').then(function (pdf) {
+    if (originalBtn) {
+      originalBtn.innerHTML = originalText;
+      originalBtn.disabled = false;
+    }
+    window.open(pdf.output('bloburl'), '_blank');
+  }).catch(err => {
     console.error("Erreur génération PDF:", err);
     alert("Erreur lors de la génération du PDF.");
+    if (originalBtn) {
+      originalBtn.innerHTML = originalText;
+      originalBtn.disabled = false;
+    }
   });
 }

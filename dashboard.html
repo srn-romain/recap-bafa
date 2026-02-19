@@ -30,6 +30,16 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-transform: none;
             font-family: 'Roboto', sans-serif;
+            margin-left: auto !important;
+            /* Force right alignment */
+        }
+
+        /* Ensure H1 containers behave as flex containers */
+        #experiences,
+        #formations {
+            display: flex !important;
+            justify-content: space-between !important;
+            width: 100%;
         }
 
         .pdf-btn:hover {
