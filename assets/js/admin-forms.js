@@ -1046,8 +1046,9 @@ async function showEditExperienceModal(data, row) {
 
   // Gestion spécifique ALSH (Mercredis vs Ponctuel)
   const isAlsh = (data.type === 'alsh' || data.type === 'scout');
-  // On vérifie si la durée contient "Tous les mercredis" (comparaison souple ou stricte)
-  const isMercredis = (data.duration === 'Tous les mercredis') || ((data.duration || '').toLowerCase().includes('mercredis'));
+  // On vérifie si la durée contient "Tous les mercredis" ou "Tous les samedis"
+  const durationLower = (data.duration || '').toLowerCase();
+  const isMercredis = durationLower.includes('mercredis') || durationLower.includes('samedis');
 
   if (isAlsh) {
     if (isMercredis) {
