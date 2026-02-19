@@ -1039,6 +1039,44 @@ async function showEditExperienceModal(data, row) {
   // Remplir le formulaire avec les données
   document.getElementById('exp-type').value = data.type || 'colo';
 
+  // Gestion spécifique ALSH (Mercredis vs Ponctuel)
+  const isAlsh = (data.type === 'alsh');
+  // On vérifie si la durée contient "Tous les mercredis" (comparaison souple ou stricte)
+  const isMercredis = (data.duration === 'Tous les mercredis') || ((data.duration || '').toLowerCase().includes('mercredis'));
+
+  if (isAlsh) {
+    if (isMercredis) {
+      const mercredisRadio = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]');
+      if (mercredisRadio) mercredisRadio.checked = true;
+
+      // Extraire l'année de départ depuis la date (ex: "Septembre 2023 ...")
+      const yearMatch = (data.date || '').match(/septembre\s+(\d{4})/i);
+      if (yearMatch) {
+        const startYear = yearMatch[1];
+        const startInput = document.getElementById('mercredis-year-start');
+        if (startInput) {
+          startInput.value = startYear;
+          // Mettre à jour l'affichage de l'année de fin
+          if (typeof updateMercredisYearEnd === 'function') {
+            updateMercredisYearEnd();
+          }
+        }
+      }
+    } else {
+      const ponctuelRadio = document.querySelector('input[name="alsh-duration-type"][value="ponctuel"]');
+      if (ponctuelRadio) ponctuelRadio.checked = true;
+    }
+  } else {
+    // Reset par défaut
+    const ponctuelRadio = document.querySelector('input[name="alsh-duration-type"][value="ponctuel"]');
+    if (ponctuelRadio) ponctuelRadio.checked = true;
+  }
+
+  // Appliquer la visibilité des champs selon le type et le mode
+  if (typeof toggleAlshDateFields === 'function') {
+    toggleAlshDateFields();
+  }
+
   // Convertir la date française en format mois pour l'input month
   const monthValue = frenchTextToMonth(data.date || '');
   document.getElementById('exp-date-month').value = monthValue;
