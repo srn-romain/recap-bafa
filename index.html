@@ -190,10 +190,44 @@
         </test>
       </test>
 
+      <!-- Section Admin : Demandes d'accès Directeur -->
+      <section id="admin-director-requests-section"
+        style="display: none; padding: 20px; border-top: 2px solid #eee; background: #fff5f5;">
+        <h2 style="color: #c0392b; margin-bottom: 20px; text-align: center;">
+          <i class="bi bi-shield-lock"></i> Demandes d'accès Directeur
+        </h2>
+        <div style="overflow-x: auto; max-width: 900px; margin: 0 auto;">
+          <table
+            style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <thead>
+              <tr style="background: #e74c3c; color: white;">
+                <th style="padding: 12px; text-align: left;">Nom</th>
+                <th style="padding: 12px; text-align: left;">Prénom</th>
+                <th style="padding: 12px; text-align: left;">Email / ID</th>
+                <th style="padding: 12px; text-align: left;">Date</th>
+                <th style="padding: 12px; text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="director-requests-table-body">
+              <!-- Rempli par JS -->
+            </tbody>
+          </table>
+          <p id="no-requests-msg"
+            style="text-align: center; color: #666; font-style: italic; padding: 20px; display: none;">Aucune demande en
+            attente.</p>
+        </div>
+      </section>
+
       <button id="request-director-btn" onclick="openDirectorRequestModal()" class="admin-btn"
-        style="display: none; margin: 0 auto 10px; font-size: 0.85rem; padding: 10px 20px; width: fit-content; border-radius: 20px; border: none; cursor: pointer">
+        style="display: none; margin: 0 auto 10px; font-size: 0.85rem; padding: 10px 20px; width: fit-content; border-radius: 20px; border: none; cursor: pointer; color: white; background: #d35400;">
         Demander un accès directeur
       </button>
+      <p id="director-request-msg"
+        style="display: none; color: #e67e22; font-style: italic; font-size: 0.9rem; max-width: 600px; margin: 0 auto 20px; text-align: center;">
+        Votre demande de compte directeur est en attente de validation. Si celle-ci est acceptée vous verrez votre
+        nouvelle section visible sur cette page. Si c'est refusé vous retrouverez ce bouton visible avec une nouvelle
+        demande possible (attention aucun message ne vous sera transmis pour vous dire si c'est accepté ou non).
+      </p>
 
       <!-- Section Recherche Profil -->
       <section id="search-section" style="text-align: center; padding: 40px 20px;">
@@ -274,7 +308,8 @@
         base publique des animateurs inscrits et avoir accès à leur lien personnalisé selon leurs paramètres de
         confidentialité établis.
       </p>
-      <button type="button" class="submit-btn" style="width: 100%; margin: 10px 0; background-color: #50644c;">
+      <button type="button" class="submit-btn" style="width: 100%; margin: 10px 0; background-color: #50644c;"
+        onclick="requestDirectorAccess()">
         Demander l'accès à l'administrateur
       </button>
       <p style="font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic;">

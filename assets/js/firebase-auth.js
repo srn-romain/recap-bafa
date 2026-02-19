@@ -57,6 +57,7 @@ async function getUserRole(user) {
       window.userRole = data.role || null;
       window.userGender = data.gender || null; // Stocker le genre pour l'affichage
       window.userProfilePic = data.profilePic || null; // Stocker la photo de profil
+      window.directorRequestStatus = data.directorRequestStatus || null; // Stocker l'état de la demande directeur
       console.log('Rôle récupéré:', window.userRole, 'Genre:', window.userGender, 'pour UID:', user.uid);
     } else {
       window.userRole = null;
@@ -545,6 +546,182 @@ function updateUI() {
   }
 
   updateSectionNumbers();
+
+  // Gestion des demandes directeur
+  if (typeof checkDirectorRequestStatus === 'function') {
+    checkDirectorRequestStatus();
+  }
+  if (window.userRole === 'admin' && typeof fetchDirectorRequests === 'function') {
+    fetchDirectorRequests();
+  }
+}
+
+// --- Gestion des demandes Directeur ---
+
+// Vérifier et mettre à jour le statut de la demande directeur (côté user)
+function checkDirectorRequestStatus() {
+  const btn = document.getElementById('request-director-btn');
+  const msg = document.getElementById('director-request-msg');
+  const userListSection = document.getElementById('user-list-section');
+
+  if (!btn || !msg) return;
+
+  // Si l'utilisateur est admin ou directeur, on cache le bouton de demande
+  if (window.userRole === 'admin' || window.userRole === 'dirlo') {
+    btn.style.display = 'none';
+    msg.style.display = 'none';
+    // Afficher la section directeur si c'est un directeur/admin (si elle existe sur la page)
+    if (userListSection) userListSection.style.display = 'block';
+    return;
+  } else {
+    // Si user simple, cacher la section directeur
+    if (userListSection) userListSection.style.display = 'none';
+  }
+
+  // Si pas connecté, cacher
+  if (!window.currentUser) {
+    btn.style.display = 'none';
+    msg.style.display = 'none';
+    return;
+  }
+
+  // Si connecté et user simple
+  if (window.directorRequestStatus === 'pending') {
+    btn.style.display = 'block';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    btn.style.cursor = 'not-allowed';
+    btn.textContent = 'Demande en attente...';
+    msg.style.display = 'block';
+  } else {
+    // Rejected ou null
+    btn.style.display = 'block'; // Afficher le bouton
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    btn.textContent = 'Demander un accès directeur';
+    msg.style.display = 'none';
+  }
+}
+
+// Gérer le modal directeur
+function openDirectorRequestModal() {
+  const modal = document.getElementById('director-request-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+  }
+}
+
+function closeDirectorRequestModal() {
+  const modal = document.getElementById('director-request-modal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  }
+}
+
+// Envoyer une demande d'accès directeur
+async function requestDirectorAccess() {
+  if (!window.currentUser) return;
+
+  try {
+    await window.firebaseDb.collection('users').doc(window.currentUser.uid).update({
+      directorRequestStatus: 'pending',
+      directorRequestDate: new Date()
+    });
+    // Mettre à jour l'état local immédiatement pour réactivité UI
+    window.directorRequestStatus = 'pending';
+    checkDirectorRequestStatus();
+    closeDirectorRequestModal();
+  } catch (error) {
+    console.error("Erreur demande directeur:", error);
+    alert("Une erreur est survenue lors de l'envoi de la demande.");
+    closeDirectorRequestModal();
+  }
+}
+
+// Admin: Récupérer les demandes
+async function fetchDirectorRequests() {
+  const tableBody = document.getElementById('director-requests-table-body');
+  const section = document.getElementById('admin-director-requests-section');
+  const noMsg = document.getElementById('no-requests-msg');
+
+  if (!tableBody || !section) return;
+
+  // Seul l'admin voit ça
+  if (window.userRole !== 'admin') {
+    section.style.display = 'none';
+    return;
+  }
+
+  try {
+    const snapshot = await window.firebaseDb.collection('users')
+      .where('directorRequestStatus', '==', 'pending')
+      .get();
+
+    tableBody.innerHTML = '';
+
+    if (snapshot.empty) {
+      noMsg.style.display = 'block';
+      section.style.display = 'block';
+      return;
+    }
+
+    noMsg.style.display = 'none';
+    section.style.display = 'block';
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const date = data.directorRequestDate ? new Date(data.directorRequestDate.seconds * 1000).toLocaleDateString() : '-';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">${data.lastname || '-'}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">${data.firstname || '-'}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">${data.email || doc.id}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">${date}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
+                    <button onclick="approveDirectorRequest('${doc.id}')" style="background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px;">Accepter</button>
+                    <button onclick="rejectDirectorRequest('${doc.id}')" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Refuser</button>
+                </td>
+            `;
+      tableBody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error("Erreur fetch demandes:", error);
+  }
+}
+
+// Admin: Accepter
+async function approveDirectorRequest(uid) {
+  if (!confirm("Confirmer l'accès directeur pour cet utilisateur ?")) return;
+  try {
+    await window.firebaseDb.collection('users').doc(uid).update({
+      role: 'dirlo',
+      directorRequestStatus: 'approved'
+    });
+    fetchDirectorRequests(); // Rafraichir
+    alert("Accès accordé.");
+  } catch (error) {
+    console.error(error);
+    alert("Erreur.");
+  }
+}
+
+// Admin: Refuser
+async function rejectDirectorRequest(uid) {
+  if (!confirm("Refuser la demande ?")) return;
+  try {
+    await window.firebaseDb.collection('users').doc(uid).update({
+      directorRequestStatus: null // On remet à null pour qu'il puisse redemander
+    });
+    fetchDirectorRequests();
+    alert("Demande refusée.");
+  } catch (error) {
+    console.error(error);
+    alert("Erreur.");
+  }
 }
 
 // Afficher le menu utilisateur
