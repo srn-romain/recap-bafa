@@ -201,6 +201,9 @@ function createExperienceRow(experience) {
 function createFormationRow(formation) {
   const tr = document.createElement('tr');
   tr.setAttribute('data-type', formation.type);
+  // Stocker l'objet complet pour une récupération facile lors de l'édition
+  tr.dataset.formation = JSON.stringify(formation);
+  tr.classList.add('formation-row');
 
   // Colonne N°
   const tdNum = document.createElement('td');

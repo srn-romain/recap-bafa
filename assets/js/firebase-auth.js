@@ -966,18 +966,31 @@ function editExperience(row) {
 
 // Éditer une formation
 function editFormation(row) {
-  const cells = row.cells;
-  const data = {
-    date: cells[1]?.textContent?.trim() || '',
-    duration: cells[2]?.textContent?.trim() || '',
-    organism: cells[3]?.querySelector('a')?.textContent?.trim() || '',
-    organismUrl: cells[3]?.querySelector('a')?.href || '',
-    logoPath: cells[4]?.querySelector('img')?.src || '',
-    title: cells[5]?.textContent?.trim() || '',
-    location: cells[6]?.textContent?.trim() || '',
-    locationUrl: cells[6]?.querySelector('a')?.href || '',
-    type: row.getAttribute('data-type') || 'bafa'
-  };
+  let data = {};
+
+  if (row.dataset.formation) {
+    try {
+      data = JSON.parse(row.dataset.formation);
+    } catch (e) {
+      console.error('Erreur parsing data-formation', e);
+    }
+  }
+
+  // Fallback si pas de dataset
+  if (!data.date) {
+    const cells = row.cells;
+    data = {
+      date: cells[1]?.textContent?.trim() || '',
+      duration: cells[2]?.textContent?.trim() || '',
+      organism: cells[3]?.querySelector('a')?.textContent?.trim() || '',
+      organismUrl: cells[3]?.querySelector('a')?.href || '',
+      logoPath: cells[4]?.querySelector('img')?.src || '',
+      title: cells[5]?.textContent?.trim() || '',
+      location: cells[6]?.textContent?.trim() || '',
+      locationUrl: cells[6]?.querySelector('a')?.href || '',
+      type: row.getAttribute('data-type') || 'bafa'
+    };
+  }
 
   if (typeof showEditFormationModal === 'function') {
     showEditFormationModal(data, row);

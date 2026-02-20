@@ -2758,8 +2758,22 @@ async function updateFormationInFirebase(data, row) {
   if (!isOwner()) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
-  const date = row.cells[1]?.textContent?.trim();
-  const organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
+  // Utiliser les données stockées dans l'attribut data-formation pour retrouver les valeurs originales
+  let date, organism;
+
+  if (row.dataset.formation) {
+    try {
+      const originalData = JSON.parse(row.dataset.formation);
+      date = originalData.date;
+      organism = originalData.organism;
+    } catch (e) {
+      console.error("Erreur parsing data-formation", e);
+    }
+  }
+
+  // Fallback
+  if (!date) date = row.cells[1]?.textContent?.trim();
+  if (!organism) organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
 
   const snapshot = await getCollectionRef('formations')
     .where('date', '==', date)
@@ -2822,8 +2836,22 @@ async function deleteFormationFromFirebase(row) {
   if (!isOwner()) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
-  const date = row.cells[1]?.textContent?.trim();
-  const organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
+  // Utiliser les données stockées dans l'attribut data-formation
+  let date, organism;
+
+  if (row.dataset.formation) {
+    try {
+      const originalData = JSON.parse(row.dataset.formation);
+      date = originalData.date;
+      organism = originalData.organism;
+    } catch (e) {
+      console.error("Erreur parsing data-formation", e);
+    }
+  }
+
+  // Fallback
+  if (!date) date = row.cells[1]?.textContent?.trim();
+  if (!organism) organism = row.cells[3]?.querySelector('a')?.textContent?.trim();
 
   const snapshot = await getCollectionRef('formations')
     .where('date', '==', date)
