@@ -1025,28 +1025,27 @@ function generatePDF(tableId, title) {
     cell.style.border = '1px solid #ddd';
     cell.style.padding = '8px';
     cell.style.textAlign = 'left';
-    // S'assurer que les images ne débordent pas
-    const img = cell.querySelector('img');
-    if (img) {
-      img.style.maxWidth = '35px';
-      img.style.height = 'auto';
-      img.style.display = 'block';
-      img.style.margin = '0 auto';
-    }
+
     // Nettoyer les liens pour qu'ils ne soient pas bleus soulignés si on veut un look propre
     const links = cell.querySelectorAll('a');
     links.forEach(link => {
       link.style.color = '#333';
       link.style.textDecoration = 'none';
     });
+  });
 
-    // Empêcher les erreurs de PDF "Tainted Canvas" liées aux Google Favicons (absence de CORS)
-    const imgElement = cell.querySelector('img');
-    if (imgElement) {
-      if (imgElement.src.includes('google.com/s2/favicons')) {
-        // Remplacer l'image externe bloquante par un texte discret
-        imgElement.style.display = 'none';
-      }
+  // Gérer toutes les images de l'élément pour le PDF
+  element.querySelectorAll('img').forEach(img => {
+    img.style.maxWidth = '35px';
+    img.style.height = 'auto';
+    img.style.display = 'block';
+    img.style.margin = '0 auto';
+
+    // Empêcher les erreurs de PDF "Tainted Canvas"
+    // Seules les images Base64 ('data:image/...') sont 100% sécurisées pour le rendu de l'export canvas.
+    // Toute image hébergée en dur ou externe sera retirée pour prévenir le crash de l'export.
+    if (!img.src || !img.src.startsWith('data:image')) {
+      img.remove();
     }
   });
 
