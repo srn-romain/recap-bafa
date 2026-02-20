@@ -20,26 +20,26 @@ function sortSelectOptionsGenerically(selectElement) {
 
   // Identifier le placeholder '-- Sélectionner --'
   let placeholderOpt = null;
-  let optionsToSort = options;
-
-  if (options[0].value === '' || options[0].text.includes('--')) {
-    placeholderOpt = options[0];
-    optionsToSort = options.slice(1);
+  const placeholderIndex = options.findIndex(o => o.value === '' || o.text.includes('--'));
+  if (placeholderIndex > -1) {
+    placeholderOpt = options.splice(placeholderIndex, 1)[0];
   }
 
   // Identifier 'Autre'
   let autreOpt = null;
-  const autreIndex = optionsToSort.findIndex(o => o.value.toLowerCase() === 'autre' || o.text.toLowerCase().includes('autre'));
+  const autreIndex = options.findIndex(o => o.value.toLowerCase() === 'autre' || o.text.toLowerCase().includes('autre'));
   if (autreIndex > -1) {
-    autreOpt = optionsToSort.splice(autreIndex, 1)[0];
+    autreOpt = options.splice(autreIndex, 1)[0];
   }
 
   // Trier alphabétiquement (insensible à la casse/accents)
+  const optionsToSort = options;
   optionsToSort.sort((a, b) => a.text.localeCompare(b.text, 'fr', { sensitivity: 'base' }));
 
   // Vider le select
   selectElement.innerHTML = '';
   if (ts) {
+    ts.clear(true); // Efface la sélection silencieusement pour pouvoir tout purger
     ts.clearOptions();
   }
 
