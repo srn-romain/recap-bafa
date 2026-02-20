@@ -61,20 +61,22 @@
       </p>
 
       <!-- Boutons CTA Hero -->
-      <test id="hero-auth-buttons" style="display:flex; flex-direction:column; align-items:center; margin: 20px 0;">
-        <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
-          <button onclick="showAuthModal('login')" class="btn-large btn-green">
-            <i class="bi bi-box-arrow-in-right"></i> Se connecter
-          </button>
-          <button onclick="showAuthModal('register')" class="btn-large btn-orange">
-            <i class="bi bi-rocket-takeoff"></i> Créer un compte
+      <test style="display: flex; justify-content: center; width: 100%; margin: 20px 0;">
+        <test id="hero-auth-buttons" style="display:inline-flex; flex-direction:column; align-items:stretch;">
+          <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+            <button onclick="showAuthModal('login')" class="btn-large btn-green">
+              <i class="bi bi-box-arrow-in-right"></i> Se connecter
+            </button>
+            <button onclick="showAuthModal('register')" class="btn-large btn-orange">
+              <i class="bi bi-rocket-takeoff"></i> Créer un compte
+            </button>
+          </test>
+          <button onclick="openUserManual()" class="btn-large"
+            style="background: #34495e; color: white; justify-content: center; margin-top: 0;"
+            onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
+            <i class="bi bi-book"></i> Manuel utilisateur
           </button>
         </test>
-        <button onclick="openUserManual()"
-          style="width: calc(100% - 20px); max-width: 450px; background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; margin-top: 5px;"
-          onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
-          <i class="bi bi-book"></i> Manuel utilisateur
-        </button>
       </test>
 
       <!-- Section Nouveautés -->
@@ -859,23 +861,25 @@
         // Hero : Remplacer les boutons par "Accéder à mon espace" + Bouton Partage
         if (heroBtns) {
           heroBtns.innerHTML = `
-                <test style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
-                    <button onclick="window.location.href='dashboard.html?uid=${user.uid}'" class="btn-large btn-orange">
-                        <i class="bi bi-speedometer2"></i> Accéder à mon espace
-                    </button>
-                    <!-- Bouton de copie de lien rapide -->
-                    <button id="quick-copy-link-btn" onclick="copyProfileLink()"
-                        style="background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: calc(100% - 20px); max-width: 450px; justify-content: center;"
-                        onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
-                        <i class="bi bi-link-45deg" style="color: white; font-size: 1.2rem;"></i>
-                        <span id="quick-copy-text">Copier le lien de partage de mon profil</span>
-                    </button>
-                    <!-- Bouton Manuel Utilisateur -->
-                    <button onclick="openUserManual()" 
-                        style="background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: calc(100% - 20px); max-width: 450px; justify-content: center;"
-                        onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
-                        <i class="bi bi-book"></i> Manuel utilisateur
-                    </button>
+                <test style="display: flex; justify-content: center; width: 100%;">
+                    <test style="display: inline-flex; flex-direction: column; align-items: stretch;">
+                        <button onclick="window.location.href='dashboard.html?uid=${user.uid}'" class="btn-large btn-orange" style="justify-content: center;">
+                            <i class="bi bi-speedometer2"></i> Accéder à mon espace
+                        </button>
+                        <!-- Bouton de copie de lien rapide -->
+                        <button id="quick-copy-link-btn" onclick="copyProfileLink()" class="btn-large"
+                            style="background: #50644c; color: white; justify-content: center;"
+                            onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
+                            <i class="bi bi-link-45deg" style="color: white; font-size: 1.2rem;"></i>
+                            <span id="quick-copy-text">Copier le lien de partage d'espace</span>
+                        </button>
+                        <!-- Bouton Manuel Utilisateur -->
+                        <button onclick="openUserManual()" class="btn-large"
+                            style="background: #34495e; color: white; justify-content: center;"
+                            onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
+                            <i class="bi bi-book"></i> Manuel utilisateur
+                        </button>
+                    </test>
                 </test>
             `;
 
@@ -924,21 +928,23 @@
 
         if (heroBtns) {
           heroBtns.innerHTML = `
-            <test style="display:flex; flex-direction:column; align-items:center; width: 100%;">
-                <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
-                    <button onclick="showAuthModal('login')" class="btn-large btn-green">
-                      <i class="bi bi-box-arrow-in-right"></i> Se connecter
-                    </button>
-                    <button onclick="showAuthModal('register')" class="btn-large btn-orange">
-                      <i class="bi bi-rocket-takeoff"></i> Créer un compte
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <test style="display:inline-flex; flex-direction:column; align-items:stretch;">
+                    <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+                        <button onclick="showAuthModal('login')" class="btn-large btn-green">
+                          <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                        </button>
+                        <button onclick="showAuthModal('register')" class="btn-large btn-orange">
+                          <i class="bi bi-rocket-takeoff"></i> Créer un compte
+                        </button>
+                    </test>
+                    <button onclick="openUserManual()" class="btn-large"
+                        style="background: #34495e; color: white; justify-content: center; margin-top: 0;"
+                        onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
+                        <i class="bi bi-book"></i> Manuel utilisateur
                     </button>
                 </test>
-                <button onclick="openUserManual()" 
-                    style="width: calc(100% - 20px); max-width: 450px; background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; margin-top: 5px;"
-                    onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
-                    <i class="bi bi-book"></i> Manuel utilisateur
-                </button>
-            </test>
+            </div>
           `;
         }
       }
