@@ -15,17 +15,38 @@ function updateExpStayTypeOptions() {
   // Toujours réafficher le container par défaut pour pouvoir repasser à un autre type
   if (container) container.style.display = 'block';
 
-  // Options à potentiellement retirer
-  const removableOptions = [
+  // Options à potentiellement retirer pour Colo
+  const removableOptionsColo = [
     { value: 'Scout', text: 'Scout' },
     { value: 'Péri-scolaire', text: 'Péri-scolaire' },
     { value: 'SNU', text: 'SNU (Service National Universel)' },
     { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' },
-    { value: 'Classe découverte', text: 'Classe découverte' }
+    { value: 'Classe découverte', text: 'Classe découverte' },
+    { value: 'Formation Base BAFA', text: 'Formation Base BAFA' },
+    { value: 'Formation Appro BAFA', text: 'Formation Appro BAFA' },
+    { value: 'Formation Base BAFD', text: 'Formation Base BAFD' },
+    { value: 'Formation Appro BAFD', text: 'Formation Appro BAFD' },
   ];
 
+  // Options à potentiellement retirer pour Autre
+  const removableOptionsAutre = [
+    { value: 'Scout', text: 'Scout' },
+    { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' },
+    { value: 'Gestion libre', text: 'Gestion libre' },
+    { value: 'Gestion libre à l\'étranger', text: 'Gestion libre à l\'étranger' },
+    { value: 'Gestion libre / Camping', text: 'Gestion libre / Camping' },
+    { value: 'Gestion libre', text: 'Gestion libre' },
+    { value: 'Itinérance', text: 'Itinérance' },
+    { value: 'Itinérance étranger', text: 'Itinérance étranger' },
+    { value: 'Pension complète', text: 'Pension complète' },
+    { value: 'Pension complète étranger', text: 'Pension complète étranger' },
+  ];
+
+  // Toutes les options pouvant être retirées (pour les remettre par défaut)
+  const allRemovableOptions = [...removableOptionsColo, ...removableOptionsAutre];
+
   // 1. Remettre toutes les options dans le DOM natif et Tom Select par défaut
-  removableOptions.forEach(optData => {
+  allRemovableOptions.forEach(optData => {
     let opt = Array.from(staySelect.options).find(o => o.value === optData.value);
     if (!opt) {
       opt = document.createElement('option');
@@ -61,7 +82,7 @@ function updateExpStayTypeOptions() {
     }
   } else if (expType === 'colo') {
     // Si la valeur actuelle est une qu'on va retirer, on la réinitialise
-    const isRemovableSelected = removableOptions.some(opt => opt.value === staySelect.value);
+    const isRemovableSelected = removableOptionsColo.some(opt => opt.value === staySelect.value);
     if (isRemovableSelected) {
       if (staySelect.tomselect) {
         staySelect.tomselect.setValue('', true);
@@ -70,8 +91,8 @@ function updateExpStayTypeOptions() {
       }
     }
 
-    // Retirer complètement les options de removableOptions du DOM et de Tom Select
-    removableOptions.forEach(optData => {
+    // Retirer complètement les options de removableOptionsColo du DOM et de Tom Select
+    removableOptionsColo.forEach(optData => {
       // Du DOM natif
       const opt = Array.from(staySelect.options).find(o => o.value === optData.value);
       if (opt) opt.remove();
@@ -82,6 +103,30 @@ function updateExpStayTypeOptions() {
     });
 
     // Synchronisation finale pour Colo
+    if (staySelect.tomselect) staySelect.tomselect.sync();
+  } else if (expType === 'autre') {
+    // Comme pour 'colo', on retire toutes les options configurées
+    const isRemovableSelected = removableOptionsAutre.some(opt => opt.value === staySelect.value);
+    if (isRemovableSelected) {
+      if (staySelect.tomselect) {
+        staySelect.tomselect.setValue('', true);
+      } else {
+        staySelect.value = '';
+      }
+    }
+
+    // Retirer complètement les options de removableOptionsAutre du DOM et de Tom Select
+    removableOptionsAutre.forEach(optData => {
+      // Du DOM natif
+      const opt = Array.from(staySelect.options).find(o => o.value === optData.value);
+      if (opt) opt.remove();
+      // De Tom Select
+      if (staySelect.tomselect) {
+        staySelect.tomselect.removeOption(optData.value);
+      }
+    });
+
+    // Synchronisation finale pour Autre
     if (staySelect.tomselect) staySelect.tomselect.sync();
   }
 
