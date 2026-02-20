@@ -4,7 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Récap BAFA & BAFD</title>
+  <title>Récap BAFA & BAFD - Gérez votre carrière d'animateur</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description"
+    content="Récap BAFA & BAFD : La plateforme pour centraliser vos expériences d'animation, générer votre CV PDF et booster votre recrutement en colo ou ALSH.">
+  <meta name="keywords"
+    content="BAFA, BAFD, animation, animateur, directeur, colo, colonie de vacances, ALSH, recrutement animation, CV animation, parcours d'animation">
+  <meta name="author" content="Romain @romain_colo">
+  <link rel="canonical" href="https://macollectiondebafa.firebaseapp.com/">
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://macollectiondebafa.firebaseapp.com/">
+  <meta property="og:title" content="Récap BAFA & BAFD - Votre parcours d'animation, simplifié">
+  <meta property="og:description" content="Générez votre CV d'animation en un clic et facilitez votre recrutement.">
+  <meta property="og:image" content="https://macollectiondebafa.firebaseapp.com/assets/img/og-image.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://macollectiondebafa.firebaseapp.com/">
+  <meta property="twitter:title" content="Récap BAFA & BAFD">
+  <meta property="twitter:description" content="Centralisez vos expériences d'animateur et directeur.">
+  <meta property="twitter:image" content="https://macollectiondebafa.firebaseapp.com/assets/img/og-image.png">
+
   <link href="assets/img/favicon.png" rel="icon">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/navbar.css">
@@ -46,10 +69,10 @@
   </nav>
 
   <div>
-    <h2 id="hero-title">
+    <h1 id="hero-title" style="text-align: center;">
       Votre parcours d'animation,<br>
       <span style="color: #f39c12;">simplement.</span>
-    </h2>
+    </h1>
 
     <section>
       <p style="text-align: center; max-width: 800px; margin: 0 auto 30px auto; line-height: 1.6;">
@@ -96,7 +119,7 @@
             style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
             <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px;"></i>
             <span><strong>Association avec Google Authentification :</strong> Vous pouvez désormais vous connecter via
-                votre compte Google directement !</span>
+              votre compte Google directement !</span>
           </test>
           <test
             style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
@@ -1137,7 +1160,7 @@
       if (user.profilePic) {
         photoHtml = `
             <div class="user-icon" style="overflow: hidden; padding: 0;">
-                <img src="${user.profilePic}" alt="${user.firstname}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="event.preventDefault(); window.openImageViewer(this.src)">
+                <img src="${user.profilePic}" alt="Profil de ${user.firstname} ${user.lastname} - Animateur BAFA" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="event.preventDefault(); window.openImageViewer(this.src)">
             </div>
           `;
       } else {
