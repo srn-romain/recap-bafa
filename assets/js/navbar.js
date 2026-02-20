@@ -134,6 +134,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 </button>
                 <!-- Champ caché pour le mode (login/register) -->
                 <input type="hidden" id="auth-mode" value="login">
+
+                <div class="auth-divider">
+                    <span>OU</span>
+                </div>
+
+                <button type="button" onclick="handleGoogleLogin()" class="google-btn">
+                    <i class="bi bi-google"></i> <span>Continuer avec Google</span>
+                </button>
             </form>
             <p style="text-align: center; margin-top: 15px; cursor: pointer; color: #50644c; text-decoration: underline;"
                 onclick="toggleAuthMode()">
