@@ -51,9 +51,17 @@ function updateExpStayTypeOptions() {
     } else {
       staySelect.value = 'ALSH';
     }
+  } else if (expType === 'scout') {
+    if (container) container.style.display = 'none';
+    if (staySelect.tomselect) {
+      staySelect.tomselect.setValue('Scout', true);
+    } else {
+      staySelect.value = 'Scout';
+    }
   } else if (expType === 'colo') {
     // Si la valeur actuelle est une qu'on va retirer, on la réinitialise
-    if (staySelect.value === 'Scout' || staySelect.value === 'SNU') {
+    const isRemovableSelected = removableOptions.some(opt => opt.value === staySelect.value);
+    if (isRemovableSelected) {
       if (staySelect.tomselect) {
         staySelect.tomselect.setValue('', true);
       } else {
@@ -61,7 +69,7 @@ function updateExpStayTypeOptions() {
       }
     }
 
-    // Retirer complètement les options "Scout" et "SNU" du DOM et de Tom Select
+    // Retirer complètement les options de removableOptions du DOM et de Tom Select
     removableOptions.forEach(optData => {
       // Du DOM natif
       const opt = Array.from(staySelect.options).find(o => o.value === optData.value);
@@ -76,8 +84,8 @@ function updateExpStayTypeOptions() {
     if (staySelect.tomselect) staySelect.tomselect.sync();
   }
 
-  // Reforcer le mask du container si ALSH car tomselect peut recréer l'affichage
-  if (expType === 'alsh' && container) container.style.display = 'none';
+  // Reforcer le mask du container si ALSH ou Scout car tomselect peut recréer l'affichage
+  if ((expType === 'alsh' || expType === 'scout') && container) container.style.display = 'none';
 }
 window.updateExpStayTypeOptions = updateExpStayTypeOptions;
 
