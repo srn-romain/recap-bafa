@@ -555,10 +555,6 @@ async function showAddExperienceModal() {
   // Réinitialiser le logo (image, input, erreurs)
   removeLogo();
 
-  // Activer la recherche automatique par défaut en ajout
-  const autoLogoCheck = document.getElementById('exp-auto-logo-check');
-  if (autoLogoCheck) autoLogoCheck.checked = true;
-
   // Réinitialiser les champs de localisation
   clearItineraryTable();
   toggleLocationFields();
@@ -583,11 +579,6 @@ async function showAddExperienceModal() {
       }
     });
   }
-
-  // Listeners are now global to avoid accumulation
-
-  // Afficher les messages d'info par défaut (pas de logo au départ)
-  toggleLogoInfoMessages();
 
   // Adapter les labels selon le genre
   await updatePositionLabels();
@@ -1197,147 +1188,6 @@ async function autoDetectLogo() {
   }
 }
 
-// Version async de autoDetectLogo pour utilisation lors de la soumission
-// Version async de autoDetectLogo pour utilisation lors de la soumission
-async function autoDetectLogoAsync(organizerUrl, modalType = 'exp', organizerName = '') {
-  const prefix = modalType === 'form' ? 'form-' : '';
-  const logoInputId = modalType === 'form' ? 'form-logo-path' : 'exp-logo-path';
-  const previewId = modalType === 'form' ? 'form-logo-preview' : 'logo-preview';
-  const placeholderId = modalType === 'form' ? 'form-logo-placeholder' : 'logo-placeholder';
-  const removeBtnId = modalType === 'form' ? 'form-remove-logo' : 'remove-logo';
-
-  const logoInput = document.getElementById(logoInputId);
-  const preview = document.getElementById(previewId);
-  const placeholder = document.getElementById(placeholderId);
-  const removeBtn = document.getElementById(removeBtnId);
-
-  // Helper pour mettre à jour l'UI
-  const updateUI = (src) => {
-    if (logoInput) logoInput.value = src;
-    if (preview) {
-      preview.src = src;
-      preview.style.display = 'block';
-    }
-    if (placeholder) placeholder.style.display = 'none';
-    if (removeBtn) removeBtn.style.display = 'inline-block';
-
-    if (modalType === 'form') {
-      toggleFormationLogoInfo();
-    } else {
-      toggleLogoInfoMessages();
-    }
-  };
-
-  // Helper fetch blob and convert to base64
-  const urlToBase64 = async (url) => {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Failed to fetch ${url}`);
-      const blob = await response.blob();
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (e) {
-      throw e;
-    }
-  };
-
-  // 1. Essayer avec l'URL si présente : Google Favicon (Le plus robuste pour "via le site")
-  if (organizerUrl) {
-    try {
-      let domain = '';
-      try {
-        const url = new URL(organizerUrl);
-        domain = url.hostname;
-      } catch (e) {
-        domain = organizerUrl;
-      }
-
-      // Essai 1: Google Favicon (128px)
-      const googleUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-
-      // Tenter de le convertir en Base64 (CORS peut bloquer)
-      try {
-        const base64 = await urlToBase64(googleUrl);
-        updateUI(base64);
-        return base64;
-      } catch (corsErr) {
-        // Si CORS bloque, on utilise l'URL directement (ça marche dans <img src=...>)
-        updateUI(googleUrl);
-        return googleUrl;
-      }
-    } catch (e) {
-      // Continue vers Clearbit si échec total (rare pour Google)
-    }
-  }
-
-  // 1b. Clearbit par Domaine (fallback qualité)
-  if (organizerUrl) {
-    try {
-      let domain = '';
-      try { domain = new URL(organizerUrl).hostname; } catch (e) { domain = organizerUrl; }
-
-      const logoUrl = `https://logo.clearbit.com/${domain}`;
-      const base64 = await urlToBase64(logoUrl);
-      updateUI(base64);
-      return base64;
-    } catch (e) { }
-  }
-
-  // 2. Essayer de trouver le VRAI LOGO par le NOM (via Clearbit Autocomplete)
-  if (organizerName) {
-    try {
-      const searchUrl = `https://autocomplete.clearbit.com/v1/companies/suggest?query=${encodeURIComponent(organizerName)}`;
-      const res = await fetch(searchUrl);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.length > 0 && data[0].logo) {
-          const logoUrl = data[0].logo;
-          try {
-            const base64 = await urlToBase64(logoUrl);
-            updateUI(base64);
-            return base64;
-          } catch (uploadErr) {
-            updateUI(logoUrl);
-            return logoUrl;
-          }
-        }
-      }
-    } catch (e) {
-      console.warn("Recherche Autocomplete Clearbit échouée", e);
-    }
-  }
-
-  // 3. Fallback: Google Favicon
-  if (organizerUrl) {
-    try {
-      let domain = '';
-      try { domain = new URL(organizerUrl).hostname; } catch (e) { domain = organizerUrl; }
-      const googleUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-      updateUI(googleUrl);
-      return googleUrl;
-    } catch (e) { }
-  }
-
-  // 4. Fallback ULTIME: Logo Abstrait/Généré (DiceBear Shapes)
-  if (organizerName) {
-    const avatarUrl = `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(organizerName)}`;
-    try {
-      const base64 = await urlToBase64(avatarUrl);
-      updateUI(base64);
-      return base64;
-    } catch (e) {
-      updateUI(avatarUrl);
-      return avatarUrl;
-    }
-  }
-
-  return null;
-}
-
 // Constantes pour la validation des images
 const MAX_LOGO_SIZE_MB = 2;
 const MAX_LOGO_SIZE_BYTES = MAX_LOGO_SIZE_MB * 1024 * 1024;
@@ -1405,9 +1255,6 @@ function initLogoFileUpload() {
       if (removeBtn) {
         removeBtn.style.display = 'inline-block';
       }
-
-      // Cacher les messages d'info auto-détection
-      toggleLogoInfoMessages();
     };
     reader.onerror = function () {
       if (errorEl) {
@@ -1482,29 +1329,9 @@ function initFormationLogoFileUpload() {
       if (removeBtn) {
         removeBtn.style.display = 'inline-block';
       }
-
-      toggleFormationLogoInfo();
     };
     reader.readAsDataURL(file);
   });
-}
-
-// Afficher/Masquer info logo formation
-function toggleFormationLogoInfo() {
-  const logoPathInput = document.getElementById('form-logo-path');
-  const preview = document.getElementById('form-logo-preview');
-  const infoSmall = document.getElementById('form-logo-auto-info-small');
-  const infoBox = document.getElementById('form-logo-auto-info-box');
-
-  const hasLogo = (logoPathInput && logoPathInput.value.trim()) ||
-    (preview && preview.style.display === 'block');
-
-  if (infoSmall) {
-    infoSmall.style.display = hasLogo ? 'none' : 'block';
-  }
-  if (infoBox) {
-    infoBox.style.display = hasLogo ? 'none' : 'block';
-  }
 }
 
 // Supprimer logo formation
@@ -1531,28 +1358,6 @@ function removeFormationLogo() {
   if (errorEl) {
     errorEl.style.display = 'none';
     errorEl.textContent = '';
-  }
-
-  toggleFormationLogoInfo();
-}
-
-// Fonction pour afficher/masquer les messages d'info selon la présence du logo
-function toggleLogoInfoMessages() {
-  const logoPathInput = document.getElementById('exp-logo-path');
-  const preview = document.getElementById('logo-preview');
-  const infoSmall = document.getElementById('logo-auto-info-small');
-  const infoBox = document.getElementById('logo-auto-info-box');
-
-  // Vérifier si un logo est présent
-  const hasLogo = (logoPathInput && logoPathInput.value.trim()) ||
-    (preview && preview.style.display === 'block');
-
-  // Cacher les messages si un logo est présent, les afficher sinon
-  if (infoSmall) {
-    infoSmall.style.display = hasLogo ? 'none' : 'block';
-  }
-  if (infoBox) {
-    infoBox.style.display = hasLogo ? 'none' : 'block';
   }
 }
 
@@ -1582,9 +1387,6 @@ function removeLogo() {
     errorEl.style.display = 'none';
     errorEl.textContent = '';
   }
-
-  // Afficher les messages d'info puisqu'il n'y a plus de logo
-  toggleLogoInfoMessages();
 }
 
 // Initialiser le gestionnaire lors de l'ouverture de la modale
@@ -1735,10 +1537,6 @@ async function showEditExperienceModal(data, row) {
     if (preview) preview.style.display = 'none';
     if (placeholder) placeholder.style.display = 'flex';
     if (removeBtn) removeBtn.style.display = 'none';
-
-    // Désactiver la recherche automatique par défaut en modification si pas de logo
-    const autoLogoCheck = document.getElementById('exp-auto-logo-check');
-    if (autoLogoCheck) autoLogoCheck.checked = false;
   }
 
   // Gérer le type de séjour et les lieux
@@ -1895,9 +1693,6 @@ async function showEditExperienceModal(data, row) {
     stayTypeSelect.addEventListener('change', toggleLocationFields);
   }
 
-  // Gérer l'affichage des messages d'info selon la présence du logo
-  toggleLogoInfoMessages();
-
   // Appliquer la logique du type de gestion une dernière fois pour être sûr
   if (typeof updateExpStayTypeOptions === 'function') {
     updateExpStayTypeOptions();
@@ -2002,11 +1797,6 @@ function showAddFormationModal() {
   hideFormationError();
   // Réinitialiser les logos
   removeFormationLogo();
-  toggleFormationLogoInfo();
-
-  // Activer la recherche automatique par défaut en ajout
-  const autoLogoCheck = document.getElementById('form-auto-logo-check');
-  if (autoLogoCheck) autoLogoCheck.checked = true;
 
   currentEditingRow = null;
   currentEditingDocId = null;
@@ -2128,13 +1918,6 @@ function showEditFormationModal(data, row) {
     if (removeBtn) removeBtn.style.display = 'inline-block';
   } else {
     removeFormationLogo();
-  }
-  toggleFormationLogoInfo();
-
-  // Désactiver la recherche automatique par défaut en modification si pas de logo
-  if (!logoPath) {
-    const autoLogoCheck = document.getElementById('form-auto-logo-check');
-    if (autoLogoCheck) autoLogoCheck.checked = false;
   }
 
   // Gérer l'intitulé (Select ou Custom)
@@ -2323,7 +2106,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const rawOrganizerUrl = document.getElementById('exp-organizer-url').value.trim();
 
       if (!logoInputVal) {
-        // Validation basique car nous avons retiré la recherche auto ici
+        // Pas de logo
       } else {
         // Logo déjà uploadé/défini
         if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
@@ -2485,18 +2268,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const organismName = (orgSelect === 'Autre') ? document.getElementById('form-organism-custom').value.trim() : orgSelect;
 
       if (!logoInputVal) {
-        // Vérifier checkbox
-        const autoLogoChecked = document.getElementById('form-auto-logo-check') ? document.getElementById('form-auto-logo-check').checked : true;
-
-        if (autoLogoChecked && (organismUrl || organismName)) {
-          try {
-            // Auto-détection
-            const detected = await autoDetectLogoAsync(organismUrl, 'form', organismName);
-            if (detected) logoPath = detected;
-          } catch (err) {
-            console.warn('Auto-détection logo formation failed', err);
-          }
-        }
+        // Pas de logo
       } else if (logoInputVal) {
         if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
           logoPath = logoInputVal;
