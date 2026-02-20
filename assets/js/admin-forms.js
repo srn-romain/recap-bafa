@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function sortSelectOptionsGenerically(selectElement) {
   if (!selectElement) return;
 
+  // Si le select contient des optgroup, on ne trie pas de façon générique (risquerait de casser la hiérarchie)
+  if (selectElement.querySelector('optgroup')) return;
+
   const options = Array.from(selectElement.options);
   if (options.length <= 1) return;
 
@@ -1860,11 +1863,111 @@ window.toggleFormTitleCustom = function () {
   }
 };
 
+// Variable pour stocker la structure originale des intitulés de formation
+let originalFormationTitleHtml = '';
+
+/**
+ * Gère l'affichage des intitulés de formation selon le type (BAFA vs BAFD).
+ */
+function updateFormationTitleLabels(clearValue = false) {
+  const typeSelect = document.getElementById('form-type');
+  const titleSelect = document.getElementById('form-title');
+  if (!typeSelect || !titleSelect) return;
+
+  // Sauvegarder la structure originale au premier appel
+  if (!originalFormationTitleHtml) {
+    originalFormationTitleHtml = titleSelect.innerHTML;
+  }
+
+  const formationType = typeSelect.value;
+  const ts = titleSelect.tomselect;
+
+  // Utiliser la valeur actuelle sauf si on demande explicitement de vider (changement manuel de type)
+  let currentValue = ts ? ts.getValue() : titleSelect.value;
+  if (clearValue) {
+    currentValue = '';
+  }
+
+  // Tableaux de blackliste demandés
+  const removableOptionsFormationBafa = [
+    'Formation Générale BAFD',
+    'Perfectionnement BAFD',
+    'Formation de formateur BAFD'
+  ];
+
+  const removableOptionsFormationBafd = [
+    'Formation Générale BAFA',
+    'Appro BAFA : 6-12 ans',
+    'Appro BAFA : Accueil de loisirs',
+    'Appro BAFA : Activités physiques et sportives',
+    'Appro BAFA : Activités scientifiques et techniques',
+    'Appro BAFA : Ados & préados',
+    'Appro BAFA : AS',
+    'Appro BAFA : Animation d\'intérieur',
+    'Appro BAFA : Animer à la mer',
+    'Appro BAFA : Animer à la montagne',
+    'Appro BAFA : Animer en ville',
+    'Appro BAFA : Grands jeux & animation',
+    'Appro BAFA : Jeux de plein air',
+    'Appro BAFA : Petite enfance',
+    'Appro BAFA : Mini camps',
+    'Appro BAFA : Publics en situation de handicap',
+    'Appro BAFA : Gestion de conflits et jeux coopératifs',
+    'Appro BAFA : Séjour à l\'étranger',
+    'Appro BAFA : Séjour et environnement',
+    'Appro BAFA : Ski & Glisse',
+    'Appro BAFA : Spectacle et expression',
+    'Qualification BAFA : Activités de loisirs motocycliste',
+    'Qualification BAFA : Canoë-Kayak',
+    'Qualification BAFA : Surveillant de Baignade',
+    'Qualification BAFA : Surveillant de Baignade (Renouvellement)',
+    'Qualification BAFA : Voile',
+    'Formation de formateur BAFA'
+  ];
+
+  const blacklist = formationType === 'bafa' ? removableOptionsFormationBafa : removableOptionsFormationBafd;
+
+  // Réinitialiser le select
+  titleSelect.innerHTML = originalFormationTitleHtml;
+
+  // Filtrer les options
+  Array.from(titleSelect.options).forEach(opt => {
+    if (blacklist.includes(opt.value)) {
+      opt.remove();
+    }
+  });
+
+  // Nettoyer les optgroups vides
+  Array.from(titleSelect.querySelectorAll('optgroup')).forEach(group => {
+    if (group.querySelectorAll('option').length === 0) {
+      group.remove();
+    }
+  });
+
+  // Synchroniser TomSelect
+  if (ts) {
+    ts.clearOptions();
+    ts.sync();
+    ts.setValue(currentValue, true);
+  } else {
+    titleSelect.value = currentValue;
+  }
+
+  // Mettre à jour l'affichage du champ "Autre" si le titre est vidé
+  if (clearValue && typeof toggleFormTitleCustom === 'function') {
+    toggleFormTitleCustom();
+  }
+}
+window.updateFormationTitleLabels = updateFormationTitleLabels;
+
 // Réinitialiser le formulaire de formation
 async function showAddFormationModal() {
   document.getElementById('formation-modal-title').textContent = 'Ajouter une formation';
   const form = document.getElementById('formation-form');
   form.reset();
+
+  // Mettre à jour les labels selon le type par défaut
+  updateFormationTitleLabels();
 
   ['form-title', 'form-organism'].forEach(id => {
     const el = document.getElementById(id);
@@ -1907,6 +2010,9 @@ function showEditFormationModal(data, row) {
 
   // Remplir le formulaire avec les données
   document.getElementById('form-type').value = data.type || 'bafa';
+
+  // Mettre à jour les labels selon le type chargé
+  updateFormationTitleLabels();
 
   // Convertir la date française en format mois pour l'input month
   const monthValue = frenchTextToMonth(data.date || '');

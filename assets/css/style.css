@@ -1799,3 +1799,50 @@ th.sortable:hover .sort-indicator.sort-neutral {
   background: #f9f9f9;
   border-color: #eee;
 }
+
+/*--------------------------------------------------------------
+# TomSelect Customization
+--------------------------------------------------------------*/
+.ts-dropdown .optgroup-header {
+  font-weight: bold !important;
+  color: #2c3e50 !important;
+  background-color: #f1f5f9 !important;
+  padding: 6px 12px !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  border-bottom: 2px solid #a6d866 !important;
+  margin-top: 8px !important;
+  line-height: 1.4 !important;
+}
+
+.ts-dropdown .optgroup {
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.ts-dropdown .option {
+  padding: 4px 12px !important;
+}
+
+/* Tabulation (indentation) des éléments dans les groupes */
+.ts-dropdown .optgroup .option {
+  padding-left: 28px !important;
+  position: relative;
+}
+
+.ts-dropdown .optgroup .option::before {
+  content: "—";
+  position: absolute;
+  left: 12px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+.ts-dropdown .option.active {
+  background-color: #f0fdf4 !important;
+  color: #166534 !important;
+}
+
+.ts-dropdown .option.selected {
+  background-color: #e2e8f0 !important;
+}
