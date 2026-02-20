@@ -583,6 +583,15 @@
                             <option value="UCPA">UCPA</option>
                             <option value="Telligo">Telligo</option>
                             <option value="Djuringa">Djuringa</option>
+                            <option value="AFOCAL">AFOCAL</option>
+                            <option value="Léo Lagrange">Léo Lagrange</option>
+                            <option value="Francas">Francas</option>
+                            <option value="CEMEA">CEMEA</option>
+                            <option value="IFAC">IFAC</option>
+                            <option value="STAJ">STAJ</option>
+                            <option value="UFOVAL">UFOVAL</option>
+                            <option value="ATC">ATC</option>
+                            <option value="Vacances pour tous">Vacances pour tous</option>
                             <option value="Autre">Autre (préciser)</option>
                         </select>
                         <input type="text" id="exp-dept" placeholder="Dép." style="width: 70px; text-align: center;"
@@ -675,6 +684,25 @@
         </div>
     </div>
 
+    <!-- Modal de confirmation de fermeture sans sauvegarder -->
+    <div id="unsaved-changes-modal" class="modal" style="display: none; z-index: 9999;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <p style="font-size: 3rem; color: #f39c12; margin-bottom: 10px; margin-top: 0;"><i
+                    class="bi bi-exclamation-triangle"></i></p>
+            <h2 style="color: #2c3e50; border-bottom: none; margin-bottom: 5px;">Modifications en cours</h2>
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 20px;">
+                Vousssss avez des modifications non enregistrées. Voulez-vous vraiment quitter ? Vos changements seront
+                perdus.
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="confirmCloseUnsavedModal()" class="submit-btn"
+                    style="background: #e74c3c; flex: 1;">Quitter sans sauvegarder</button>
+                <button onclick="cancelCloseUnsavedModal()" class="submit-btn"
+                    style="background: #95a5a6; flex: 1;">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal d'ajout/modification de formation -->
     <div id="formation-modal" class="modal" style="display: none;">
         <div class="modal-content large-modal">
@@ -683,7 +711,7 @@
             <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 5px;">Les champs marqués
                 d'un <span style="color: red;">*</span> sont obligatoires.</p>
             <p
-                    style="color: #0369a1; background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; font-size: 0.85rem; padding: 10px 15px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;">
+                style="color: #0369a1; background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; font-size: 0.85rem; padding: 10px 15px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;">
                 <i class="bi bi-lightbulb-fill" style="color: #0ea5e9; font-size: 1.1rem; margin-top: -2px;"></i>
                 <span><strong>Conseil :</strong> Remplissez le formulaire dans l'ordre. Certains champs (comme les
                     postes ou les modes de gestion) s'adaptent dynamiquement selon vos sélections précédentes.</span>
@@ -746,6 +774,15 @@
                             <option value="UCPA">UCPA</option>
                             <option value="Telligo">Telligo</option>
                             <option value="Djuringa">Djuringa</option>
+                            <option value="AFOCAL">AFOCAL</option>
+                            <option value="Léo Lagrange">Léo Lagrange</option>
+                            <option value="Francas">Francas</option>
+                            <option value="CEMEA">CEMEA</option>
+                            <option value="IFAC">IFAC</option>
+                            <option value="STAJ">STAJ</option>
+                            <option value="UFOVAL">UFOVAL</option>
+                            <option value="ATC">ATC</option>
+                            <option value="Vacances pour tous">Vacances pour tous</option>
                             <option value="Autre">Autre (préciser)</option>
                         </select>
                         <input type="text" id="form-organism-dept" placeholder="Dép."
@@ -768,7 +805,7 @@
                         </optgroup>
 
                         <optgroup label="Approfondissement / Qualification BAFA">
-                            <option value="Appro BAFA : 6-12 ans">Appro BAFA : 6-12 ans</option>
+                            <option value="Appro BAFA : 6-12 ans">Approfondissement BAFA : 6-12 ans</option>
                             <option value="Appro BAFA : Accueil de loisirs">Approfondissement BAFA : Accueil
                                 de loisirs</option>
                             <option value="Appro BAFA : Activités physiques et sportives">Approfondissement
@@ -776,6 +813,8 @@
                             <option value="Appro BAFA : Activités scientifiques et techniques">
                                 Approfondissement BAFA : Activités scientifiques et techniques</option>
                             <option value="Appro BAFA : Ados & préados">Approfondissement BAFA : Ados & préados</option>
+                            <option value="Appro BAFA : AS">Approfondissement BAFA : Assistant Sanitaire</option>
+                            <option value="Appro BAFA : Animation d'intérieur">Approfondissement BAFA : Animation d'intérieur</option>
                             <option value="Appro BAFA : Animer à la mer">Approfondissement BAFA : Animer à la mer
                             </option>
                             <option value="Appro BAFA : Animer à la montagne">Approfondissement BAFA : Animer à la
@@ -788,8 +827,11 @@
                                 plein air</option>
                             <option value="Appro BAFA : Petite enfance">Approfondissement BAFA : Petite
                                 enfance</option>
+                            <option value="Appro BAFA : Petite enfance">Approfondissement BAFA : Mini camps</option>
                             <option value="Appro BAFA : Publics en situation de handicap">Approfondissement
                                 BAFA : Publics en situation de handicap</option>
+                            <option value="Appro BAFA : Gestion de conflits et jeux coopératifs">Approfondissement
+                                BAFA : Gestion de conflits et jeux coopératifs</option>
                             <option value="Appro BAFA : Séjour à l'étranger">Approfondissement BAFA : Séjour
                                 à l'étranger</option>
                             <option value="Appro BAFA : Séjour et environnement">Approfondissement BAFA :
@@ -797,11 +839,14 @@
                             <option value="Appro BAFA : Ski & Glisse">Approfondissement BAFA : Ski & Glisse</option>
                             <option value="Appro BAFA : Spectacle et expression">Approfondissement BAFA :
                                 Spectacle et expression</option>
+                            <option value="Qualification BAFA : Activités de loisirs motocycliste">Qualification BAFA :
+                                Activités de loisirs motocycliste</option>
                             <option value="Qualification BAFA : Canoë-Kayak">Qualification BAFA : Canoë-Kayak</option>
                             <option value="Qualification BAFA : Surveillant de Baignade">Qualification BAFA :
                                 Surveillant de Baignade</option>
                             <option value="Qualification BAFA : Surveillant de Baignade (Renouvellement)">Qualification
                                 BAFA : Surveillant de Baignade (Renouvellement)</option>
+                            <option value="Qualification BAFA : Voile">Qualification BAFA : Voile</option>
                         </optgroup>
 
                         <optgroup label="BAFD">

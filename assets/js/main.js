@@ -1039,6 +1039,15 @@ function generatePDF(tableId, title) {
       link.style.color = '#333';
       link.style.textDecoration = 'none';
     });
+
+    // Empêcher les erreurs de PDF "Tainted Canvas" liées aux Google Favicons (absence de CORS)
+    const imgElement = cell.querySelector('img');
+    if (imgElement) {
+      if (imgElement.src.includes('google.com/s2/favicons')) {
+        // Remplacer l'image externe bloquante par un texte discret
+        imgElement.style.display = 'none';
+      }
+    }
   });
 
   // Gérer la visibilité des lignes pour le PDF

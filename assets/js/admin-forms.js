@@ -3,6 +3,42 @@
 let currentEditingRow = null;
 let currentEditingDocId = null;
 
+// Variable globale pour suivre les modifications non sauvegardées
+window.hasUnsavedChanges = false;
+let currentModalToClose = null;
+
+window.showUnsavedChangesModal = function (modalType) {
+  currentModalToClose = modalType;
+  document.getElementById('unsaved-changes-modal').style.display = 'flex';
+};
+
+window.confirmCloseUnsavedModal = function () {
+  window.hasUnsavedChanges = false;
+  const unsavedModal = document.getElementById('unsaved-changes-modal');
+  if (unsavedModal) unsavedModal.style.display = 'none';
+
+  if (currentModalToClose === 'experience') {
+    closeExperienceModal(true);
+  } else if (currentModalToClose === 'formation') {
+    closeFormationModal(true);
+  }
+};
+
+window.cancelCloseUnsavedModal = function () {
+  const unsavedModal = document.getElementById('unsaved-changes-modal');
+  if (unsavedModal) unsavedModal.style.display = 'none';
+};
+
+// Listeners pour détecter les modifications dans les formulaires
+document.addEventListener('DOMContentLoaded', () => {
+  const markUnsaved = () => { window.hasUnsavedChanges = true; };
+  document.getElementById('experience-form')?.addEventListener('input', markUnsaved);
+  document.getElementById('experience-form')?.addEventListener('change', markUnsaved);
+  document.getElementById('formation-form')?.addEventListener('input', markUnsaved);
+  document.getElementById('formation-form')?.addEventListener('change', markUnsaved);
+});
+
+
 /**
  * Trie par ordre alphabétique les options d'un menu déroulant en conservant
  * l'option "-- Sélectionner --" en haut et l'option "Autre" à la fin si elle existe.
@@ -564,6 +600,9 @@ async function showAddExperienceModal() {
 
   // Initialiser l'affichage des champs ALSH
   toggleAlshDateFields();
+  initSearchableSelects();
+
+  window.hasUnsavedChanges = false;
 
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
@@ -1425,6 +1464,7 @@ function removeLogo() {
 document.addEventListener('DOMContentLoaded', function () {
   initLogoFileUpload();
   initFormationLogoFileUpload();
+  initSearchableSelects(); // Important de garder après reset si non présent, ajouté avant.
 });
 
 // Afficher le modal d'édition d'expérience
@@ -1730,12 +1770,18 @@ async function showEditExperienceModal(data, row) {
     updateExpStayTypeOptions();
   }
 
+  window.hasUnsavedChanges = false;
+
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
 }
 
 // Fermer le modal d'expérience
-function closeExperienceModal() {
+function closeExperienceModal(force = false) {
+  if (window.hasUnsavedChanges && !force) {
+    window.showUnsavedChangesModal('experience');
+    return;
+  }
   document.getElementById('experience-modal').style.display = 'none';
   document.body.classList.remove('modal-open');
   currentEditingRow = null;
@@ -1812,41 +1858,39 @@ window.toggleFormTitleCustom = function () {
   }
 };
 
-// Afficher le modal d'ajout de formation
-function showAddFormationModal() {
+// Réinitialiser le formulaire de formation
+async function showAddFormationModal() {
   document.getElementById('formation-modal-title').textContent = 'Ajouter une formation';
-  document.getElementById('formation-form').reset();
+  const form = document.getElementById('formation-form');
+  form.reset();
 
-  // Reset Tom Selects
   ['form-title', 'form-organism'].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tomselect) el.tomselect.clear();
   });
 
-  // Reset logo text
+  toggleFormTitleCustom();
   if (typeof toggleFormationOrganizerCustom === 'function') toggleFormationOrganizerCustom();
-
-  const customInput = document.getElementById('form-title-custom');
-  if (customInput) { customInput.style.display = 'none'; }
-
-  hideFormationError();
-  // Réinitialiser les logos
   removeFormationLogo();
+  hideFormationError();
 
-  currentEditingRow = null;
-  currentEditingDocId = null;
+  const modalMonthInput = document.getElementById('form-date-month');
+  if (modalMonthInput) modalMonthInput.value = '';
+  document.getElementById('form-date').value = '';
+
+  window.hasUnsavedChanges = false;
+
   document.getElementById('formation-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
 
   // Écouter les changements du mois pour mettre à jour le texte
-  const monthInput = document.getElementById('form-date-month');
-  if (monthInput) {
-    monthInput.addEventListener('change', function () {
+  if (modalMonthInput) {
+    modalMonthInput.addEventListener('change', function () {
       const dateText = monthToFrenchText(this.value);
       document.getElementById('form-date').value = dateText;
     });
     // Ouvrir le calendrier au clic sur le champ entier
-    monthInput.addEventListener('click', function () {
+    modalMonthInput.addEventListener('click', function () {
       if ('showPicker' in this) {
         this.showPicker();
       }
@@ -2013,7 +2057,11 @@ function showEditFormationModal(data, row) {
 }
 
 // Fermer le modal de formation
-function closeFormationModal() {
+function closeFormationModal(force = false) {
+  if (window.hasUnsavedChanges && !force) {
+    window.showUnsavedChangesModal('formation');
+    return;
+  }
   document.getElementById('formation-modal').style.display = 'none';
   document.body.classList.remove('modal-open');
   currentEditingRow = null;
@@ -2266,7 +2314,8 @@ document.addEventListener('DOMContentLoaded', function () {
           await addExperienceToFirebase(data);
         }
 
-        closeExperienceModal();
+        window.hasUnsavedChanges = false;
+        closeExperienceModal(true);
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
           const scrollPos = window.scrollY; // Sauvegarder la position
@@ -2394,7 +2443,8 @@ document.addEventListener('DOMContentLoaded', function () {
           await addFormationToFirebase(data);
         }
 
-        closeFormationModal();
+        window.hasUnsavedChanges = false;
+        closeFormationModal(true);
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
           const scrollPos = window.scrollY; // Sauvegarder la position
