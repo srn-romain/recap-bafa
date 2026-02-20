@@ -20,7 +20,8 @@ function updateExpStayTypeOptions() {
     { value: 'Scout', text: 'Scout' },
     { value: 'Péri-scolaire', text: 'Péri-scolaire' },
     { value: 'SNU', text: 'SNU (Service National Universel)' },
-    { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' }
+    { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' },
+    { value: 'Classe découverte', text: 'Classe découverte' }
   ];
 
   // 1. Remettre toutes les options dans le DOM natif et Tom Select par défaut
