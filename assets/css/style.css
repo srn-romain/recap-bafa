@@ -1728,6 +1728,41 @@ th.sortable:hover .sort-indicator.sort-neutral {
   background: #50644c;
 }
 
+.btn-dark {
+  background: #34495e;
+}
+
+.btn-dark:hover {
+  background: #2c3e50;
+}
+
+.hero-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 30px 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .hero-buttons-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-buttons-container .btn-large {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+    margin: 5px 0;
+  }
+}
+
+
 #hero-title {
   font-size: 3.5rem;
   margin-bottom: 24px;

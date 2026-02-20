@@ -496,13 +496,35 @@ function updateUI() {
   }
 
   if (authButtonTop) {
-    // Si connecté, on cache le bouton de connexion (car on affiche Logout)
-    // Si déconnecté, on l'affiche pour permettre la connexion
     authButtonTop.style.display = isLoggedIn ? 'none' : 'block';
+  }
+
+  const registerButtonTop = document.getElementById('register-button-top');
+  if (registerButtonTop) {
+    registerButtonTop.style.display = isLoggedIn ? 'none' : 'block';
   }
 
   if (logoutButtonTop) {
     logoutButtonTop.style.display = isLoggedIn ? 'block' : 'none';
+  }
+
+  // Gestion spécifique de l'index (boutons Hero)
+  const heroAuthBtns = document.getElementById('hero-auth-btns');
+  const heroLoggedBtns = document.getElementById('hero-logged-btns');
+  const heroDashboardBtn = document.getElementById('hero-dashboard-btn');
+
+  if (heroAuthBtns) {
+    heroAuthBtns.style.display = isLoggedIn ? 'none' : 'contents';
+  }
+
+  if (heroLoggedBtns) {
+    heroLoggedBtns.style.display = isLoggedIn ? 'contents' : 'none';
+  }
+
+  if (heroDashboardBtn && isLoggedIn && currentUid) {
+    heroDashboardBtn.onclick = () => {
+      window.location.href = `dashboard.html?uid=${currentUid}`;
+    };
   }
 
   // Gérer automatiquement le dépliage/pliage des astuces selon qu'on est propriétaire ou non
