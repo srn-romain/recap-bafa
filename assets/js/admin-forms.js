@@ -4,6 +4,84 @@ let currentEditingRow = null;
 let currentEditingDocId = null;
 
 /**
+ * Gère l'affichage et les options du champ 'Gestion' ('exp-stay-type') selon le type d'expérience.
+ */
+function updateExpStayTypeOptions() {
+  const expType = document.getElementById('exp-type').value;
+  const staySelect = document.getElementById('exp-stay-type');
+  if (!staySelect) return;
+  const container = staySelect.closest('.form-group');
+
+  // Toujours réafficher le container par défaut pour pouvoir repasser à un autre type
+  if (container) container.style.display = 'block';
+
+  // Options à potentiellement retirer
+  const removableOptions = [
+    { value: 'Scout', text: 'Scout' },
+    { value: 'Péri-scolaire', text: 'Péri-scolaire' },
+    { value: 'SNU', text: 'SNU (Service National Universel)' },
+    { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' }
+  ];
+
+  // 1. Remettre toutes les options dans le DOM natif et Tom Select par défaut
+  removableOptions.forEach(optData => {
+    let opt = Array.from(staySelect.options).find(o => o.value === optData.value);
+    if (!opt) {
+      opt = document.createElement('option');
+      opt.value = optData.value;
+      opt.text = optData.text;
+      // Insérer avant "Autre" pour garder un ordre correct
+      const autreOpt = Array.from(staySelect.options).find(o => o.value === 'Autre');
+      if (autreOpt) {
+        staySelect.insertBefore(opt, autreOpt);
+      } else {
+        staySelect.appendChild(opt);
+      }
+    }
+  });
+
+  // Synchroniser avant suppression pour s'assurer de l'état clean
+  if (staySelect.tomselect) staySelect.tomselect.sync();
+
+  // 2. Appliquer les règles
+  if (expType === 'alsh') {
+    if (container) container.style.display = 'none';
+    if (staySelect.tomselect) {
+      staySelect.tomselect.setValue('ALSH', true);
+    } else {
+      staySelect.value = 'ALSH';
+    }
+  } else if (expType === 'colo') {
+    // Si la valeur actuelle est une qu'on va retirer, on la réinitialise
+    if (staySelect.value === 'Scout' || staySelect.value === 'SNU') {
+      if (staySelect.tomselect) {
+        staySelect.tomselect.setValue('', true);
+      } else {
+        staySelect.value = '';
+      }
+    }
+
+    // Retirer complètement les options "Scout" et "SNU" du DOM et de Tom Select
+    removableOptions.forEach(optData => {
+      // Du DOM natif
+      const opt = Array.from(staySelect.options).find(o => o.value === optData.value);
+      if (opt) opt.remove();
+      // De Tom Select
+      if (staySelect.tomselect) {
+        staySelect.tomselect.removeOption(optData.value);
+      }
+    });
+
+    // Synchronisation finale pour Colo
+    if (staySelect.tomselect) staySelect.tomselect.sync();
+  }
+
+  // Reforcer le mask du container si ALSH car tomselect peut recréer l'affichage
+  if (expType === 'alsh' && container) container.style.display = 'none';
+}
+window.updateExpStayTypeOptions = updateExpStayTypeOptions;
+
+/**
  * Gère l'affichage des champs de date selon le type d'expérience (ALSH vs autres)
  * et le mode (Ponctuel vs Tous les mercredis)
  */
@@ -13,6 +91,11 @@ function toggleAlshDateFields() {
   const standardDateContainer = document.getElementById('standard-date-container');
   const mercredisDateContainer = document.getElementById('mercredis-date-container');
   const durationInput = document.getElementById('exp-duration'); // Champ durée
+
+  // Mise à jour de la liste 'gestion'
+  if (typeof updateExpStayTypeOptions === 'function') {
+    updateExpStayTypeOptions();
+  }
 
   // Si c'est un ALSH ou Scout, on montre les options radio
   if (expType === 'alsh' || expType === 'scout') {
@@ -1295,6 +1378,11 @@ async function showEditExperienceModal(data, row) {
 
   // Gérer l'affichage des messages d'info selon la présence du logo
   toggleLogoInfoMessages();
+
+  // Appliquer la logique du type de gestion une dernière fois pour être sûr
+  if (typeof updateExpStayTypeOptions === 'function') {
+    updateExpStayTypeOptions();
+  }
 
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
