@@ -548,6 +548,9 @@ async function showAddExperienceModal() {
     if (el && el.tomselect) el.tomselect.clear();
   });
 
+  // Reset logo text
+  if (typeof toggleOrganizerCustom === 'function') toggleOrganizerCustom();
+
   hideExperienceError();
   currentEditingRow = null;
   currentEditingDocId = null;
@@ -737,6 +740,7 @@ window.toggleOrganizerCustom = function () {
   const placeholder = document.getElementById('logo-placeholder');
   const removeBtn = document.getElementById('remove-logo');
   const deptInput = document.getElementById('exp-dept');
+  const logoText = document.getElementById('exp-logo-text');
 
   if (!select) return;
 
@@ -769,6 +773,8 @@ window.toggleOrganizerCustom = function () {
     if (placeholder) placeholder.style.display = 'flex';
     if (removeBtn) removeBtn.style.display = 'none';
 
+    if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
+
   } else if (knownOrganizers[select.value]) {
     if (custom) {
       custom.style.display = 'none';
@@ -797,6 +803,8 @@ window.toggleOrganizerCustom = function () {
       placeholder.style.display = 'none';
       removeBtn.style.display = 'none'; // Empêche l'utilisateur d'enlever ce logo pré-défini
     }
+
+    if (logoText) logoText.textContent = "Le logo est prédéfini pour cet organisme";
   } else {
     // Cas '-- Sélectionner --'
     if (custom) {
@@ -820,6 +828,8 @@ window.toggleOrganizerCustom = function () {
     if (preview) preview.style.display = 'none';
     if (placeholder) placeholder.style.display = 'flex';
     if (removeBtn) removeBtn.style.display = 'none';
+
+    if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
   }
 };
 
@@ -833,6 +843,7 @@ window.toggleFormationOrganizerCustom = function () {
   const placeholder = document.getElementById('form-logo-placeholder');
   const removeBtn = document.getElementById('form-remove-logo');
   const deptInput = document.getElementById('form-organism-dept');
+  const logoText = document.getElementById('form-logo-text');
 
   if (!select) return;
 
@@ -865,6 +876,8 @@ window.toggleFormationOrganizerCustom = function () {
     if (placeholder) placeholder.style.display = 'flex';
     if (removeBtn) removeBtn.style.display = 'none';
 
+    if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
+
   } else if (knownOrganizersFormation[select.value]) {
     if (custom) {
       custom.style.display = 'none';
@@ -891,6 +904,8 @@ window.toggleFormationOrganizerCustom = function () {
       placeholder.style.display = 'none';
       removeBtn.style.display = 'none'; // Empêche l'utilisateur d'enlever ce logo pré-défini
     }
+
+    if (logoText) logoText.textContent = "Le logo est prédéfini pour cet organisme";
   } else {
     // Cas '-- Sélectionner --'
     if (custom) {
@@ -914,6 +929,8 @@ window.toggleFormationOrganizerCustom = function () {
     if (preview) preview.style.display = 'none';
     if (placeholder) placeholder.style.display = 'flex';
     if (removeBtn) removeBtn.style.display = 'none';
+
+    if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
   }
 };
 
@@ -1359,6 +1376,9 @@ function removeFormationLogo() {
     errorEl.style.display = 'none';
     errorEl.textContent = '';
   }
+
+  const logoText = document.getElementById('form-logo-text');
+  if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
 }
 
 // Fonction pour supprimer le logo
@@ -1387,6 +1407,9 @@ function removeLogo() {
     errorEl.style.display = 'none';
     errorEl.textContent = '';
   }
+
+  const logoText = document.getElementById('exp-logo-text');
+  if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
 }
 
 // Initialiser le gestionnaire lors de l'ouverture de la modale
@@ -1791,6 +1814,9 @@ function showAddFormationModal() {
     if (el && el.tomselect) el.tomselect.clear();
   });
 
+  // Reset logo text
+  if (typeof toggleFormationOrganizerCustom === 'function') toggleFormationOrganizerCustom();
+
   const customInput = document.getElementById('form-title-custom');
   if (customInput) { customInput.style.display = 'none'; }
 
@@ -1900,6 +1926,11 @@ function showEditFormationModal(data, row) {
   }
 
   document.getElementById('form-organism-url').value = data.organismUrl || '';
+
+  // Appliquer le style selon le choix
+  if (typeof toggleFormationOrganizerCustom === 'function') {
+    toggleFormationOrganizerCustom();
+  }
 
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
