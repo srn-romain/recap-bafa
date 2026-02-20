@@ -1134,6 +1134,11 @@
                     <button type="button" onclick="sendPasswordReset()" class="secondary-action-btn">
                         <i class="bi bi-key"></i> Réinitialiser mot de passe
                     </button>
+
+                    <button type="button" onclick="closeSettingsModal(); Tutorial.start();" class="secondary-action-btn"
+                        style="background: #34495e; color: white;">
+                        <i class="bi bi-play-circle"></i> Relancer le tutoriel
+                    </button>
                 </div>
 
                 <div class="data-buttons-row">
@@ -1225,6 +1230,20 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <!-- Tom Select JS -->
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+        <script src="assets/js/tutorial.js"></script>
+        <script>
+            // Trigger tutorial for new users (if not seen yet)
+            firebase.auth().onAuthStateChanged(user => {
+                if (user && !localStorage.getItem('tutorial_seen')) {
+                    // Attendre que la page soit chargée et que les boutons soient potentiellement affichés
+                    setTimeout(() => {
+                        if (typeof window.isOwner === 'function' && window.isOwner()) {
+                            Tutorial.start();
+                        }
+                    }, 2000);
+                }
+            });
+        </script>
     </div>
 </body>
 
