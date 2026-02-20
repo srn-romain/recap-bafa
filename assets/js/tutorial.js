@@ -98,28 +98,49 @@ const Tutorial = (function () {
     }
 
     function highlight(selector) {
-        const el = document.querySelector(selector);
-        if (!el) return null;
+        let el = document.querySelector(selector);
 
-        const rect = el.getBoundingClientRect();
+        // Si l'élément est masqué ou inexistant, on cherche un parent visible ou on cible la navbar par défaut
+        if (!el || window.getComputedStyle(el).display === 'none') {
+            if (selector === '#nav-profile-pic-container') {
+                el = document.querySelector('#sticky-navbar');
+            } else {
+                console.warn("Élément non trouvé ou masqué :", selector);
+            }
+        }
+
+        const rect = el ? el.getBoundingClientRect() : {
+            top: window.innerHeight / 2,
+            bottom: window.innerHeight / 2,
+            left: window.innerWidth / 2,
+            right: window.innerWidth / 2,
+            width: 0,
+            height: 0
+        };
         const padding = 5;
 
-        // On scroll si besoin
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // On scroll si l'élément existe et n'est pas la navbar (déjà en haut)
+        if (el && el.id !== 'sticky-navbar') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
 
         // Mise à jour de l'overlay avec un trou (mask)
-        // Note: Sur certains navigateurs on utilise clip-path avec un polygone complexe pour faire un trou
         setTimeout(() => {
-            const upRect = el.getBoundingClientRect();
-            overlay.style.clipPath = `polygon(
-                0% 0%, 0% 100%, 
-                ${upRect.left - padding}px 100%, 
-                ${upRect.left - padding}px ${upRect.top - padding}px, 
-                ${upRect.right + padding}px ${upRect.top - padding}px, 
-                ${upRect.right + padding}px ${upRect.bottom + padding}px, 
-                ${upRect.left - padding}px ${upRect.bottom + padding}px, 
-                ${upRect.left - padding}px 100%, 100% 100%, 100% 0%
-            )`;
+            const upRect = el ? el.getBoundingClientRect() : rect;
+
+            if (el && window.getComputedStyle(el).display !== 'none') {
+                overlay.style.clipPath = `polygon(
+                    0% 0%, 0% 100%, 
+                    ${upRect.left - padding}px 100%, 
+                    ${upRect.left - padding}px ${upRect.top - padding}px, 
+                    ${upRect.right + padding}px ${upRect.top - padding}px, 
+                    ${upRect.right + padding}px ${upRect.bottom + padding}px, 
+                    ${upRect.left - padding}px ${upRect.bottom + padding}px, 
+                    ${upRect.left - padding}px 100%, 100% 100%, 100% 0%
+                )`;
+            } else {
+                overlay.style.clipPath = 'none';
+            }
 
             updateTooltip(upRect);
         }, 500); // Délai pour le scroll smooth
@@ -170,22 +191,45 @@ const Tutorial = (function () {
             currentStep = 0;
             overlay.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            highlight(steps[currentStep].element);
+
+            // On vérifie si le premier élément existe, sinon on cherche le premier disponible
+            this.showStep();
+        },
+        showStep: function () {
+            if (currentStep >= steps.length) {
+                this.stop();
+                return;
+            }
+
+            const step = steps[currentStep];
+            const el = document.querySelector(step.element);
+            const isVisible = el && window.getComputedStyle(el).display !== 'none';
+
+            // Si l'élément n'existe pas ou est masqué (ex: statistiques sans données)
+            // On l'ignore, sauf pour la photo de profil qui a son propre fallback dans highlight()
+            if ((!el || !isVisible) && step.element !== '#nav-profile-pic-container') {
+                console.log("Étape masquée car élément absent ou invisible :", step.element);
+                this.next(); // On passe récursivement à la suivante
+                return;
+            }
+
+            highlight(step.element);
         },
         next: function () {
             currentStep++;
-            if (currentStep < steps.length) {
-                highlight(steps[currentStep].element);
-            } else {
-                this.stop();
-            }
+            this.showStep();
         },
         stop: function () {
             if (overlay) overlay.style.display = 'none';
             if (tooltip) tooltip.style.display = 'none';
             document.body.style.overflow = '';
-            // Marquer comme vu
-            localStorage.setItem('tutorial_seen', 'true');
+
+            // Marquer comme vu pour cet utilisateur spécifique
+            if (window.currentUser) {
+                localStorage.setItem('tutorial_seen_' + window.currentUser.uid, 'true');
+            } else {
+                localStorage.setItem('tutorial_seen', 'true');
+            }
         },
         isActive: function () {
             return overlay && overlay.style.display === 'block';

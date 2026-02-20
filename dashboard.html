@@ -1232,15 +1232,45 @@
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
         <script src="assets/js/tutorial.js"></script>
         <script>
-            // Trigger tutorial for new users (if not seen yet)
+            // Déclencheur automatique du tutoriel pour les nouveaux comptes
             firebase.auth().onAuthStateChanged(user => {
-                if (user && !localStorage.getItem('tutorial_seen')) {
-                    // Attendre que la page soit chargée et que les boutons soient potentiellement affichés
-                    setTimeout(() => {
-                        if (typeof window.isOwner === 'function' && window.isOwner()) {
-                            Tutorial.start();
+                if (user) {
+                    const userSeenKey = 'tutorial_seen_' + user.uid;
+                    if (!localStorage.getItem(userSeenKey)) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const targetUid = urlParams.get('uid');
+
+                        // Condition : On est propriétaire, on n'a pas encore vu le tuto, et le compte est RÉCENT
+                        // On considère un compte récent s'il a été créé il y a moins de 10 minutes
+                        const creationTime = new Date(user.metadata.creationTime).getTime();
+                        const now = new Date().getTime();
+                        const isNewAccount = (now - creationTime) < 10 * 60 * 1000;
+
+                        if (targetUid === user.uid && isNewAccount) {
+                            let attempts = 0;
+                            const checkInterval = setInterval(() => {
+                                attempts++;
+                                // On attend que updateUI() ait fait son travail (boutons visibles)
+                                const triggerEl = document.getElementById('add-experience-btn');
+                                const isVisible = triggerEl && window.getComputedStyle(triggerEl).display !== 'none';
+
+                                if (isVisible) {
+                                    clearInterval(checkInterval);
+                                    // Petit délai supplémentaire pour que tout soit stable (animations, photos, etc)
+                                    setTimeout(() => {
+                                        if (typeof Tutorial !== 'undefined' && !Tutorial.isActive()) {
+                                            console.log("Lancement automatique du tutoriel pour l'utilisateur :", user.uid);
+                                            Tutorial.start();
+                                        }
+                                    }, 800);
+                                }
+
+                                if (attempts > 40) { // On arrête après 20 secondes
+                                    clearInterval(checkInterval);
+                                }
+                            }, 500);
                         }
-                    }, 2000);
+                    }
                 }
             });
         </script>
