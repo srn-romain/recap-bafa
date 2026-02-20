@@ -543,7 +543,7 @@ async function showAddExperienceModal() {
   form.reset();
 
   // Reset Tom Selects
-  ['exp-stay-type', 'exp-position'].forEach(id => {
+  ['exp-stay-type', 'exp-position', 'exp-organizer'].forEach(id => {
     const el = document.getElementById(id);
     if (el && el.tomselect) el.tomselect.clear();
   });
@@ -621,7 +621,7 @@ async function showAddExperienceModal() {
 
 // Initialiser Tom Select pour les listes déroulantes
 function initSearchableSelects() {
-  const ids = ['exp-stay-type', 'exp-position', 'form-title', 'exp-type'];
+  const ids = ['exp-stay-type', 'exp-position', 'form-title', 'exp-type', 'exp-organizer'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -634,7 +634,12 @@ function initSearchableSelects() {
           plugins: ['dropdown_input'], // Assure que l'input de recherche est dans le dropdown
           onInitialize: function () {
             // S'assurer que le container a la bonne largeur
-            this.wrapper.style.width = '100%';
+            if (id === 'exp-organizer') {
+              this.wrapper.style.width = 'auto';
+              this.wrapper.style.flex = '1';
+            } else {
+              this.wrapper.style.width = '100%';
+            }
           }
         });
       }
@@ -728,6 +733,101 @@ window.toggleExpPositionCustom = function () {
       customInput.style.display = 'none';
       customInput.required = false;
     }
+  }
+};
+
+window.toggleOrganizerCustom = function () {
+  const select = document.getElementById('exp-organizer');
+  const custom = document.getElementById('exp-organizer-custom');
+  const urlInput = document.getElementById('exp-organizer-url');
+  const fileInput = document.getElementById('exp-logo-file');
+  const logoPathInput = document.getElementById('exp-logo-path');
+  const preview = document.getElementById('logo-preview');
+  const placeholder = document.getElementById('logo-placeholder');
+  const removeBtn = document.getElementById('remove-logo');
+  const deptInput = document.getElementById('exp-dept');
+
+  if (!select) return;
+
+  const knownOrganizers = {
+    'UCPA': { url: 'https://www.ucpa.com/', logo: 'assets/img/ucpa.png', dept: '92' },
+    'Telligo': { url: 'https://www.telligo.fr/', logo: 'assets/img/telligo.png', dept: '92' },
+    'Djuringa': { url: 'https://www.djuringa-juniors.fr/', logo: 'assets/img/djuringa.png', dept: '69' }
+  };
+
+  if (select.value === 'Autre') {
+    if (custom) {
+      custom.style.display = 'block';
+      custom.required = true;
+    }
+    if (urlInput) {
+      urlInput.disabled = false;
+      urlInput.readOnly = false;
+      urlInput.value = '';
+    }
+    if (fileInput) fileInput.disabled = false;
+    if (deptInput) {
+      deptInput.disabled = false;
+      deptInput.readOnly = false;
+    }
+
+    // Cleanup any forced logo
+    if (logoPathInput) logoPathInput.value = '';
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (removeBtn) removeBtn.style.display = 'none';
+
+  } else if (knownOrganizers[select.value]) {
+    if (custom) {
+      custom.style.display = 'none';
+      custom.required = false;
+      custom.value = '';
+    }
+
+    const data = knownOrganizers[select.value];
+    if (urlInput) {
+      urlInput.value = data.url;
+      urlInput.readOnly = true;
+    }
+    if (fileInput) fileInput.disabled = true;
+
+    if (deptInput) {
+      if (data.dept !== undefined) deptInput.value = data.dept;
+      deptInput.readOnly = true;
+      // Optionnellement on le disable, mais attention en form submit car disabled exclut du payload
+      // Sauf si getFormData(). Donc on laisse visible mais readOnly ou on change la couleur
+    }
+
+    if (logoPathInput) logoPathInput.value = data.logo;
+    if (preview && placeholder && removeBtn) {
+      preview.src = data.logo;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+      removeBtn.style.display = 'none'; // Empêche l'utilisateur d'enlever ce logo pré-défini
+    }
+  } else {
+    // Cas '-- Sélectionner --'
+    if (custom) {
+      custom.style.display = 'none';
+      custom.required = false;
+      custom.value = '';
+    }
+    if (urlInput) {
+      urlInput.disabled = false;
+      urlInput.readOnly = false;
+      urlInput.value = '';
+    }
+    if (fileInput) fileInput.disabled = false;
+    if (deptInput) {
+      deptInput.disabled = false;
+      deptInput.readOnly = false;
+      deptInput.value = '';
+    }
+
+    if (logoPathInput) logoPathInput.value = '';
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (removeBtn) removeBtn.style.display = 'none';
   }
 };
 
@@ -1466,12 +1566,56 @@ async function showEditExperienceModal(data, row) {
   const rawOrganizer = data.organizer || '';
   // Matcher "Nom (Dept)"
   const organizerMatch = rawOrganizer.match(/^(.*?)\s*\(([^)]+)\)$/);
+
+  let orgName = rawOrganizer;
+  let orgDept = '';
+
   if (organizerMatch) {
-    document.getElementById('exp-organizer').value = organizerMatch[1].trim();
-    document.getElementById('exp-dept').value = organizerMatch[2].trim();
-  } else {
-    document.getElementById('exp-organizer').value = rawOrganizer;
-    document.getElementById('exp-dept').value = '';
+    orgName = organizerMatch[1].trim();
+    orgDept = organizerMatch[2].trim();
+  }
+
+  const orgSelect = document.getElementById('exp-organizer');
+  const orgCustom = document.getElementById('exp-organizer-custom');
+
+  if (orgSelect) {
+    let optionExists = false;
+    for (let i = 0; i < orgSelect.options.length; i++) {
+      if (orgSelect.options[i].value === orgName && orgName !== '') {
+        optionExists = true;
+        break;
+      }
+    }
+
+    if (optionExists) {
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue(orgName);
+      else orgSelect.value = orgName;
+      if (orgCustom) {
+        orgCustom.value = '';
+        orgCustom.style.display = 'none';
+      }
+    } else if (orgName) {
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('Autre');
+      else orgSelect.value = 'Autre';
+      if (orgCustom) {
+        orgCustom.value = orgName;
+        orgCustom.style.display = 'block';
+      }
+    } else {
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('');
+      else orgSelect.value = '';
+      if (orgCustom) {
+        orgCustom.value = '';
+        orgCustom.style.display = 'none';
+      }
+    }
+  }
+
+  document.getElementById('exp-dept').value = orgDept;
+
+  // Appliquer le style selon le choix
+  if (typeof toggleOrganizerCustom === 'function') {
+    toggleOrganizerCustom();
   }
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
 
@@ -1479,10 +1623,11 @@ async function showEditExperienceModal(data, row) {
   const logoPath = extractLogoFilename(data.logoPath || '');
   document.getElementById('exp-logo-path').value = logoPath;
 
-  // Afficher le preview du logo si disponible
+  // Afficher le preview du logo si disponible (et que l'utilisateur n'a pas sélectionné un prestataire fixe qui en a pris la charge sinon on garde celui qui a été chargé)
   const preview = document.getElementById('logo-preview');
   const placeholder = document.getElementById('logo-placeholder');
   const removeBtn = document.getElementById('remove-logo');
+
 
   if (logoPath) {
     if (preview) {
@@ -2033,28 +2178,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const rawOrganizerUrl = document.getElementById('exp-organizer-url').value.trim();
 
       if (!logoInputVal) {
-        // Pas de logo uploadé, vérifier checkbox
-        const autoLogoChecked = document.getElementById('exp-auto-logo-check') ? document.getElementById('exp-auto-logo-check').checked : true;
-
-        if (autoLogoChecked) {
-          const organizerName = document.getElementById('exp-organizer').value.trim();
-
-          // On tente si on a une URL OU un nom
-          if (rawOrganizerUrl || organizerName) {
-            try {
-              // Appeler la détection automatique
-              await autoDetectLogoAsync(rawOrganizerUrl, 'exp', organizerName);
-              // Récupérer le logo après détection
-              const detectedLogo = document.getElementById('exp-logo-path').value.trim();
-              if (detectedLogo) {
-                logoPath = detectedLogo;
-              }
-            } catch (error) {
-              console.warn('Auto-détection du logo échouée:', error);
-              // Continuer sans logo
-            }
-          }
-        }
+        // Validation basique car nous avons retiré la recherche auto ici
       } else {
         // Logo déjà uploadé/défini
         if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
@@ -2099,7 +2223,9 @@ document.addEventListener('DOMContentLoaded', function () {
           return days > 1 ? `${days} jours` : `${days} jour`;
         })(),
         organizer: (() => {
-          const org = document.getElementById('exp-organizer').value.trim();
+          const orgSelect = document.getElementById('exp-organizer').value;
+          const org = (orgSelect === 'Autre') ? document.getElementById('exp-organizer-custom').value.trim() : orgSelect;
+
           const dept = document.getElementById('exp-dept').value.trim().toUpperCase();
           if (dept && !/^\d+$|^2[AB]$/.test(dept)) {
             showExperienceError('Le département de l\'organisateur doit être composé de chiffres ou être 2A/2B.');
@@ -2112,7 +2238,8 @@ document.addEventListener('DOMContentLoaded', function () {
           const rawUrl = document.getElementById('exp-organizer-url').value.trim();
           if (rawUrl) return rawUrl;
 
-          const org = document.getElementById('exp-organizer').value.trim();
+          const orgSelect = document.getElementById('exp-organizer').value;
+          const org = (orgSelect === 'Autre') ? document.getElementById('exp-organizer-custom').value.trim() : orgSelect;
           const dept = document.getElementById('exp-dept').value.trim();
           const fullOrg = org + (dept ? ` ${dept}` : ''); // Use space for cleaner search query
 
