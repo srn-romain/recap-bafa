@@ -1946,8 +1946,14 @@ function updateFormationTitleLabels(clearValue = false) {
 
   // Synchroniser TomSelect
   if (ts) {
+    // 1. Vider totalement TomSelect (options et groupes)
+    ts.clear(true);
     ts.clearOptions();
+
+    // 2. Ré-importer les options filtrées depuis le select natif
     ts.sync();
+
+    // 3. Restaurer la valeur (éventuellement vide)
     ts.setValue(currentValue, true);
   } else {
     titleSelect.value = currentValue;
