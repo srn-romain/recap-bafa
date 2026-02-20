@@ -151,6 +151,11 @@ function toggleAlshDateFields() {
     updateExpStayTypeOptions();
   }
 
+  // Mise à jour de la liste des intitulés de poste (qui dépend aussi du type)
+  if (typeof updatePositionLabels === 'function') {
+    updatePositionLabels();
+  }
+
   // Si c'est un ALSH ou Scout, on montre les options radio
   if (expType === 'alsh' || expType === 'scout') {
     alshOptions.style.display = 'block';
@@ -298,52 +303,105 @@ async function updatePositionLabels() {
   // Définir les labels en fonction du genre
   const isFeminin = gender === 'feminin';
 
-  // Mettre à jour les options (texte et valeur)
-  const options = positionSelect.options;
-  options[0].text = '-- Sélectionner --';
-  options[0].value = '';
+  // Lire le type d'expérience en cours
+  const expTypeElement = document.getElementById('exp-type');
+  const expType = expTypeElement ? expTypeElement.value : '';
 
-  const positions = [
-    { m: 'Animateur Stagiaire', f: 'Animatrice Stagiaire' },
-    { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)' },
-    { m: 'Animateur Ski', f: 'Animatrice Ski' },
-    { m: 'Animateur Snow', f: 'Animatrice Snow' },
-    { m: 'Animateur SB', f: 'Animatrice SB' },
-    { m: 'Animateur AS', f: 'Animatrice AS' },
-    { m: 'Animateur Référent Handicap', f: 'Animatrice Référente Handicap' },
-    { m: 'Responsable de Groupe', f: 'Responsable de Groupe' },
-    { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)' },
-    { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)' },
-    { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)' },
-    { m: 'Cuisinier', f: 'Cuisinière' },
-    { m: 'Directeur', f: 'Directrice' },
-    { m: 'Directeur Stagiaire', f: 'Directrice Stagiaire' },
-    { m: 'Directeur AS', f: 'Directrice AS' },
-    { m: 'Directeur SB', f: 'Directrice SB' },
-    { m: 'Directeur de Formation', f: 'Directrice de Formation' },
-    { m: 'Directeur de Structure', f: 'Directrice de Structure' },
-    { m: 'Directeur Adjoint', f: 'Directrice Adjointe' },
-    { m: 'Directeur Adjoint & SB', f: 'Directrice Adjointe & SB' },
-    { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS' },
-    { m: 'Formateur BAFA', f: 'Formatrice BAFA' },
-    { m: 'Formateur BAFD', f: 'Formatrice BAFD' },
-    { m: 'Respons Scout', f: 'Respons Scout' },
-    { m: 'Chef Scout', f: 'Cheffe Scout' },
-    { m: 'Autre (préciser)', f: 'Autre (préciser)' }
+  // Conserver la valeur actuelle
+  let currentValue = positionSelect.value;
+  if (positionSelect.tomselect) {
+    currentValue = positionSelect.tomselect.getValue();
+  }
+
+  // Vider le select
+  positionSelect.innerHTML = '<option value="">-- Sélectionner --</option>';
+  if (positionSelect.tomselect) {
+    positionSelect.tomselect.clearOptions();
+    positionSelect.tomselect.addOption({ value: '', text: '-- Sélectionner --' });
+  }
+
+  const allPositions = [
+    { m: 'Animateur Stagiaire', f: 'Animatrice Stagiaire', roles: ['all'] },
+    { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)', roles: ['all'] },
+    { m: 'Animateur Ski', f: 'Animatrice Ski', roles: ['all'] },
+    { m: 'Animateur Snow', f: 'Animatrice Snow', roles: ['all'] },
+    { m: 'Animateur SB', f: 'Animatrice SB', roles: ['all'] },
+    { m: 'Animateur AS', f: 'Animatrice AS', roles: ['all'] },
+    { m: 'Animateur Référent Handicap', f: 'Animatrice Référente Handicap', roles: ['all'] },
+    { m: 'Responsable de Groupe', f: 'Responsable de Groupe', roles: ['all'] },
+    { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)', roles: ['all'] },
+    { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)', roles: ['all'] },
+    { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)', roles: ['all'] },
+    { m: 'Cuisinier', f: 'Cuisinière', roles: ['all'] },
+    { m: 'Directeur', f: 'Directrice', roles: ['all'] },
+    { m: 'Directeur Stagiaire', f: 'Directrice Stagiaire', roles: ['all'] },
+    { m: 'Directeur AS', f: 'Directrice AS', roles: ['all'] },
+    { m: 'Directeur SB', f: 'Directrice SB', roles: ['all'] },
+    { m: 'Directeur de Formation', f: 'Directrice de Formation', roles: ['all'] },
+    { m: 'Directeur de Structure', f: 'Directrice de Structure', roles: ['all'] },
+    { m: 'Directeur Adjoint', f: 'Directrice Adjointe', roles: ['all'] },
+    { m: 'Directeur Adjoint & SB', f: 'Directrice Adjointe & SB', roles: ['all'] },
+    { m: 'Directeur Adjoint & AS', f: 'Directrice Adjointe & AS', roles: ['all'] },
+    { m: 'Formateur BAFA', f: 'Formatrice BAFA', roles: ['all'] },
+    { m: 'Formateur BAFD', f: 'Formatrice BAFD', roles: ['all'] },
+    { m: 'Respons Scout', f: 'Respons Scout', roles: ['scout'] },
+    { m: 'Chef Scout', f: 'Cheffe Scout', roles: ['scout'] },
+    /*{ m: 'Autre (préciser)', f: 'Autre (préciser)', roles: ['all', 'scout'] }*/
+  ];
+  // Intitulés de poste à retirer spécifiquement pour "Colonie de vacances" (colo)
+  // Utiliser la valeur 'm' (masculin) de l'intitulé pour le cibler
+  const removableOptionsPosteColo = [
+    'Tuteur de Maisonnée (SNU)', 'Chef Scout', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout'
   ];
 
-  positions.forEach((pos, index) => {
-    // Enregistrement en base au masculin (pos.m)
-    // Affichage au masculin ou féminin selon le genre (text)
-    if (options[index + 1]) {
-      options[index + 1].value = pos.m;
-      options[index + 1].text = isFeminin ? pos.f : pos.m;
+  let optionFoundForCurrentValue = false;
+
+  allPositions.forEach(pos => {
+    let shouldShow = false;
+
+    if (expType === 'scout') {
+      if (pos.roles.includes('scout')) shouldShow = true;
+    } else {
+      if (pos.roles.includes('all')) shouldShow = true;
+
+      // Masquer si c'est une colo et que le poste est dans la liste à bannir
+      if (expType === 'colo' && removableOptionsPosteColo.includes(pos.m)) {
+        shouldShow = false;
+      }
+    }
+
+    if (shouldShow) {
+      const optionValue = pos.m;
+      const optionText = isFeminin ? pos.f : pos.m;
+
+      if (optionValue === currentValue) {
+        optionFoundForCurrentValue = true;
+      }
+
+      // Ajouter au DOM
+      const opt = document.createElement('option');
+      opt.value = optionValue;
+      opt.text = optionText;
+      positionSelect.appendChild(opt);
+
+      // Ajouter à TomSelect
+      if (positionSelect.tomselect) {
+        positionSelect.tomselect.addOption({ value: optionValue, text: optionText });
+      }
     }
   });
 
-  // Synchroniser Tom Select si présent
+  // Si la valeur actuelle n'est plus dans la liste des options possibles, on la réinitialise
+  if (!optionFoundForCurrentValue && currentValue !== '') {
+    currentValue = '';
+  }
+
+  // Restaurer la valeur et finaliser
   if (positionSelect.tomselect) {
+    positionSelect.tomselect.setValue(currentValue, true);
     positionSelect.tomselect.sync();
+  } else {
+    positionSelect.value = currentValue;
   }
 }
 
