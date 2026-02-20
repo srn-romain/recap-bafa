@@ -159,9 +159,10 @@ function calculateExperienceStatistics() {
     const youthText = youthCell ? youthCell.textContent : '';
     let youthCount = extractNumber(youthText);
 
-    // Extraire l'organisateur
+    // Extraire l'organisateur et normaliser pour le groupement (enlever le département)
     const organizerCell = row.cells[3];
-    const organizerText = organizerCell ? organizerCell.querySelector('a')?.textContent : '';
+    const organizerTextRaw = organizerCell ? (organizerCell.querySelector('a')?.textContent || organizerCell.textContent) : '';
+    const organizerText = organizerTextRaw.replace(/\s*\(\d{2,3}[AB]?\)\s*$/, '').trim();
 
     // Ajouter aux statistiques
     if (types.includes('colo')) {
@@ -228,9 +229,10 @@ function calculateFormationStatistics() {
     const durationText = durationCell ? durationCell.textContent : '';
     let days = extractDays(durationText);
 
-    // Extraire l'organisateur
+    // Extraire l'organisateur et normaliser pour le groupement (enlever le département)
     const organizerCell = row.cells[3];
-    const organizerText = organizerCell ? organizerCell.querySelector('a')?.textContent : '';
+    const organizerTextRaw = organizerCell ? (organizerCell.querySelector('a')?.textContent || organizerCell.textContent) : '';
+    const organizerText = organizerTextRaw.replace(/\s*\(\d{2,3}[AB]?\)\s*$/, '').trim();
 
     // Ajouter aux statistiques
     totalDaysFormation += days;
@@ -262,18 +264,31 @@ function calculateFormationStatistics() {
 function extractDays(text) {
   if (!text) return 0;
 
-  // Cas spécial "Tous les mercredis" ou "Tous les samedis"
-  if (text.includes('mercredis') || text.includes('samedis')) {
-    // Estimation: environ 36 jours dans une année scolaire
+  const lowerText = text.toLowerCase().trim();
+  // Remplacer virgule par point pour parseFloat
+  const normalizedText = lowerText.replace(',', '.');
+
+  // Cas spécial périodique (estimation année scolaire)
+  if (normalizedText.includes('mercredis') || normalizedText.includes('samedis')) {
     return 36;
   }
 
-  const match = text.match(/(\d+)\s*jour/i);
-  if (match) return parseInt(match[1], 10);
+  // Priorité 1 : Chercher "X jours" ou "X j" (inclut les décimaux)
+  const dayMatch = normalizedText.match(/(\d+(?:\.\d+)?)\s*(?:jour|j\b)/);
+  if (dayMatch) {
+    return parseFloat(dayMatch[1]);
+  }
 
-  // Fallback pour les nombres seuls (si "jour" est absent)
-  const simpleMatch = text.match(/(\d+)/);
-  return simpleMatch ? parseInt(simpleMatch[1], 10) : 0;
+  // Fallback : On cherche n'importe quel nombre raisonnable (ex: "8")
+  const simpleMatch = normalizedText.match(/(\d+(?:\.\d+)?)/);
+  if (simpleMatch) {
+    const val = parseFloat(simpleMatch[1]);
+    // On ignore si le chiffre ressemble à une année (ex: 2024) ou un code postal
+    if (val > 500) return 0;
+    return val;
+  }
+
+  return 0;
 }
 
 // Fonction utilitaire pour extraire un nombre
@@ -349,7 +364,9 @@ function createChart(canvasId, data, titleText) {
 function generateColors(count) {
   const baseColors = [
     '#f39c12', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6',
-    '#1abc9c', '#d35400', '#34495e', '#16a085', '#27ae60'
+    '#1abc9c', '#d35400', '#2980b9', '#16a085', '#27ae60',
+    '#e67e22', '#c0392b', '#8e44ad', '#f1c40f', '#f0932b',
+    '#eb4d4b', '#6ab04c', '#4834d4', '#22a6b3', '#be2edd'
   ];
 
   return Array.from({ length: count }, (_, i) => baseColors[i % baseColors.length]);
@@ -439,8 +456,8 @@ function createAgeGroupChart(data) {
   // Labels de 3 à 17 ans avec "ans"
   const labels = Object.keys(data).map(age => age + ' ans');
   const values = Object.values(data);
-  // Générer les couleurs
-  const colors = generateColorGradient('#3498db', '#f39c12', labels.length);
+  // Générer les couleurs (une différente par âge)
+  const colors = generateColors(labels.length);
 
   // Créer et stocker le nouveau graphique
   chartInstances['ageGroupChart'] = new Chart(canvas, {
