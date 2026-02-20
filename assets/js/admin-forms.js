@@ -478,6 +478,34 @@ window.toggleExpStayTypeCustom = function () {
     }
   }
 
+  // Gérer l'intitulé du poste pour les formations BAFA/BAFD dans le menu de gestion
+  const positionSelect = document.getElementById('exp-position');
+  if (select && positionSelect) {
+    const positionFormGroup = positionSelect.closest('.form-group');
+    const val = select.value;
+
+    if (val === 'Formation Base BAFA' || val === 'Formation Appro BAFA') {
+      if (positionFormGroup) positionFormGroup.style.display = 'none';
+      if (positionSelect.tomselect) {
+        positionSelect.tomselect.setValue('Formateur BAFA', true);
+      } else {
+        positionSelect.value = 'Formateur BAFA';
+      }
+      setTimeout(() => { if (typeof window.toggleExpPositionCustom === 'function') window.toggleExpPositionCustom(); }, 0);
+    } else if (val === 'Formation Base BAFD' || val === 'Formation Appro BAFD') {
+      if (positionFormGroup) positionFormGroup.style.display = 'none';
+      if (positionSelect.tomselect) {
+        positionSelect.tomselect.setValue('Formateur BAFD', true);
+      } else {
+        positionSelect.value = 'Formateur BAFD';
+      }
+      setTimeout(() => { if (typeof window.toggleExpPositionCustom === 'function') window.toggleExpPositionCustom(); }, 0);
+    } else {
+      // Re-afficher le champ si ce n'est pas une formation
+      if (positionFormGroup) positionFormGroup.style.display = 'block';
+    }
+  }
+
   // Masquer le département du lieu si c'est à l'étranger
   const locationDeptInput = document.getElementById('exp-location-dept');
   if (select && locationDeptInput) {
