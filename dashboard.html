@@ -306,8 +306,13 @@
         <div class="modal-content large-modal">
             <span class="close-modal" onclick="closeExperienceModal()">&times;</span>
             <h2 id="experience-modal-title">Ajouter une expérience</h2>
-            <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 20px;">Les champs marqués
+            <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 5px;">Les champs marqués
                 d'un <span style="color: red;">*</span> sont obligatoires.</p>
+            <p
+                style="color: #1976d2; background-color: #e3f2fd; font-size: 0.85rem; font-style: italic; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="bi bi-info-circle"></i>
+                Conseil : Remplissez le formulaire dans l'ordre, certains champs s'adaptent selon vos choix précédents.
+            </p>
             <form id="experience-form">
                 <div class="form-group">
                     <label>Type <span class="required-asterisk">*</span></label>
@@ -538,7 +543,38 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Organisateur</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin: 0;">Organisateur</label>
+                        <a href="#" onclick="toggleDeptExplanation(event, 'exp')"
+                            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                            Pourquoi cette question ?
+                        </a>
+                    </div>
+
+                    <!-- Bulle explicative Département -->
+                    <div id="exp-dept-explanation-bubble"
+                        style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+                        <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                    border-radius: 8px; 
+                                    padding: 15px; 
+                                    color: white; 
+                                    font-size: 0.85rem; 
+                                    box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                    position: relative;">
+                            <div style="position: absolute; 
+                                        top: -8px; 
+                                        right: 20px; 
+                                        width: 0; 
+                                        height: 0; 
+                                        border-left: 8px solid transparent; 
+                                        border-right: 8px solid transparent; 
+                                        border-bottom: 8px solid #a6d866;"></div>
+                            <p style="margin: 0; line-height: 1.5;">
+                                Le numéro de département correspond au siège social de l'organisme.
+                                Cela permet aux recruteurs de situer géographiquement l'organisme avec précision.
+                            </p>
+                        </div>
+                    </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <select id="exp-organizer" style="flex: 1;"
                             onchange="if(typeof toggleOrganizerCustom === 'function') toggleOrganizerCustom()">
@@ -643,8 +679,13 @@
         <div class="modal-content large-modal">
             <span class="close-modal" onclick="closeFormationModal()">&times;</span>
             <h2 id="formation-modal-title">Ajouter une formation</h2>
-            <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 20px;">Les champs marqués
+            <p class="form-info-message" style="color: #666; font-size: 0.9em; margin-bottom: 5px;">Les champs marqués
                 d'un <span style="color: red;">*</span> sont obligatoires.</p>
+            <p
+                style="color: #1976d2; font-size: 0.85rem; font-style: italic; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                <i class="bi bi-info-circle"></i>
+                Conseil : Remplissez le formulaire dans l'ordre, certains champs s'adaptent selon vos choix précédents.
+            </p>
             <form id="formation-form">
                 <div class="form-group">
                     <label>Type <span class="required-asterisk">*</span></label>
@@ -664,7 +705,38 @@
                     <span> jours</span>
                 </div>
                 <div class="form-group">
-                    <label>Organisme</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label style="margin: 0;">Organisme</label>
+                        <a href="#" onclick="toggleDeptExplanation(event, 'form')"
+                            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                            Pourquoi cette question ?
+                        </a>
+                    </div>
+
+                    <!-- Bulle explicative Département -->
+                    <div id="form-dept-explanation-bubble"
+                        style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+                        <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                    border-radius: 8px; 
+                                    padding: 15px; 
+                                    color: white; 
+                                    font-size: 0.85rem; 
+                                    box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                    position: relative;">
+                            <div style="position: absolute; 
+                                        top: -8px; 
+                                        right: 20px; 
+                                        width: 0; 
+                                        height: 0; 
+                                        border-left: 8px solid transparent; 
+                                        border-right: 8px solid transparent; 
+                                        border-bottom: 8px solid #a6d866;"></div>
+                            <p style="margin: 0; line-height: 1.5;">
+                                Le numéro de département correspond au siège social de l'organisme.
+                                Cela permet aux recruteurs de situer géographiquement l'organisme avec précision.
+                            </p>
+                        </div>
+                    </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <select id="form-organism" style="flex: 1;"
                             onchange="if(typeof toggleFormationOrganizerCustom === 'function') toggleFormationOrganizerCustom()">

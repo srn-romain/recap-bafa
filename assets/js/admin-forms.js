@@ -944,6 +944,15 @@ window.toggleMapExplanation = function (event, type) {
   }
 };
 
+window.toggleDeptExplanation = function (event, type) {
+  if (event) event.preventDefault();
+  const bubbleId = type === 'exp' ? 'exp-dept-explanation-bubble' : 'form-dept-explanation-bubble';
+  const bubble = document.getElementById(bubbleId);
+  if (bubble) {
+    bubble.style.display = bubble.style.display === 'none' ? 'block' : 'none';
+  }
+};
+
 // Toggle entre champs lieu unique et tableau itinérance
 function toggleLocationFields() {
   toggleExpStayTypeCustom(); // Mettre à jour l'affichage du champ custom
