@@ -4,6 +4,69 @@
 window.currentUser = null;
 window.userRole = null;
 
+console.log("Firebase Auth Script Loading...");
+
+// Gérer la connexion avec Google
+window.handleGoogleLogin = async function () {
+  console.log("handleGoogleLogin called");
+  hideAuthError();
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  try {
+    const result = await firebase.auth().signInWithPopup(provider);
+    const user = result.user;
+
+    // Vérifier si le document utilisateur existe déjà
+    const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
+
+    if (!userDoc.exists) {
+      // Extraire prénom et nom depuis le nom complet Google
+      let firstName = "";
+      let lastName = "";
+
+      if (user.displayName) {
+        const parts = user.displayName.split(' ');
+        firstName = parts[0] || "";
+        lastName = parts.slice(1).join(' ') || "";
+      }
+
+      // Créer le document utilisateur initial
+      await window.firebaseDb.collection('users').doc(user.uid).set({
+        email: user.email,
+        firstname: firstName,
+        lastname: lastName,
+        displayName: user.displayName || user.email,
+        profilePic: user.photoURL || '',
+        createdAt: new Date(),
+        role: 'user',
+        gender: null,
+        publicVisibility: false,
+        emailVisibility: false
+      });
+    } else {
+      // Mettre à jour la date de dernière connexion
+      await window.firebaseDb.collection('users').doc(user.uid).update({
+        lastLogin: new Date()
+      });
+    }
+
+    // Récupérer le rôle et mettre à jour l'état local
+    await getUserRole(user);
+
+    // Fermer la modale
+    if (typeof closeAuthModal === 'function') closeAuthModal();
+
+    // Rediriger vers le tableau de bord
+    window.location.href = `dashboard.html?uid=${user.uid}`;
+
+  } catch (error) {
+    console.error("Erreur Google Login:", error);
+    if (error.code !== 'auth/popup-closed-by-user') {
+      showAuthError("Erreur lors de la connexion avec Google : " + (error.message || "Erreur inconnue"));
+    }
+  }
+};
+
 // Initialiser l'authentification
 function initAuth() {
   if (!window.firebaseInitialized || !firebase.auth) {
@@ -208,6 +271,15 @@ function hideAuthError() {
   const errorDiv = document.getElementById('auth-error-message');
   if (errorDiv) {
     errorDiv.style.display = 'none';
+  }
+}
+
+// Afficher un message d'erreur dans le modal
+function showAuthError(message) {
+  const errorDiv = document.getElementById('auth-error-message');
+  if (errorDiv) {
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
   }
 }
 
@@ -741,65 +813,6 @@ function showUserMenu() {
   }
 }
 
-// Gérer la connexion avec Google
-async function handleGoogleLogin() {
-  hideAuthError();
-  const provider = new firebase.auth.GoogleAuthProvider();
-
-  try {
-    const result = await firebase.auth().signInWithPopup(provider);
-    const user = result.user;
-
-    // Vérifier si le document utilisateur existe déjà
-    const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
-
-    if (!userDoc.exists) {
-      // Extraire prénom et nom depuis le nom complet Google
-      let firstName = "";
-      let lastName = "";
-
-      if (user.displayName) {
-        const parts = user.displayName.split(' ');
-        firstName = parts[0] || "";
-        lastName = parts.slice(1).join(' ') || "";
-      }
-
-      // Créer le document utilisateur initial
-      await window.firebaseDb.collection('users').doc(user.uid).set({
-        email: user.email,
-        firstname: firstName,
-        lastname: lastName,
-        displayName: user.displayName || user.email,
-        profilePic: user.photoURL || '',
-        createdAt: new Date(),
-        role: 'user',
-        gender: null,
-        publicVisibility: false,
-        emailVisibility: false
-      });
-    } else {
-      // Mettre à jour la date de dernière connexion
-      await window.firebaseDb.collection('users').doc(user.uid).update({
-        lastLogin: new Date()
-      });
-    }
-
-    // Récupérer le rôle et mettre à jour l'état local
-    await getUserRole(user);
-
-    // Fermer la modale
-    closeAuthModal();
-
-    // Rediriger vers le tableau de bord
-    window.location.href = `dashboard.html?uid=${user.uid}`;
-
-  } catch (error) {
-    console.error("Erreur Google Login:", error);
-    if (error.code !== 'auth/popup-closed-by-user') {
-      showAuthError("Erreur lors de la connexion avec Google : " + (error.message || "Erreur inconnue"));
-    }
-  }
-}
 
 // Afficher le modal d'authentification
 function showAuthModal(mode) {
