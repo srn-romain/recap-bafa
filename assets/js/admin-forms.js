@@ -815,7 +815,7 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Association Regards': { url: 'https://www.asso-regards.org/', logo: 'assets/img/assoRegards.jpg', dept: '92' },
     'CE SNCF': { url: 'https://recrutement-sej.ccgpfcheminots.com/', logo: 'assets/img/ceSNCF.jpg', dept: '75' },
     'CE Air France': { url: 'https://cceairfrance-recrute.talent-soft.com/', logo: 'assets/img/ceAirFrance.png', dept: '95' },
-    'Chemins du Monde': { url: 'https://cheminsdumonde.fr/', logo: 'assets/img/cheminsDuMonde.jpg', dept: '12' },
+    'Chemins du Monde': { url: 'https://cheminsdumonde.fr/', logo: 'assets/img/cheminsDuMonde.png', dept: '12' },
     'Chic Planet': { url: 'https://colos.chic-planet.fr/', logo: 'assets/img/chicPlanet.png', dept: '31' },
     'GoColo': { url: 'https://www.gocolo.fr/', logo: 'assets/img/gocolo.png', dept: '12' },
     'Le Temps des Copains': { url: 'https://www.tempsdescopains.com/', logo: 'assets/img/letempsdescopains.png', dept: '94' },
@@ -2459,6 +2459,9 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           ageRangeString = `${ageMin} ans`;
         }
+      } else if (ageMaxVal) {
+        const ageMax = parseInt(ageMaxVal, 10);
+        ageRangeString = `${ageMax} ans`;
       }
 
       const data = {
