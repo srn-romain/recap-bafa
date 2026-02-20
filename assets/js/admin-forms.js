@@ -769,6 +769,7 @@ window.toggleOrganizerCustom = function () {
     if (deptInput) {
       deptInput.disabled = false;
       deptInput.readOnly = false;
+      deptInput.value = '';
     }
 
     // Cleanup any forced logo
