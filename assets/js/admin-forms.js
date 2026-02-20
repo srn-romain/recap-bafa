@@ -307,6 +307,10 @@ async function updatePositionLabels() {
   const expTypeElement = document.getElementById('exp-type');
   const expType = expTypeElement ? expTypeElement.value : '';
 
+  // Lire la valeur du type de séjour (Gestion) pour appliquer les filtres prioritaires (SNU, Formations...)
+  const expStayTypeElement = document.getElementById('exp-stay-type');
+  const stayType = expStayTypeElement ? expStayTypeElement.value : '';
+
   // Conserver la valeur actuelle
   let currentValue = positionSelect.value;
   if (positionSelect.tomselect) {
@@ -354,6 +358,32 @@ async function updatePositionLabels() {
     'Tuteur de Maisonnée (SNU)', 'Chef Scout', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout'
   ];
 
+  // Intitulés de poste à retirer spécifiquement pour "Centre de loisir" (alsh)
+  const removableOptionsPosteAlsh = [
+    'Animateur Ski', 'Directeur de Formation', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout', 'Chef Scout'
+  ];
+
+  // Intitulés de poste à retirer spécifiquement pour "Autre" (autre)
+  const removableOptionsPosteAutre = [
+    'Animateur Ski', 'Directeur de Formation', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout', 'Chef Scout'
+  ];
+
+  // Intitulés de poste à afficher EXCLUSIVEMENT pour "SNU" (dans gestion)
+  // Attention à respecter les majuscules exactes ("Responsable de Groupe", pas "responsable de groupe")
+  const onlyOptionsPosteSnu = [
+    'Tuteur de Maisonnée (SNU)', 'Directeur de Structure', 'Directeur Adjoint', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Responsable de Groupe', 'Cuisinier'
+  ];
+
+  // Intitulés de poste à afficher EXCLUSIVEMENT pour les Formations BAFA (dans gestion)
+  const onlyOptionsPosteFormationBafa = [
+    'Formateur BAFA', 'Directeur de Formation', 'Cuisinier'
+  ];
+
+  // Intitulés de poste à afficher EXCLUSIVEMENT pour les Formations BAFD (dans gestion)
+  const onlyOptionsPosteFormationBafd = [
+    'Formateur BAFD', 'Directeur de Formation', 'Cuisinier'
+  ];
+
   let optionFoundForCurrentValue = false;
 
   allPositions.forEach(pos => {
@@ -364,9 +394,22 @@ async function updatePositionLabels() {
     } else {
       if (pos.roles.includes('all')) shouldShow = true;
 
-      // Masquer si c'est une colo et que le poste est dans la liste à bannir
-      if (expType === 'colo' && removableOptionsPosteColo.includes(pos.m)) {
-        shouldShow = false;
+      // Masquage prioritaire si le gestionnaire (Gestion) est SNU ou Formation
+      if (stayType === 'SNU') {
+        shouldShow = onlyOptionsPosteSnu.includes(pos.m);
+      } else if (stayType === 'Formation Base BAFA' || stayType === 'Formation Appro BAFA') {
+        shouldShow = onlyOptionsPosteFormationBafa.includes(pos.m);
+      } else if (stayType === 'Formation Base BAFD' || stayType === 'Formation Appro BAFD') {
+        shouldShow = onlyOptionsPosteFormationBafd.includes(pos.m);
+      } else {
+        // Masquer selon le type sélectionné (Colo, ALSH, Autre)
+        if (expType === 'colo' && removableOptionsPosteColo.includes(pos.m)) {
+          shouldShow = false;
+        } else if (expType === 'alsh' && removableOptionsPosteAlsh.includes(pos.m)) {
+          shouldShow = false;
+        } else if (expType === 'autre' && removableOptionsPosteAutre.includes(pos.m)) {
+          shouldShow = false;
+        }
       }
     }
 
@@ -543,7 +586,7 @@ window.toggleExpStayTypeCustom = function () {
     const val = select.value;
 
     if (val === 'Formation Base BAFA' || val === 'Formation Appro BAFA') {
-      if (positionFormGroup) positionFormGroup.style.display = 'none';
+      if (positionFormGroup) positionFormGroup.style.display = 'block';
       if (positionSelect.tomselect) {
         positionSelect.tomselect.setValue('Formateur BAFA', true);
       } else {
@@ -551,7 +594,7 @@ window.toggleExpStayTypeCustom = function () {
       }
       setTimeout(() => { if (typeof window.toggleExpPositionCustom === 'function') window.toggleExpPositionCustom(); }, 0);
     } else if (val === 'Formation Base BAFD' || val === 'Formation Appro BAFD') {
-      if (positionFormGroup) positionFormGroup.style.display = 'none';
+      if (positionFormGroup) positionFormGroup.style.display = 'block';
       if (positionSelect.tomselect) {
         positionSelect.tomselect.setValue('Formateur BAFD', true);
       } else {
@@ -572,6 +615,11 @@ window.toggleExpStayTypeCustom = function () {
     } else {
       locationDeptInput.style.display = ''; // Revenir au style par défaut (flex item)
     }
+  }
+
+  // Mettre à jour les intitulés de poste disponibles vu que le gestionnaire a changé
+  if (typeof updatePositionLabels === 'function') {
+    updatePositionLabels();
   }
 };
 
