@@ -979,7 +979,7 @@ function parseFrenchDate(dateStr) {
 /*--------------------------------------------------------------
 # Génération de PDF
 --------------------------------------------------------------*/
-function generatePDF(tableId, title) {
+async function generatePDF(tableId, title) {
   const originalTable = document.getElementById(tableId);
   if (!originalTable) {
     console.error("Tableau non trouvé:", tableId);
@@ -1035,54 +1035,68 @@ function generatePDF(tableId, title) {
   });
 
   // Gérer toutes les images de l'élément pour le PDF
-  element.querySelectorAll('img').forEach(img => {
-    img.style.maxWidth = '35px';
+  // On doit les convertir en Base64 pour éviter l'erreur "Tainted Canvas"
+  const images = Array.from(element.querySelectorAll('img'));
+  const originalImages = Array.from(originalTable.querySelectorAll('img'));
+  let hasMissingLogos = false;
+
+  const imagePromises = images.map(async (img, idx) => {
+    img.style.maxWidth = '30px'; // Taille légèrement réduite pour sécurité
     img.style.height = 'auto';
     img.style.display = 'block';
     img.style.margin = '0 auto';
 
-    // Empêcher les erreurs de PDF "Tainted Canvas"
-    // Seules les images Base64 ('data:image/...') sont 100% sécurisées pour le rendu de l'export canvas.
-    // Toute image hébergée en dur ou externe sera retirée pour prévenir le crash de l'export.
-    if (!img.src || !img.src.startsWith('data:image')) {
-      img.remove();
+    if (img.src && !img.src.startsWith('data:image')) {
+      // 1. Tenter d'abord de récupérer l'image depuis l'élément d'origine s'il est chargé
+      const originalImg = originalImages[idx];
+      if (originalImg && originalImg.complete && originalImg.naturalWidth > 0) {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = originalImg.naturalWidth;
+          canvas.height = originalImg.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(originalImg, 0, 0);
+          img.src = canvas.toDataURL('image/png');
+          return; // Succès via canvas
+        } catch (e) {
+          // Si erreur de sécurité canvas (CORS), on passe au fetch
+        }
+      }
+
+      // 2. Fallback via fetch (nécesaire pour les images non encore chargées ou cross-origin avec CORS)
+      try {
+        // Convertir en URL absolue pour éviter les problèmes de chemins relatifs dans le clone
+        const absoluteUrl = new URL(img.src, window.location.href).href;
+        const response = await fetch(absoluteUrl);
+        const blob = await response.blob();
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            img.src = reader.result;
+            resolve();
+          };
+          reader.readAsDataURL(blob);
+        });
+      } catch (e) {
+        // En cas d'échec total (CORS/accès), on retire l'image pour que le PDF se génère
+        img.remove();
+        hasMissingLogos = true;
+      }
     }
   });
 
+  // Attendre que toutes les images soient converties (ou retirées)
+  await Promise.all(imagePromises);
+
   // Gérer la visibilité des lignes pour le PDF
-  // Pour les formations, s'assurer que toutes les lignes pertinentes sont affichées
-  // Si le tableau original était filtré, on pourrait vouloir tout afficher ou garder le filtre.
-  // Ici, on garde le comportement visuel actuel (ce qui est visible à l'écran)
-  // MAIS on force l'affichage si c'est une ligne de données valide qui était masquée par "display:none" du parent
+  // On s'assure qu'on voit bien tout le contenu et on prépare le rendu
   Array.from(rows).forEach(row => {
-    // Si la ligne contient "Aucune donnée" et qu'elle n'est pas la seule (donc il y a des données), on la cache
     if (row.textContent.includes("Aucune donnée") && rows.length > 2) {
       row.style.display = 'none';
       return;
     }
-
-    // Pour toutes les autres lignes, on s'assure qu'elles sont visibles si elles ont du contenu
-    // On vérifie si la ligne était visible dans le tableau d'origine
-    // Cependant, pour résoudre le problème de "pages blanches", on va forcer l'affichage
-    // des lignes qui ne sont pas explicitement cachées par une classe utilitaire de masquage
-
-    // Force l'affichage en table-row pour le PDF
-    if (row.style.display === 'none') {
-      // Si elle était cachée, on la laisse cachée (respect du filtre)
-      // Sauf si c'est une bizarrerie du clonage, mais on suppose que le filtre est voulu.
-      // ATTENTION : L'utilisateur dit "page blanche". Si le filtre est actif, c'est normal.
-      // Si le filtre n'est pas actif, display n'est pas none.
-
-      // HYPOTHÈSE : Le clonage ne récupère pas correctement la visibilité si elle dépend de classes CSS complexes.
-      // On va forcer le display à 'table-row' pour réinitialiser
-    }
-
-    // RESET pour le PDF : on affiche tout ce qui est dans le DOM du tableau
-    // Si l'utilisateur a filtré, il vaut mieux voir tout le tableau que rien du tout ?
-    // Ou alors le problème vient du fait que html2canvas ne rend pas les <tr> si le table a css border-collapse
-
     row.style.display = 'table-row';
-    row.style.pageBreakInside = 'avoid'; // Éviter de couper une ligne
+    row.style.pageBreakInside = 'avoid';
   });
 
 
@@ -1194,6 +1208,19 @@ function generatePDF(tableId, title) {
   container.appendChild(header);
   container.appendChild(h1);
   container.appendChild(element);
+
+  // Note discrète si des logos manquent
+  if (hasMissingLogos) {
+    const note = document.createElement('p');
+    note.style.fontSize = '10px';
+    note.style.color = '#777';
+    note.style.fontStyle = 'italic';
+    note.style.margin = '5px 0 0 0';
+    note.style.textAlign = 'right';
+    note.innerHTML = `<i class="bi bi-info-circle"></i> Note : Certains logos n'apparaissent pas car l'accès sécurisé à leur source est restreint par le navigateur (CORS).`;
+    container.appendChild(note);
+  }
+
   container.appendChild(footer);
 
   // Exécution de html2pdf
