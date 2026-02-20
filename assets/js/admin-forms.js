@@ -4,6 +4,73 @@ let currentEditingRow = null;
 let currentEditingDocId = null;
 
 /**
+ * Trie par ordre alphabétique les options d'un menu déroulant en conservant
+ * l'option "-- Sélectionner --" en haut et l'option "Autre" à la fin si elle existe.
+ * Met également à jour TomSelect si l'élément l'utilise.
+ */
+function sortSelectOptionsGenerically(selectElement) {
+  if (!selectElement) return;
+
+  const options = Array.from(selectElement.options);
+  if (options.length <= 1) return;
+
+  // Garder la valeur actuelle et la cible TomSelect
+  const ts = selectElement.tomselect;
+  const currentValue = ts ? ts.getValue() : selectElement.value;
+
+  // Identifier le placeholder '-- Sélectionner --'
+  let placeholderOpt = null;
+  let optionsToSort = options;
+
+  if (options[0].value === '' || options[0].text.includes('--')) {
+    placeholderOpt = options[0];
+    optionsToSort = options.slice(1);
+  }
+
+  // Identifier 'Autre'
+  let autreOpt = null;
+  const autreIndex = optionsToSort.findIndex(o => o.value.toLowerCase() === 'autre' || o.text.toLowerCase().includes('autre'));
+  if (autreIndex > -1) {
+    autreOpt = optionsToSort.splice(autreIndex, 1)[0];
+  }
+
+  // Trier alphabétiquement (insensible à la casse/accents)
+  optionsToSort.sort((a, b) => a.text.localeCompare(b.text, 'fr', { sensitivity: 'base' }));
+
+  // Vider le select
+  selectElement.innerHTML = '';
+  if (ts) {
+    ts.clearOptions();
+  }
+
+  // Remettre le placeholder
+  if (placeholderOpt) {
+    selectElement.appendChild(placeholderOpt);
+    if (ts) ts.addOption({ value: placeholderOpt.value, text: placeholderOpt.text });
+  }
+
+  // Mettre les options triées
+  optionsToSort.forEach(opt => {
+    selectElement.appendChild(opt);
+    if (ts) ts.addOption({ value: opt.value, text: opt.text });
+  });
+
+  // Remettre "Autre" à la fin
+  if (autreOpt) {
+    selectElement.appendChild(autreOpt);
+    if (ts) ts.addOption({ value: autreOpt.value, text: autreOpt.text });
+  }
+
+  // Restaurer les valeurs et forcer la MAJ
+  if (ts) {
+    ts.setValue(currentValue, true);
+    ts.sync();
+  } else {
+    selectElement.value = currentValue;
+  }
+}
+
+/**
  * Gère l'affichage et les options du champ 'Gestion' ('exp-stay-type') selon le type d'expérience.
  */
 function updateExpStayTypeOptions() {
@@ -132,6 +199,9 @@ function updateExpStayTypeOptions() {
 
   // Reforcer le mask du container si ALSH ou Scout car tomselect peut recréer l'affichage
   if ((expType === 'alsh' || expType === 'scout') && container) container.style.display = 'none';
+
+  // Trier alphabétiquement tout le select
+  sortSelectOptionsGenerically(staySelect);
 }
 window.updateExpStayTypeOptions = updateExpStayTypeOptions;
 
@@ -335,7 +405,7 @@ async function updatePositionLabels() {
     { m: 'Responsable de Groupe', f: 'Responsable de Groupe', roles: ['all'] },
     { m: 'Surveillant de Baignade (non animateur)', f: 'Surveillante de Baignade (non animatrice)', roles: ['all'] },
     { m: 'Assistant Sanitaire (non animateur)', f: 'Assistante Sanitaire (non animatrice)', roles: ['all'] },
-    { m: 'Tuteur de Maisonnée (SNU)', f: 'Tutrice de Maisonnée (SNU)', roles: ['all'] },
+    { m: 'Tuteur de Maisonnée', f: 'Tutrice de Maisonnée', roles: ['all'] },
     { m: 'Cuisinier', f: 'Cuisinière', roles: ['all'] },
     { m: 'Directeur', f: 'Directrice', roles: ['all'] },
     { m: 'Directeur Stagiaire', f: 'Directrice Stagiaire', roles: ['all'] },
@@ -371,7 +441,7 @@ async function updatePositionLabels() {
   // Intitulés de poste à afficher EXCLUSIVEMENT pour "SNU" (dans gestion)
   // Attention à respecter les majuscules exactes ("Responsable de Groupe", pas "responsable de groupe")
   const onlyOptionsPosteSnu = [
-    'Tuteur de Maisonnée (SNU)', 'Directeur de Structure', 'Directeur Adjoint', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Responsable de Groupe', 'Cuisinier'
+    'Tuteur de Maisonnée', 'Directeur de Structure', 'Directeur Adjoint', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Responsable de Groupe', 'Cuisinier', 'Animateur Référent Handicap'
   ];
 
   // Intitulés de poste à afficher EXCLUSIVEMENT pour les Formations BAFA (dans gestion)
@@ -382,6 +452,16 @@ async function updatePositionLabels() {
   // Intitulés de poste à afficher EXCLUSIVEMENT pour les Formations BAFD (dans gestion)
   const onlyOptionsPosteFormationBafd = [
     'Formateur BAFD', 'Directeur de Formation', 'Cuisinier'
+  ];
+
+  // Intitulés de poste à afficher EXCLUSIVEMENT pour les Formations BAFD (dans gestion)
+  const onlyOptionsPostePeriscolaire = [
+    'Animateur (diplômé)', 'Animateur Stagiaire', 'Directeur', 'Cuisinier', 'Directeur Adjoint', 'Animateur Référent Handicap'
+  ];
+
+  // Intitulés de poste à afficher EXCLUSIVEMENT pour les Formations BAFD (dans gestion)
+  const onlyOptionsPosteClasseDecouverte = [
+    'Animateur (diplômé)', 'Animateur Stagiaire', 'Directeur', 'Cuisinier', 'Directeur Adjoint', 'Animateur Référent Handicap'
   ];
 
   let optionFoundForCurrentValue = false;
@@ -401,6 +481,10 @@ async function updatePositionLabels() {
         shouldShow = onlyOptionsPosteFormationBafa.includes(pos.m);
       } else if (stayType === 'Formation Base BAFD' || stayType === 'Formation Appro BAFD') {
         shouldShow = onlyOptionsPosteFormationBafd.includes(pos.m);
+      } else if (stayType === 'Péri-scolaire') {
+        shouldShow = onlyOptionsPostePeriscolaire.includes(pos.m);
+      } else if (stayType === 'Classe découverte') {
+        shouldShow = onlyOptionsPosteClasseDecouverte.includes(pos.m);
       } else {
         // Masquer selon le type sélectionné (Colo, ALSH, Autre)
         if (expType === 'colo' && removableOptionsPosteColo.includes(pos.m)) {
@@ -446,6 +530,9 @@ async function updatePositionLabels() {
   } else {
     positionSelect.value = currentValue;
   }
+
+  // Trier alphabétiquement (générique)
+  sortSelectOptionsGenerically(positionSelect);
 }
 
 
@@ -534,19 +621,23 @@ async function showAddExperienceModal() {
 
 // Initialiser Tom Select pour les listes déroulantes
 function initSearchableSelects() {
-  const ids = ['exp-stay-type', 'exp-position', 'form-title'];
+  const ids = ['exp-stay-type', 'exp-position', 'form-title', 'exp-type'];
   ids.forEach(id => {
     const el = document.getElementById(id);
-    if (el && !el.tomselect) {
-      new TomSelect(el, {
-        create: false,
-        sortField: [], // Désactiver le tri pour respecter l'ordre du DOM (groupes, hiérarchie)
-        plugins: ['dropdown_input'], // Assure que l'input de recherche est dans le dropdown
-        onInitialize: function () {
-          // S'assurer que le container a la bonne largeur
-          this.wrapper.style.width = '100%';
-        }
-      });
+    if (el) {
+      sortSelectOptionsGenerically(el);
+
+      if (id !== 'exp-type' && !el.tomselect) {
+        new TomSelect(el, {
+          create: false,
+          sortField: [], // Désactiver le tri pour respecter l'ordre du DOM (groupes, hiérarchie)
+          plugins: ['dropdown_input'], // Assure que l'input de recherche est dans le dropdown
+          onInitialize: function () {
+            // S'assurer que le container a la bonne largeur
+            this.wrapper.style.width = '100%';
+          }
+        });
+      }
     }
   });
 }
