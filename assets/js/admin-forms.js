@@ -425,7 +425,7 @@ async function updatePositionLabels() {
   // Intitulés de poste à retirer spécifiquement pour "Colonie de vacances" (colo)
   // Utiliser la valeur 'm' (masculin) de l'intitulé pour le cibler
   const removableOptionsPosteColo = [
-    'Tuteur de Maisonnée (SNU)', 'Chef Scout', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout'
+    'Tuteur de Maisonnée', 'Chef Scout', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout'
   ];
 
   // Intitulés de poste à retirer spécifiquement pour "Centre de loisir" (alsh)
