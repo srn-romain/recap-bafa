@@ -1090,11 +1090,27 @@ async function generatePDF(tableId, title) {
 
   // Gérer la visibilité des lignes pour le PDF
   // On s'assure qu'on voit bien tout le contenu et on prépare le rendu
-  Array.from(rows).forEach(row => {
-    if (row.textContent.includes("Aucune donnée") && rows.length > 2) {
-      row.style.display = 'none';
+  const originalRows = Array.from(originalTable.querySelectorAll('tr'));
+
+  Array.from(rows).forEach((row, index) => {
+    // 1. Supprimer la ligne "Aucun résultat trouvé" de la recherche
+    if (row.classList.contains('no-results-row') || row.textContent.includes("Aucun résultat trouvé")) {
+      row.remove();
       return;
     }
+
+    // 2. Si la ligne correspondante dans le tableau d'origine est masquée (fitres/recherche)
+    // On la retire aussi du PDF pour ne montrer que ce que l'utilisateur voit à l'écran
+    const originalRow = originalRows[index];
+    if (originalRow && !originalRow.classList.contains('always-visible')) {
+      const display = window.getComputedStyle(originalRow).display;
+      if (display === 'none') {
+        row.remove();
+        return;
+      }
+    }
+
+    // 3. Pour les lignes restantes, on force l'affichage correct
     row.style.display = 'table-row';
     row.style.pageBreakInside = 'avoid';
   });
