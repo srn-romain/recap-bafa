@@ -774,7 +774,7 @@ window.toggleExpPositionCustom = function () {
   }
 };
 
-window.toggleOrganizerCustom = function () {
+window.toggleOrganizerCustom = function (skipReset = false) {
   const select = document.getElementById('exp-organizer');
   const custom = document.getElementById('exp-organizer-custom');
   const urlInput = document.getElementById('exp-organizer-url');
@@ -833,20 +833,34 @@ window.toggleOrganizerCustom = function () {
     if (urlInput) {
       urlInput.disabled = false;
       urlInput.readOnly = false;
-      urlInput.value = '';
+      if (!skipReset) urlInput.value = '';
     }
     if (fileInput) fileInput.disabled = false;
+
+    // Cleanup any forced logo
+    const logoLabel = select.closest('.form-group')?.querySelector('label[for="exp-logo-file"]');
+    if (logoLabel) {
+      logoLabel.style.pointerEvents = 'auto';
+      logoLabel.style.cursor = 'pointer';
+    }
+
     if (deptInput) {
       deptInput.disabled = false;
       deptInput.readOnly = false;
-      deptInput.value = '';
+      if (!skipReset) deptInput.value = '';
     }
 
-    // Cleanup any forced logo
-    if (logoPathInput) logoPathInput.value = '';
-    if (preview) preview.style.display = 'none';
-    if (placeholder) placeholder.style.display = 'flex';
-    if (removeBtn) removeBtn.style.display = 'none';
+    if (!skipReset) {
+      if (logoPathInput) logoPathInput.value = '';
+      if (preview) preview.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'flex';
+      if (removeBtn) removeBtn.style.display = 'none';
+    } else {
+      // En mode skipReset (edit), si on a un logo, on affiche le bouton supprimer
+      if (removeBtn && logoPathInput && logoPathInput.value) {
+        removeBtn.style.display = 'inline-block';
+      }
+    }
 
     if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
 
@@ -863,6 +877,12 @@ window.toggleOrganizerCustom = function () {
       urlInput.readOnly = true;
     }
     if (fileInput) fileInput.disabled = true;
+
+    const logoLabel = select.closest('.form-group')?.querySelector('label[for="exp-logo-file"]');
+    if (logoLabel) {
+      logoLabel.style.pointerEvents = 'none';
+      logoLabel.style.cursor = 'default';
+    }
 
     if (deptInput) {
       if (data.dept !== undefined) deptInput.value = data.dept;
@@ -890,25 +910,38 @@ window.toggleOrganizerCustom = function () {
     if (urlInput) {
       urlInput.disabled = false;
       urlInput.readOnly = false;
-      urlInput.value = '';
+      if (!skipReset) urlInput.value = '';
     }
     if (fileInput) fileInput.disabled = false;
     if (deptInput) {
       deptInput.disabled = false;
       deptInput.readOnly = false;
-      deptInput.value = '';
+      if (!skipReset) deptInput.value = '';
     }
 
-    if (logoPathInput) logoPathInput.value = '';
-    if (preview) preview.style.display = 'none';
-    if (placeholder) placeholder.style.display = 'flex';
-    if (removeBtn) removeBtn.style.display = 'none';
+    const logoLabel = select.closest('.form-group')?.querySelector('label[for="exp-logo-file"]');
+    if (logoLabel) {
+      logoLabel.style.pointerEvents = 'auto';
+      logoLabel.style.cursor = 'pointer';
+    }
+
+    if (!skipReset) {
+      if (logoPathInput) logoPathInput.value = '';
+      if (preview) preview.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'flex';
+      if (removeBtn) removeBtn.style.display = 'none';
+    } else {
+      // En mode skipReset (edit), si on a un logo, on affiche le bouton supprimer
+      if (removeBtn && logoPathInput && logoPathInput.value) {
+        removeBtn.style.display = 'inline-block';
+      }
+    }
 
     if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
   }
 };
 
-window.toggleFormationOrganizerCustom = function () {
+window.toggleFormationOrganizerCustom = function (skipReset = false) {
   const select = document.getElementById('form-organism');
   const custom = document.getElementById('form-organism-custom');
   const urlInput = document.getElementById('form-organism-url');
@@ -939,8 +972,8 @@ window.toggleFormationOrganizerCustom = function () {
     'SILC': { url: 'https://silc.fr/', logo: 'assets/img/silc.png', dept: '16' },
     'Les Francas': { url: 'https://www.francas.asso.fr/', logo: 'assets/img/lesFrancas.png', dept: '69' },
     'Cemea': { url: 'https://cemea.asso.fr/', logo: 'assets/img/cemea.png', dept: '38' },
-    'ALEF': { url: 'https://www.alef.asso.fr/', logo: 'assets/img/alef.png', dept: '69' },
-    'IFAC': { url: 'https://ifac-formation.fr/', logo: 'assets/img/ifac.png', dept: '92' }
+    'ALEF': { url: 'https://www.alef.asso.fr/', logo: 'assets/img/alef.jpg', dept: '69' },
+    'IFAC': { url: 'https://ifac-formation.fr/', logo: 'assets/img/ifac.jpg', dept: '92' }
   };
 
   if (select.value === 'Autre') {
@@ -951,20 +984,33 @@ window.toggleFormationOrganizerCustom = function () {
     if (urlInput) {
       urlInput.disabled = false;
       urlInput.readOnly = false;
-      urlInput.value = '';
+      if (!skipReset) urlInput.value = '';
     }
     if (fileInput) fileInput.disabled = false;
     if (deptInput) {
       deptInput.disabled = false;
       deptInput.readOnly = false;
-      deptInput.value = '';
+      if (!skipReset) deptInput.value = '';
+    }
+
+    const logoLabel = select.closest('.form-group')?.querySelector('label[for="form-logo-file"]');
+    if (logoLabel) {
+      logoLabel.style.pointerEvents = 'auto';
+      logoLabel.style.cursor = 'pointer';
     }
 
     // Cleanup any forced logo
-    if (logoPathInput) logoPathInput.value = '';
-    if (preview) preview.style.display = 'none';
-    if (placeholder) placeholder.style.display = 'flex';
-    if (removeBtn) removeBtn.style.display = 'none';
+    if (!skipReset) {
+      if (logoPathInput) logoPathInput.value = '';
+      if (preview) preview.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'flex';
+      if (removeBtn) removeBtn.style.display = 'none';
+    } else {
+      // En mode skipReset (edit), si on a un logo, on affiche le bouton supprimer
+      if (removeBtn && logoPathInput && logoPathInput.value) {
+        removeBtn.style.display = 'inline-block';
+      }
+    }
 
     if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
 
@@ -987,6 +1033,12 @@ window.toggleFormationOrganizerCustom = function () {
       deptInput.readOnly = true;
     }
 
+    const logoLabel = select.closest('.form-group')?.querySelector('label[for="form-logo-file"]');
+    if (logoLabel) {
+      logoLabel.style.pointerEvents = 'none';
+      logoLabel.style.cursor = 'default';
+    }
+
     if (logoPathInput) logoPathInput.value = data.logo;
     if (preview && placeholder && removeBtn) {
       preview.src = data.logo;
@@ -1006,19 +1058,32 @@ window.toggleFormationOrganizerCustom = function () {
     if (urlInput) {
       urlInput.disabled = false;
       urlInput.readOnly = false;
-      urlInput.value = '';
+      if (!skipReset) urlInput.value = '';
     }
     if (fileInput) fileInput.disabled = false;
     if (deptInput) {
       deptInput.disabled = false;
       deptInput.readOnly = false;
-      deptInput.value = '';
+      if (!skipReset) deptInput.value = '';
     }
 
-    if (logoPathInput) logoPathInput.value = '';
-    if (preview) preview.style.display = 'none';
-    if (placeholder) placeholder.style.display = 'flex';
-    if (removeBtn) removeBtn.style.display = 'none';
+    const logoLabel = select.closest('.form-group')?.querySelector('label[for="form-logo-file"]');
+    if (logoLabel) {
+      logoLabel.style.pointerEvents = 'auto';
+      logoLabel.style.cursor = 'pointer';
+    }
+
+    if (!skipReset) {
+      if (logoPathInput) logoPathInput.value = '';
+      if (preview) preview.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'flex';
+      if (removeBtn) removeBtn.style.display = 'none';
+    } else {
+      // En mode skipReset (edit), si on a un logo, on affiche le bouton supprimer
+      if (removeBtn && logoPathInput && logoPathInput.value) {
+        removeBtn.style.display = 'inline-block';
+      }
+    }
 
     if (logoText) logoText.textContent = 'Cliquez ou déposez un logo ici';
   }
@@ -1632,22 +1697,15 @@ async function showEditExperienceModal(data, row) {
   }
 
   document.getElementById('exp-dept').value = orgDept;
-
-  // Appliquer le style selon le choix
-  if (typeof toggleOrganizerCustom === 'function') {
-    toggleOrganizerCustom();
-  }
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
 
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
   document.getElementById('exp-logo-path').value = logoPath;
 
-  // Afficher le preview du logo si disponible (et que l'utilisateur n'a pas sélectionné un prestataire fixe qui en a pris la charge sinon on garde celui qui a été chargé)
   const preview = document.getElementById('logo-preview');
   const placeholder = document.getElementById('logo-placeholder');
   const removeBtn = document.getElementById('remove-logo');
-
 
   if (logoPath) {
     if (preview) {
@@ -1655,11 +1713,14 @@ async function showEditExperienceModal(data, row) {
       preview.style.display = 'block';
     }
     if (placeholder) placeholder.style.display = 'none';
-    if (removeBtn) removeBtn.style.display = 'inline-block';
   } else {
     if (preview) preview.style.display = 'none';
     if (placeholder) placeholder.style.display = 'flex';
-    if (removeBtn) removeBtn.style.display = 'none';
+  }
+
+  // Appliquer le style selon le choix (après avoir chargé le logo pour que toggle gère la visibilité du bouton supprimer)
+  if (typeof toggleOrganizerCustom === 'function') {
+    toggleOrganizerCustom(true);
   }
 
   // Gérer le type de séjour et les lieux
@@ -2140,11 +2201,6 @@ function showEditFormationModal(data, row) {
 
   document.getElementById('form-organism-url').value = data.organismUrl || '';
 
-  // Appliquer le style selon le choix
-  if (typeof toggleFormationOrganizerCustom === 'function') {
-    toggleFormationOrganizerCustom();
-  }
-
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
   document.getElementById('form-logo-path').value = logoPath;
@@ -2159,9 +2215,13 @@ function showEditFormationModal(data, row) {
       preview.style.display = 'block';
     }
     if (placeholder) placeholder.style.display = 'none';
-    if (removeBtn) removeBtn.style.display = 'inline-block';
   } else {
     removeFormationLogo();
+  }
+
+  // Appliquer le style selon le choix
+  if (typeof toggleFormationOrganizerCustom === 'function') {
+    toggleFormationOrganizerCustom(true);
   }
 
   // Gérer l'intitulé (Select ou Custom)
