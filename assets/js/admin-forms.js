@@ -2064,11 +2064,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      // Illustration aléatoire si aucun logo n'est défini
+      // Illustration par défaut si aucun logo n'est défini
       if (!logoPath) {
-        const randomImages = ['random1.png', 'random2.png', 'random3.png'];
-        const randomImage = randomImages[Math.floor(Math.random() * randomImages.length)];
-        logoPath = `assets/img/${randomImage}`;
+        logoPath = `assets/img/no-img.jpg`;
       }
 
       // Valider et formater l'âge
@@ -2234,11 +2232,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      // Illustration aléatoire si aucun logo n'est défini
+      // Illustration par défaut si aucun logo n'est défini
       if (!logoPath) {
-        const randomImages = ['random1.png', 'random2.png', 'random3.png'];
-        const randomImage = randomImages[Math.floor(Math.random() * randomImages.length)];
-        logoPath = `assets/img/${randomImage}`;
+        logoPath = `assets/img/no-img.jpg`;
       }
 
       const data = {
