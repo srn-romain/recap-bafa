@@ -61,13 +61,19 @@
       </p>
 
       <!-- Boutons CTA Hero -->
-      <test id="hero-auth-buttons"
-        style="display:flex; justify-content:center; gap:12px; margin: 20px 0; flex-wrap:wrap;">
-        <button onclick="showAuthModal('login')" class="btn-large btn-green">
-          <i class="bi bi-box-arrow-in-right"></i> Se connecter
-        </button>
-        <button onclick="showAuthModal('register')" class="btn-large btn-orange">
-          <i class="bi bi-rocket-takeoff"></i> Créer un compte
+      <test id="hero-auth-buttons" style="display:flex; flex-direction:column; align-items:center; margin: 20px 0;">
+        <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+          <button onclick="showAuthModal('login')" class="btn-large btn-green">
+            <i class="bi bi-box-arrow-in-right"></i> Se connecter
+          </button>
+          <button onclick="showAuthModal('register')" class="btn-large btn-orange">
+            <i class="bi bi-rocket-takeoff"></i> Créer un compte
+          </button>
+        </test>
+        <button onclick="openUserManual()"
+          style="width: calc(100% - 20px); max-width: 450px; background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; margin-top: 5px;"
+          onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
+          <i class="bi bi-book"></i> Manuel utilisateur
         </button>
       </test>
 
@@ -232,12 +238,12 @@
       <!-- Section Recherche Profil -->
       <section id="search-section" style="text-align: center; padding: 40px 20px;">
         <h2 style="color: #333; margin-bottom: 10px;"><i class="bi bi-search"></i> Rechercher un animateur</h2>
-          <p style="color: #666; margin-bottom: 25px;">Recherchez un animateur ci-dessous. S’il est inscrit sur la
-              plateforme et selon ses paramètres de confidentialité, vous pourrez accéder à son lien personnalisé et
-              découvrir son parcours d’animation. Consultez le profil fictif de <i>Joe Doe</i> pour explorer les
-              fonctionnalités de l’application.</p>
+        <p style="color: #666; margin-bottom: 25px;">Recherchez un animateur ci-dessous. S’il est inscrit sur la
+          plateforme et selon ses paramètres de confidentialité, vous pourrez accéder à son lien personnalisé et
+          découvrir son parcours d’animation. Consultez le profil fictif de <i>Joe Doe</i> pour explorer les
+          fonctionnalités de l’application.</p>
 
-          <form class="search-form" onsubmit="event.preventDefault(); searchProfile();"
+        <form class="search-form" onsubmit="event.preventDefault(); searchProfile();"
           style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; max-width: 500px; margin: 0 auto;">
           <input type="text" id="search-firstname" placeholder="Prénom (ex: Joe)" class="search-input"
             style="padding: 12px; border: 1px solid #ddd; border-radius: 6px; flex: 1; min-width: 150px;">
@@ -637,6 +643,104 @@
     </div>
   </div>
 
+  <!-- Modal Manuel Utilisateur -->
+  <div id="user-manual-modal" class="modal" style="display: none; z-index: 10001;">
+    <div class="modal-content large-modal" style="max-height: 90vh; overflow-y: auto; padding: 15px;">
+      <span class="close-modal" onclick="closeUserManual()">&times;</span>
+      <h2
+        style="border-bottom: 2px solid #f39c12; padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+        <i class="bi bi-book-half" style="color: #f39c12; font-size: 1.8rem;"></i> Manuel d'utilisation
+      </h2>
+
+      <div style="text-align: left; line-height: 1.7; color: #333; padding: 0 10px;">
+
+        <!-- Section 1 -->
+        <div style="margin-bottom: 25px;">
+          <h3
+            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
+            1. Personnalisation du Profil
+          </h3>
+          <p style="margin-bottom: 10px;">Dès votre inscription, rendez-vous dans les <strong>Paramètres</strong> (icône
+            <i class="bi bi-gear-fill"></i>) pour :
+          </p>
+          <ul style="padding-left: 20px; margin-bottom: 10px;">
+            <li><strong>Photo de profil :</strong> Téléchargez votre plus beau sourire pour humaniser votre fiche.</li>
+            <li><strong>Genre :</strong> Indiquez-le pour que l'application adapte automatiquement les accords (Ex:
+              <em>Animateur</em> ou <em>Animatrice</em>).
+            </li>
+            <li><strong>Visibilité :</strong> Choisissez de rendre votre profil public ou de rester discret.</li>
+          </ul>
+        </div>
+
+        <!-- Section 2 -->
+        <div style="margin-bottom: 25px;">
+          <h3
+            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
+            2. Gestion Dynamique du Parcours
+          </h3>
+          <p style="margin-bottom: 10px;">Votre tableau de bord permet d'ajouter vos <strong>Expériences</strong>
+            (Colos, ALSH, Scouts) et vos <strong>Formations</strong> (BAFA, BAFD, Secourisme).</p>
+          <div
+            style="background: #fff8e1; border-radius: 8px; padding: 15px; border: 1px dashed #f39c12; margin-bottom: 10px;">
+            <p style="margin: 0; font-weight: 600; color: #b45309;"><i class="bi bi-magic"></i> Magie des champs
+              dynamiques :</p>
+            <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Remplissez les formulaires <strong>dans l'ordre</strong> !
+              Les questions s'adaptent à vos réponses (Ex: choix du mode de séjour, auto-détection des logos
+              d'organisme, calcul automatique des jours de formation...).</p>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div style="margin-bottom: 25px;">
+          <h3
+            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
+            3. Votre Carte de Visite Digitale
+          </h3>
+          <p style="margin-bottom: 10px;">Une fois complété, votre profil devient une véritable vitrine professionnelle
+            prête à être partagée :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Statistiques :</strong> Vos jours travaillés et publics encadrés sont calculés en temps réel.
+            </li>
+            <li><strong>Carte Interactive :</strong> Si vous renseignez l'URL Google Maps de vos séjours, ils
+              s'affichent sur une carte.</li>
+            <li><strong>Logos Automatiques :</strong> Pour les grands organismes (UCPA, etc.), le logo officiel est
+              pré-rempli !</li>
+          </ul>
+        </div>
+
+        <!-- Section 4 -->
+        <div style="margin-bottom: 25px;">
+          <h3
+            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
+            4. Export, PDF et Sauvegarde
+          </h3>
+          <p style="margin-bottom: 10px;">Nous tenons à votre autonomie. Vous pouvez à tout moment :</p>
+          <ul style="padding-left: 20px;">
+            <li><strong>Générer un PDF :</strong> Exportez vos tableaux d'expériences et de formations en haute qualité.
+            </li>
+            <li><strong>Import / Export JSON :</strong> Téléchargez l'intégralité de vos données en un clic pour une
+              sauvegarde locale ou pour les transférer sur un autre compte.</li>
+          </ul>
+        </div>
+
+        <!-- Section 5 -->
+        <div>
+          <h3
+            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
+            5. Mode Directeur (Recrutement)
+          </h3>
+          <p>Les recruteurs peuvent demander un <strong>accès spécial</strong> pour explorer la base des profils
+            publics, facilitant ainsi la mise en relation directe avec les animateurs qualifiés.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px; text-align: center;">
+        <button onclick="closeUserManual()" class="btn-large btn-green" style="width: auto; padding: 10px 40px;">J'ai
+          compris !</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -761,10 +865,16 @@
                     </button>
                     <!-- Bouton de copie de lien rapide -->
                     <button id="quick-copy-link-btn" onclick="copyProfileLink()"
-                        style="background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s;"
+                        style="background: #50644c; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: calc(100% - 20px); max-width: 450px; justify-content: center;"
                         onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
                         <i class="bi bi-link-45deg" style="color: white; font-size: 1.2rem;"></i>
                         <span id="quick-copy-text">Copier le lien de partage de mon profil</span>
+                    </button>
+                    <!-- Bouton Manuel Utilisateur -->
+                    <button onclick="openUserManual()" 
+                        style="background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; gap: 8px; transition: background 0.2s; width: calc(100% - 20px); max-width: 450px; justify-content: center;"
+                        onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
+                        <i class="bi bi-book"></i> Manuel utilisateur
                     </button>
                 </test>
             `;
@@ -814,12 +924,21 @@
 
         if (heroBtns) {
           heroBtns.innerHTML = `
-            <button onclick="showAuthModal('login')" class="btn-large btn-green">
-              <i class="bi bi-box-arrow-in-right"></i> Se connecter
-            </button>
-            <button onclick="showAuthModal('register')" class="btn-large btn-orange">
-              <i class="bi bi-rocket-takeoff"></i> Créer un compte
-            </button>
+            <test style="display:flex; flex-direction:column; align-items:center; width: 100%;">
+                <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
+                    <button onclick="showAuthModal('login')" class="btn-large btn-green">
+                      <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                    </button>
+                    <button onclick="showAuthModal('register')" class="btn-large btn-orange">
+                      <i class="bi bi-rocket-takeoff"></i> Créer un compte
+                    </button>
+                </test>
+                <button onclick="openUserManual()" 
+                    style="width: calc(100% - 20px); max-width: 450px; background: #34495e; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; margin-top: 5px;"
+                    onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
+                    <i class="bi bi-book"></i> Manuel utilisateur
+                </button>
+            </test>
           `;
         }
       }
@@ -1141,6 +1260,18 @@
       if (e.target === settingsModal) {
         if (typeof closeSettingsModal === 'function') closeSettingsModal();
       }
+      const manualModal = document.getElementById('user-manual-modal');
+      if (e.target === manualModal) closeUserManual();
+    }
+
+    function openUserManual() {
+      document.getElementById('user-manual-modal').style.display = 'flex';
+      document.body.classList.add('modal-open');
+    }
+
+    function closeUserManual() {
+      document.getElementById('user-manual-modal').style.display = 'none';
+      document.body.classList.remove('modal-open');
     }
   </script>
 </body>
