@@ -621,7 +621,7 @@ async function showAddExperienceModal() {
 
 // Initialiser Tom Select pour les listes déroulantes
 function initSearchableSelects() {
-  const ids = ['exp-stay-type', 'exp-position', 'form-title', 'exp-type', 'exp-organizer'];
+  const ids = ['exp-stay-type', 'exp-position', 'form-title', 'exp-type', 'exp-organizer', 'form-organism'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -634,7 +634,7 @@ function initSearchableSelects() {
           plugins: ['dropdown_input'], // Assure que l'input de recherche est dans le dropdown
           onInitialize: function () {
             // S'assurer que le container a la bonne largeur
-            if (id === 'exp-organizer') {
+            if (id === 'exp-organizer' || id === 'form-organism') {
               this.wrapper.style.width = 'auto';
               this.wrapper.style.flex = '1';
             } else {
@@ -797,6 +797,100 @@ window.toggleOrganizerCustom = function () {
       deptInput.readOnly = true;
       // Optionnellement on le disable, mais attention en form submit car disabled exclut du payload
       // Sauf si getFormData(). Donc on laisse visible mais readOnly ou on change la couleur
+    }
+
+    if (logoPathInput) logoPathInput.value = data.logo;
+    if (preview && placeholder && removeBtn) {
+      preview.src = data.logo;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+      removeBtn.style.display = 'none'; // Empêche l'utilisateur d'enlever ce logo pré-défini
+    }
+  } else {
+    // Cas '-- Sélectionner --'
+    if (custom) {
+      custom.style.display = 'none';
+      custom.required = false;
+      custom.value = '';
+    }
+    if (urlInput) {
+      urlInput.disabled = false;
+      urlInput.readOnly = false;
+      urlInput.value = '';
+    }
+    if (fileInput) fileInput.disabled = false;
+    if (deptInput) {
+      deptInput.disabled = false;
+      deptInput.readOnly = false;
+      deptInput.value = '';
+    }
+
+    if (logoPathInput) logoPathInput.value = '';
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (removeBtn) removeBtn.style.display = 'none';
+  }
+};
+
+window.toggleFormationOrganizerCustom = function () {
+  const select = document.getElementById('form-organism');
+  const custom = document.getElementById('form-organism-custom');
+  const urlInput = document.getElementById('form-organism-url');
+  const fileInput = document.getElementById('form-logo-file');
+  const logoPathInput = document.getElementById('form-logo-path');
+  const preview = document.getElementById('form-logo-preview');
+  const placeholder = document.getElementById('form-logo-placeholder');
+  const removeBtn = document.getElementById('form-remove-logo');
+  const deptInput = document.getElementById('form-organism-dept');
+
+  if (!select) return;
+
+  const knownOrganizersFormation = {
+    'UCPA': { url: 'https://www.ucpa.com/', logo: 'assets/img/ucpa.png', dept: '92' },
+    'Telligo': { url: 'https://www.telligo.fr/', logo: 'assets/img/telligo.png', dept: '92' },
+    'Djuringa': { url: 'https://www.djuringa-juniors.fr/', logo: 'assets/img/djuringa.png', dept: '69' }
+  };
+
+  if (select.value === 'Autre') {
+    if (custom) {
+      custom.style.display = 'block';
+      custom.required = true;
+    }
+    if (urlInput) {
+      urlInput.disabled = false;
+      urlInput.readOnly = false;
+      urlInput.value = '';
+    }
+    if (fileInput) fileInput.disabled = false;
+    if (deptInput) {
+      deptInput.disabled = false;
+      deptInput.readOnly = false;
+      deptInput.value = '';
+    }
+
+    // Cleanup any forced logo
+    if (logoPathInput) logoPathInput.value = '';
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+    if (removeBtn) removeBtn.style.display = 'none';
+
+  } else if (knownOrganizersFormation[select.value]) {
+    if (custom) {
+      custom.style.display = 'none';
+      custom.required = false;
+      custom.value = '';
+    }
+
+    const data = knownOrganizersFormation[select.value];
+    if (urlInput) {
+      urlInput.value = data.url;
+      urlInput.readOnly = true;
+    }
+    if (fileInput) fileInput.disabled = true;
+
+    if (deptInput) {
+      if (data.dept !== undefined) deptInput.value = data.dept;
+      deptInput.readOnly = true;
     }
 
     if (logoPathInput) logoPathInput.value = data.logo;
@@ -1896,9 +1990,11 @@ function showAddFormationModal() {
   document.getElementById('formation-modal-title').textContent = 'Ajouter une formation';
   document.getElementById('formation-form').reset();
 
-  // Reset Tom Select
-  const titleSelect = document.getElementById('form-title');
-  if (titleSelect && titleSelect.tomselect) titleSelect.tomselect.clear();
+  // Reset Tom Selects
+  ['form-title', 'form-organism'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.tomselect) el.tomselect.clear();
+  });
 
   const customInput = document.getElementById('form-title-custom');
   if (customInput) { customInput.style.display = 'none'; }
@@ -1958,13 +2054,61 @@ function showEditFormationModal(data, row) {
   const rawOrganism = data.organism || '';
   // Matcher "Nom (Dept)"
   const organismMatch = rawOrganism.match(/^(.*?)\s*\(([^)]+)\)$/);
+
+  let orgName = rawOrganism;
+  let orgDept = '';
+
   if (organismMatch) {
-    document.getElementById('form-organism').value = organismMatch[1].trim();
-    document.getElementById('form-organism-dept').value = organismMatch[2].trim();
-  } else {
-    document.getElementById('form-organism').value = rawOrganism;
-    document.getElementById('form-organism-dept').value = '';
+    orgName = organismMatch[1].trim();
+    orgDept = organismMatch[2].trim();
   }
+
+  const orgSelect = document.getElementById('form-organism');
+  const orgCustom = document.getElementById('form-organism-custom');
+
+  if (orgSelect) {
+    let optionExists = false;
+    for (let i = 0; i < orgSelect.options.length; i++) {
+      if (orgSelect.options[i].value === orgName && orgName !== '') {
+        optionExists = true;
+        break;
+      }
+    }
+
+    if (optionExists) {
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue(orgName);
+      else orgSelect.value = orgName;
+      if (orgCustom) {
+        orgCustom.value = '';
+        orgCustom.style.display = 'none';
+      }
+    } else if (orgName) {
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('Autre');
+      else orgSelect.value = 'Autre';
+      if (orgCustom) {
+        orgCustom.value = orgName;
+        orgCustom.style.display = 'block';
+      }
+    } else {
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('');
+      else orgSelect.value = '';
+      if (orgCustom) {
+        orgCustom.value = '';
+        orgCustom.style.display = 'none';
+      }
+    }
+  }
+
+  const deptInput = document.getElementById('form-organism-dept');
+  if (deptInput) {
+    deptInput.value = orgDept;
+    if (orgSelect && orgSelect.value !== 'Autre' && orgSelect.value !== '') {
+      deptInput.readOnly = true;
+    } else {
+      deptInput.readOnly = false;
+    }
+  }
+
   document.getElementById('form-organism-url').value = data.organismUrl || '';
 
   // Gérer le logo
@@ -2337,7 +2481,8 @@ document.addEventListener('DOMContentLoaded', function () {
       const logoInputVal = document.getElementById('form-logo-path').value.trim();
       const organismUrl = document.getElementById('form-organism-url').value.trim();
 
-      const organismName = document.getElementById('form-organism').value.trim();
+      const orgSelect = document.getElementById('form-organism').value;
+      const organismName = (orgSelect === 'Autre') ? document.getElementById('form-organism-custom').value.trim() : orgSelect;
 
       if (!logoInputVal) {
         // Vérifier checkbox
@@ -2375,7 +2520,8 @@ document.addEventListener('DOMContentLoaded', function () {
           return days > 1 ? `${days} jours` : `${days} jour`;
         })(),
         organism: (() => {
-          const org = document.getElementById('form-organism').value.trim();
+          const orgSelect = document.getElementById('form-organism').value;
+          const org = (orgSelect === 'Autre') ? document.getElementById('form-organism-custom').value.trim() : orgSelect;
           const dept = document.getElementById('form-organism-dept').value.trim().toUpperCase();
           if (dept && !/^\d+$|^2[AB]$/.test(dept)) {
             showFormationError('Le département de l\'organisme doit être composé de chiffres ou être 2A/2B.');
@@ -2387,7 +2533,8 @@ document.addEventListener('DOMContentLoaded', function () {
           const rawUrl = document.getElementById('form-organism-url').value.trim();
           if (rawUrl) return rawUrl;
 
-          const org = document.getElementById('form-organism').value.trim();
+          const orgSelect = document.getElementById('form-organism').value;
+          const org = (orgSelect === 'Autre') ? document.getElementById('form-organism-custom').value.trim() : orgSelect;
           const dept = document.getElementById('form-organism-dept').value.trim();
           const fullOrg = org + (dept ? ` ${dept}` : '');
 

@@ -550,6 +550,10 @@
                         </select>
                         <input type="text" id="exp-dept" placeholder="Dép." style="width: 70px; text-align: center;"
                             maxlength="3">
+                        <a href="#" onclick="toggleMapExplanation(event, 'exp')"
+                            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+                            Pourquoi cette question ?
+                        </a>
                         <input type="text" id="exp-organizer-custom" placeholder="Nom de l'organisateur"
                             style="flex: 100%; display: none; margin-top: 5px;">
                     </div>
@@ -664,10 +668,19 @@
                 </div>
                 <div class="form-group">
                     <label>Organisme</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="form-organism" placeholder="Ex: UFCV" style="flex: 1;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <select id="form-organism" style="flex: 1;"
+                            onchange="if(typeof toggleFormationOrganizerCustom === 'function') toggleFormationOrganizerCustom()">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="UCPA">UCPA</option>
+                            <option value="Telligo">Telligo</option>
+                            <option value="Djuringa">Djuringa</option>
+                            <option value="Autre">Autre (préciser)</option>
+                        </select>
                         <input type="text" id="form-organism-dept" placeholder="Dép."
                             style="width: 70px; text-align: center;" maxlength="3">
+                        <input type="text" id="form-organism-custom" placeholder="Nom de l'organisateur"
+                            style="flex: 100%; display: none; margin-top: 5px;">
                     </div>
                 </div>
                 <div class="form-group">
