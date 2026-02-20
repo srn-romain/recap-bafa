@@ -250,7 +250,7 @@ function getSettingsState() {
 /**
  * Vérifie s'il y a des changements non enregistrés
  */
-function hasUnsavedChanges() {
+function hasUnsavedSettingsChanges() {
     if (!settingsInitialState) return false;
     const currentState = getSettingsState();
     return JSON.stringify(currentState) !== JSON.stringify(settingsInitialState);
@@ -378,10 +378,14 @@ window.closeSettingsModal = function (force = false) {
         return;
     }
 
-    if (hasUnsavedChanges()) {
+    if (hasUnsavedSettingsChanges()) {
         const unsavedModal = document.getElementById('unsaved-changes-modal');
         if (unsavedModal) {
-            unsavedModal.style.display = 'flex';
+            if (typeof window.showUnsavedChangesModal === 'function') {
+                window.showUnsavedChangesModal('settings');
+            } else {
+                unsavedModal.style.display = 'flex';
+            }
         } else {
             // Fallback si la modale de confirmation n'existe pas
             if (confirm("Vous avez des modifications non enregistrées. Voulez-vous vraiment fermer sans sauvegarder ?")) {
@@ -405,28 +409,20 @@ window.closeSettingsModal = function (force = false) {
 /**
  * Confirme la fermeture sans sauvegarder
  */
-function confirmCloseSettings() {
-    // Fermer les deux modales
-    const unsavedModal = document.getElementById('unsaved-changes-modal');
+window.confirmCloseSettings = function () {
+    // Fermer les modales existantes
     const settingsModal = document.getElementById('settings-modal');
-
-    if (unsavedModal) unsavedModal.style.display = 'none';
     if (settingsModal) settingsModal.style.display = 'none';
+
     document.body.classList.remove('modal-open');
 
     // Réinitialiser l'état
     settingsInitialState = null;
-}
 
-/**
- * Annule la fermeture et retourne aux paramètres
- */
-function cancelCloseSettings() {
+    // Fermer la modale globale d'avertissement depuis settings (s'assure de l'effacer)
     const unsavedModal = document.getElementById('unsaved-changes-modal');
-    if (unsavedModal) {
-        unsavedModal.style.display = 'none';
-    }
-}
+    if (unsavedModal) unsavedModal.style.display = 'none';
+};
 
 // Fermer la modale si on clique en dehors
 window.addEventListener('click', function (event) {

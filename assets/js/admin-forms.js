@@ -4,7 +4,7 @@ let currentEditingRow = null;
 let currentEditingDocId = null;
 
 // Variable globale pour suivre les modifications non sauvegardées
-window.hasUnsavedChanges = false;
+window.hasUnsavedFormChanges = false;
 let currentModalToClose = null;
 
 window.showUnsavedChangesModal = function (modalType) {
@@ -13,7 +13,7 @@ window.showUnsavedChangesModal = function (modalType) {
 };
 
 window.confirmCloseUnsavedModal = function () {
-  window.hasUnsavedChanges = false;
+  window.hasUnsavedFormChanges = false;
   const unsavedModal = document.getElementById('unsaved-changes-modal');
   if (unsavedModal) unsavedModal.style.display = 'none';
 
@@ -21,6 +21,8 @@ window.confirmCloseUnsavedModal = function () {
     closeExperienceModal(true);
   } else if (currentModalToClose === 'formation') {
     closeFormationModal(true);
+  } else if (currentModalToClose === 'settings') {
+    if (typeof confirmCloseSettings === 'function') confirmCloseSettings();
   }
 };
 
@@ -31,7 +33,7 @@ window.cancelCloseUnsavedModal = function () {
 
 // Listeners pour détecter les modifications dans les formulaires
 document.addEventListener('DOMContentLoaded', () => {
-  const markUnsaved = () => { window.hasUnsavedChanges = true; };
+  const markUnsaved = () => { window.hasUnsavedFormChanges = true; };
   document.getElementById('experience-form')?.addEventListener('input', markUnsaved);
   document.getElementById('experience-form')?.addEventListener('change', markUnsaved);
   document.getElementById('formation-form')?.addEventListener('input', markUnsaved);
@@ -326,7 +328,7 @@ function updateMercredisYearEnd() {
   if (startYear && startYear > 1900 && startYear < 2200) {
     const endYear = startYear + 1;
     endYearSpan.textContent = endYear;
-    periodDisplay.textContent = `${startYear}-${endYear}`;
+    periodDisplay.textContent = `${startYear} -${endYear} `;
   } else {
     endYearSpan.textContent = 'AAAA';
     periodDisplay.textContent = 'XXXX-YYYY';
@@ -602,7 +604,7 @@ async function showAddExperienceModal() {
   toggleAlshDateFields();
   initSearchableSelects();
 
-  window.hasUnsavedChanges = false;
+  window.hasUnsavedFormChanges = false;
 
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
@@ -1028,7 +1030,7 @@ function addItineraryRow(location = '', url = '') {
   const tbody = document.getElementById('itinerary-tbody');
   if (!tbody) return;
 
-  const rowId = `itinerary-row-${Date.now()}`;
+  const rowId = `itinerary - row - ${Date.now()} `;
 
   const row = document.createElement('tr');
   row.id = rowId;
@@ -1036,7 +1038,7 @@ function addItineraryRow(location = '', url = '') {
   row.style.borderBottom = '1px solid #bbf7d0';
 
   row.innerHTML = `
-    <td style="padding: 10px;">
+  < td style = "padding: 10px;" >
       <input type="text" class="itinerary-location" placeholder="Ex: Lyon" 
         style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; color: #1e293b; background: #fff; transition: all 0.2s;" 
         onfocus="this.style.borderColor='#2563eb'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(37, 99, 235, 0.1)';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
@@ -1046,7 +1048,7 @@ function addItineraryRow(location = '', url = '') {
         style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; color: #1e293b; background: #fff; transition: all 0.2s;" 
         onfocus="this.style.borderColor='#2563eb'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(37, 99, 235, 0.1)';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
     </td>
-  `;
+`;
 
   // Assigner les valeurs via JS pour éviter les problèmes d'échappement
   const inputs = row.getElementsByTagName('input');
@@ -1118,7 +1120,7 @@ function monthToFrenchText(monthValue) {
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
   const monthIndex = parseInt(month, 10) - 1;
   if (monthIndex < 0 || monthIndex > 11) return '';
-  return `${months[monthIndex]} ${year}`;
+  return `${months[monthIndex]} ${year} `;
 }
 
 // Convertir un texte français en mois (YYYY-MM)
@@ -1130,7 +1132,7 @@ function frenchTextToMonth(dateText) {
   // Cas spécifique : Septembre 2023 - Juin 2024
   const alshMatch = lowerText.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/);
   if (alshMatch) {
-    return `${alshMatch[1]}-09`;
+    return `${alshMatch[1]} -09`;
   }
 
   const months = {
@@ -1153,7 +1155,7 @@ function frenchTextToMonth(dateText) {
       break;
     }
   }
-  return `${year}-${month}`;
+  return `${year} -${month} `;
 }
 
 // Extraire le nom du fichier ou retourner l'URL/Base64 tel quel
@@ -1770,7 +1772,7 @@ async function showEditExperienceModal(data, row) {
     updateExpStayTypeOptions();
   }
 
-  window.hasUnsavedChanges = false;
+  window.hasUnsavedFormChanges = false;
 
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
@@ -1778,7 +1780,7 @@ async function showEditExperienceModal(data, row) {
 
 // Fermer le modal d'expérience
 function closeExperienceModal(force = false) {
-  if (window.hasUnsavedChanges && !force) {
+  if (window.hasUnsavedFormChanges && !force) {
     window.showUnsavedChangesModal('experience');
     return;
   }
@@ -1878,7 +1880,7 @@ async function showAddFormationModal() {
   if (modalMonthInput) modalMonthInput.value = '';
   document.getElementById('form-date').value = '';
 
-  window.hasUnsavedChanges = false;
+  window.hasUnsavedFormChanges = false;
 
   document.getElementById('formation-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
@@ -2058,7 +2060,7 @@ function showEditFormationModal(data, row) {
 
 // Fermer le modal de formation
 function closeFormationModal(force = false) {
-  if (window.hasUnsavedChanges && !force) {
+  if (window.hasUnsavedFormChanges && !force) {
     window.showUnsavedChangesModal('formation');
     return;
   }
@@ -2314,7 +2316,7 @@ document.addEventListener('DOMContentLoaded', function () {
           await addExperienceToFirebase(data);
         }
 
-        window.hasUnsavedChanges = false;
+        window.hasUnsavedFormChanges = false;
         closeExperienceModal(true);
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
@@ -2443,7 +2445,7 @@ document.addEventListener('DOMContentLoaded', function () {
           await addFormationToFirebase(data);
         }
 
-        window.hasUnsavedChanges = false;
+        window.hasUnsavedFormChanges = false;
         closeFormationModal(true);
         // Recharger les données
         if (typeof loadDataFromFirebase === 'function') {
