@@ -603,8 +603,9 @@ async function showAddExperienceModal() {
   clearItineraryTable();
   toggleLocationFields();
 
-  // Initialiser l'affichage des champs ALSH
+  // Initialiser l'affichage des champs ALSH et types de séjours
   toggleAlshDateFields();
+  updateExpStayTypeOptions();
   initSearchableSelects();
 
   window.hasUnsavedFormChanges = false;
@@ -795,7 +796,7 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Cap Monde': { url: 'https://www.capmonde.fr/', logo: 'assets/img/capMonde.png', dept: '74' },
     'CGCV': { url: 'https://www.cgcv.org/com/homepage', logo: 'assets/img/cgcv.jpeg', dept: '92' },
     'Compagnons Des Jours Heureux': { url: 'https://www.compagnons.asso.fr/', logo: 'assets/img/cjh.png', dept: '78' },
-    'Haute Pyrénées Sport & Nature': { url: 'https://www.sport-nature.org/', logo: 'assets/img/hpsn.jpg', dept: '65' },
+    'Haute Pyrénées Sport & Nature': { url: 'https://www.sport-nature.org/', logo: 'assets/img/hpsn.png', dept: '65' },
     'Nouvelles Aventures Junior': { url: 'https://www.naj-colo.com/', logo: 'assets/img/naj.png', dept: '13' },
     'Sports Elite Jeunes': { url: 'https://www.sportselitejeunes.fr/', logo: 'assets/img/sej.png', dept: '75' },
     'SNU': { url: 'https://www.snu.fr/', logo: 'assets/img/snu.png', dept: '69' },
@@ -805,10 +806,10 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Léo Lagrange': { url: 'https://www.leolagrange.org/', logo: 'assets/img/leoLagrange.png', dept: '75' },
     'Avea': { url: 'https://www.avea.fr/', logo: 'assets/img/avea.png', dept: '75' },
     'CIE Thales': { url: 'https://www.cie-thales.net/', logo: 'assets/img/cieThales.png', dept: '92' },
-    'Zigo': { url: 'https://www.zigotours.com/', logo: 'assets/img/zigo.jpg', dept: '38' },
+    'Zigo': { url: 'https://www.zigotours.com/', logo: 'assets/img/zigo.png', dept: '38' },
     'Le Zèbre': { url: 'https://www.le-zebre.com/', logo: 'assets/img/leZebre.jpg', dept: '13' },
     'Cap Juniors': { url: 'https://www.cap-juniors.com/', logo: 'assets/img/capJuniors.png', dept: '69' },
-    'Mondiale Junior': { url: 'https://www.mondiale-junior.fr/', logo: 'assets/img/mondialeJunior.jpg', dept: '13' },
+    'Mondiale Junior': { url: 'https://www.mondiale-junior.fr/', logo: 'assets/img/mondialeJunior.png', dept: '13' },
     'Agence Nature': { url: 'https://www.agencenature.com/', logo: 'assets/img/agenceNature.png', dept: '13' },
     'Les séjours de l\'AJD': { url: 'https://www.sejours-ajd.fr/', logo: 'assets/img/sejoursAJD.png', dept: '75' },
     'Association Regards': { url: 'https://www.asso-regards.org/', logo: 'assets/img/assoRegards.jpg', dept: '92' },
@@ -1629,6 +1630,9 @@ async function showEditExperienceModal(data, row) {
   if (typeof toggleAlshDateFields === 'function') {
     toggleAlshDateFields();
   }
+  if (typeof updateExpStayTypeOptions === 'function') {
+    updateExpStayTypeOptions();
+  }
 
   // Convertir la date française en format mois pour l'input month
   const monthValue = frenchTextToMonth(data.date || '');
@@ -2305,7 +2309,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // Écouter le changement de type d'expérience pour afficher/masquer les options ALSH
   const expTypeSelect = document.getElementById('exp-type');
   if (expTypeSelect) {
-    expTypeSelect.addEventListener('change', toggleAlshDateFields);
+    expTypeSelect.addEventListener('change', () => {
+      toggleAlshDateFields();
+      updateExpStayTypeOptions();
+    });
   }
 
 });
