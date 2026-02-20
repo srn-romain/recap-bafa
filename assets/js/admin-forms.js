@@ -1181,7 +1181,7 @@ function frenchTextToMonth(dateText) {
   // Cas spécifique : Septembre 2023 - Juin 2024
   const alshMatch = lowerText.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/);
   if (alshMatch) {
-    return `${alshMatch[1]} -09`;
+    return `${alshMatch[1]}-09`;
   }
 
   const months = {
@@ -1204,7 +1204,7 @@ function frenchTextToMonth(dateText) {
       break;
     }
   }
-  return `${year} -${month} `;
+  return `${year}-${month}`;
 }
 
 // Extraire le nom du fichier ou retourner l'URL/Base64 tel quel
@@ -2357,7 +2357,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Pas de logo
       } else {
         // Logo déjà uploadé/défini
-        if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
+        if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image') || logoInputVal.startsWith('assets/img/')) {
           logoPath = logoInputVal;
         } else {
           logoPath = `assets/img/${logoInputVal}`;
@@ -2519,7 +2519,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!logoInputVal) {
         // Pas de logo
       } else if (logoInputVal) {
-        if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image')) {
+        if (logoInputVal.startsWith('http') || logoInputVal.startsWith('data:image') || logoInputVal.startsWith('assets/img/')) {
           logoPath = logoInputVal;
         } else {
           logoPath = `assets/img/${logoInputVal}`;
