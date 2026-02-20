@@ -1673,21 +1673,21 @@ async function showEditExperienceModal(data, row) {
     }
 
     if (optionExists) {
-      if (orgSelect.tomselect) orgSelect.tomselect.setValue(orgName);
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue(orgName, true);
       else orgSelect.value = orgName;
       if (orgCustom) {
         orgCustom.value = '';
         orgCustom.style.display = 'none';
       }
     } else if (orgName) {
-      if (orgSelect.tomselect) orgSelect.tomselect.setValue('Autre');
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('Autre', true);
       else orgSelect.value = 'Autre';
       if (orgCustom) {
         orgCustom.value = orgName;
         orgCustom.style.display = 'block';
       }
     } else {
-      if (orgSelect.tomselect) orgSelect.tomselect.setValue('');
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('', true);
       else orgSelect.value = '';
       if (orgCustom) {
         orgCustom.value = '';
@@ -1742,7 +1742,7 @@ async function showEditExperienceModal(data, row) {
   if (optionExists) {
     if (stayTypeSelect) {
       stayTypeSelect.value = stayTypeVal;
-      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.setValue(stayTypeVal);
+      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.setValue(stayTypeVal, true);
     }
     if (stayTypeCustom) {
       stayTypeCustom.style.display = 'none';
@@ -1752,7 +1752,7 @@ async function showEditExperienceModal(data, row) {
     // C'est un type personnalisé -> "Autre"
     if (stayTypeSelect) {
       stayTypeSelect.value = 'Autre';
-      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.setValue('Autre');
+      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.setValue('Autre', true);
     }
     if (stayTypeCustom) {
       stayTypeCustom.style.display = 'block';
@@ -1761,7 +1761,7 @@ async function showEditExperienceModal(data, row) {
   } else {
     if (stayTypeSelect) {
       stayTypeSelect.value = '';
-      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.clear();
+      if (stayTypeSelect.tomselect) stayTypeSelect.tomselect.clear(true);
     }
     if (stayTypeCustom) {
       stayTypeCustom.style.display = 'none';
@@ -1828,7 +1828,9 @@ async function showEditExperienceModal(data, row) {
     }
 
     if (optionExists) {
-      positionSelect.value = currentPosition;
+      if (positionSelect.tomselect) positionSelect.tomselect.setValue(currentPosition, true);
+      else positionSelect.value = currentPosition;
+
       if (customPositionInput) {
         customPositionInput.value = '';
         customPositionInput.style.display = 'none';
@@ -1836,14 +1838,18 @@ async function showEditExperienceModal(data, row) {
       }
     } else if (currentPosition) {
       // Si n'existe pas, mettre "Autre" et remplir le champ custom
-      positionSelect.value = 'Autre';
+      if (positionSelect.tomselect) positionSelect.tomselect.setValue('Autre', true);
+      else positionSelect.value = 'Autre';
+
       if (customPositionInput) {
         customPositionInput.value = currentPosition;
         customPositionInput.style.display = 'block';
         customPositionInput.required = true;
       }
     } else {
-      positionSelect.value = '';
+      if (positionSelect.tomselect) positionSelect.tomselect.clear(true);
+      else positionSelect.value = '';
+
       if (customPositionInput) {
         customPositionInput.value = '';
         customPositionInput.style.display = 'none';
@@ -2166,21 +2172,21 @@ function showEditFormationModal(data, row) {
     }
 
     if (optionExists) {
-      if (orgSelect.tomselect) orgSelect.tomselect.setValue(orgName);
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue(orgName, true);
       else orgSelect.value = orgName;
       if (orgCustom) {
         orgCustom.value = '';
         orgCustom.style.display = 'none';
       }
     } else if (orgName) {
-      if (orgSelect.tomselect) orgSelect.tomselect.setValue('Autre');
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('Autre', true);
       else orgSelect.value = 'Autre';
       if (orgCustom) {
         orgCustom.value = orgName;
         orgCustom.style.display = 'block';
       }
     } else {
-      if (orgSelect.tomselect) orgSelect.tomselect.setValue('');
+      if (orgSelect.tomselect) orgSelect.tomselect.setValue('', true);
       else orgSelect.value = '';
       if (orgCustom) {
         orgCustom.value = '';
@@ -2241,7 +2247,7 @@ function showEditFormationModal(data, row) {
 
     if (optionExists) {
       titleSelect.value = currentTitle;
-      if (titleSelect.tomselect) titleSelect.tomselect.setValue(currentTitle);
+      if (titleSelect.tomselect) titleSelect.tomselect.setValue(currentTitle, true);
 
       if (customTitleInput) {
         customTitleInput.value = '';
@@ -2250,7 +2256,7 @@ function showEditFormationModal(data, row) {
     } else {
       // Si n'existe pas, mettre "Autre" et remplir le champ custom
       titleSelect.value = 'Autre';
-      if (titleSelect.tomselect) titleSelect.tomselect.setValue('Autre');
+      if (titleSelect.tomselect) titleSelect.tomselect.setValue('Autre', true);
 
       if (customTitleInput) {
         customTitleInput.value = currentTitle;
