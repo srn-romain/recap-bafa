@@ -1144,7 +1144,7 @@ function addItineraryRow(location = '', url = '') {
   const tbody = document.getElementById('itinerary-tbody');
   if (!tbody) return;
 
-  const rowId = `itinerary - row - ${Date.now()} `;
+  const rowId = `itinerary-row-${Date.now()}`;
 
   const row = document.createElement('tr');
   row.id = rowId;
@@ -1152,7 +1152,7 @@ function addItineraryRow(location = '', url = '') {
   row.style.borderBottom = '1px solid #bbf7d0';
 
   row.innerHTML = `
-  < td style = "padding: 10px;" >
+    <td style="padding: 10px;">
       <input type="text" class="itinerary-location" placeholder="Ex: Lyon" 
         style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; color: #1e293b; background: #fff; transition: all 0.2s;" 
         onfocus="this.style.borderColor='#2563eb'; this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(37, 99, 235, 0.1)';" onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='none';">
