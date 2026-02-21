@@ -1926,7 +1926,7 @@ function closeExperienceModal(force = false) {
 // Fermer la modale au clic extérieur
 document.addEventListener('DOMContentLoaded', function () {
   // Fermer les modales au clic sur le fond
-  const modals = ['experience-modal', 'formation-modal', 'auth-modal', 'delete-confirm-modal'];
+  const modals = ['experience-modal', 'formation-modal', 'delete-confirm-modal'];
   modals.forEach(modalId => {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -1936,8 +1936,6 @@ document.addEventListener('DOMContentLoaded', function () {
             closeExperienceModal();
           } else if (modalId === 'formation-modal') {
             closeFormationModal();
-          } else if (modalId === 'auth-modal') {
-            closeAuthModal();
           } else if (modalId === 'delete-confirm-modal') {
             closeDeleteConfirmModal();
           }

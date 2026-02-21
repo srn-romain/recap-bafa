@@ -1340,7 +1340,7 @@
     window.onclick = function (e) {
       const authModal = document.getElementById('auth-modal');
       const settingsModal = document.getElementById('settings-modal');
-      if (e.target === authModal) closeAuthModal();
+      // if (e.target === authModal) closeAuthModal(); <- Removed to prevent accidental closure
       if (e.target === settingsModal) {
         if (typeof closeSettingsModal === 'function') closeSettingsModal();
       }
