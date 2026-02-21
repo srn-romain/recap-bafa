@@ -499,7 +499,8 @@ async function sendPasswordReset() {
 
     try {
         await firebase.auth().sendPasswordResetEmail(window.currentUser.email);
-        showSettingsFeedback('success', `Email de réinitialisation envoyé à ${window.currentUser.email}`);
+        const sender = 'noreply@macollectiondebafa.firebaseapp.com';
+        showSettingsFeedback('success', `Email de réinitialisation envoyé à ${window.currentUser.email} - vérifiez vos spams ! (expéditeur : ${sender})`);
     } catch (error) {
         console.error("Erreur reset password", error);
         showSettingsFeedback('error', "Erreur: " + error.message);
