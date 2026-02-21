@@ -6,11 +6,11 @@ const SETTINGS_FEEDBACK_ID = 'settings-feedback';
  * @param {string} type 'success' ou 'error'
  * @param {string} message Le message à afficher
  */
-function showSettingsFeedback(type, message) {
+function showSettingsFeedback(type, message, { durationMs = 3000, allowHtml = false } = {}) {
     const feedbackEl = document.getElementById(SETTINGS_FEEDBACK_ID);
     if (!feedbackEl) return;
 
-    feedbackEl.textContent = message;
+    feedbackEl.innerHTML = allowHtml ? message : message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     feedbackEl.className = `feedback-message ${type}`;
     feedbackEl.style.display = 'block';
 
@@ -18,7 +18,7 @@ function showSettingsFeedback(type, message) {
     if (type === 'success') {
         setTimeout(() => {
             feedbackEl.style.display = 'none';
-        }, 3000);
+        }, durationMs);
     }
 }
 
@@ -500,7 +500,10 @@ async function sendPasswordReset() {
     try {
         await firebase.auth().sendPasswordResetEmail(window.currentUser.email);
         const sender = 'noreply@macollectiondebafa.firebaseapp.com';
-        showSettingsFeedback('success', `Email de réinitialisation envoyé à ${window.currentUser.email} - vérifiez vos spams ! (expéditeur : ${sender})`);
+        // Mettre en relief l'email et laisser le message plus longtemps (12s)
+        const highlightedEmail = `<span style="font-weight:700; color:#f39c12; text-decoration:underline;">${window.currentUser.email}</span>`;
+        const msg = `Email de réinitialisation envoyé à ${highlightedEmail} — vérifiez vos spams !<br><small>Expéditeur : <strong>${sender}</strong></small>`;
+        showSettingsFeedback('success', msg, { durationMs: 12000, allowHtml: true });
     } catch (error) {
         console.error("Erreur reset password", error);
         showSettingsFeedback('error', "Erreur: " + error.message);
