@@ -47,7 +47,7 @@ const Tutorial = (function () {
         {
             element: '#logout-button-top',
             title: 'Terminé !',
-            content: 'Le tour est fini. N’oubliez pas de vous déconnecter sur un ordinateur public. Bonne route !',
+            content: 'Le tour est fini. N’oubliez pas de vous déconnecter si vous êtes sur un ordinateur public. Bonne route !',
             position: 'bottom'
         }
     ];
