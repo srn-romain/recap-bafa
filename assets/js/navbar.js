@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="nav-content">
             <!-- Profile Pic (Dynamic) -->
             <test id="nav-profile-pic-container" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid white; display: none; margin-right: 10px;">
-                <img id="nav-profile-pic" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                <img id="nav-profile-pic" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
             </test>
 
             <!-- Home Icon (Mobile) -->

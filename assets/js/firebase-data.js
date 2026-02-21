@@ -238,6 +238,7 @@ function createFormationRow(formation) {
   logoImg.src = formation.logoPath;
   logoImg.alt = 'Logo de ' + formation.organism;
   logoImg.className = 'image-carrée';
+  logoImg.loading = 'lazy';
   logoLink.appendChild(logoImg);
   tdLogo.appendChild(logoLink);
   tr.appendChild(tdLogo);
