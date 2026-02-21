@@ -201,7 +201,7 @@
             style="background: #e2d9f3; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
             <i class="bi bi-globe2" style="font-size: 1.8rem; color: #512da8;"></i>
           </div>
-          <h3 style="color: #333; margin-bottom: 10px; font-size: 1.2rem;">Polyvalence</h3>
+          <h3 style="color: #333; margin-bottom: 10px; font-size: 1.2rem;">Diversité</h3>
           <p style="color: #666; font-size: 0.95rem;">Gérez tout type de séjour : Centre de loisirs, Scoutisme, Colos ou
             séjours de vacances...</p>
         </test>
@@ -497,7 +497,41 @@
 
         <div class="settings-divider"></div>
 
-        <h3 class="subsettings-title">Statistiques manuelles</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+          <h3 class="subsettings-title" style="margin: 0;">Statistiques manuelles</h3>
+          <a href="#" onclick="toggleStatsExplanation(event)"
+            style="font-size: 0.7rem; color: #999; text-decoration: underline; font-weight: normal; font-style: italic;">
+            Pourquoi cette question ?
+          </a>
+        </div>
+
+
+
+        <!-- Bulle explicative Stats Manuelles -->
+        <div id="stats-explanation-bubble"
+          style="display: none; position: relative; margin-top: 10px; margin-bottom: 15px;">
+          <div style="background: linear-gradient(135deg, #a6d866 0%, #8ecf4e 100%); 
+                                  border-radius: 8px; 
+                                  padding: 15px; 
+                                  color: white; 
+                                  font-size: 0.85rem; 
+                                  box-shadow: 0 4px 12px rgba(166, 216, 102, 0.3);
+                                  position: relative;">
+            <div style="position: absolute; 
+                                      top: -8px; 
+                                      right: 30px; 
+                                      width: 0; 
+                                      height: 0; 
+                                      border-left: 8px solid transparent; 
+                                      border-right: 8px solid transparent; 
+                                      border-bottom: 8px solid #a6d866;"></div>
+            <p style="margin: 0; line-height: 1.5;">
+              Nous vous demandons ces chiffres car le programme ne peut pas deviner si vous avez travaillé plusieurs
+              fois avec les mêmes personnes. Ces données permettent d'avoir un aperçu réel de votre réseau dans la
+              section <strong>Statistiques</strong>.
+            </p>
+          </div>
+        </div>
         <div class="form-row" style="display: flex; gap: 10px;">
           <div class="form-group" style="flex: 1;">
             <label>Animateurs</label>
@@ -513,6 +547,10 @@
           </div>
         </div>
 
+        <!-- Preview de la phrase publique -->
+        <div id="settings-stats-preview"
+          style="display: none; background: #f8fdf4; border: 1px dashed #a6d866; border-radius: 8px; padding: 10px; margin-top: 15px; font-size: 0.8rem; color: #666; text-align: center; line-height: 1.4;">
+        </div>
         <button type="submit" class="submit-btn" style="width: 100%; margin-top: 15px;">Enregistrer</button>
 
         <div id="settings-feedback" class="feedback-message hidden" style="margin-top: 10px;"></div>

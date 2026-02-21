@@ -69,11 +69,13 @@ document.addEventListener('DOMContentLoaded', function () {
         backgroundInput.addEventListener('change', handleBackgroundImageUpload);
     }
 
-    // Listener pour la photo de profil
-    const profileInput = document.getElementById('settings-profile-pic');
-    if (profileInput) {
-        profileInput.addEventListener('change', handleProfilePicUpload);
-    }
+    // Listeners pour les stats manuelles (preview dynamique)
+    ['settings-animators-count', 'settings-directors-count', 'settings-trainers-count'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', updateSettingsStatsPreview);
+        }
+    });
 });
 
 /**
@@ -319,6 +321,9 @@ async function openSettingsModal() {
 
             // Sauvegarder l'état initial
             settingsInitialState = getSettingsState();
+
+            // Mettre à jour la preview des stats
+            updateSettingsStatsPreview();
 
             // Remplir la photo de profil
             const profilePreview = document.getElementById('preview-profile-pic');
@@ -814,3 +819,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // Les listeners sont généralement attachés via onclick dans le HTML
     // ou gérés par firebase-auth.js pour l'affichage initial
 });
+/**
+ * Met à jour la phrase de prévisualisation des statistiques manuelles
+ */
+function updateSettingsStatsPreview() {
+    const animators = parseInt(document.getElementById('settings-animators-count')?.value || 0, 10);
+    const directors = parseInt(document.getElementById('settings-directors-count')?.value || 0, 10);
+    const trainers = parseInt(document.getElementById('settings-trainers-count')?.value || 0, 10);
+
+    const previewEl = document.getElementById('settings-stats-preview');
+    if (!previewEl) return;
+
+    const parts = [];
+    if (animators > 0) parts.push(`<span style="color: #50644c; font-weight: bold;">${animators}</span> animateur${animators > 1 ? 's' : ''}`);
+    if (directors > 0) parts.push(`<span style="color: #50644c; font-weight: bold;">${directors}</span> directeur${directors > 1 ? 's' : ''}`);
+    if (trainers > 0) parts.push(`<span style="color: #50644c; font-weight: bold;">${trainers}</span> formateur${trainers > 1 ? 's' : ''}`);
+
+    if (parts.length > 0) {
+        let sentence = "J'ai travaillé avec ";
+        if (parts.length === 1) {
+            sentence += parts[0];
+        } else {
+            const last = parts.pop();
+            sentence += parts.join(', ') + ' et ' + last;
+        }
+        previewEl.innerHTML = `La phrase affichée publiquement sera : <br><em>"${sentence}"</em>`;
+        previewEl.style.borderColor = "#a6d866";
+        previewEl.style.background = "#f8fdf4";
+    } else {
+        // Mode Teaser / Incitation
+        previewEl.innerHTML = `En remplissant ces données, la phrase qui sera affichée pourrait être :<br><em>"J'ai travaillé avec 15 animateurs, 2 directeurs et 1 formateur"</em>`;
+        previewEl.style.borderColor = "#ddd";
+        previewEl.style.background = "#fafafa";
+    }
+    previewEl.style.display = 'block';
+}

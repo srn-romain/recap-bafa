@@ -1141,4 +1141,11 @@ window.toggleTips = function () {
     }
   }
 };
-
+// Fonction pour plier/déplier l'explication des stats manuelles
+window.toggleStatsExplanation = function (event) {
+  if (event) event.preventDefault();
+  const bubble = document.getElementById('stats-explanation-bubble');
+  if (bubble) {
+    bubble.style.display = (bubble.style.display === 'none' || bubble.style.display === '') ? 'block' : 'none';
+  }
+};
