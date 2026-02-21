@@ -36,7 +36,7 @@ body {
   line-height: 1.6;
   background: #50644c;
   color: #333;
-  padding: 20px;
+  padding: 5px;
   margin: 0;
 }
 
@@ -54,9 +54,9 @@ body.modal-open {
 # Principale
 --------------------------------------------------------------*/
 div {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 13px;
   background: #fff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -1930,4 +1930,14 @@ th.sortable:hover .sort-indicator.sort-neutral {
 .google-btn i {
   color: #4285F4;
   font-size: 1.2rem;
+}
+
+/* Corrections pour le tutoriel : éviter que la règle générique `div { max-width: 1500px }` n'affecte l'overlay */
+#tutorial-overlay {
+  max-width: none !important;
+}
+
+/* Le tooltip doit rester stylé mais ne pas hériter des contraintes globales */
+#tutorial-tooltip {
+  max-width: none !important;
 }
