@@ -471,12 +471,12 @@ async function updatePositionLabels() {
 
   // Intitulés de poste à retirer spécifiquement pour "Centre de loisir" (alsh)
   const removableOptionsPosteAlsh = [
-    'Animateur Ski', 'Directeur de Formation', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout', 'Chef Scout'
+    'Animateur Ski', 'Animateur Snow', 'Directeur de Formation', 'Tuteur de Maisonnée', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout', 'Chef Scout'
   ];
 
   // Intitulés de poste à retirer spécifiquement pour "Autre" (autre)
   const removableOptionsPosteAutre = [
-    'Animateur Ski', 'Directeur de Formation', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout', 'Chef Scout'
+    'Animateur Ski', 'Animateur Snow', 'Directeur de Formation', 'Directeur Adjoint & SB', 'Directeur Adjoint & AS', 'Formateur BAFA', 'Formateur BAFD', 'Respons Scout', 'Chef Scout'
   ];
 
   // Intitulés de poste à afficher EXCLUSIVEMENT pour "SNU" (dans gestion)
