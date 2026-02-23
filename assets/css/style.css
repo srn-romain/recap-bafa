@@ -1749,14 +1749,11 @@ th.sortable:hover .sort-indicator.sort-neutral {
 .btn-dark {
   background: linear-gradient(135deg, #50644c 0%, #3d4f3a 100%);
   box-shadow: 0 4px 15px rgba(80, 100, 76, 0.35);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+    transition: opacity 0.3s;;
 }
 
 .btn-dark:hover {
-  background: linear-gradient(135deg, #5d7558 0%, #4a5e46 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(80, 100, 76, 0.5);
-  opacity: 1 !important;
+    opacity: 0.9;;
 }
 
 .btn-dark:active {
