@@ -974,6 +974,9 @@ async function confirmDelete() {
     return;
   }
 
+  // Sauvegarder la position de scroll avant rechargement
+  const savedScrollY = window.scrollY;
+
   try {
     if (currentDeletingType === 'experience') {
       if (typeof deleteExperienceFromFirebase === 'function') {
@@ -994,6 +997,9 @@ async function confirmDelete() {
     if (typeof loadDataFromFirebase === 'function') {
       await loadDataFromFirebase();
     }
+
+    // Restaurer la position de scroll
+    window.scrollTo({ top: savedScrollY, behavior: 'instant' });
   } catch (error) {
     console.error('Erreur lors de la suppression:', error);
     alert('Erreur lors de la suppression. Veuillez réessayer.');

@@ -271,17 +271,33 @@ function toggleAlshDateFields() {
   if (expType === 'alsh' || expType === 'scout') {
     alshOptions.style.display = 'block';
 
+    // Mettre à jour le libellé du bouton radio selon le type
+    const isScout = (expType === 'scout');
+    const mercredisRadioLabel = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]');
+    if (mercredisRadioLabel && mercredisRadioLabel.parentElement) {
+      // Le texte est le nœud texte à la fin du label
+      const label = mercredisRadioLabel.parentElement;
+      // Récupérer le dernier nœud texte du label
+      const textNodes = Array.from(label.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
+      if (textNodes.length > 0) {
+        textNodes[textNodes.length - 1].textContent = isScout ? '\n                                Tous les samedis\n                            ' : '\n                                Tous les mercredis\n                            ';
+      } else {
+        // Fallback : remplacer le innerHTML en conservant le radio
+        label.lastChild.textContent = isScout ? ' Tous les samedis' : ' Tous les mercredis';
+      }
+    }
+
     // Vérifier quel radio est coché
     const isMercredis = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
 
     if (isMercredis) {
-      // Mode "Tous les mercredis"
+      // Mode "Tous les mercredis/samedis"
       standardDateContainer.style.display = 'none';
       mercredisDateContainer.style.display = 'block';
 
       const dayTypeSpan = document.getElementById('alsh-day-type');
       if (dayTypeSpan) {
-        dayTypeSpan.textContent = (expType === 'scout') ? 'des samedis' : 'des mercredis';
+        dayTypeSpan.textContent = isScout ? 'des samedis' : 'des mercredis';
       }
 
       // Masquer le champ durée standard car géré automatiquement (36j)
