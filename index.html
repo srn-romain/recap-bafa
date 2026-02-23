@@ -110,6 +110,13 @@
         </button>
       </div>
 
+      <!-- Lien RGPD -->
+      <p style="text-align: center; margin-top: -10px; margin-bottom: 20px;">
+        <button onclick="openRgpdModal()" class="rgpd-link-btn">
+          <i class="bi bi-shield-check"></i> Politique de confidentialité & RGPD
+        </button>
+      </p>
+
       <!-- Section Nouveautés -->
       <div id="whats-new-section"
         style="max-width: 850px; margin: 40px auto; background: #fff9eb; border-left: 5px solid #f39c12; padding: 20px 30px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: left;">
@@ -298,9 +305,9 @@
         text-align:center;>
         <p style="margin:0;">
           Vous repérez une erreur ? Vous avez une question/suggestion ?<br>
-          Remplissez ce formulaire dédié  :
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwn-_yuDIcpBQPzOjowHK_m_dh_No04GOvwDK99KgduHTwCA/viewform?usp=publish-editor" target="_blank"
-            style="color:#f39c12; font-weight:bold; text-decoration:underline;">ici</a>
+          Remplissez ce formulaire dédié :
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwn-_yuDIcpBQPzOjowHK_m_dh_No04GOvwDK99KgduHTwCA/viewform?usp=publish-editor"
+            target="_blank" style="color:#f39c12; font-weight:bold; text-decoration:underline;">ici</a>
         </p>
 
       </test>
@@ -1362,7 +1369,185 @@
       document.getElementById('user-manual-modal').style.display = 'none';
       document.body.classList.remove('modal-open');
     }
+
+    function openRgpdModal() {
+      document.getElementById('rgpd-modal').style.display = 'flex';
+      document.body.classList.add('modal-open');
+    }
+
+    function closeRgpdModal() {
+      document.getElementById('rgpd-modal').style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
+
+    // Fermer la modale RGPD au clic extérieur
+    document.addEventListener('DOMContentLoaded', function () {
+      const rgpdModal = document.getElementById('rgpd-modal');
+      if (rgpdModal) {
+        rgpdModal.addEventListener('click', function (e) {
+          if (e.target === rgpdModal) closeRgpdModal();
+        });
+      }
+    });
   </script>
+  <!-- Modale RGPD -->
+  <div id="rgpd-modal" class="modal" style="display: none; z-index: 10002;">
+    <div class="modal-content large-modal" style="max-height: 90vh; overflow-y: auto; padding: 20px; text-align: left;">
+      <span class="close-modal" onclick="closeRgpdModal()">&times;</span>
+
+      <h2
+        style="border-bottom: 2px solid #a6d866; padding-bottom: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+        <i class="bi bi-shield-lock-fill" style="color: #50644c; font-size: 1.4rem;"></i>
+        Politique de confidentialité & RGPD
+      </h2>
+
+      <span class="rgpd-badge">Conforme au Règlement (UE) 2016/679 — RGPD</span>
+      <p style="font-size: 0.82rem; color: #888; margin-bottom: 20px; font-style: italic;">
+        Dernière mise à jour : Février 2026
+      </p>
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-person-badge-fill"></i> 1. Responsable du traitement</h3>
+        <p>
+          Le responsable du traitement des données est <strong>Romain (@romain_colo)</strong>, créateur et
+          administrateur
+          de la plateforme (<a href="https://srn-romain.github.io/recap-bafa/index.html"
+            target="_blank" style="color:#50644c;"><u><em>Récap BAFA &amp; BAFD</em></u></a>).<br>
+          Contact : via Instagram <a href="https://www.instagram.com/romain_colo/" target="_blank"
+                                     style="color:#50644c;"><u>@romain_colo</u></a> ou via le formulaire de la plateforme.
+        </p>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-database-fill"></i> 2. Données collectées</h3>
+        <p>Les données suivantes sont collectées lors de votre inscription et utilisation :</p>
+        <ul>
+          <li><strong>Identité :</strong> prénom, nom de famille</li>
+          <li><strong>Contact :</strong> adresse e-mail</li>
+          <li><strong>Profil :</strong> genre (optionnelle), photo de profil (optionnelle), lien LinkedIn (optionnel)</li>
+          <li><strong>Parcours professionnel :</strong> expériences d'animation (dates, lieux, types de séjour, postes,
+            tranches d'âge, organismes) et formations (BAFA, BAFD) (optionnelle)</li>
+          <li><strong>Statistiques manuelles :</strong> nombre d'animateurs, directeurs et formateurs croisés
+            (optionnel)</li>
+          <li><strong>Paramètres :</strong> visibilité du profil, visibilité de l'e-mail</li>
+          <li><strong>Métadonnées techniques :</strong> date de création du compte, date de dernière connexion</li>
+        </ul>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-bullseye"></i> 3. Finalités du traitement</h3>
+        <p>Vos données sont utilisées exclusivement pour :</p>
+        <ul>
+          <li>Créer et gérer votre compte utilisateur</li>
+          <li>Afficher votre profil public de parcours d'animation</li>
+          <li>Permettre aux recruteurs de trouver votre profil via la recherche (si vous avez activé la visibilité)</li>
+          <li>Calculer et afficher vos statistiques de parcours</li>
+          <li>Générer des exports PDF de vos tableaux</li>
+          <li>Assurer la sécurité et le bon fonctionnement de la plateforme</li>
+          <li>Personnaliser votre profil : le genre ajuste les accords (ex. Animateur/Animatrice), la photo de profil humanise votre fiche et facilite la reconnaissance, et le lien LinkedIn facilite la prise de contact.</li>
+        </ul>
+        <p style="margin-top: 8px;"><strong>Aucune donnée n'est utilisée à des fins commerciales, publicitaires ou cédée
+            à des tiers.</strong></p>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-justify-left"></i> 4. Base légale du traitement</h3>
+        <p>
+          Le traitement repose sur votre <strong>consentement explicite</strong> (Art. 6.1.a RGPD), manifesté lors de
+          la création de votre compte. Vous pouvez retirer ce consentement à tout moment en supprimant votre compte.
+        </p>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-clock-history"></i> 5. Durée de conservation</h3>
+        <ul>
+          <li>Vos données sont conservées <strong>aussi longtemps que votre compte est actif</strong></li>
+          <li>En cas de suppression de compte, toutes vos données (profil, expériences, formations, photo) sont
+            <strong>définitivement et immédiatement supprimées</strong> des serveurs Firebase
+          </li>
+          <li>Aucune archive ou copie de sauvegarde n'est conservée après suppression</li>
+        </ul>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-lock-fill"></i> 6. Sécurité des données</h3>
+        <p>
+          La plateforme utilise les services <strong>Firebase (Google LLC)</strong> pour l'authentification,
+          le stockage de données (Firestore) et les fichiers (Firebase Storage). Ces services offrent :
+        </p>
+        <ul>
+          <li>Chiffrement des données en transit (HTTPS/TLS)</li>
+          <li>Chiffrement des données au repos</li>
+          <li>Authentification sécurisée (mot de passe hashé, connexion Google OAuth2)</li>
+          <li>Règles d'accès Firestore : chaque utilisateur ne peut lire/modifier que ses propres données</li>
+        </ul>
+        <p style="margin-top: 8px;">
+          Firebase est soumis au RGPD via les <a href="https://firebase.google.com/support/privacy" target="_blank"
+                                                 style="color:#50644c;"><u>clauses contractuelles types</u></a> de Google.
+        </p>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-people-fill"></i> 7. Partage des données</h3>
+        <p>
+          Vos données ne sont <strong>jamais vendues ni cédées</strong> à des tiers. Elles sont uniquement partagées
+          avec :
+        </p>
+        <ul>
+          <li><strong>Firebase / Google LLC</strong> (hébergeur technique, États-Unis — encadré par des garanties RGPD)
+          </li>
+          <li>Les <strong>recruteurs ou visiteurs</strong> qui consultent votre profil public, uniquement si vous
+            activez la visibilité dans les paramètres</li>
+        </ul>
+      </div>
+
+      <hr class="rgpd-divider">
+
+      <div class="rgpd-section">
+        <h3><i class="bi bi-hand-index-thumb-fill"></i> 8. Vos droits</h3>
+        <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+        <ul>
+          <li><strong>Droit d'accès :</strong> consulter toutes vos données depuis votre tableau de bord</li>
+          <li><strong>Droit de rectification :</strong> modifier vos données à tout moment depuis les paramètres et le
+            tableau de bord</li>
+          <li><strong>Droit à l'effacement (« droit à l'oubli ») :</strong> supprimer définitivement votre compte et
+            toutes vos données via <em>Paramètres → Zone de danger → Supprimer mon compte</em></li>
+          <li><strong>Droit à la portabilité :</strong> exporter l'intégralité de vos données en JSON via <em>Paramètres
+              → Exporter</em></li>
+          <li><strong>Droit d'opposition :</strong> vous pouvez désactiver la visibilité publique de votre profil à tout
+            moment</li>
+          <li><strong>Droit de retrait du consentement :</strong> en supprimant votre compte</li>
+        </ul>
+
+        <hr class="rgpd-divider">
+
+        <p style="margin-top: 8px;">
+          Pour exercer un droit ou signaler un problème, contactez le responsable via
+            <a href="https://www.instagram.com/romain_colo/" target="_blank" style="color:#50644c;"><u>@romain_colo</u></a>
+          ou via le formulaire de contact de la plateforme.
+        </p>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px;">
+        <button onclick="closeRgpdModal()" class="submit-btn" style="width: auto; padding: 10px 30px; margin: 0;">
+          J'ai compris
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

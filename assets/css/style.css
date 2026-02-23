@@ -1749,11 +1749,13 @@ th.sortable:hover .sort-indicator.sort-neutral {
 .btn-dark {
   background: linear-gradient(135deg, #50644c 0%, #3d4f3a 100%);
   box-shadow: 0 4px 15px rgba(80, 100, 76, 0.35);
-    transition: opacity 0.3s;;
+  transition: opacity 0.3s;
+  ;
 }
 
 .btn-dark:hover {
-    opacity: 0.9;;
+  opacity: 0.9;
+  ;
 }
 
 .btn-dark:active {
@@ -2012,4 +2014,85 @@ th.sortable:hover .sort-indicator.sort-neutral {
 .other-site-link:hover {
   color: rgba(243, 156, 18, 0.85);
   border-bottom-color: rgba(243, 156, 18, 0.4);
+}
+
+/* Bouton RGPD discret */
+.rgpd-link-btn {
+  background: none;
+  border: none;
+  color: rgba(60, 60, 60, 0.45);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 1px dashed rgba(60, 60, 60, 0.2);
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  font-style: italic;
+}
+
+.rgpd-link-btn:hover {
+  color: #50644c;
+  border-bottom-color: rgba(80, 100, 76, 0.4);
+}
+
+/* Sections RGPD dans la modale */
+.rgpd-section {
+  margin-bottom: 20px;
+}
+
+.rgpd-section h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 6px 0;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  text-align: left;
+}
+
+.rgpd-section h3 i {
+  color: #50644c;
+  font-size: 1rem;
+}
+
+.rgpd-section p,
+.rgpd-section ul {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 0;
+}
+
+.rgpd-section ul {
+  padding-left: 18px;
+}
+
+.rgpd-section ul li {
+  margin-bottom: 3px;
+}
+
+.rgpd-divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 15px 0;
+}
+
+.rgpd-badge {
+  display: inline-block;
+  background: #f0fdf4;
+  border: 1px solid #a6d866;
+  color: #50644c;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-bottom: 8px;
 }
