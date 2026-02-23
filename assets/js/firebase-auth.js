@@ -381,35 +381,8 @@ async function signOut() {
     window.currentUser = null;
     window.userRole = null;
     window.userProfilePic = null;
-
-    // Vider les données des formations du tableau
-    const formationsTable = document.getElementById('table-formations');
-    if (formationsTable) {
-      const rows = formationsTable.querySelectorAll('tr[data-type]:not(.always-visible)');
-      rows.forEach(row => row.remove());
-    }
-
-    // Vider les stats formations
-    const totalDaysFormation = document.getElementById('total-days-formation');
-    const totalBafaFormations = document.getElementById('total-bafa-formations');
-    const totalBafdFormations = document.getElementById('total-bafd-formations');
-    if (totalDaysFormation) totalDaysFormation.textContent = '0';
-    if (totalBafaFormations) totalBafaFormations.textContent = '0';
-    if (totalBafdFormations) totalBafdFormations.textContent = '0';
-
-    // Cacher le canvas du graphique
-    const formationCanvas = document.getElementById('formationOrganizationChart');
-    if (formationCanvas) {
-      formationCanvas.style.display = 'none';
-      formationCanvas.style.visibility = 'hidden';
-    }
-
-    // Recalculer les statistiques (sans les formations)
-    if (typeof calculateAllStatistics === 'function') {
-      calculateAllStatistics();
-    }
-
-    // Mettre à jour l'UI
+    window.directorRequestStatus = null;
+    document.body.classList.remove('user-logged-in');
     updateUI();
   } catch (error) {
     console.error("Erreur lors de la déconnexion:", error);
@@ -642,6 +615,10 @@ function updateUI() {
   updateSectionNumbers();
 
   // Gestion des demandes directeur
+  const adminRequestsSection = document.getElementById('admin-director-requests-section');
+  if (adminRequestsSection) {
+    adminRequestsSection.style.display = (window.userRole === 'admin') ? 'block' : 'none';
+  }
   if (typeof checkDirectorRequestStatus === 'function') {
     checkDirectorRequestStatus();
   }
