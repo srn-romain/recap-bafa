@@ -332,6 +332,9 @@ async function initAdminMap() {
         const uniqueLocations = {}; // { "Paris": [exp1, exp2], "Lyon": [exp3] }
 
         adminDataCache.experiences.forEach(exp => {
+            // Ignore le compte test pour l'affichage sur la carte
+            if (exp.userId === '60KsVndcHsUYhxh6ErSWgHbjnz63') return;
+
             const locName = exp.data.location ? exp.data.location.trim() : null;
             if (locName && locName.length > 2) {
                 if (!uniqueLocations[locName]) uniqueLocations[locName] = [];
