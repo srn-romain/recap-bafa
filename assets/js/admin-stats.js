@@ -20,7 +20,9 @@ async function loadAdminStats() {
         console.log("Chargement des données globales (mode Admin)...");
 
         const usersSnapshot = await window.firebaseDb.collection('users').get();
-        adminDataCache.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        adminDataCache.users = usersSnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(u => u.id !== '60KsVndcHsUYhxh6ErSWgHbjnz63'); // Exclure le compte de test Joe Doe
 
         // 1. Stats de base (Utilisateurs)
         updateUserStats();
