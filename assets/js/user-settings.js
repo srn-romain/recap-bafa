@@ -237,8 +237,8 @@ let settingsInitialState = null;
  */
 function getSettingsState() {
     return {
-        firstname: document.getElementById('settings-firstname')?.value.trim() || '',
-        lastname: document.getElementById('settings-lastname')?.value.trim() || '',
+        firstname: document.getElementById('settings-firstname')?.value.trim().replace(/\\s+/g, ' ') || '',
+        lastname: document.getElementById('settings-lastname')?.value.trim().replace(/\\s+/g, ' ') || '',
         gender: document.getElementById('settings-gender')?.value || '',
         linkedin: document.getElementById('settings-linkedin')?.value.trim() || '',
         publiclyVisible: document.getElementById('settings-public-visibility')?.checked || false,
@@ -443,8 +443,8 @@ window.addEventListener('click', function (event) {
 async function handleSettingsSubmit(event) {
     event.preventDefault();
 
-    const firstname = document.getElementById('settings-firstname').value.trim();
-    const lastname = document.getElementById('settings-lastname').value.trim();
+    const firstname = document.getElementById('settings-firstname').value.trim().replace(/\\s+/g, ' ');
+    const lastname = document.getElementById('settings-lastname').value.trim().replace(/\\s+/g, ' ');
     const gender = document.getElementById('settings-gender').value;
     const linkedin = document.getElementById('settings-linkedin').value.trim();
     const publiclyVisible = document.getElementById('settings-public-visibility').checked;

@@ -25,7 +25,8 @@ window.handleGoogleLogin = async function () {
       let lastName = "";
 
       if (user.displayName) {
-        const parts = user.displayName.split(' ');
+        const cleanName = user.displayName.trim().replace(/\\s+/g, ' ');
+        const parts = cleanName.split(' ');
         firstName = parts[0] || "";
         lastName = parts.slice(1).join(' ') || "";
       }
@@ -321,8 +322,8 @@ async function handleLogin(event) {
 
       // Inscription
       // Inscription
-      const firstName = document.getElementById('auth-firstname').value;
-      const lastName = document.getElementById('auth-lastname').value;
+      const firstName = document.getElementById('auth-firstname').value.trim().replace(/\\s+/g, ' ');
+      const lastName = document.getElementById('auth-lastname').value.trim().replace(/\\s+/g, ' ');
       const linkedinInput = document.getElementById('auth-linkedin');
       const linkedin = linkedinInput ? linkedinInput.value : '';
 
