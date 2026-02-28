@@ -696,6 +696,22 @@ function filterTable(type, tableId) {
       tab.classList.remove('active');
     }
   });
+
+  // Mettre à jour le label du bouton PDF selon le filtre actif
+  const pdfLabelId = tableId === 'table-experiences'
+    ? 'pdf-btn-experiences-label'
+    : 'pdf-btn-formations-label';
+  const pdfLabel = document.getElementById(pdfLabelId);
+  if (pdfLabel) {
+    if (type === 'all') {
+      pdfLabel.textContent = 'Générer PDF';
+    } else {
+      // Récupérer le texte de l'onglet actif pour l'afficher dans le bouton
+      const activeTab = tabContainer.querySelector('.tab.active');
+      const filterName = activeTab ? activeTab.textContent.trim() : type.toUpperCase();
+      pdfLabel.textContent = `Générer PDF — ${filterName}`;
+    }
+  }
 }
 
 // Initialiser la recherche pour les deux tableaux quand le DOM est chargé
