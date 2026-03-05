@@ -45,10 +45,12 @@ window.handleGoogleLogin = async function () {
         emailVisibility: false
       });
     } else {
-      // Mettre à jour la date de dernière connexion
-      await window.firebaseDb.collection('users').doc(user.uid).update({
-        lastLogin: new Date()
-      });
+      // Mettre à jour la date de dernière connexion et synchroniser la photo Google
+      const updateData = { lastLogin: new Date() };
+      if (user.photoURL) {
+        updateData.profilePic = user.photoURL;
+      }
+      await window.firebaseDb.collection('users').doc(user.uid).update(updateData);
     }
 
     // Récupérer le rôle et mettre à jour l'état local
