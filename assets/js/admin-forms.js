@@ -2398,12 +2398,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       let location = null;
       let locationUrl = null;
-      let itineraryLocations = null;
+      let itineraryLocationsData = null;
 
       if (stayType && stayType.includes('Itinérance')) {
         // Mode itinérance : récupérer le tableau de lieux
-        itineraryLocations = getItineraryLocations();
-        if (itineraryLocations.length === 0 || itineraryLocations.length === 1) {
+        itineraryLocationsData = getItineraryLocations();
+        if (itineraryLocationsData.length === 0 || itineraryLocationsData.length === 1) {
           showExperienceError('Veuillez remplir au moins deux lieux pour l\'itinérance.');
           return;
         }
@@ -2432,7 +2432,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           locationUrl = null;
         }
-        // itineraryLocations reste null
+        // itineraryLocationsData reste null
       }
 
       // Gérer le logo : si vide, tenter la détection automatique
@@ -2544,15 +2544,11 @@ document.addEventListener('DOMContentLoaded', function () {
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
       };
 
-      // Gérer le tableau locations : garder l'un ou l'autre selon le type
+      // Gérer le tableau locations selon le type de séjour
       if (stayType && stayType.includes('Itinérance')) {
-        data.locations = itineraryLocations;
-        // On force la suppression de l'ancien champ s'il existe encore
-        data.itineraryLocations = null;
+        data.locations = itineraryLocationsData;
       } else {
         data.locations = null;
-        // On force la suppression de l'ancien champ s'il existe encore
-        data.itineraryLocations = null;
       }
 
       try {
