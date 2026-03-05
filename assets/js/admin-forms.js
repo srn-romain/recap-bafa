@@ -2570,7 +2570,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       } catch (error) {
         console.error('Erreur:', error);
-        showExperienceError('Erreur lors de l\'enregistrement. Veuillez réessayer.');
+        showExperienceError('Erreur lors de l\'enregistrement. Veuillez recharger la page.');
       }
     });
   }

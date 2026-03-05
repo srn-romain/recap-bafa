@@ -150,6 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
             <p id="auth-privacy-notice" style="display: none; font-size: 0.75rem; color: #888; text-align: center; margin-top: 15px; line-height: 1.4; font-style: italic;">
                 Vos informations personnelles sont collectées dans l'unique but de sécuriser votre accès et de permettre aux recruteurs de vous identifier de manière unique. 
                 En aucun cas vos données ne seront utilisées à des fins commerciales. Nous ne vous contacterons jamais et vos données ne seront jamais cédées.
+                <br><a href="index.html#rgpd" onclick="event.preventDefault(); if(typeof openRgpdModal === 'function'){ closeAuthModal(); openRgpdModal(); } else { window.open('index.html#rgpd', '_blank'); }"
+                style="color: #50644c; text-decoration: underline;">Voir la politique complète</a>
             </p>
         </div>
     </div>
