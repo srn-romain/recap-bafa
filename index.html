@@ -110,39 +110,225 @@
         </button>
       </div>
 
-      <!-- Lien RGPD -->
-      <p style="text-align: center; margin-top: -10px; margin-bottom: 20px;">
-        <button onclick="openRgpdModal()" class="rgpd-link-btn">
-          <i class="bi bi-shield-check"></i> Politique de confidentialité & RGPD
-        </button>
-      </p>
-
       <!-- Section Nouveautés -->
-      <div id="whats-new-section"
-        style="max-width: 850px; margin: 40px auto; background: #fff9eb; border-left: 5px solid #f39c12; padding: 20px 30px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: left;">
-        <h3
-          style="color: #d35400; margin: 0 0 12px 0; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; font-weight: 700;">
-          <i class="bi bi-stars" style="font-size: 1.3rem;"></i> Nouveautés Février 2026
-        </h3>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div id="whats-new-section" style="max-width: 850px; margin: 40px auto; text-align: left;">
+
+        <!-- Version actuelle : Février 2026 -->
+        <div
+          style="background: #fff9eb; border-left: 5px solid #f39c12; padding: 20px 30px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
           <test
-            style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-            <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px;"></i>
-            <span><strong>Gestion photo de profil :</strong> Personnalisez votre espace avec votre propre image.</span>
+            style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+            <h3
+              style="color: #d35400; margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                Dernière version : <i>Février 2026</i>
+            </h3>
+            <span
+              style="background: #f39c12; color: white; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;">VERSION
+              ACTUELLE</span>
           </test>
-          <test
-            style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-            <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px;"></i>
-            <span><strong>Association avec Google Authentification :</strong> Vous pouvez désormais vous connecter via
-              votre compte Google directement !</span>
-          </test>
-          <test
-            style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-            <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px;"></i>
-            <span><strong>Génération PDF :</strong> Téléchargez tout votre parcours en un seul clic !</span>
-          </test>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <test
+              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+              <span><strong>Gestion photo de profil :</strong> Personnalisez votre espace avec votre propre
+                image.</span>
+            </test>
+            <test
+              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+              <span><strong>Connexion Google :</strong> Connectez-vous désormais directement via votre compte
+                Google.</span>
+            </test>
+            <test
+              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+              <span><strong>Génération PDF :</strong> Téléchargez tout votre parcours en un seul clic.</span>
+            </test>
+          </div>
         </div>
+
+        <!-- Conteneur des versions précédentes (empilées, révélées une par une) -->
+        <test id="changelog-history" style="margin-top: 0;">
+
+          <!-- v13 : Janvier 2026 -->
+          <div class="changelog-entry" id="cl-jan2026"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Janvier 2026</p>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Ouverture des comptes publics :</strong> chacun peut créer son propre espace.</span>
+              </test>
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Colos itinérantes :</strong> gestion des séjours multi-lieux.</span>
+              </test>
+            </div>
+          </div>
+
+          <!-- v12 : Novembre 2025 -->
+          <div class="changelog-entry" id="cl-nov2025"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Novembre 2025</p>
+            <div
+              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>Système de connexion :</strong> mise en place du moyen de connexion utilisateur.</span>
+            </div>
+          </div>
+
+          <!-- v11 : Octobre 2025 -->
+          <div class="changelog-entry" id="cl-oct2025"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Octobre 2025</p>
+            <div
+              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>Responsive mobile :</strong> l'interface s'adapte désormais aux écrans de téléphone.</span>
+            </div>
+          </div>
+
+          <!-- v10 : Juillet 2025 -->
+          <div class="changelog-entry" id="cl-jul2025"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Juillet 2025</p>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Graphiques :</strong> ajout de graphiques dans la section Statistiques.</span>
+              </test>
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Nouvelles colonnes :</strong> nombre de jeunes encadrés et logo de l'organisme.</span>
+              </test>
+            </div>
+          </div>
+
+          <!-- v9 : Mars 2025 -->
+          <div class="changelog-entry" id="cl-mar2025"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Mars 2025</p>
+            <div
+              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>Barre de recherche :</strong> filtrez vos expériences et formations.</span>
+            </div>
+          </div>
+
+          <!-- v8 : Février 2025 -->
+          <div class="changelog-entry" id="cl-feb2025"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Février 2025</p>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Tableau des formations :</strong> nouvelle section dédiée à vos formations
+                  BAFA/BAFD.</span>
+              </test>
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Bouton "Retour en haut" :</strong> navigation rapide en bas de page.</span>
+              </test>
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Filtres :</strong> filtrez vos données par type, date ou organisme.</span>
+              </test>
+            </div>
+          </div>
+
+          <!-- v7 : Janvier 2025 -->
+          <div class="changelog-entry" id="cl-jan2025"
+            style="display: none; border-left: 5px solid #a6d866; background: #f8fdf4; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #888; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Janvier 2025</p>
+            <div
+              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #50644c; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>Section Statistiques :</strong> visualisez votre parcours avec des données chiffrées.</span>
+            </div>
+          </div>
+
+          <!-- v1 : Novembre 2024 -->
+          <div class="changelog-entry" id="cl-nov2024"
+            style="display: none; border-left: 5px solid #bbb; background: #f9f9f9; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #aaa; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Novembre 2024 — Lancement 🚀</p>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #777; font-size: 0.9rem; line-height: 1.5;">
+                <span><strong>Mise en ligne initiale :</strong> première version de l'application.</span>
+              </test>
+              <test
+                style="display: flex; align-items: flex-start; gap: 8px; color: #777; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #bbb; flex-shrink: 0; margin-top: 2px;"></i>
+                <span>Mise en place du compte de démonstration.</span>
+              </test>
+            </div>
+          </div>
+        </test>
+
+        <!-- Bouton "Version précédente" -->
+        <test style="text-align: center; margin-top: 10px;"><br>
+          <button id="changelog-prev-btn" onclick="revealPreviousVersion()"
+            style="background: none; border: none; color: #888; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 5px; margin: 0 auto; padding: 6px 12px; border-radius: 20px; transition: background 0.2s;"
+            onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+              &#129047; Voir la version précédente &#129047;
+          </button>
+        </test>
+
       </div>
+
+      <script>
+        // Ordre des versions à révéler (du plus récent au plus ancien)
+        const changelogVersions = [
+          'cl-jan2026', 'cl-dec2025', 'cl-nov2025', 'cl-oct2025',
+          'cl-jul2025', 'cl-mar2025', 'cl-feb2025', 'cl-jan2025', 'cl-nov2024'
+        ];
+        let changelogIndex = 0;
+
+        function revealPreviousVersion() {
+          if (changelogIndex >= changelogVersions.length) return;
+          const id = changelogVersions[changelogIndex];
+          const el = document.getElementById(id);
+          if (el) {
+            el.style.display = 'block';
+            // Animation douce
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-6px)';
+            requestAnimationFrame(() => {
+              el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+            });
+          }
+          changelogIndex++;
+          // Masquer le bouton si on a tout révélé
+          if (changelogIndex >= changelogVersions.length) {
+            document.getElementById('changelog-prev-btn').style.display = 'none';
+          }
+        }
+      </script>
 
       <!-- Cartes de fonctionnalités -->
       <test id="features-grid">
@@ -311,7 +497,14 @@
         </p>
 
       </test>
-    </test>
+    </test><br>
+
+    <!-- Lien RGPD -->
+    <p>
+      <button onclick="openRgpdModal()" class="rgpd-link-btn">
+        <i class="bi bi-shield-check"></i> Politique de confidentialité & RGPD
+      </button>
+    </p>
 
     <!-- Section directeur -->
     <section id="user-list-section" style="display: none; margin-top: 40px; padding: 20px; border-top: 2px solid #eee;">
@@ -516,8 +709,6 @@
             Pourquoi cette question ?
           </a>
         </div>
-
-
 
         <!-- Bulle explicative Stats Manuelles -->
         <div id="stats-explanation-bubble"
@@ -731,8 +922,8 @@
         recruteurs de vous identifier de manière unique.
         En aucun cas vos données ne seront utilisées à des fins commerciales. Nous ne vous contacterons jamais et vos
         données ne seront jamais cédées.<br>
-          <a href="#" onclick="closeAuthModal(); openRgpdModal();"
-             style="color: #50644c; text-decoration: underline;">Voir la politique complète</a>
+        <a href="#" onclick="closeAuthModal(); openRgpdModal();"
+          style="color: #50644c; text-decoration: underline;">Voir la politique complète</a>
       </p>
     </div>
   </div>
