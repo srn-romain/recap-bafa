@@ -171,6 +171,10 @@ function toggleAuthMode() {
     // Afficher les critères et la mention de confidentialité immédiatement
     const privacyNotice = document.getElementById('auth-privacy-notice');
     if (privacyNotice) privacyNotice.style.display = 'block';
+
+    const forgotPasswordLink = document.getElementById('forgot-password-link-container');
+    if (forgotPasswordLink) forgotPasswordLink.style.display = 'none';
+
     setTimeout(updatePasswordStrengthUI, 0);
   } else {
     // Passer en mode connexion
@@ -185,8 +189,11 @@ function toggleAuthMode() {
     // Cacher la liste des critères et la mention de confidentialité en mode connexion
     const criteriaContainer = document.getElementById('password-criteria-container');
     const privacyNotice = document.getElementById('auth-privacy-notice');
+    const forgotPasswordLink = document.getElementById('forgot-password-link-container');
+
     if (criteriaContainer) criteriaContainer.style.display = 'none';
     if (privacyNotice) privacyNotice.style.display = 'none';
+    if (forgotPasswordLink) forgotPasswordLink.style.display = 'block';
   }
 }
 
@@ -274,6 +281,9 @@ function hideAuthError() {
   const errorDiv = document.getElementById('auth-error-message');
   if (errorDiv) {
     errorDiv.style.display = 'none';
+    errorDiv.style.backgroundColor = '';
+    errorDiv.style.color = '';
+    errorDiv.style.borderColor = '';
   }
 }
 
@@ -376,6 +386,57 @@ async function handleLogin(event) {
     showAuthError(errorMessage);
   }
 }
+
+/**
+ * Gère la réinitialisation du mot de passe depuis la modale d'authentification
+ */
+async function handleForgotPassword() {
+  const emailInput = document.getElementById('login-email');
+  const email = emailInput ? emailInput.value.trim() : "";
+  const errorDiv = document.getElementById('auth-error-message');
+
+  if (!email) {
+    showAuthError("Veuillez saisir votre adresse email dans le champ ci-dessus pour réinitialiser votre mot de passe.");
+    if (emailInput) emailInput.focus();
+    return;
+  }
+
+  try {
+    hideAuthError();
+    await firebase.auth().sendPasswordResetEmail(email);
+
+    // Afficher un message de succès
+    if (errorDiv) {
+      errorDiv.innerHTML = `<i class="bi bi-check-circle-fill"></i> Email de réinitialisation envoyé à <strong>${email}</strong> ! Vérifiez vos spams.`;
+      errorDiv.style.display = 'block';
+      errorDiv.style.backgroundColor = '#d4edda';
+      errorDiv.style.color = '#155724';
+      errorDiv.style.borderColor = '#c3e6cb';
+
+      // Remettre le style par défaut après 10 secondes ou si on reclique
+      setTimeout(() => {
+        if (errorDiv.style.backgroundColor === 'rgb(212, 237, 218)') { // #d4edda in RGB
+          errorDiv.style.display = 'none';
+          errorDiv.style.backgroundColor = '';
+          errorDiv.style.color = '';
+          errorDiv.style.borderColor = '';
+        }
+      }, 10000);
+    }
+  } catch (error) {
+    console.error("Erreur Forgot Password:", error);
+    let message = "Erreur lors de l'envoi de l'email.";
+    if (error.code === 'auth/user-not-found') {
+      message = "Aucun utilisateur trouvé avec cette adresse email.";
+    } else if (error.code === 'auth/invalid-email') {
+      message = "Format d'email invalide.";
+    } else if (error.code === 'auth/too-many-requests') {
+      message = "Trop de tentatives. Veuillez réessayer plus tard.";
+    }
+    showAuthError(message);
+  }
+}
+window.handleForgotPassword = handleForgotPassword;
 
 // Déconnexion
 async function signOut() {

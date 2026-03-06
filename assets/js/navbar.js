@@ -128,6 +128,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div id="crit-number" style="margin-bottom: 2px;"><i class="bi bi-circle"></i> Un chiffre</div>
                         <div id="crit-special"><i class="bi bi-circle"></i> Un caractère spécial</div>
                     </div>
+                    <div id="forgot-password-link-container" style="text-align: right; margin-top: 5px;">
+                        <a href="#" onclick="event.preventDefault(); handleForgotPassword();" style="font-size: 0.8rem; color: #50644c; text-decoration: underline;">Mot de passe oublié ?</a>
+                    </div>
                 </div>
                 <button type="submit" class="auth-option-btn admin-btn" style="width: 100%;">
                     <i class="bi bi-box-arrow-in-right"></i> <span id="auth-submit-text">Se connecter</span>
