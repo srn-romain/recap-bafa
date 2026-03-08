@@ -990,7 +990,8 @@ window.toggleFormationOrganizerCustom = function (skipReset = false) {
     'Les Francas': { url: 'https://www.francas.asso.fr/', logo: 'assets/img/lesFrancas.webp', dept: '69' },
     'Cemea': { url: 'https://cemea.asso.fr/', logo: 'assets/img/cemea.webp', dept: '38' },
     'ALEF': { url: 'https://www.alef.asso.fr/', logo: 'assets/img/alef.jpg', dept: '69' },
-    'IFAC': { url: 'https://ifac-formation.fr/', logo: 'assets/img/ifac.jpg', dept: '92' }
+    'IFAC': { url: 'https://ifac-formation.fr/', logo: 'assets/img/ifac.jpg', dept: '92' },
+    'CGCV': { url: 'https://www.cgcv.org/com/homepage', logo: 'assets/img/cgcv.jpeg', dept: '92' }
   };
 
   if (select.value === 'Autre') {
@@ -2895,4 +2896,115 @@ async function deleteFormationFromFirebase(row) {
 }
 
 // La fonction handleLogin est maintenant dans firebase-auth.js
+
+/* === Autocomplete Lieux === */
+function setupCityAutocomplete(inputId, deptInputId) {
+  const inputEl = document.getElementById(inputId);
+  if (!inputEl) return;
+  const deptInputEl = document.getElementById(deptInputId);
+
+  const parent = inputEl.parentElement;
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'autocomplete-dropdown';
+  dropdown.style.display = 'none';
+  dropdown.style.position = 'absolute';
+  dropdown.style.background = 'white';
+  dropdown.style.border = '1px solid #ddd';
+  dropdown.style.borderRadius = '4px';
+  dropdown.style.maxHeight = '200px';
+  dropdown.style.overflowY = 'auto';
+  dropdown.style.width = '100%';
+  dropdown.style.zIndex = '1000';
+  dropdown.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+  dropdown.style.top = '100%';
+  dropdown.style.left = '0';
+  dropdown.style.marginTop = '4px';
+
+  parent.style.position = 'relative';
+  parent.appendChild(dropdown);
+
+  let debounceTimer;
+
+  inputEl.addEventListener('input', function () {
+    clearTimeout(debounceTimer);
+    const query = this.value.trim();
+
+    if (query.length < 3) {
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    debounceTimer = setTimeout(async () => {
+      try {
+        const url = `https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(query)}&fields=nom,codeDepartement,departement,region&boost=population&limit=5`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        dropdown.innerHTML = '';
+        if (data.length > 0) {
+          data.forEach(city => {
+            const item = document.createElement('div');
+            item.style.padding = '8px 12px';
+            item.style.cursor = 'pointer';
+            item.style.borderBottom = '1px solid #f0f0f0';
+            item.style.textAlign = 'left';
+
+            item.addEventListener('mouseenter', () => item.style.backgroundColor = '#f9f9f9');
+            item.addEventListener('mouseleave', () => item.style.backgroundColor = 'transparent');
+
+            const cityName = document.createElement('div');
+            cityName.textContent = city.nom;
+            cityName.style.fontWeight = 'bold';
+            cityName.style.color = '#333';
+
+            const regionName = document.createElement('div');
+            const deptName = city.departement ? city.departement.nom : '';
+            const regName = city.region ? city.region.nom : '';
+            regionName.textContent = `${deptName} (${city.codeDepartement}) - ${regName}`;
+            regionName.style.fontSize = '0.75em';
+            regionName.style.color = '#777';
+            regionName.style.marginTop = '2px';
+
+            item.appendChild(cityName);
+            item.appendChild(regionName);
+
+            item.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              inputEl.value = city.nom;
+              if (deptInputEl) {
+                deptInputEl.value = city.codeDepartement;
+              }
+              dropdown.style.display = 'none';
+            });
+
+            dropdown.appendChild(item);
+          });
+          dropdown.style.display = 'block';
+        } else {
+          dropdown.style.display = 'none';
+        }
+      } catch (e) {
+        console.error("Erreur géo API", e);
+      }
+    }, 300);
+  });
+
+  inputEl.addEventListener('blur', function () {
+    setTimeout(() => {
+      dropdown.style.display = 'none';
+    }, 150);
+  });
+
+  inputEl.addEventListener('focus', function () {
+    if (this.value.trim().length >= 3 && dropdown.children.length > 0) {
+      dropdown.style.display = 'block';
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  setupCityAutocomplete('exp-location', 'exp-location-dept');
+  setupCityAutocomplete('form-location', 'form-location-dept');
+});
 
