@@ -139,6 +139,7 @@ function calculateExperienceStatistics() {
 
   let totalDaysColo = 0;
   let totalDaysAlsh = 0;
+  let totalDaysPeriscolaire = 0;
   let totalYouth = 0;
   const organizationDays = {};
 
@@ -164,23 +165,19 @@ function calculateExperienceStatistics() {
     const organizerTextRaw = organizerCell ? (organizerCell.querySelector('a')?.textContent || organizerCell.textContent) : '';
     const organizerText = organizerTextRaw.replace(/\s*\(\d{2,3}[AB]?\)\s*$/, '').trim();
 
-    // Ajouter aux statistiques
     if (types.includes('colo')) {
       totalDaysColo += days;
-
-      // Ajouter au compteur par organisme
-      if (organizerText) {
-        organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
-      }
+      if (organizerText) organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
     }
 
     if (types.includes('alsh')) {
       totalDaysAlsh += days;
+      if (organizerText) organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
+    }
 
-      // Ajouter au compteur par organisme
-      if (organizerText) {
-        organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
-      }
+    if (types.includes('periscolaire')) {
+      totalDaysPeriscolaire += days;
+      if (organizerText) organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
     }
 
     totalYouth += youthCount;
@@ -189,6 +186,7 @@ function calculateExperienceStatistics() {
   // Mettre à jour les valeurs dans le DOM avec gestion de la visibilité
   updateStatWithVisibility('total-days-colo', totalDaysColo);
   updateStatWithVisibility('total-days-alsh', totalDaysAlsh);
+  updateStatWithVisibility('total-days-periscolaire', totalDaysPeriscolaire);
   updateStatWithVisibility('total-youth', totalYouth);
   updateStatWithVisibility('total-experiences', totalExps);
 
