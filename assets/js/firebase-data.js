@@ -320,24 +320,24 @@ async function loadExperiencesFromFirebase() {
       if (table) {
         table.style.display = '';
         // Vider le tableau sauf l'en-tête
-        const rows = table.querySelectorAll('tr[data-type]');
+        const rows = table.querySelectorAll('tr[data-type], tr.no-data-row');
         rows.forEach(row => {
           if (!row.classList.contains('always-visible')) row.remove();
         });
         // Ajouter le message "Aucune donnée"
         const tbody = table.querySelector('tbody') || table;
         const emptyRow = document.createElement('tr');
+        emptyRow.className = 'no-data-row';
         emptyRow.innerHTML = '<td colspan="10" style="text-align: center; padding: 20px; font-style: italic; color: #7f8c8d;">Aucune donnée à afficher</td>';
         tbody.appendChild(emptyRow);
       }
       return true; // Retourner true pour dire que le chargement est "fini" même si vide
     }
 
-    const table = document.getElementById('table-experiences');
     if (!table) return false;
 
     // Supprimer toutes les lignes sauf l'en-tête
-    const rows = table.querySelectorAll('tr[data-type]');
+    const rows = table.querySelectorAll('tr[data-type], tr.no-data-row');
     rows.forEach(row => {
       if (!row.classList.contains('always-visible')) {
         row.remove();
@@ -402,7 +402,18 @@ async function loadExperiencesFromFirebase() {
     experiences.forEach(experience => {
       const row = createExperienceRow(experience);
       table.appendChild(row);
+
+      // Vérifier si une expérience concerne le BAFD pour le titre
+      const pos = (experience.position || '').toLowerCase();
+      if (pos.includes('dir-') || pos.includes('directeur') || pos.includes('bafd')) {
+        window.userHasBafd = true;
+      }
     });
+
+    // Mettre à jour le titre si nécessaire
+    if (window.userHasBafd && typeof updateDashboardTitle === 'function') {
+      updateDashboardTitle();
+    }
 
     // Cacher le spinner et afficher le tableau
     if (loadingSpinner) {
@@ -417,8 +428,6 @@ async function loadExperiencesFromFirebase() {
   } catch (error) {
     console.error("Erreur lors du chargement des expériences:", error);
     // Cacher le spinner en cas d'erreur
-    const loadingSpinner = document.getElementById('loading-experiences');
-    const table = document.getElementById('table-experiences');
     if (loadingSpinner) {
       loadingSpinner.classList.add('hidden');
     }
@@ -477,24 +486,24 @@ async function loadFormationsFromFirebase() {
       if (table) {
         table.style.display = '';
         // Vider le tableau sauf l'en-tête
-        const rows = table.querySelectorAll('tr[data-type]');
+        const rows = table.querySelectorAll('tr[data-type], tr.no-data-row');
         rows.forEach(row => {
           if (!row.classList.contains('always-visible')) row.remove();
         });
         // Ajouter le message "Aucune donnée"
         const tbody = table.querySelector('tbody') || table;
         const emptyRow = document.createElement('tr');
+        emptyRow.className = 'no-data-row';
         emptyRow.innerHTML = '<td colspan="8" style="text-align: center; padding: 20px; font-style: italic; color: #7f8c8d;">Aucune donnée à afficher</td>';
         tbody.appendChild(emptyRow);
       }
       return true; // Retourner true pour dire que le chargement est "fini" même si vide
     }
 
-    const table = document.getElementById('table-formations');
     if (!table) return false;
 
     // Supprimer toutes les lignes sauf l'en-tête
-    const rows = table.querySelectorAll('tr[data-type]');
+    const rows = table.querySelectorAll('tr[data-type], tr.no-data-row');
     rows.forEach(row => {
       if (!row.classList.contains('always-visible')) {
         row.remove();
@@ -505,7 +514,7 @@ async function loadFormationsFromFirebase() {
     const formations = [];
     snapshot.forEach(doc => {
       const data = doc.data();
-      formations.push({
+      const formation = {
         type: data.type || 'bafa',
         date: data.date || '',
         duration: data.duration || '',
@@ -515,8 +524,19 @@ async function loadFormationsFromFirebase() {
         title: data.title || '',
         location: data.location || '',
         locationUrl: (data.locationUrl && data.locationUrl !== '#') ? data.locationUrl : ''
-      });
+      };
+      formations.push(formation);
+
+      // Vérifier si une formation concerne le BAFD pour le titre
+      if (formation.type.toLowerCase() === 'bafd' || formation.title.toLowerCase().includes('bafd')) {
+        window.userHasBafd = true;
+      }
     });
+
+    // Mettre à jour le titre si nécessaire
+    if (window.userHasBafd && typeof updateDashboardTitle === 'function') {
+      updateDashboardTitle();
+    }
 
     // Trier par date (tri côté client car les dates sont des chaînes)
     // Utiliser la fonction parseFrenchDate de main.js si disponible, sinon créer une version locale
@@ -568,8 +588,6 @@ async function loadFormationsFromFirebase() {
   } catch (error) {
     console.error("Erreur lors du chargement des formations:", error);
     // Cacher le spinner en cas d'erreur
-    const loadingSpinner = document.getElementById('loading-formations');
-    const table = document.getElementById('table-formations');
     if (loadingSpinner) {
       loadingSpinner.classList.add('hidden');
     }
@@ -585,6 +603,9 @@ async function loadFormationsFromFirebase() {
  */
 async function loadDataFromFirebase() {
   // Afficher les spinners au début du chargement
+  // Réinitialiser les drapeaux pour le titre
+  window.userHasBafd = false;
+
   const loadingExperiences = document.getElementById('loading-experiences');
   const loadingFormations = document.getElementById('loading-formations');
   const tableExperiences = document.getElementById('table-experiences');
@@ -700,6 +721,17 @@ function initializeFirebaseData() {
   }
 }
 
+/**
+ * Met à jour le titre du tableau de bord avec ou sans mention BAFD
+ */
+function updateDashboardTitle() {
+  const title = document.getElementById('main-dashboard-title');
+  if (!title || !window.currentUserFullName) return;
+
+  const bafdText = window.userHasBafd ? ' & BAFD' : '';
+  title.innerHTML = `Détails des expériences BAFA${bafdText} de <orange>${window.currentUserFullName}</orange>`;
+}
+
 // Charger le profil utilisateur (pour le titre et LinkedIn)
 async function loadUserProfile() {
   if (!window.targetUid || !window.firebaseDb) return true;
@@ -708,9 +740,7 @@ async function loadUserProfile() {
     const doc = await window.firebaseDb.collection('users').doc(window.targetUid).get();
     if (doc.exists) {
       const data = doc.data();
-      const title = document.getElementById('main-dashboard-title');
       const linkedinLink = document.getElementById('linkedin-link');
-
       // Construire le nom complet
       let fullName = 'Animateur';
       if (data.firstname && data.lastname) {
@@ -722,11 +752,11 @@ async function loadUserProfile() {
       } else if (data.email) {
         fullName = data.email.split('@')[0];
       }
+      window.currentUserFullName = fullName;
 
-      // Mettre à jour le titre
-      if (title) {
-        title.innerHTML = `Détails des expériences BAFA & BAFD de <orange>${fullName}</orange>`;
-      }
+      // Mettre à jour le titre initialement (uniquement BAFA par défaut)
+      window.userHasBafd = false;
+      updateDashboardTitle();
 
       // Gestion de la confidentialité (Compte privé)
       const isOwner = window.currentUser && window.currentUser.uid === window.targetUid;
