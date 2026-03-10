@@ -1634,11 +1634,11 @@ async function showEditExperienceModal(data, row) {
   // Remplir le formulaire avec les données
   document.getElementById('exp-type').value = data.type || 'colo';
 
-  // Gestion spécifique ALSH (Mercredis vs Ponctuel)
-  const isAlsh = (data.type === 'alsh' || data.type === 'scout');
-  // On vérifie si la durée contient "Tous les mercredis" ou "Tous les samedis"
+  // Gestion spécifique ALSH/Scout/Périscolaire (Mercredis vs Ponctuel)
+  const isAlsh = (data.type === 'alsh' || data.type === 'scout' || data.type === 'periscolaire');
+  // On vérifie si la durée contient "Tous les mercredis", "Tous les samedis" ou "Une année périscolaire"
   const durationLower = (data.duration || '').toLowerCase();
-  const isMercredis = durationLower.includes('mercredis') || durationLower.includes('samedis');
+  const isMercredis = durationLower.includes('mercredis') || durationLower.includes('samedis') || durationLower.includes('périscolaire') || durationLower.includes('periscolaire');
 
   if (isAlsh) {
     if (isMercredis) {
