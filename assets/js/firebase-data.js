@@ -510,11 +510,11 @@ async function loadFormationsFromFirebase() {
         date: data.date || '',
         duration: data.duration || '',
         organism: data.organism || '',
-        organismUrl: data.organismUrl || '#',
+        organismUrl: (data.organismUrl && data.organismUrl !== '#') ? data.organismUrl : '',
         logoPath: data.logoPath || '',
         title: data.title || '',
         location: data.location || '',
-        locationUrl: data.locationUrl || '#'
+        locationUrl: (data.locationUrl && data.locationUrl !== '#') ? data.locationUrl : ''
       });
     });
 
