@@ -839,6 +839,8 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Passion Aventure Junior': { url: 'https://passion-aventure-junior.com/', logo: 'assets/img/passionAventureJunior.png', dept: '31' },
     'Sans Frontières': { url: 'https://www.sans-frontieres.fr/', logo: 'assets/img/sansFrontieres.png', dept: '75' },
     'SILC': { url: 'https://silc.fr/', logo: 'assets/img/silc.webp', dept: '16' },
+    'Éclaireuses/Éclaireurs de France': { url: 'https://www.eedf.fr/', logo: 'assets/img/eedf.webp', dept: '75' },
+    'Scout et Guide de France': { url: 'https://www.sgdf.fr/', logo: 'assets/img/scoutgdf.png', dept: '75' },
     'Visas Loisirs': { url: 'https://visasloisirs.com/', logo: 'assets/img/visasLoisirs.webp', dept: '38' },
   };
 
