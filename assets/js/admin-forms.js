@@ -139,6 +139,7 @@ function updateExpStayTypeOptions() {
   // Options à potentiellement retirer pour Autre
   const removableOptionsAutre = [
     { value: 'Scout', text: 'Scout' },
+    { value: 'Péri-scolaire', text: 'Péri-scolaire' },
     { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' },
     { value: 'Gestion libre', text: 'Gestion libre' },
     { value: 'Gestion libre à l\'étranger', text: 'Gestion libre à l\'étranger' },
@@ -187,6 +188,13 @@ function updateExpStayTypeOptions() {
       staySelect.tomselect.setValue('Scout', true);
     } else {
       staySelect.value = 'Scout';
+    }
+  } else if (expType === 'periscolaire') {
+    if (container) container.style.display = 'none';
+    if (staySelect.tomselect) {
+      staySelect.tomselect.setValue('Péri-scolaire', true);
+    } else {
+      staySelect.value = 'Péri-scolaire';
     }
   } else if (expType === 'colo') {
     // Si la valeur actuelle est une qu'on va retirer, on la réinitialise
@@ -238,8 +246,8 @@ function updateExpStayTypeOptions() {
     if (staySelect.tomselect) staySelect.tomselect.sync();
   }
 
-  // Reforcer le mask du container si ALSH ou Scout car tomselect peut recréer l'affichage
-  if ((expType === 'alsh' || expType === 'scout') && container) container.style.display = 'none';
+  // Reforcer le mask du container si ALSH, Scout ou Périscolaire car tomselect peut recréer l'affichage
+  if ((expType === 'alsh' || expType === 'scout' || expType === 'periscolaire') && container) container.style.display = 'none';
 
   // Trier alphabétiquement tout le select
   sortSelectOptionsGenerically(staySelect);
@@ -267,12 +275,13 @@ function toggleAlshDateFields() {
     updatePositionLabels();
   }
 
-  // Si c'est un ALSH ou Scout, on montre les options radio
-  if (expType === 'alsh' || expType === 'scout') {
+  // Si c'est un ALSH, Scout ou Périscolaire, on montre les options radio
+  if (expType === 'alsh' || expType === 'scout' || expType === 'periscolaire') {
     alshOptions.style.display = 'block';
 
     // Mettre à jour le libellé du bouton radio selon le type
     const isScout = (expType === 'scout');
+    const isPeriscolaire = (expType === 'periscolaire');
     const mercredisRadioLabel = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]');
     if (mercredisRadioLabel && mercredisRadioLabel.parentElement) {
       // Le texte est le nœud texte à la fin du label
@@ -280,12 +289,17 @@ function toggleAlshDateFields() {
       // Récupérer le dernier nœud texte du label
       const textNodes = Array.from(label.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
       if (textNodes.length > 0) {
-        textNodes[textNodes.length - 1].textContent = isScout ? '\n                                Tous les samedis\n                            ' : '\n                                Tous les mercredis\n                            ';
+        textNodes[textNodes.length - 1].textContent = isScout ? '\n                                Tous les samedis\n                            ' : isPeriscolaire ? '\n                                Une année périscolaire\n                            ' : '\n                                Tous les mercredis\n                            ';
       } else {
-        // Fallback : remplacer le innerHTML en conservant le radio
-        label.lastChild.textContent = isScout ? ' Tous les samedis' : ' Tous les mercredis';
+        label.lastChild.textContent = isScout ? ' Tous les samedis' : isPeriscolaire ? ' Une année périscolaire' : ' Tous les mercredis';
       }
     }
+
+    // Afficher le bon message d'info
+    const alshInfoMsg = document.getElementById('alsh-info-message');
+    const periscolaireInfoMsg = document.getElementById('periscolaire-info-message');
+    if (alshInfoMsg) alshInfoMsg.style.display = isPeriscolaire ? 'none' : '';
+    if (periscolaireInfoMsg) periscolaireInfoMsg.style.display = isPeriscolaire ? '' : 'none';
 
     // Vérifier quel radio est coché
     const isMercredis = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
@@ -305,7 +319,7 @@ function toggleAlshDateFields() {
       // L'utilisateur demande "dans le champ durée '36' et disabled"
       if (durationInput) {
         durationInput.type = "number";
-        durationInput.value = "36";
+        durationInput.value = isPeriscolaire ? "144" : "36";
         durationInput.disabled = true;
       }
     } else {
@@ -321,8 +335,15 @@ function toggleAlshDateFields() {
       }
     }
   } else {
-    // Pas ALSH (Colo, Autre) -> comportement classique
+    // Pas ALSH, Scout ni Périscolaire (Colo, Autre) -> comportement classique
     alshOptions.style.display = 'none';
+
+    // Réinitialiser les messages d'info
+    const alshInfoMsg = document.getElementById('alsh-info-message');
+    const periscolaireInfoMsg = document.getElementById('periscolaire-info-message');
+    if (alshInfoMsg) alshInfoMsg.style.display = '';
+    if (periscolaireInfoMsg) periscolaireInfoMsg.style.display = 'none';
+
     standardDateContainer.style.display = 'block';
     mercredisDateContainer.style.display = 'none';
 
@@ -527,7 +548,9 @@ async function updatePositionLabels() {
     let shouldShow = false;
 
     if (expType === 'scout') {
-      if (pos.roles.includes('scout')) shouldShow = true;
+      if (pos.roles.includes('scout') || pos.roles.includes('periscolaire')) shouldShow = true;
+    } else if (expType === 'periscolaire') {
+      shouldShow = onlyOptionsPostePeriscolaire.includes(pos.m);
     } else {
       if (pos.roles.includes('all')) shouldShow = true;
 
@@ -2353,7 +2376,8 @@ document.addEventListener('DOMContentLoaded', function () {
       let finalDuration = '';
 
       const expType = document.getElementById('exp-type').value;
-      const isAlshOrScout = (expType === 'alsh' || expType === 'scout');
+      const isAlshOrScout = (expType === 'alsh' || expType === 'scout' || expType === 'periscolaire');
+      const isPeriscolaire = (expType === 'periscolaire');
       const isMercredis = isAlshOrScout && document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
 
       if (isMercredis) {
@@ -2366,8 +2390,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const endYear = parseInt(startYear) + 1;
         finalDate = `Septembre ${startYear} - Juin ${endYear}`;
 
-        // La durée est fixée à "Tous les mercredis" ou "Tous les samedis"
-        finalDuration = (expType === 'scout') ? "Tous les samedis" : "Tous les mercredis";
+        // La durée est fixée selon le type
+        if (isPeriscolaire) {
+          finalDuration = "Une année périscolaire";
+        } else if (expType === 'scout') {
+          finalDuration = "Tous les samedis";
+        } else {
+          finalDuration = "Tous les mercredis";
+        }
       } else {
         // Mode classique (Ponctuel ou Colo/Autre)
         const monthValue = document.getElementById('exp-date-month').value;
@@ -2485,7 +2515,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: document.getElementById('exp-type').value,
         date: finalDate, // Utiliser la date calculée plus haut (gère Mercredis et Mois standard)
         duration: (() => {
-          if (finalDuration === "Tous les mercredis" || finalDuration === "Tous les samedis") return finalDuration;
+          if (finalDuration === "Tous les mercredis" || finalDuration === "Tous les samedis" || finalDuration === "Une année périscolaire") return finalDuration;
           // Sinon logique standard avec jours
           if (!finalDuration) return '';
           const days = parseInt(finalDuration, 10);

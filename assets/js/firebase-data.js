@@ -50,11 +50,11 @@ function createExperienceRow(experience) {
 
   // Colonne Date
   const tdDate = document.createElement('td');
-  // Vérification pour format spécifique ALSH/Scout "Tous les mercredis/samedis"
+  // Vérification pour format spécifique ALSH/Scout/Périscolaire "Tous les mercredis/samedis/Une année périscolaire"
   // On veut afficher seulement "AAAA-AAAA" mais garder le tri correct
-  const isPeriodic = (experience.type === 'alsh' || experience.type === 'scout') &&
+  const isPeriodic = (experience.type === 'alsh' || experience.type === 'scout' || experience.type === 'periscolaire') &&
     typeof experience.duration === 'string' &&
-    (experience.duration.includes('mercredis') || experience.duration.includes('samedis'));
+    (experience.duration.includes('mercredis') || experience.duration.includes('samedis') || experience.duration.includes('périscolaire'));
 
   if (isPeriodic) {
     const periodMatch = experience.date.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/i);

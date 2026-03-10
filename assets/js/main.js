@@ -272,6 +272,10 @@ function extractDays(text) {
   if (normalizedText.includes('mercredis') || normalizedText.includes('samedis')) {
     return 36;
   }
+  // Cas spécial périscolaire (144 jours = 4 jours/semaine × 36 semaines)
+  if (normalizedText.includes('périscolaire') || normalizedText.includes('periscolaire')) {
+    return 144;
+  }
 
   // Priorité 1 : Chercher "X jours" ou "X j" (inclut les décimaux)
   const dayMatch = normalizedText.match(/(\d+(?:\.\d+)?)\s*(?:jour|j\b)/);
@@ -648,8 +652,8 @@ function filterTable(type, tableId) {
       const rowType = row.getAttribute('data-type');
       if (rowType) {
         if (type === 'autre') {
-          // Inclure 'scout' dans la catégorie 'autre'
-          if (rowType.includes('autre') || rowType.includes('scout')) {
+          // Inclure 'scout' et 'periscolaire' dans la catégorie 'autre'
+          if (rowType.includes('autre') || rowType.includes('scout') || rowType.includes('periscolaire')) {
             row.style.display = '';
             visibleCount++;
           } else {

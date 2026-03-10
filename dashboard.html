@@ -362,6 +362,7 @@
                         <option value="" disabled selected>-- Sélectionner --</option>
                         <option value="colo">Colonie de vacances</option>
                         <option value="alsh">Centre de loisir</option>
+                        <option value="periscolaire">Périscolaire</option>
                         <option value="scout">Scout</option>
                         <option value="autre">Autre</option>
                     </select>
@@ -401,10 +402,17 @@
                                 min="2000" max="2100" oninput="updateMercredisYearEnd()">
                             <span style="font-weight: 500;">- Juin <span id="mercredis-year-end">AAAA</span></span>
                         </div>
-                        <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 5px; font-style: italic;">
+                        <p id="alsh-info-message"
+                            style="color: #7f8c8d; font-size: 0.85rem; margin-top: 5px; font-style: italic;">
                             <i class="bi bi-info-circle"></i> 36 jours seront comptabilisés sur cette année scolaire
                             <span id="alsh-day-type">des mercredis</span> de l'année <span
                                 id="mercredis-period-display">XXXX-YYYY</span>.
+                        </p>
+                        <p id="periscolaire-info-message"
+                            style="color: #7f8c8d; font-size: 0.85rem; margin-top: 5px; font-style: italic; display: none;">
+                            <i class="bi bi-info-circle"></i> Pour une année périscolaire (septembre – juin), on compte
+                            environ <strong>144 jours</strong> (les jours de semaine hors mercredis, soit 4 jours
+                            &times; 36 semaines). C&rsquo;est ce nombre qui sera comptabilisé.
                         </p>
                     </div>
                 </div>
@@ -431,7 +439,6 @@
                         <option value="Itinérance étranger">Itinérance étranger</option>
                         <option value="Pension complète">Pension complète</option>
                         <option value="Pension complète étranger">Pension complète étranger</option>
-                        <option value="Péri-scolaire">Péri-scolaire</option>
                         <option value="Scout">Scout</option>
                         <option value="SNU">SNU (Service National Universel)</option>
                         <!--<option value="Autre">Autre (préciser)</option>-->
@@ -1213,7 +1220,8 @@
 
                 <div class="form-group checkbox-row">
                     <input type="checkbox" id="settings-is-private" style="transform: scale(1.5); margin-right: 10px;">
-                    <label for="settings-is-private" style="font-size: 0.74em">Rendre mon compte privé (accessible uniquement par moi)</label>
+                    <label for="settings-is-private" style="font-size: 0.74em">Rendre mon compte privé (accessible
+                        uniquement par moi)</label>
                 </div>
 
                 <div class="settings-divider"></div>
