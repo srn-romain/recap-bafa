@@ -602,25 +602,8 @@ function updateUI() {
     quickCopyBtn.style.display = isOwner ? 'flex' : 'none';
   }
 
-  // Afficher toutes les sections (Formations, Stats) pour tout le monde (Public Read)
-  const formationsTitle = document.getElementById('formations');
-  const formationsTableContainer = document.getElementById('table-formations')?.closest('.tabs');
-  const formationsFilters = document.querySelector('#formations + .tabs');
-
-  if (formationsTitle) formationsTitle.style.display = '';
-  if (formationsTableContainer) formationsTableContainer.style.display = '';
-  if (formationsFilters) formationsFilters.style.display = '';
-
-  // S'assurer que le tableau des formations est visible
-  const formationsTable = document.getElementById('table-formations');
-  if (formationsTable) formationsTable.style.display = '';
-
-  // Afficher les stats
-  const canvas = document.getElementById('formationOrganizationChart');
-  if (canvas) {
-    canvas.style.display = '';
-    canvas.style.visibility = '';
-  }
+  // La visibilité des sections (Formations, Stats) est désormais gérée par loadUserProfile
+  // dans firebase-data.js pour respecter les paramètres de confidentialité.
 
   // Activer les liens Google Maps pour tout le monde (demandé : "tout est accessible")
   const mapLinks = document.querySelectorAll('a[href*="maps.app.goo.gl"]');

@@ -740,8 +740,6 @@ async function loadUserProfile() {
       const statsSection = document.getElementById('statistiques');
       const footer = document.getElementById('footer');
       const dashboardTitle = document.getElementById('main-dashboard-title');
-      const experiencesSearch = document.querySelector('.search-container'); // On suppose que c'est le 1er
-      const formationsSearch = document.querySelectorAll('.search-container')[1];
 
       // Reset notices
       if (ownerNotice) ownerNotice.style.display = 'none';
@@ -756,29 +754,41 @@ async function loadUserProfile() {
           if (visitorNotice) visitorNotice.style.display = 'block';
 
           // Masquer les sections de contenu
+          const experiencesHeader = document.getElementById('experiences');
+          const formationsHeader = document.getElementById('formations');
           const sectionsToHide = [
             introSection, tableExperiences, tableFormations, statsSection,
-            dashboardTitle, footer, experiencesSearch, formationsSearch
+            dashboardTitle, footer, experiencesHeader, formationsHeader
           ];
+
+          // Masquer tous les conteneurs de recherche
+          document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', 'none', 'important'));
 
           sectionsToHide.forEach(el => {
             if (el) {
-              // Si c'est un tableau, on cache aussi son parent .tabs si besoin, 
-              // mais commençons par l'élément lui-même
-              el.style.display = 'none';
+              el.style.setProperty('display', 'none', 'important');
+
               // Masquer aussi les conteneurs de type .tabs qui suivent ou précèdent
               if (el.id === 'table-experiences' || el.id === 'table-formations' || el.id === 'statistiques') {
                 let parent = el.parentElement;
                 while (parent && !parent.classList.contains('tabs')) {
                   parent = parent.parentElement;
                 }
-                if (parent) parent.style.display = 'none';
+                if (parent) parent.style.setProperty('display', 'none', 'important');
 
-                // Masquer aussi les onglets de filtres au-dessus
+                // Masquer aussi les onglets de filtres au-dessus et les éléments adjacents
                 let prev = (parent || el).previousElementSibling;
-                while (prev && (prev.classList.contains('tabs') || prev.classList.contains('search-container') || prev.tagName === 'H1')) {
-                  prev.style.display = 'none';
+                while (prev && (prev.classList.contains('tabs') || prev.classList.contains('search-container') || prev.tagName === 'H1' || prev.tagName === 'BR')) {
+                  prev.style.setProperty('display', 'none', 'important');
                   prev = prev.previousElementSibling;
+                }
+                // Pour le titre statistique, masquer aussi l'élément suivant (la grille de stats)
+                if (el.id === 'statistiques') {
+                  let next = el.nextElementSibling;
+                  while (next && (next.classList.contains('tabs') || next.tagName === 'BR')) {
+                    next.style.setProperty('display', 'none', 'important');
+                    next = next.nextElementSibling;
+                  }
                 }
               }
             }
@@ -786,11 +796,28 @@ async function loadUserProfile() {
 
           // Masquer la navbar (sauf home et auth)
           const navItems = document.querySelectorAll('.nav-toc-link');
-          navItems.forEach(item => item.style.display = 'none');
+          navItems.forEach(item => item.style.setProperty('display', 'none', 'important'));
 
           console.log("Accès refusé : Profil privé");
           return false; // Accès refusé
         }
+      }
+
+      // Si accès public OU autorisé (propriétaire d'un compte privé)
+      if (data.isPrivate !== true || isOwner) {
+        // Accès public ou autorisé : S'assurer que les sections sont visibles
+        const experiencesHeader = document.getElementById('experiences');
+        const formationsHeader = document.getElementById('formations');
+        const sectionsToShow = [
+          introSection, tableExperiences, tableFormations, statsSection,
+          dashboardTitle, footer, experiencesHeader, formationsHeader
+        ];
+
+        sectionsToShow.forEach(el => {
+          if (el) el.style.setProperty('display', '', ''); // Reset display
+        });
+        document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', '', ''));
+        document.querySelectorAll('.nav-toc-link').forEach(item => item.style.setProperty('display', '', ''));
       }
 
       // Gérer l'icône LinkedIn et le positionnement du bouton paramètres
