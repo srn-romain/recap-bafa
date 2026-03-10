@@ -708,7 +708,7 @@ async function loadUserProfile() {
     const doc = await window.firebaseDb.collection('users').doc(window.targetUid).get();
     if (doc.exists) {
       const data = doc.data();
-      const title = document.querySelector('h2');
+      const title = document.getElementById('main-dashboard-title');
       const linkedinLink = document.getElementById('linkedin-link');
 
       // Construire le nom complet
@@ -725,9 +725,7 @@ async function loadUserProfile() {
 
       // Mettre à jour le titre
       if (title) {
-        const isDirlo = data.role === 'dirlo';
-        const experiencesText = isDirlo ? 'BAFA & BAFD' : 'BAFA';
-        title.innerHTML = `Détails des expériences ${experiencesText} de <orange>${fullName}</orange>`;
+        title.innerHTML = `Détails des expériences BAFA & BAFD de <orange>${fullName}</orange>`;
       }
 
       // Gestion de la confidentialité (Compte privé)
