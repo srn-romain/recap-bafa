@@ -243,6 +243,7 @@ function getSettingsState() {
         linkedin: document.getElementById('settings-linkedin')?.value.trim() || '',
         publiclyVisible: document.getElementById('settings-public-visibility')?.checked || false,
         emailVisible: document.getElementById('settings-email-visibility')?.checked || false,
+        isPrivate: document.getElementById('settings-is-private')?.checked || false,
         animators: document.getElementById('settings-animators-count')?.value || '',
         directors: document.getElementById('settings-directors-count')?.value || '',
         trainers: document.getElementById('settings-trainers-count')?.value || ''
@@ -301,6 +302,12 @@ async function openSettingsModal() {
             const emailVisibilityInput = document.getElementById('settings-email-visibility');
             if (emailVisibilityInput) {
                 emailVisibilityInput.checked = data.emailVisible === true; // Par défaut false
+            }
+
+            // Charger la visibilité privée
+            const isPrivateInput = document.getElementById('settings-is-private');
+            if (isPrivateInput) {
+                isPrivateInput.checked = data.isPrivate === true; // Par défaut false
             }
 
             // Charger les stats manuelles
@@ -449,6 +456,7 @@ async function handleSettingsSubmit(event) {
     const linkedin = document.getElementById('settings-linkedin').value.trim();
     const publiclyVisible = document.getElementById('settings-public-visibility').checked;
     const emailVisible = document.getElementById('settings-email-visibility').checked;
+    const isPrivate = document.getElementById('settings-is-private').checked;
 
     // Récupérer les stats manuelles
     const animatorsCount = document.getElementById('settings-animators-count').value;
@@ -467,6 +475,7 @@ async function handleSettingsSubmit(event) {
             linkedin: linkedin,
             publiclyVisible: publiclyVisible,
             emailVisible: emailVisible,
+            isPrivate: isPrivate,
             stats: {
                 animators: animatorsCount ? parseInt(animatorsCount) : 0,
                 directors: directorsCount ? parseInt(directorsCount) : 0,

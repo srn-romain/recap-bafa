@@ -604,13 +604,22 @@ async function loadDataFromFirebase() {
     tableFormations.style.display = 'none';
   }
 
+  // 1. Charger les infos du profil et vérifier la confidentialité
+  let accessGranted = true;
+  if (window.targetUid) {
+    accessGranted = await loadUserProfile();
+  }
+
+  if (!accessGranted) {
+    // Cacher les spinners si accès refusé
+    if (loadingExperiences) loadingExperiences.classList.add('hidden');
+    if (loadingFormations) loadingFormations.classList.add('hidden');
+    return;
+  }
+
+  // 2. Charger les données si accès autorisé
   const experiencesLoaded = await loadExperiencesFromFirebase();
   const formationsLoaded = await loadFormationsFromFirebase();
-
-  // Charger les infos du profil (titre)
-  if (window.targetUid) {
-    loadUserProfile();
-  }
 
 
   if (experiencesLoaded || formationsLoaded) {
@@ -693,7 +702,7 @@ function initializeFirebaseData() {
 
 // Charger le profil utilisateur (pour le titre et LinkedIn)
 async function loadUserProfile() {
-  if (!window.targetUid || !window.firebaseDb) return;
+  if (!window.targetUid || !window.firebaseDb) return true;
 
   try {
     const doc = await window.firebaseDb.collection('users').doc(window.targetUid).get();
@@ -719,6 +728,69 @@ async function loadUserProfile() {
         const isDirlo = data.role === 'dirlo';
         const experiencesText = isDirlo ? 'BAFA & BAFD' : 'BAFA';
         title.innerHTML = `Détails des expériences ${experiencesText} de <orange>${fullName}</orange>`;
+      }
+
+      // Gestion de la confidentialité (Compte privé)
+      const isOwner = window.currentUser && window.currentUser.uid === window.targetUid;
+      const ownerNotice = document.getElementById('privacy-notice-owner');
+      const visitorNotice = document.getElementById('privacy-notice-visitor');
+      const introSection = document.getElementById('intro-section');
+      const tableExperiences = document.getElementById('table-experiences');
+      const tableFormations = document.getElementById('table-formations');
+      const statsSection = document.getElementById('statistiques');
+      const footer = document.getElementById('footer');
+      const dashboardTitle = document.getElementById('main-dashboard-title');
+      const experiencesSearch = document.querySelector('.search-container'); // On suppose que c'est le 1er
+      const formationsSearch = document.querySelectorAll('.search-container')[1];
+
+      // Reset notices
+      if (ownerNotice) ownerNotice.style.display = 'none';
+      if (visitorNotice) visitorNotice.style.display = 'none';
+
+      if (data.isPrivate === true) {
+        if (isOwner) {
+          // Propriétaire : Afficher la page normally + bandeau jaune
+          if (ownerNotice) ownerNotice.style.display = 'block';
+        } else {
+          // Visiteur non autorisé : Masquer tout et afficher le message d'erreur
+          if (visitorNotice) visitorNotice.style.display = 'block';
+
+          // Masquer les sections de contenu
+          const sectionsToHide = [
+            introSection, tableExperiences, tableFormations, statsSection,
+            dashboardTitle, footer, experiencesSearch, formationsSearch
+          ];
+
+          sectionsToHide.forEach(el => {
+            if (el) {
+              // Si c'est un tableau, on cache aussi son parent .tabs si besoin, 
+              // mais commençons par l'élément lui-même
+              el.style.display = 'none';
+              // Masquer aussi les conteneurs de type .tabs qui suivent ou précèdent
+              if (el.id === 'table-experiences' || el.id === 'table-formations' || el.id === 'statistiques') {
+                let parent = el.parentElement;
+                while (parent && !parent.classList.contains('tabs')) {
+                  parent = parent.parentElement;
+                }
+                if (parent) parent.style.display = 'none';
+
+                // Masquer aussi les onglets de filtres au-dessus
+                let prev = (parent || el).previousElementSibling;
+                while (prev && (prev.classList.contains('tabs') || prev.classList.contains('search-container') || prev.tagName === 'H1')) {
+                  prev.style.display = 'none';
+                  prev = prev.previousElementSibling;
+                }
+              }
+            }
+          });
+
+          // Masquer la navbar (sauf home et auth)
+          const navItems = document.querySelectorAll('.nav-toc-link');
+          navItems.forEach(item => item.style.display = 'none');
+
+          console.log("Accès refusé : Profil privé");
+          return false; // Accès refusé
+        }
       }
 
       // Gérer l'icône LinkedIn et le positionnement du bouton paramètres
@@ -785,8 +857,10 @@ async function loadUserProfile() {
         }
       }
     }
+    return true; // Accès autorisé
   } catch (e) {
     console.error("Erreur chargement profil", e);
+    return true; // Fallback par défaut si erreur (ou false si on veut être strict)
   }
 }
 
