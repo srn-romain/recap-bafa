@@ -326,8 +326,7 @@
           </button>
           <button id="changelog-collapse-btn" onclick="collapseAllVersions()"
             style="display: none; background: none; border: 1px solid #ddd; color: #aaa; font-size: 0.78rem; cursor: pointer; align-items: center; gap: 5px; margin: 8px auto 0; padding: 5px 14px; border-radius: 20px; transition: all 0.2s;"
-            onmouseover="this.style.background='#f0f0f0';"
-            onmouseout="this.style.background='none';">
+            onmouseover="this.style.background='#f0f0f0';" onmouseout="this.style.background='none';">
             &#129045; Tout replier &#129045;
           </button>
         </test>
@@ -757,6 +756,12 @@
         <div class="form-group checkbox-row">
           <input type="checkbox" id="settings-email-visibility" style="transform: scale(1.5); margin-right: 10px;">
           <label for="settings-email-visibility">Rendre mon adresse email visible aux visiteurs</label>
+        </div>
+
+        <div class="form-group checkbox-row">
+          <input type="checkbox" id="settings-is-private" style="transform: scale(1.5); margin-right: 10px;">
+          <label for="settings-is-private" style="font-size: 0.74em">Rendre mon compte privé (accessible uniquement par
+            moi)</label>
         </div>
 
         <div class="settings-divider"></div>
@@ -1447,7 +1452,7 @@
         allPublicUsers = [];
         snapshot.forEach(doc => {
           const data = doc.data();
-          if (data.publiclyVisible !== false) {
+          if (data.publiclyVisible !== false && data.isPrivate !== true) {
             allPublicUsers.push({ id: doc.id, ...data });
           }
         });
@@ -1580,7 +1585,8 @@
           // Vérif prénom
           if (data.firstname && data.firstname.trim().toLowerCase() === fn.toLowerCase()) {
             // Vérif visibilité (par défaut true ou undefined = visible, false = caché)
-            if (data.publiclyVisible !== false) {
+            // Un compte privé n'apparait jamais dans la recherche
+            if (data.publiclyVisible !== false && data.isPrivate !== true) {
               results.push({ id: doc.id, ...data });
             }
           }

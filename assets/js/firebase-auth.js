@@ -102,6 +102,11 @@ function initAuth() {
       window.userRole = null;
       document.body.classList.remove('user-logged-in');
       updateUI();
+
+      // En cas de déconnexion sur un dashboard, on relance le chargement pour vérifier la confidentialité
+      if (window.targetUid && typeof loadDataFromFirebase === 'function') {
+        loadDataFromFirebase();
+      }
     }
   });
 }
