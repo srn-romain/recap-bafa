@@ -148,6 +148,11 @@ document.addEventListener('DOMContentLoaded', function () {
         backgroundInput.addEventListener('change', handleBackgroundImageUpload);
     }
 
+    const profilePicInput = document.getElementById('settings-profile-pic');
+    if (profilePicInput) {
+        profilePicInput.addEventListener('change', handleProfilePicUpload);
+    }
+
     // Listeners pour les stats manuelles (preview dynamique)
     ['settings-animators-count', 'settings-directors-count', 'settings-trainers-count'].forEach(id => {
         const input = document.getElementById(id);
