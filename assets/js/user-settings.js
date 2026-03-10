@@ -54,7 +54,86 @@ function toggleLinkedinExplanation(event) {
     }
 }
 
-// Variables pour l'image de fond et de profil
+/**
+ * Logique ergonomique des cases à cocher de confidentialité.
+ * Gère l'exclusion mutuelle et met à jour le bandeau d'info.
+ */
+window.handlePrivacyCheckboxChange = function (which) {
+    const publicCb = document.getElementById('settings-public-visibility');
+    const emailCb = document.getElementById('settings-email-visibility');
+    const privateCb = document.getElementById('settings-is-private');
+
+    if (which === 'private' && privateCb && privateCb.checked) {
+        // Compte privé : incompatible avec "visible dans la recherche" et "email visible"
+        if (publicCb) publicCb.checked = false;
+        if (emailCb) emailCb.checked = false;
+    } else if (which === 'public' && publicCb && publicCb.checked) {
+        // Si on remet "visible dans la recherche", on enlève "privé"
+        if (privateCb) privateCb.checked = false;
+    } else if (which === 'email' && emailCb && emailCb.checked) {
+        // Email visible est incompatible avec compte privé
+        if (privateCb) privateCb.checked = false;
+    }
+
+    updatePrivacyBanner();
+};
+
+/**
+ * Met à jour le bandeau récapitulatif de confidentialité.
+ */
+function updatePrivacyBanner() {
+    const publicCb = document.getElementById('settings-public-visibility');
+    const emailCb = document.getElementById('settings-email-visibility');
+    const privateCb = document.getElementById('settings-is-private');
+    const banner = document.getElementById('privacy-status-banner');
+    const iconEl = document.getElementById('privacy-status-icon');
+    const textEl = document.getElementById('privacy-status-text');
+
+    if (!banner || !iconEl || !textEl) return;
+
+    const isPublic = publicCb && publicCb.checked;
+    const isEmail = emailCb && emailCb.checked;
+    const isPrivate = privateCb && privateCb.checked;
+
+    let icon, text, bg, color;
+
+    if (isPrivate) {
+        icon = '🔒';
+        bg = '#fdf0f0';
+        color = '#c0392b';
+        text = '<strong>Profil privé</strong> — Votre page n\'est visible que par vous. Elle n\'apparaît pas dans les résultats de recherche et aucune information n\'est exposée aux visiteurs.';
+    } else if (!isPublic && !isEmail) {
+        icon = '🔕';
+        bg = '#fef9ec';
+        color = '#d68910';
+        text = '<strong>Profil discret</strong> — Votre page est accessible si quelqu\'un connaît votre lien direct, mais elle n\'apparaît pas dans les résultats de recherche.';
+    } else if (isPublic && !isEmail) {
+        icon = '🌍';
+        bg = '#eef9f0';
+        color = '#1e8449';
+        text = '<strong>Profil public</strong> — Votre page est visible dans les résultats de recherche. Votre adresse email reste privée.';
+    } else if (isPublic && isEmail) {
+        icon = '🌍';
+        bg = '#eef9f0';
+        color = '#1e8449';
+        text = '<strong>Profil public avec email</strong> — Votre page est visible dans la recherche et votre adresse email est affichée aux visiteurs.';
+    } else {
+        // isEmail seul (cas rare)
+        icon = '🔕';
+        bg = '#fef9ec';
+        color = '#d68910';
+        text = '<strong>Profil discret avec email visible</strong> — Votre page n\'apparaît pas dans la recherche, mais les visiteurs ayant votre lien pourront voir votre email.';
+    }
+
+    banner.style.display = 'block';
+    banner.style.background = bg;
+    banner.style.color = color;
+    banner.style.border = `1.5px solid ${color}40`;
+    iconEl.textContent = icon;
+    textEl.innerHTML = text;
+}
+window.updatePrivacyBanner = updatePrivacyBanner;
+
 let backgroundImageData = null;
 let profilePicData = null; // New variable for profile picture
 const MAX_IMAGE_SIZE_MB = 2;
@@ -309,6 +388,9 @@ async function openSettingsModal() {
             if (isPrivateInput) {
                 isPrivateInput.checked = data.isPrivate === true; // Par défaut false
             }
+
+            // Mettre à jour le bandeau de confidentialité avec l'état chargé
+            updatePrivacyBanner();
 
             // Charger les stats manuelles
             const animatorsInput = document.getElementById('settings-animators-count');

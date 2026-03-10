@@ -749,19 +749,28 @@
         </div>
 
         <div class="form-group checkbox-row">
-          <input type="checkbox" id="settings-public-visibility" style="transform: scale(1.5); margin-right: 10px;">
+          <input type="checkbox" id="settings-public-visibility" style="transform: scale(1.5); margin-right: 10px;"
+            onchange="handlePrivacyCheckboxChange('public')">
           <label for="settings-public-visibility">Afficher mon profil dans les résultats de recherche</label>
         </div>
 
         <div class="form-group checkbox-row">
-          <input type="checkbox" id="settings-email-visibility" style="transform: scale(1.5); margin-right: 10px;">
+          <input type="checkbox" id="settings-email-visibility" style="transform: scale(1.5); margin-right: 10px;"
+            onchange="handlePrivacyCheckboxChange('email')">
           <label for="settings-email-visibility">Rendre mon adresse email visible aux visiteurs</label>
         </div>
 
         <div class="form-group checkbox-row">
-          <input type="checkbox" id="settings-is-private" style="transform: scale(1.5); margin-right: 10px;">
+          <input type="checkbox" id="settings-is-private" style="transform: scale(1.5); margin-right: 10px;"
+            onchange="handlePrivacyCheckboxChange('private')">
           <label for="settings-is-private" style="font-size: 0.74em">Rendre mon compte privé (accessible uniquement par
             moi)</label>
+        </div>
+
+        <div id="privacy-status-banner"
+          style="display:none; border-radius: 10px; padding: 12px 15px; margin-top: 8px; font-size: 0.82rem; line-height: 1.5;">
+          <span id="privacy-status-icon" style="font-size: 1.1rem; margin-right: 6px;"></span>
+          <span id="privacy-status-text"></span>
         </div>
 
         <div class="settings-divider"></div>
