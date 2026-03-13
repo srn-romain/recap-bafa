@@ -110,19 +110,37 @@
         </button>
       </div>
 
-        <!-- Bandeau de migration (À supprimer avant de déployer sur Firebase) -->
-        <div id="migration-banner" style="background: #fdf2f2; padding: 15px 20px; text-align: center; position: sticky; top: 0; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <test style="max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <span style="font-size: 1.5rem;">⚠️</span>
-                <h1>CHANGEMENT DE LIEN</h1>
-                <span style="font-size: 1.5rem;">⚠️</span>
-                <p style="margin: 0; color: #991b1b; font-weight: 600; font-family: 'Roboto', sans-serif;">
-                    🚨 Attention : Cette adresse URL va bientôt disparaître. Utilisez désormais notre nouvelle adresse officielle :
-                    <a href="https://macollectiondebafa.web.app/index.html" style="color: #ef4444; text-decoration: underline; margin-left: 5px;">macollectiondebafa.web.app</a> 🚨
-                    <br>Pensez à mettre à jours vos favoris !
+        <!-- Modale de migration forcée  -->
+        <div id="forced-migration-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); font-family: 'Roboto', sans-serif; pointer-events: all;">
+            <div style="background: white; width: 90%; max-width: 500px; padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 4px solid #ef4444; position: relative;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">🚨</div>
+                <h1 style="color: #ef4444; font-size: 1.8rem; margin-bottom: 20px; font-weight: 800; border: none; letter-spacing: -0.5px; text-transform: uppercase;">Déménagement du site</h1>
+                <p style="color: #374151; font-size: 1.1rem; line-height: 1.6; margin-bottom: 35px;">
+                    Cette adresse URL est devenue <b>obsolète</b> et va bientôt cesser de fonctionner.<br><br>
+                    Cliquer sur le bouton ci-dessous pour rejoindre notre nouvelle URL officielle :
                 </p>
-            </test>
+                <a href="https://macollectiondebafa.web.app/index.html"
+                   style="display: block; background: #ef4444; color: white !important; text-decoration: none !important; padding: 20px; border-radius: 14px; font-weight: 800; font-size: 1.2rem; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.5); transform: scale(1);"
+                   onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='#dc2626'" 
+                   onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#ef4444'">
+                    Accéder à la nouvelle URL du site
+                </a>
+                <p style="margin-top: 30px; font-size: 0.85rem; color: #9ca3af; font-style: italic;">
+                    Pensez à mettre à jour vos favoris !
+                </p>
+            </div>
         </div>
+        <script>
+            // Bloquer toute interaction avec le fond
+            document.body.style.overflow = 'hidden';
+            // Empêcher la fermeture via Échap
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        </script>
 
 
         <!-- Section Nouveautés -->
