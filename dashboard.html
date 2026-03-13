@@ -170,6 +170,31 @@
                     indiquée</a> pour toute question !
             </p>
 
+
+            <!-- Bandeau de migration pour Dashboard (À supprimer avant de déployer sur Firebase) -->
+            <div id="migration-banner" style="background: #fdf2f2; padding: 15px 20px; text-align: center; position: sticky; top: 0; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <test style="max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <h1>CHANGEMENT DE LIEN</h1>
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <p style="margin: 0; color: #991b1b; font-weight: 600; font-family: 'Roboto', sans-serif;">
+                        🚨 Attention : Ce lien va bientôt disparaître. Retrouvez ce profil à sa nouvelle adresse :
+                        <a id="migration-link" href="https://macollectiondebafa.web.app/dashboard.html" style="color: #ef4444; text-decoration: underline; margin-left: 5px;">macollectiondebafa.web.app</a> 🚨
+                    </p>
+                </test>
+            </div>
+
+            <script>
+                // Script de mise à jour dynamique du lien (À supprimer aussi avant Firebase)
+                (function() {
+                    const link = document.getElementById('migration-link');
+                    if (link) {
+                        // Recopie automatiquement les paramètres (?uid=...) vers la nouvelle URL
+                        link.href = "https://macollectiondebafa.web.app/dashboard.html" + window.location.search;
+                    }
+                })();
+            </script><br>
+
             <div id="mobile-message" class="mobile-notification">
                 Le tableau est réduit. Faites défiler horizontalement pour voir l'intégralité du contenu.
             </div>
