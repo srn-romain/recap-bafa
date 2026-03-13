@@ -6,7 +6,6 @@
  */
 
 // Map des genres pour l'affichage (synchronisé avec admin-forms.js)
-// Map des genres pour l'affichage (synchronisé avec admin-forms.js)
 const GENDER_MAP = [
   { m: 'Animateur Stagiaire', f: 'Animatrice Stagiaire' },
   { m: 'Animateur (diplômé)', f: 'Animatrice (diplômée)', displayM: 'Animateur', displayF: 'Animatrice' },
@@ -35,6 +34,74 @@ const GENDER_MAP = [
   { m: 'Chef Scout', f: 'Cheffe Scout' },
   { m: 'Autre (préciser)', f: 'Autre (préciser)' }
 ];
+
+/**
+ * Détermine si un badge doit être affiché pour une expérience ou formation
+ */
+function getStatusBadge(item) {
+  const dateStr = item.date;
+  const durationStr = item.duration;
+  const type = item.type;
+
+  // Ne gère pas le cas du periscolaire, tous les samedis et tous les mercredis
+  const isPeriodic = (type === 'alsh' || type === 'scout' || type === 'periscolaire') &&
+    typeof durationStr === 'string' &&
+    (durationStr.includes('mercredis') || durationStr.includes('samedis') || durationStr.includes('périscolaire'));
+
+  if (isPeriodic || type === 'periscolaire') {
+    return null;
+  }
+
+  const parseFn = typeof parseFrenchDate === 'function' ? parseFrenchDate : (d) => new Date(d);
+  const extractFn = typeof extractDays === 'function' ? extractDays : (t) => 0;
+
+  const startDate = parseFn(dateStr);
+  const now = new Date();
+
+  // Durée en jours
+  const days = extractFn(durationStr);
+
+  // Calculer la date de fin
+  const endDate = new Date(startDate);
+  if (days > 1) {
+    endDate.setDate(endDate.getDate() + days - 1);
+  } else if (days === 0) {
+    // Si pas de durée, on considère par défaut que ça dure le mois entier pour le badge "en cours"
+    endDate.setMonth(endDate.getMonth() + 1);
+    endDate.setDate(0); // Dernier jour du mois
+  }
+
+  // Nouveau : 5 jours après la date de fin
+  const newUntilDate = new Date(endDate);
+  newUntilDate.setDate(newUntilDate.getDate() + 5);
+
+  // Futur
+  if (startDate > now) {
+    const span = document.createElement('span');
+    span.className = 'badge-status badge-futur';
+    span.textContent = 'À venir';
+    return span;
+  }
+
+  // En cours
+  if (now >= startDate && now <= endDate) {
+    const span = document.createElement('span');
+    span.className = 'badge-status badge-ongoing';
+    span.textContent = days > 0 ? `En cours (${durationStr})` : 'En cours';
+    return span;
+  }
+
+  // Nouveau
+  if (now > endDate && now <= newUntilDate) {
+    const span = document.createElement('span');
+    span.className = 'badge-status badge-new';
+    span.textContent = 'Nouveau';
+    return span;
+  }
+
+  return null;
+}
+
 
 function createExperienceRow(experience) {
   const tr = document.createElement('tr');
@@ -68,7 +135,15 @@ function createExperienceRow(experience) {
   } else {
     tdDate.textContent = experience.date;
   }
+
+  // Ajouter le badge de statut
+  const badge = getStatusBadge(experience);
+  if (badge) {
+    tdDate.appendChild(badge);
+  }
+
   tr.appendChild(tdDate);
+
 
   // Colonne Durée
   const tdDuration = document.createElement('td');
@@ -213,7 +288,15 @@ function createFormationRow(formation) {
   // Colonne Date
   const tdDate = document.createElement('td');
   tdDate.textContent = formation.date;
+
+  // Ajouter le badge de statut
+  const badge = getStatusBadge(formation);
+  if (badge) {
+    tdDate.appendChild(badge);
+  }
+
   tr.appendChild(tdDate);
+
 
   // Colonne Durée
   const tdDuration = document.createElement('td');
