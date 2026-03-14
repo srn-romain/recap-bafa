@@ -1395,6 +1395,12 @@
         // Déclencheur automatique du tutoriel pour les nouveaux comptes
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
+                // Rediriger vers son propre dashboard si pas d'UID
+                if (!window.targetUid) {
+                    window.location.href = `dashboard.html?uid=${user.uid}`;
+                    return;
+                }
+
                 const userSeenKey = 'tutorial_seen_' + user.uid;
                 if (!localStorage.getItem(userSeenKey)) {
                     const urlParams = new URLSearchParams(window.location.search);
@@ -1430,6 +1436,11 @@
                             }
                         }, 500);
                     }
+                }
+            } else {
+                // Rediriger vers le profil par défaut si pas d'UID et pas connecté
+                if (!window.targetUid) {
+                    window.location.href = 'dashboard.html?uid=5DP6faC4Y8ce6K3x07aC2qHjflq2';
                 }
             }
         });
