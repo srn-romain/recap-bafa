@@ -88,7 +88,24 @@
                 // Optional: window.location.href = 'index.html';
                 console.log("Aucun UID spécifié, mode démo ou attente connexion");
             }
+
+            // Afficher le bandeau de démonstration pour le profil Joe Doe
+            if (window.targetUid === '5DP6faC4Y8ce6K3x07aC2qHjflq2') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    const notice = document.getElementById('fictional-profile-notice');
+                    if (notice) notice.style.display = 'block';
+                });
+            }
         </script>
+
+        <!-- Bandeau d'information pour le profil Joe Doe -->
+        <div id="fictional-profile-notice"
+            style="display: none; max-width: 1000px; margin: 0 auto 20px; padding: 15px; background-color: #e6f7ff; border: 1px solid #91d5ff; border-radius: 8px; color: #0050b3; text-align: center; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <i class="bi bi-info-circle-fill" style="margin-right: 8px; font-size: 1.1rem; vertical-align: middle;"></i>
+            <strong>Profil de démonstration :</strong> Vous consultez le profil d'un animateur fictif nommé <strong>Joe Doe</strong>. 
+            Cette page illustre l'étendue de ce que la plateforme propose pour structurer et valoriser votre parcours d'animation (expériences, formations et statistiques).
+        </div>
+
         <div id="privacy-notice-owner"
             style="display: none; max-width: 1000px; margin: 0 auto 20px; padding: 15px; background-color: #f6ffed; border: 1px solid #b7eb8f; border-radius: 8px; color: #389e0d; text-align: center; font-size: 0.95rem;">
             <i class="bi bi-shield-lock-fill" style="margin-right: 8px;"></i>
