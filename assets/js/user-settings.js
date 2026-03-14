@@ -879,7 +879,29 @@ function copyProfileLink() {
     const linkInput = document.getElementById('share-profile-link');
     if (!linkInput) return;
 
-    // Le lien est dans un input caché
+    // Remplir le lien à la volée s'il est vide ou pour forcer l'exactitude
+    if (window.currentUser && window.currentUser.uid) {
+        const currentUrl = new URL(window.location.href);
+        let path = currentUrl.pathname;
+
+        if (path.endsWith('index.html') || path.endsWith('/')) {
+            if (path.endsWith('index.html')) {
+                path = path.replace('index.html', 'dashboard.html');
+            } else {
+                path += 'dashboard.html';
+            }
+        } else if (!path.includes('dashboard.html')) {
+            path = path.substring(0, path.lastIndexOf('/')) + '/dashboard.html';
+        }
+
+        linkInput.value = `${currentUrl.origin}${path}?uid=${window.currentUser.uid}`;
+    }
+
+    if (!linkInput.value) {
+        console.warn("copyProfileLink: Lien de partage non disponible");
+        return;
+    }
+
     navigator.clipboard.writeText(linkInput.value).then(() => {
         const btnText = document.getElementById('share-btn-text');
 
