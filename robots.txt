@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://macollectiondebafa.firebaseapp.com/sitemap.xml
+Sitemap: https://macollectiondebafa.web.app/sitemap.xml

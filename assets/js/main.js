@@ -1233,7 +1233,7 @@ async function generatePDF(tableId, title) {
 
   const rightPart = document.createElement('div');
   rightPart.innerHTML = `<strong>Récapitulatif BAFA/BAFD - Plateforme collaborative</strong><br>
-                         Généré via <a href="https://srn-romain.github.io/recap-bafa/" style="color: #e67e22; text-decoration: none;">https://srn-romain.github.io/recap-bafa/</a>`;
+                         Généré via <a href="https://macollectiondebafa.web.app/" style="color: #e67e22; text-decoration: none;">https://macollectiondebafa.web.app/</a>`;
   rightPart.style.textAlign = 'right';
 
   footer.appendChild(leftPart);
