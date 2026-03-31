@@ -194,6 +194,10 @@ function calculateExperienceStatistics() {
   updateStatWithVisibility('total-days-periscolaire', totalDaysPeriscolaire);
   updateStatWithVisibility('total-youth', totalYouth);
   updateStatWithVisibility('total-experiences', totalExps);
+  
+  // Nombre d'organismes différents
+  const totalOrgs = Object.keys(organizationDays).length;
+  updateStatWithVisibility('total-organizations', totalOrgs);
 
   // Créer le graphique pour les jours par organisme
   createChart('organizationChart', organizationDays, 'Nombre de jours par organisme');
