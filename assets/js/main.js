@@ -167,17 +167,19 @@ function calculateExperienceStatistics() {
 
     if (types.includes('colo')) {
       totalDaysColo += days;
-      if (organizerText) organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
     }
 
     if (types.includes('alsh')) {
       totalDaysAlsh += days;
-      if (organizerText) organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
     }
 
     if (types.includes('periscolaire')) {
       totalDaysPeriscolaire += days;
-      if (organizerText) organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
+    }
+
+    // Ajouter au graphique par organisme si c'est une expérience reconnue
+    if (organizerText && (types.includes('colo') || types.includes('alsh') || types.includes('periscolaire') || types.includes('scout') || types.includes('autre'))) {
+      organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
     }
 
     totalYouth += youthCount;
