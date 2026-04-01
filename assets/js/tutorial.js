@@ -23,7 +23,7 @@ const Tutorial = (function () {
         {
             element: '#add-experience-btn',
             title: 'Ajouter une Expérience',
-            content: 'Commencez par ajouter vos expériences (Colos, ALSH, Scoutisme...). Les formulaires sont dynamiques !',
+            content: 'Commencez par ajouter vos expériences (Colos, ALSH, Périscolaire...). Saisissez une date de début et de fin pour calculer la durée !',
             position: 'bottom'
         },
         {
