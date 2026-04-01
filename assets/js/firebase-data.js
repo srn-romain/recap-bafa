@@ -103,7 +103,53 @@ function getStatusBadge(item) {
 }
 
 
+
+/**
+ * Formate une date d'expérience pour l'affichage dans le tableau principal.
+ * - "15 Juillet 2024"                        → "15 Juillet 2024"
+ * - "15 Juillet 2024 - 31 Juillet 2024"      → "du 15 au 31 Juillet 2024"
+ * - "15 Juillet 2024 - 3 Août 2024"          → "du 15 juil. au 3 août 2024"
+ */
+function formatDateForDisplay(dateStr) {
+  if (!dateStr) return dateStr;
+
+  const MONTH_ABBR = {
+    'janvier': 'janv.', 'février': 'févr.', 'mars': 'mars',
+    'avril': 'avr.', 'mai': 'mai', 'juin': 'juin',
+    'juillet': 'juil.', 'août': 'août', 'septembre': 'sept.',
+    'octobre': 'oct.', 'novembre': 'nov.', 'décembre': 'déc.'
+  };
+
+  const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  // Essayer de parser "Jour Mois Année - Jour Mois Année"
+  const rangeMatch = dateStr.match(
+    /^(\d{1,2})\s+([A-Za-zÀ-ÿ]+)\s+(\d{4})\s*[-–]\s*(\d{1,2})\s+([A-Za-zÀ-ÿ]+)\s+(\d{4})$/
+  );
+
+  if (rangeMatch) {
+    const [, d1, m1Raw, y1, d2, m2Raw, y2] = rangeMatch;
+    const m1 = m1Raw.toLowerCase();
+    const m2 = m2Raw.toLowerCase();
+
+    if (m1 === m2 && y1 === y2) {
+      // Même mois, même année → "du 15 au 31 Juillet 2024"
+      return `du ${parseInt(d1)} au ${parseInt(d2)} ${capitalize(m1Raw)} ${y1}`;
+    } else {
+      // Mois ou années différents → abréviations
+      const abbr1 = MONTH_ABBR[m1] || m1Raw;
+      const abbr2 = MONTH_ABBR[m2] || m2Raw;
+      const yearSuffix = y1 === y2 ? y1 : `${y1}-${y2}`;
+      return `du ${parseInt(d1)} ${abbr1} au ${parseInt(d2)} ${abbr2} ${yearSuffix}`;
+    }
+  }
+
+  // Fallback : retourner tel quel (ex: "Juillet 2024", "Septembre 2023 - Juin 2024")
+  return dateStr;
+}
+
 function createExperienceRow(experience) {
+
   const tr = document.createElement('tr');
   tr.setAttribute('data-type', experience.type);
   // Stocker l'objet complet pour une récupération facile lors de l'édition
@@ -133,7 +179,7 @@ function createExperienceRow(experience) {
       tdDate.textContent = experience.date;
     }
   } else {
-    tdDate.textContent = experience.date;
+    tdDate.textContent = formatDateForDisplay(experience.date);
   }
 
   // Ajouter le badge de statut
