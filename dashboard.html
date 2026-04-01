@@ -411,9 +411,19 @@
                         </div>
                     </div>
 
-                    <!-- Champ Date Classique -->
+                    <!-- Champ Date Classique : saisie début + fin -->
                     <div id="standard-date-container">
-                        <input type="month" id="exp-date-month">
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Début <span class="required-asterisk">*</span></label>
+                                <input type="date" id="exp-date-start" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateExpDuration()">
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Fin</label>
+                                <input type="date" id="exp-date-end" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateExpDuration()">
+                            </div>
+                        </div>
+                        <input type="hidden" id="exp-date-month">
                         <input type="hidden" id="exp-date">
                     </div>
 
@@ -440,9 +450,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Durée</label>
-                    <input type="number" id="exp-duration" placeholder="Ex: 17" style="width: 80px;" min="0" max="199">
-                    <span> jours</span>
+                    <label>Durée <span style="font-size:0.78rem; color:#888; font-weight:normal;">(calculée automatiquement)</span></label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="number" id="exp-duration" placeholder="—" style="width: 80px; background:#f9f9f9; color:#555;" min="0" max="9999" readonly>
+                        <span>jours</span>
+                    </div>
+                    <p id="exp-duration-hint" style="font-size:0.8rem; color:#a0aec0; margin-top:4px; font-style:italic;">Saisissez une date de début et de fin pour calculer la durée.</p>
                 </div>
                 <div class="form-group">
                     <label>Gestion</label>
@@ -821,13 +834,26 @@
                 </div>
                 <div class="form-group">
                     <label>Date <span class="required-asterisk">*</span></label>
-                    <input type="month" id="form-date-month" required>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Début <span class="required-asterisk">*</span></label>
+                            <input type="date" id="form-date-start" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateFormDuration()" required>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Fin</label>
+                            <input type="date" id="form-date-end" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateFormDuration()">
+                        </div>
+                    </div>
+                    <input type="hidden" id="form-date-month">
                     <input type="hidden" id="form-date">
                 </div>
                 <div class="form-group">
-                    <label>Durée</label>
-                    <input type="number" id="form-duration" placeholder="Ex: 8" style="width: 80px;" min="0" max="199">
-                    <span> jours</span>
+                    <label>Durée <span style="font-size:0.78rem; color:#888; font-weight:normal;">(calculée automatiquement)</span></label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="number" id="form-duration" placeholder="—" style="width: 80px; background:#f9f9f9; color:#555;" min="0" max="9999" readonly>
+                        <span>jours</span>
+                    </div>
+                    <p id="form-duration-hint" style="font-size:0.8rem; color:#a0aec0; margin-top:4px; font-style:italic;">Saisissez une date de début et de fin pour calculer la durée.</p>
                 </div>
                 <div class="form-group">
                     <label>Intitulé</label>

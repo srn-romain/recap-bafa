@@ -327,11 +327,10 @@ function toggleAlshDateFields() {
       standardDateContainer.style.display = 'block';
       mercredisDateContainer.style.display = 'none';
 
+      // En mode ponctuel, la durée est calculée par les champs date
       if (durationInput) {
-        durationInput.type = "number";
-        durationInput.value = ""; // Reset quand on repasse en ponctuel (comportement par défaut au clic)
-        durationInput.disabled = false;
-        durationInput.placeholder = "Ex: 17";
+        durationInput.readOnly = true;
+        // On ne réinitialise pas la valeur ici pour ne pas effacer un calcul existant
       }
     }
   } else {
@@ -348,9 +347,7 @@ function toggleAlshDateFields() {
     mercredisDateContainer.style.display = 'none';
 
     if (durationInput) {
-      durationInput.type = "number";
-      durationInput.disabled = false;
-      durationInput.placeholder = "Ex: 17";
+      durationInput.readOnly = true;
     }
   }
 }
@@ -652,20 +649,15 @@ async function showAddExperienceModal() {
   document.getElementById('experience-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
 
-  // Écouter les changements du mois pour mettre à jour le texte
-  const monthInput = document.getElementById('exp-date-month');
-  if (monthInput) {
-    monthInput.addEventListener('change', function () {
-      const dateText = monthToFrenchText(this.value);
-      document.getElementById('exp-date').value = dateText;
-    });
-    // Ouvrir le calendrier au clic sur le champ entier
-    monthInput.addEventListener('click', function () {
-      if ('showPicker' in this) {
-        this.showPicker();
-      }
-    });
-  }
+  // Réinitialiser les champs de date (nouveau système)
+  const startInput = document.getElementById('exp-date-start');
+  const endInput = document.getElementById('exp-date-end');
+  if (startInput) startInput.value = '';
+  if (endInput) endInput.value = '';
+  const durationField = document.getElementById('exp-duration');
+  if (durationField) durationField.value = '';
+  const durationHint = document.getElementById('exp-duration-hint');
+  if (durationHint) { durationHint.textContent = 'Saisissez une date de début et de fin pour calculer la durée.'; durationHint.style.display = 'block'; }
 
   // Adapter les labels selon le genre
   await updatePositionLabels();
@@ -1280,6 +1272,123 @@ function monthToFrenchText(monthValue) {
   return `${months[monthIndex]} ${year} `;
 }
 
+/**
+ * Convertit une date HTML (YYYY-MM-DD) en texte français court (ex: "15 Juillet 2024")
+ */
+function dateToFrenchText(dateValue) {
+  if (!dateValue) return '';
+  const [year, month, day] = dateValue.split('-');
+  const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  const monthIndex = parseInt(month, 10) - 1;
+  if (monthIndex < 0 || monthIndex > 11) return '';
+  return `${parseInt(day, 10)} ${months[monthIndex]} ${year}`;
+}
+
+/**
+ * Convertit un texte de date français ("15 Juillet 2024" ou "Juillet 2024") en YYYY-MM-DD.
+ * Pour les données existantes avec seulement un mois, retourne le 1er du mois.
+ */
+function frenchTextToDate(dateText) {
+  if (!dateText) return '';
+  const lowerText = dateText.toLowerCase().trim();
+
+  // Cas ALSH scolaire
+  const alshMatch = lowerText.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/);
+  if (alshMatch) return `${alshMatch[1]}-09-01`;
+
+  const months = {
+    'janvier': '01', 'janv': '01', 'février': '02', 'févr': '02', 'mars': '03',
+    'avril': '04', 'avr': '04', 'mai': '05', 'juin': '06',
+    'juillet': '07', 'juil': '07', 'août': '08', 'septembre': '09', 'sept': '09',
+    'octobre': '10', 'oct': '10', 'novembre': '11', 'nov': '11', 'décembre': '12', 'déc': '12'
+  };
+
+  const yearMatch = lowerText.match(/\d{4}/);
+  const year = yearMatch ? yearMatch[0] : '';
+  if (!year) return '';
+
+  let month = '01';
+  for (const [name, num] of Object.entries(months)) {
+    if (lowerText.includes(name)) { month = num; break; }
+  }
+
+  // Jour explicite : "15 Juillet 2024"
+  const dayMatch = lowerText.match(/^(\d{1,2})\s/);
+  const day = dayMatch ? dayMatch[1].padStart(2, '0') : '01';
+
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Calcule automatiquement la durée (jours) pour le formulaire d'expérience
+ * à partir des champs exp-date-start et exp-date-end.
+ */
+function calculateExpDuration() {
+  const startVal = document.getElementById('exp-date-start')?.value;
+  const endVal = document.getElementById('exp-date-end')?.value;
+  const durationInput = document.getElementById('exp-duration');
+  const hint = document.getElementById('exp-duration-hint');
+
+  if (!startVal) {
+    if (durationInput) { durationInput.value = ''; }
+    if (hint) hint.style.display = 'block';
+    return;
+  }
+
+  const start = new Date(startVal);
+  const end = endVal ? new Date(endVal) : null;
+
+  if (end && end >= start) {
+    const diffMs = end - start;
+    const days = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1; // Inclus les deux bornes
+    if (durationInput) durationInput.value = days;
+    if (hint) hint.style.display = 'none';
+  } else if (!endVal) {
+    // Pas de fin saisie : 1 jour par défaut
+    if (durationInput) durationInput.value = 1;
+    if (hint) hint.style.display = 'none';
+  } else {
+    // Fin avant début
+    if (durationInput) durationInput.value = '';
+    if (hint) { hint.textContent = '⚠️ La date de fin doit être après la date de début.'; hint.style.display = 'block'; }
+  }
+}
+window.calculateExpDuration = calculateExpDuration;
+
+/**
+ * Calcule automatiquement la durée pour le formulaire de formation.
+ */
+function calculateFormDuration() {
+  const startVal = document.getElementById('form-date-start')?.value;
+  const endVal = document.getElementById('form-date-end')?.value;
+  const durationInput = document.getElementById('form-duration');
+  const hint = document.getElementById('form-duration-hint');
+
+  if (!startVal) {
+    if (durationInput) durationInput.value = '';
+    if (hint) hint.style.display = 'block';
+    return;
+  }
+
+  const start = new Date(startVal);
+  const end = endVal ? new Date(endVal) : null;
+
+  if (end && end >= start) {
+    const diffMs = end - start;
+    const days = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    if (durationInput) durationInput.value = days;
+    if (hint) hint.style.display = 'none';
+  } else if (!endVal) {
+    if (durationInput) durationInput.value = 1;
+    if (hint) hint.style.display = 'none';
+  } else {
+    if (durationInput) durationInput.value = '';
+    if (hint) { hint.textContent = '⚠️ La date de fin doit être après la date de début.'; hint.style.display = 'block'; }
+  }
+}
+window.calculateFormDuration = calculateFormDuration;
+
 // Convertir un texte français en mois (YYYY-MM)
 // Convertir un texte français en mois (YYYY-MM)
 function frenchTextToMonth(dateText) {
@@ -1676,24 +1785,35 @@ async function showEditExperienceModal(data, row) {
     updateExpStayTypeOptions();
   }
 
-  // Convertir la date française en format mois pour l'input month
-  const monthValue = frenchTextToMonth(data.date || '');
-  document.getElementById('exp-date-month').value = monthValue;
-  document.getElementById('exp-date').value = data.date || '';
-
-  // Parser la durée pour enlever " jours" ou " jour"
-  let durationVal = data.duration || '';
-  const durationMatch = durationVal.match(/^(\d+)/);
-  if (durationMatch) {
-    document.getElementById('exp-duration').value = durationMatch[1];
-  } else {
-    // Si pas de match (ex: "Tous les mercredis"), on ne vide le champ QUE si on n'est pas en mode Mercredis
-    // En mode Mercredis, toggleAlshDateFields a déjà mis "36"
-    const isMercredisMode = document.querySelector('input[name="alsh-duration-type"][value="mercredis"]').checked;
-    if (!isMercredisMode) {
-      document.getElementById('exp-duration').value = '';
+  // Remplir les champs date avec le nouveau système (compatible données existantes)
+  const startDateVal = frenchTextToDate(data.date || '');
+  const expDateStart = document.getElementById('exp-date-start');
+  const expDateEnd = document.getElementById('exp-date-end');
+  if (expDateStart) expDateStart.value = startDateVal || '';
+  // Pour la date de fin : si on a une durée en jours, on la calcule
+  if (expDateEnd) {
+    if (startDateVal && !isMercredis) {
+      const durationMatch2 = (data.duration || '').match(/^(\d+)/);
+      if (durationMatch2) {
+        const durDays = parseInt(durationMatch2[1], 10);
+        if (durDays > 1) {
+          const endDate = new Date(startDateVal);
+          endDate.setDate(endDate.getDate() + durDays - 1);
+          expDateEnd.value = endDate.toISOString().split('T')[0];
+        } else {
+          expDateEnd.value = '';
+        }
+      } else {
+        expDateEnd.value = '';
+      }
+    } else {
+      expDateEnd.value = '';
     }
   }
+  document.getElementById('exp-date').value = data.date || '';
+  
+  // Recalculer la durée affichée
+  if (!isMercredis) calculateExpDuration();
   const rawOrganizer = data.organizer || '';
   // Matcher "Nom (Dept)"
   const organizerMatch = rawOrganizer.match(/^(.*?)\s*\(([^)]+)\)$/);
@@ -2142,28 +2262,21 @@ async function showAddFormationModal() {
   removeFormationLogo();
   hideFormationError();
 
-  const modalMonthInput = document.getElementById('form-date-month');
-  if (modalMonthInput) modalMonthInput.value = '';
+  // Réinitialiser les champs de date du nouveau système
+  const formStartInput = document.getElementById('form-date-start');
+  const formEndInput = document.getElementById('form-date-end');
+  if (formStartInput) formStartInput.value = '';
+  if (formEndInput) formEndInput.value = '';
+  const formDuration = document.getElementById('form-duration');
+  if (formDuration) formDuration.value = '';
+  const formDurationHint = document.getElementById('form-duration-hint');
+  if (formDurationHint) { formDurationHint.textContent = 'Saisissez une date de début et de fin pour calculer la durée.'; formDurationHint.style.display = 'block'; }
   document.getElementById('form-date').value = '';
 
   window.hasUnsavedFormChanges = false;
 
   document.getElementById('formation-modal').style.display = 'flex';
   document.body.classList.add('modal-open');
-
-  // Écouter les changements du mois pour mettre à jour le texte
-  if (modalMonthInput) {
-    modalMonthInput.addEventListener('change', function () {
-      const dateText = monthToFrenchText(this.value);
-      document.getElementById('form-date').value = dateText;
-    });
-    // Ouvrir le calendrier au clic sur le champ entier
-    modalMonthInput.addEventListener('click', function () {
-      if ('showPicker' in this) {
-        this.showPicker();
-      }
-    });
-  }
 }
 
 // Afficher le modal d'édition de formation
@@ -2177,19 +2290,34 @@ function showEditFormationModal(data, row) {
   // Mettre à jour les labels selon le type chargé
   updateFormationTitleLabels();
 
-  // Convertir la date française en format mois pour l'input month
-  const monthValue = frenchTextToMonth(data.date || '');
-  document.getElementById('form-date-month').value = monthValue;
+  // Remplir les champs date avec le nouveau système (compatible données existantes)
+  const formStartDateVal = frenchTextToDate(data.date || '');
+  const formDateStartEl = document.getElementById('form-date-start');
+  const formDateEndEl = document.getElementById('form-date-end');
+  if (formDateStartEl) formDateStartEl.value = formStartDateVal || '';
+  if (formDateEndEl) {
+    if (formStartDateVal) {
+      const formDurMatch = (data.duration || '').match(/^(\d+)/);
+      if (formDurMatch) {
+        const formDurDays = parseInt(formDurMatch[1], 10);
+        if (formDurDays > 1) {
+          const formEndDate = new Date(formStartDateVal);
+          formEndDate.setDate(formEndDate.getDate() + formDurDays - 1);
+          formDateEndEl.value = formEndDate.toISOString().split('T')[0];
+        } else {
+          formDateEndEl.value = '';
+        }
+      } else {
+        formDateEndEl.value = '';
+      }
+    } else {
+      formDateEndEl.value = '';
+    }
+  }
   document.getElementById('form-date').value = data.date || '';
 
-  // Parser la durée pour enlever " jours" ou " jour"
-  let durationVal = data.duration || '';
-  const durationMatch = durationVal.match(/^(\d+)/);
-  if (durationMatch) {
-    document.getElementById('form-duration').value = durationMatch[1];
-  } else {
-    document.getElementById('form-duration').value = '';
-  }
+  // Recalculer la durée affichée
+  calculateFormDuration();
 
   const rawOrganism = data.organism || '';
   // Matcher "Nom (Dept)"
@@ -2399,24 +2527,25 @@ document.addEventListener('DOMContentLoaded', function () {
           finalDuration = "Tous les mercredis";
         }
       } else {
-        // Mode classique (Ponctuel ou Colo/Autre)
-        const monthValue = document.getElementById('exp-date-month').value;
-        if (!monthValue) {
-          showExperienceError("Veuillez saisir une date.");
+        // Mode classique (Ponctuel ou Colo/Autre) : lire les champs date-start/end
+        const startDateVal = document.getElementById('exp-date-start')?.value;
+        const endDateVal = document.getElementById('exp-date-end')?.value;
+
+        if (!startDateVal) {
+          showExperienceError("Veuillez saisir une date de début.");
           return;
         }
-        finalDate = monthToFrenchText(monthValue);
 
-        // Si le champ durée est désactivé (bug potentiel de transition), on prend la valeur
-        // Si c'est ponctuel, l'utilisateur saisit un nombre
-        const durationInput = document.getElementById('exp-duration');
-        // On s'assure de récupérer la valeur même si on vient de repasser "type text" à "number" ou inversement
-        // Normalement toggleAlshDateFields gère l'input type
-        finalDuration = durationInput.value;
-        if (!finalDuration && durationInput.type === 'number') {
-          // Durée optionnelle ? Le placeholder dit Ex: 17, mais label n'a pas *. 
-          // On laisse vide si vide.
+        // Construire le texte de date pour le stockage
+        if (endDateVal && endDateVal !== startDateVal) {
+          finalDate = `${dateToFrenchText(startDateVal)} - ${dateToFrenchText(endDateVal)}`;
+        } else {
+          finalDate = dateToFrenchText(startDateVal);
         }
+
+        // Récupérer la durée calculée (read-only, déjà calculée par calculateExpDuration)
+        const durationInput = document.getElementById('exp-duration');
+        finalDuration = durationInput ? durationInput.value : '';
       }
 
       // On met la date formatée dans le champ hidden pour qu'elle soit récupérée par getFormData ou la suite
@@ -2621,9 +2750,18 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      // Convertir le mois sélectionné en texte français
-      const monthValue = document.getElementById('form-date-month').value;
-      const dateText = monthValue ? monthToFrenchText(monthValue) : '';
+      // Construire la date à partir des champs start/end
+      const formStartVal = document.getElementById('form-date-start')?.value;
+      const formEndVal = document.getElementById('form-date-end')?.value;
+
+      if (!formStartVal) {
+        showFormationError("Veuillez saisir une date de début.");
+        return;
+      }
+
+      const dateText = (formEndVal && formEndVal !== formStartVal)
+        ? `${dateToFrenchText(formStartVal)} - ${dateToFrenchText(formEndVal)}`
+        : dateToFrenchText(formStartVal);
       document.getElementById('form-date').value = dateText;
 
       // Gérer le chemin du logo avec le préfixe GitHub Pages
