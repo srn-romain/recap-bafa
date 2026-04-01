@@ -982,9 +982,10 @@ function parseFrenchDate(dateStr) {
     'décembre': 11, 'déc': 11
   };
 
-  // Extraire l'année et le mois
+  // Extraire l'année, le mois et le jour
   let year = 0;
   let month = 0;
+  let day = 1;
 
   // Rechercher l'année dans la chaîne
   const yearMatch = dateStr.match(/\d{4}/);
@@ -1000,7 +1001,13 @@ function parseFrenchDate(dateStr) {
     }
   }
 
-  return new Date(year, month, 1);
+  // Rechercher le jour au début de la chaîne (ex: "5 Juillet 2024")
+  const dayMatch = dateStr.match(/^(\d{1,2})/);
+  if (dayMatch) {
+    day = parseInt(dayMatch[1], 10);
+  }
+
+  return new Date(year, month, day);
 }
 
 /*--------------------------------------------------------------

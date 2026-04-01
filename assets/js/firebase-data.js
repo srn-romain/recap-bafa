@@ -518,7 +518,10 @@ async function loadExperiencesFromFirebase() {
           break;
         }
       }
-      return new Date(year, month, 1);
+      // Extraire le jour s'il est au début (ex: "5 Juillet 2024")
+      const dayMatch = dateStr.match(/^(\d{1,2})/);
+      const day = dayMatch ? parseInt(dayMatch[1], 10) : 1;
+      return new Date(year, month, day);
     };
 
     experiences.sort((a, b) => {
@@ -689,7 +692,10 @@ async function loadFormationsFromFirebase() {
           break;
         }
       }
-      return new Date(year, month, 1);
+      // Extraire le jour s'il est au début (ex: "5 Juillet 2024")
+      const dayMatch = dateStr.match(/^(\d{1,2})/);
+      const day = dayMatch ? parseInt(dayMatch[1], 10) : 1;
+      return new Date(year, month, day);
     };
 
     formations.sort((a, b) => {
