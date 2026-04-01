@@ -133,14 +133,14 @@ function formatDateForDisplay(dateStr) {
     const m2 = m2Raw.toLowerCase();
 
     if (m1 === m2 && y1 === y2) {
-      // Même mois, même année → "du 15 au 31 Juillet 2024"
-      return `du ${parseInt(d1)} au ${parseInt(d2)} ${capitalize(m1Raw)} ${y1}`;
+      // Même mois, même année → "Du 15 au 31 Juillet 2024"
+      return `Du ${parseInt(d1)} au ${parseInt(d2)} ${capitalize(m1Raw)} ${y1}`;
     } else {
       // Mois ou années différents → abréviations
       const abbr1 = MONTH_ABBR[m1] || m1Raw;
       const abbr2 = MONTH_ABBR[m2] || m2Raw;
       const yearSuffix = y1 === y2 ? y1 : `${y1}-${y2}`;
-      return `du ${parseInt(d1)} ${abbr1} au ${parseInt(d2)} ${abbr2} ${yearSuffix}`;
+      return `Du ${parseInt(d1)} ${abbr1} au ${parseInt(d2)} ${abbr2} ${yearSuffix}`;
     }
   }
 
