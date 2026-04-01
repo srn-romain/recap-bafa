@@ -333,7 +333,7 @@ function createFormationRow(formation) {
 
   // Colonne Date
   const tdDate = document.createElement('td');
-  tdDate.textContent = formation.date;
+  tdDate.textContent = formatDateForDisplay(formation.date);
 
   // Ajouter le badge de statut
   const badge = getStatusBadge(formation);
