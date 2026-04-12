@@ -1151,8 +1151,8 @@ async function generatePDF(tableId, title) {
 
 
   // Récupérer le nom de l'utilisateur pour le nom de fichier et l'en-tête
-  let userName = "Animateur";
-  const titleH2 = document.querySelector('h2');
+  let userName = window.currentUserFullName || "Animateur";
+  const titleH2 = document.getElementById('main-dashboard-title');
   if (titleH2) {
     const orangeSpan = titleH2.querySelector('orange');
     if (orangeSpan) {
