@@ -1248,7 +1248,7 @@ async function generatePDF(tableId, title) {
   leftPart.innerHTML = `Généré le <strong>${dateStr}</strong> à ${timeStr}`;
 
   const rightPart = document.createElement('div');
-  rightPart.innerHTML = `<strong>Récapitulatif BAFA/BAFD - Plateforme collaborative</strong><br>
+  rightPart.innerHTML = `<strong>Récapitulatif BAFA/BAFD - Plateforme collaborative - By <a href="https://www.instagram.com/romain_colo/" style="color: #e67e22; text-decoration: none;">@romain_colo</a></strong><br>
                          Généré via <a href="https://macollectiondebafa.web.app/" style="color: #e67e22; text-decoration: none;">https://macollectiondebafa.web.app/</a>`;
   rightPart.style.textAlign = 'right';
 
