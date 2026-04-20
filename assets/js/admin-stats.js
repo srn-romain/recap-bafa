@@ -73,7 +73,9 @@ function updateUserStats() {
         } else {
             lastLogins.forEach((u, index) => {
                 const date = u.lastLogin.toDate ? u.lastLogin.toDate() : new Date(u.lastLogin.seconds * 1000);
-                const name = u.displayName || `${u.firstname || ''} ${u.lastname || ''}`.trim() || u.email;
+                const baseName = u.displayName || `${u.firstname || ''} ${u.lastname || ''}`.trim();
+                const email = u.email || '';
+                const displayName = baseName && baseName !== email ? `${baseName} (${email})` : email;
 
                 const item = document.createElement('div');
                 item.style.display = 'flex';
@@ -84,7 +86,7 @@ function updateUserStats() {
                 item.style.border = '1px solid #f3f4f6';
                 item.innerHTML = `
                     <span style="font-weight: 600; color: #374151; font-size: 0.8rem;">
-                        <span style="color: #9ca3af; font-size: 0.7rem; margin-right: 5px;">#${index + 1}</span>${name}
+                        <span style="color: #9ca3af; font-size: 0.7rem; margin-right: 5px;">#${index + 1}</span>${displayName}
                     </span>
                     <span style="color: #6b7280; font-size: 0.75rem;">${date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                 `;
