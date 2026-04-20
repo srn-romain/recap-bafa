@@ -38,6 +38,8 @@ function createAdminModal() {
             }
             .admin-stat-full {
                 grid-column: 1 / -1;
+                width: 100%;
+                overflow-x: auto;
             }
             @media (max-width: 900px) {
                 .admin-stats-grid {
@@ -111,8 +113,9 @@ function createAdminModal() {
                         <p style="font-size: 0.875rem; font-weight: 700; color: #b91c1c; margin-bottom: 0.8rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
                             <i class="bi bi-activity"></i>Activité du site
                         </p>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
-                            <thead>
+                        <div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                            <table style="min-width: 450px; width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                                <thead>
                                 <tr style="border-bottom: 1px solid #fee2e2;">
                                     <th style="padding: 8px; text-align: center; color: #6b7280; font-weight: 500;">Période</th>
                                     <th style="padding: 8px; text-align: center; color: #6b7280; font-weight: 500;">7 jours</th>
@@ -148,14 +151,15 @@ function createAdminModal() {
                             </tbody>
                         </table>
                     </div>
-                    <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; min-height: 180px;">
-                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                             <i class="bi bi-clock-history"></i>Dernières connexions (hors vous)
-                        </p>
-                        <div id="adminStatLastLoginList" style="width: 100%; display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto; padding-right: 5px;">
-                            <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Chargement...</p>
-                        </div>
+                </div>
+                <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; min-height: 180px;">
+                    <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                         <i class="bi bi-clock-history"></i>Dernières connexions (hors vous)
+                    </p>
+                    <div id="adminStatLastLoginList" style="width: 100%; display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto; padding-right: 5px; overflow-x: auto;">
+                        <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Chargement...</p>
                     </div>
+                </div>
                 </div>
             </div>
 

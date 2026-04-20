@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             <!-- Statistiques Admin (visible si admin) -->
             <button id="admin-stats-btn" onclick="openAdminStatsModal()" class="nav-item" title="Statistiques Admin" style="display: none;">
-                <i class="bi bi-bar-chart-fill"></i>
+                <i class="bi bi-shield-shaded"></i>
             </button>
 
             <!-- Paramètres (visible si propriétaire/admin) -->

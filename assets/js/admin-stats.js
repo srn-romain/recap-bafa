@@ -80,15 +80,18 @@ function updateUserStats() {
                 const item = document.createElement('div');
                 item.style.display = 'flex';
                 item.style.justifyContent = 'space-between';
-                item.style.padding = '4px 8px';
+                item.style.alignItems = 'center';
+                item.style.gap = '20px';
+                item.style.padding = '6px 10px';
                 item.style.background = '#f9fafb';
                 item.style.borderRadius = '4px';
                 item.style.border = '1px solid #f3f4f6';
+                item.style.minWidth = 'max-content'; // Force la largeur pour le scroll horizontal
                 item.innerHTML = `
-                    <span style="font-weight: 600; color: #374151; font-size: 0.8rem;">
-                        <span style="color: #9ca3af; font-size: 0.7rem; margin-right: 5px;">#${index + 1}</span>${displayName}
+                    <span style="font-weight: 600; color: #374151; font-size: 0.8rem; white-space: nowrap;">
+                        <span style="color: #9ca3af; font-size: 0.7rem; margin-right: 8px;">#${index + 1}</span>${displayName}
                     </span>
-                    <span style="color: #6b7280; font-size: 0.75rem;">${date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+                    <span style="color: #6b7280; font-size: 0.75rem; white-space: nowrap; font-family: monospace;">${date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                 `;
                 listContainer.appendChild(item);
             });
