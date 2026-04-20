@@ -41,6 +41,10 @@ function createAdminModal() {
                 width: 100%;
                 overflow-x: auto;
             }
+            .custom-marker-icon {
+                background: none !important;
+                border: none !important;
+            }
             @media (max-width: 900px) {
                 .admin-stats-grid {
                     grid-template-columns: repeat(3, 1fr);

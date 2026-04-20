@@ -22,7 +22,7 @@ async function loadAdminStats() {
         const usersSnapshot = await window.firebaseDb.collection('users').get();
         adminDataCache.users = usersSnapshot.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(u => u.id !== '60KsVndcHsUYhxh6ErSWgHbjnz63' && u.id !== '5DP6faC4Y8ce6K3x07aC2qHjflq2'); // Exclure les comptes de test/démo
+            .filter(u => u.id !== 'iaoZlSgBXUc6eYVHaZMy6hz4tVI3' && u.id !== '5DP6faC4Y8ce6K3x07aC2qHjflq2'); // Exclure les comptes de test/démo
 
         // 1. Stats de base (Utilisateurs)
         updateUserStats();
@@ -315,30 +315,66 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 async function geocodeLocation(locationName) {
     if (!locationName || locationName.length < 3) return null;
 
-    // Cache local session
+    // 1. Cache local session (RAM)
     if (!window._geoCache) window._geoCache = {};
     if (window._geoCache[locationName]) return window._geoCache[locationName];
 
+    // Clé sécurisée pour Firestore (ID sans caractères interdits)
+    // On utilise un hash simple ou un btoa nettoyé
+    let safeId;
     try {
-        let query = locationName;
-        // Détection d'un numéro de département : "Nice (06)" ou "Lyon 69"
-        // Regex cherche 2 ou 3 chiffres entre parenthèses OU à la fin du string
-        const deptRegex = /\(\d{2,3}\)|\s\d{2,3}$/;
+        safeId = btoa(unescape(encodeURIComponent(locationName))).replace(/[\/\+=]/g, '_').substring(0, 50);
+    } catch(e) {
+        safeId = locationName.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
+    }
 
-        if (deptRegex.test(locationName)) {
-            // Si département présent, on force France pour éviter les homonymes (Nice USA vs Nice 06)
-            if (!query.toLowerCase().includes('france')) {
-                query += ", France";
+    // 2. Cache global Firestore (pour éviter les 429 répétitifs sur les lieux communs)
+    try {
+        if (window.firebaseDb) {
+            const cacheDoc = await window.firebaseDb.collection('geocoding_cache').doc(safeId).get();
+            if (cacheDoc.exists) {
+                const coords = cacheDoc.data();
+                window._geoCache[locationName] = coords;
+                return coords;
             }
         }
-        // Sinon, on laisse tel quel pour permettre les lieux étrangers (ex: "Londres", "New York")
+    } catch (e) {
+        console.warn("Erreur lecture cache géo Firestore:", e);
+    }
+
+    // 3. Appel API Nominatim (OpenStreetMap)
+    try {
+        let query = locationName;
+        // Détection d'un numéro de département pour précision
+        const deptRegex = /\(\d{2,3}\)|\s\d{2,3}$/;
+        if (deptRegex.test(locationName) && !query.toLowerCase().includes('france')) {
+            query += ", France";
+        }
 
         const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+        
+        if (resp.status === 429) {
+            console.error("Rate limit Nominatim (429). Trop de requêtes.");
+            return null;
+        }
+
         const results = await resp.json();
 
         if (results && results.length > 0) {
             const coords = { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+            
+            // Mise à jour cache RAM
             window._geoCache[locationName] = coords;
+
+            // Mise à jour cache Firestore (non bloquant)
+            if (window.firebaseDb) {
+                window.firebaseDb.collection('geocoding_cache').doc(safeId).set({
+                    ...coords,
+                    name: locationName,
+                    updatedAt: new Date()
+                }).catch(() => {});
+            }
+
             return coords;
         }
     } catch (e) {
@@ -363,11 +399,10 @@ async function initAdminMap() {
         // Centrer sur la France par défaut
         adminMap = L.map('adminRacesMap').setView([46.603354, 1.888334], 5);
 
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri'
+        // Utiliser les tuiles OpenStreetMap en français
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(adminMap);
-
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}').addTo(adminMap);
 
         // Ajouter les marqueurs
         let markerCount = 0;
@@ -393,18 +428,26 @@ async function initAdminMap() {
         const locationNames = Object.keys(uniqueLocations);
         if (statusEl) statusEl.textContent = `Traitement de ${locationNames.length} lieux uniques...`;
 
-        // Traitement par lots de 5 pour respecter rate limits (1 req/s pour Nominatim officiellement, mais on peut tenter un peu plus agressif ou cache)
+        // Traitement par lots pour respecter rate limits
         for (let i = 0; i < locationNames.length; i++) {
             const locName = locationNames[i];
             let coords = null;
+            const expsAtLoc = uniqueLocations[locName];
 
-            // Vérif cache session
-            if (window._geoCache && window._geoCache[locName]) {
-                coords = window._geoCache[locName];
-            } else {
-                // Appel API
-                coords = await geocodeLocation(locName);
-                if (coords) await sleep(600); // 600ms pause min entre appels API
+            // 1. Tenter d'extraire les coordonnées de l'URL Google Maps si elle existe
+            const firstExpWithUrl = expsAtLoc.find(e => e.data && e.data.locationUrl);
+            if (firstExpWithUrl) {
+                coords = extractCoordsFromUrl(firstExpWithUrl.data.locationUrl);
+            }
+
+            // 2. Sinon, utiliser le géo-codage OSM Nominatim (avec cache session)
+            if (!coords) {
+                if (window._geoCache && window._geoCache[locName]) {
+                    coords = window._geoCache[locName];
+                } else {
+                    coords = await geocodeLocation(locName);
+                    if (coords) await sleep(1200); // 1.2s pause pour respecter Nominatim (1 req/s)
+                }
             }
 
             if (coords) {
@@ -429,13 +472,24 @@ async function initAdminMap() {
                 });
                 popupContent += `</div>`;
 
-                const marker = L.marker([coords.lat, coords.lng]).bindPopup(popupContent);
+                const markerIcon = L.divIcon({
+                    html: `<div style="background-color: #dc2626; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>`,
+                    className: 'custom-marker-icon',
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6],
+                    popupAnchor: [0, -6]
+                });
+
+                const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon }).bindPopup(popupContent);
                 adminMarkers.push(marker);
                 marker.addTo(adminMap);
                 markerCount += expsAtLoc.length;
+                console.log(`Marqueur ajouté : ${locName} (${coords.lat}, ${coords.lng})`);
+            } else {
+                console.warn(`Lieu non localisé : ${locName}`);
             }
 
-            if (statusEl && i % 2 === 0) {
+            if (statusEl && (i % 2 === 0 || i === locationNames.length - 1)) {
                 statusEl.textContent = `Chargement carte... (${Math.round((i / locationNames.length) * 100)}%)`;
             }
         }
