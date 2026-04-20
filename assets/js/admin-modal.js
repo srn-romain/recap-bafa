@@ -107,9 +107,9 @@ function createAdminModal() {
                         <p class="admin-stat-value" style="color: #0891b2;" id="adminStatTotalOrgs">0</p>
                         <p class="admin-stat-label">Organismes</p>
                     </div>
-                    <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start;">
+                    <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; min-height: 180px;">
                         <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center;">Dernières connexions (hors vous)</p>
-                        <div id="adminStatLastLoginList" style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
+                        <div id="adminStatLastLoginList" style="width: 100%; display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto; padding-right: 5px;">
                             <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Chargement...</p>
                         </div>
                     </div>

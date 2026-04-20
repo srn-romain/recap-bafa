@@ -51,7 +51,7 @@ function updateUserStats() {
     setText('adminStatTotalUsers', totalUsers);
     setText('adminStatUnlistedProfiles', unlistedProfiles);
 
-    // 5 dernières connexions (hors admin actuel)
+    // 10 dernières connexions (hors admin actuel)
     const currentUid = window.currentUser ? window.currentUser.uid : null;
 
     // Filtrage et tri
@@ -62,7 +62,7 @@ function updateUserStats() {
             const dateB = b.lastLogin.seconds || 0;
             return dateB - dateA;
         })
-        .slice(0, 5);
+        .slice(0, 10);
 
     const listContainer = document.getElementById('adminStatLastLoginList');
     if (listContainer) {
@@ -71,7 +71,7 @@ function updateUserStats() {
         if (lastLogins.length === 0) {
             listContainer.innerHTML = '<p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Aucun historique récent.</p>';
         } else {
-            lastLogins.forEach(u => {
+            lastLogins.forEach((u, index) => {
                 const date = u.lastLogin.toDate ? u.lastLogin.toDate() : new Date(u.lastLogin.seconds * 1000);
                 const name = u.displayName || `${u.firstname || ''} ${u.lastname || ''}`.trim() || u.email;
 
@@ -83,7 +83,9 @@ function updateUserStats() {
                 item.style.borderRadius = '4px';
                 item.style.border = '1px solid #f3f4f6';
                 item.innerHTML = `
-                    <span style="font-weight: 600; color: #374151; font-size: 0.8rem;">${name}</span>
+                    <span style="font-weight: 600; color: #374151; font-size: 0.8rem;">
+                        <span style="color: #9ca3af; font-size: 0.7rem; margin-right: 5px;">#${index + 1}</span>${name}
+                    </span>
                     <span style="color: #6b7280; font-size: 0.75rem;">${date.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                 `;
                 listContainer.appendChild(item);
