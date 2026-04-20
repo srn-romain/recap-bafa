@@ -138,6 +138,39 @@ async function fetchAllSubCollections() {
     });
 
     await Promise.all(promises);
+
+    // 2. Récupérer aussi les collections à la racine (legacy ou standalone)
+    try {
+        const [rootExpSnap, rootFormSnap] = await Promise.all([
+            window.firebaseDb.collection('experiences').get(),
+            window.firebaseDb.collection('formations').get()
+        ]);
+
+        rootExpSnap.docs.forEach(doc => {
+            // Éviter les doublons si déjà présents via les sous-collections
+            if (!adminDataCache.experiences.some(e => e.id === doc.id)) {
+                adminDataCache.experiences.push({
+                    id: doc.id,
+                    data: doc.data(),
+                    userId: 'root',
+                    userName: 'Système / Legacy'
+                });
+            }
+        });
+
+        rootFormSnap.docs.forEach(doc => {
+            if (!adminDataCache.formations.some(f => f.id === doc.id)) {
+                adminDataCache.formations.push({
+                    id: doc.id,
+                    data: doc.data(),
+                    userId: 'root',
+                    userName: 'Système / Legacy'
+                });
+            }
+        });
+    } catch (err) {
+        console.warn("Erreur lors du chargement des collections racine:", err);
+    }
 }
 
 /**
@@ -286,6 +319,29 @@ async function geocodeLocation(locationName) {
     if (!window._geoCache) window._geoCache = {};
     if (window._geoCache[locationName]) return window._geoCache[locationName];
 
+    // Clé sécurisée pour Firestore (ID sans caractères interdits)
+    // On utilise un hash simple ou un btoa nettoyé
+    let safeId;
+    try {
+        safeId = btoa(unescape(encodeURIComponent(locationName))).replace(/[\/\+=]/g, '_').substring(0, 50);
+    } catch(e) {
+        safeId = locationName.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
+    }
+
+    // 2. Cache global Firestore (pour éviter les 429 répétitifs sur les lieux communs)
+    try {
+        if (window.firebaseDb) {
+            const cacheDoc = await window.firebaseDb.collection('geocoding_cache').doc(safeId).get();
+            if (cacheDoc.exists) {
+                const coords = cacheDoc.data();
+                window._geoCache[locationName] = coords;
+                return coords;
+            }
+        }
+    } catch (e) {
+        console.warn("Erreur lecture cache géo Firestore:", e);
+    }
+
     // 3. Appel API Nominatim (OpenStreetMap)
     try {
         let query = locationName;
@@ -309,6 +365,15 @@ async function geocodeLocation(locationName) {
             
             // Mise à jour cache RAM
             window._geoCache[locationName] = coords;
+
+            // Mise à jour cache Firestore (non bloquant)
+            if (window.firebaseDb) {
+                window.firebaseDb.collection('geocoding_cache').doc(safeId).set({
+                    ...coords,
+                    name: locationName,
+                    updatedAt: new Date()
+                }).catch(() => {});
+            }
 
             return coords;
         }
