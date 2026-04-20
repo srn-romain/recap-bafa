@@ -279,6 +279,9 @@ function updateAdminStatsDisplay(filterMode) {
     
     // Mettre à jour les stats d'activité (7j, 30j, 1an)
     updateActivityStats();
+
+    // Mettre à jour le top des organismes
+    updateOrganismStats();
 }
 
 /**
@@ -591,6 +594,61 @@ function updateActivityStats() {
     setTrend('trendAjouts7d', stats.ajouts['7d'], stats.ajoutsPrev['7d']);
     setTrend('trendAjouts30d', stats.ajouts['30d'], stats.ajoutsPrev['30d']);
     setTrend('trendAjouts1y', stats.ajouts['1y'], stats.ajoutsPrev['1y']);
+}
+
+/**
+ * Calcule et affiche le classement des organismes les plus utilisés
+ */
+function updateOrganismStats() {
+    const container = document.getElementById('adminTopOrganisms');
+    if (!container) return;
+
+    const orgCounts = {};
+    const allData = [...adminDataCache.experiences, ...adminDataCache.formations];
+    let totalItems = 0;
+
+    allData.forEach(item => {
+        let name = item.data.organizer || item.data.organism;
+        if (!name) return;
+
+        // Normalisation simple : enlever le département "(75)"
+        name = name.replace(/\s*\(\d{2,3}[AB]?\)\s*$/, '').trim();
+        if (!name) return;
+
+        orgCounts[name] = (orgCounts[name] || 0) + 1;
+        totalItems++;
+    });
+
+    if (totalItems === 0) {
+        container.innerHTML = '<p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Aucune donnée disponible.</p>';
+        return;
+    }
+
+    // Trier les organismes par occurrence décroissante
+    const sortedOrgs = Object.entries(orgCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5); // Prendre les 5 premiers
+
+    const colors = ['#7c3aed', '#2563eb', '#16a34a', '#db2777', '#ea580c'];
+
+    container.innerHTML = '';
+    sortedOrgs.forEach(([name, count], index) => {
+        const percentage = ((count / totalItems) * 100).toFixed(1);
+        const color = colors[index % colors.length];
+
+        const row = document.createElement('div');
+        row.style.width = '100%';
+        row.innerHTML = `
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px;">
+                <span style="font-weight: 600; color: #374151;">${name}</span>
+                <span style="color: #6b7280;">${count} (${percentage}%)</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden;">
+                <div style="width: ${percentage}%; height: 100%; background: ${color}; border-radius: 4px;"></div>
+            </div>
+        `;
+        container.appendChild(row);
+    });
 }
 
 // Helpers

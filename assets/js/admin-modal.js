@@ -152,6 +152,14 @@ function createAdminModal() {
                         </table>
                     </div>
                 </div>
+                <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <p style="font-size: 0.875rem; font-weight: 700; color: #7c3aed; margin-bottom: 1rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="bi bi-bar-chart-fill"></i>Top Organismes
+                    </p>
+                    <div id="adminTopOrganisms" style="width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 0 10px 10px 10px;">
+                        <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Analyse en cours...</p>
+                    </div>
+                </div>
                 <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; min-height: 180px;">
                     <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
                          <i class="bi bi-clock-history"></i>Dernières connexions (hors vous)
