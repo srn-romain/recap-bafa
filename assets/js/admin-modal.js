@@ -45,6 +45,36 @@ function createAdminModal() {
                 background: none !important;
                 border: none !important;
             }
+            /* Style UISwitch */
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 32px;
+                height: 18px;
+            }
+            .switch input { opacity: 0; width: 0; height: 0; }
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background-color: #dc2626;
+                transition: .4s;
+                border-radius: 18px;
+            }
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 12px;
+                width: 12px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+            input:checked + .slider { background-color: #2563eb; }
+            input:checked + .slider:before { transform: translateX(14px); }
+
             @media (max-width: 900px) {
                 .admin-stats-grid {
                     grid-template-columns: repeat(3, 1fr);
@@ -157,8 +187,16 @@ function createAdminModal() {
                     </div>
                 </div>
                 <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; margin-bottom: 0.5rem;">
-                    <p style="font-size: 0.875rem; font-weight: 700; color: #7c3aed; margin-bottom: 1rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <i class="bi bi-bar-chart-fill"></i>Top Organismes
+                    <p style="font-size: 0.875rem; font-weight: 700; color: #374151; margin-bottom: 1rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px;">
+                        <i class="bi bi-bar-chart-fill" style="color: #7c3aed;"></i>Top Organismes
+                        <span style="display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.7rem; color: #6b7280; margin-left: 10px; background: #f3f4f6; padding: 4px 8px; border-radius: 20px; border: 1px solid #e5e7eb;">
+                            <span id="labelExp" style="color: #dc2626;">Exp.</span>
+                            <label class="switch">
+                                <input type="checkbox" id="topOrgToggle" onchange="updateOrganismStats()">
+                                <span class="slider"></span>
+                            </label>
+                            <span id="labelForm">Form.</span>
+                        </span>
                     </p>
                     <div id="adminTopOrganisms" style="width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 0 10px 10px 10px;">
                         <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Analyse en cours...</p>

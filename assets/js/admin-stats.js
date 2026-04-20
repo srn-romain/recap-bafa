@@ -409,19 +409,24 @@ async function initAdminMap() {
         adminMarkers = [];
 
         // Pour accélérer : On se base UNIQUEMENT sur le nom du lieu (Nominatim avec cache)
-        // On lance les requêtes en parallèle par petits lots pour ne pas bloquer mais aller plus vite que séquentiel
+        // On lance les requêtes en parallèle par petits lots
+        const uniqueLocations = {}; 
 
-        // Dédoublonnage des lieux pour éviter de géo-coder 50 fois "Paris"
-        const uniqueLocations = {}; // { "Paris": [exp1, exp2], "Lyon": [exp3] }
-
+        // Agrégation des expériences
         adminDataCache.experiences.forEach(exp => {
-            // Ignore le compte test pour l'affichage sur la carte
-            if (exp.userId === '60KsVndcHsUYhxh6ErSWgHbjnz63') return;
-
             const locName = exp.data.location ? exp.data.location.trim() : null;
             if (locName && locName.length > 2) {
-                if (!uniqueLocations[locName]) uniqueLocations[locName] = [];
-                uniqueLocations[locName].push(exp);
+                if (!uniqueLocations[locName]) uniqueLocations[locName] = { exps: [], forms: [] };
+                uniqueLocations[locName].exps.push(exp);
+            }
+        });
+
+        // Agrégation des formations
+        adminDataCache.formations.forEach(form => {
+            const locName = form.data.location ? form.data.location.trim() : null;
+            if (locName && locName.length > 2) {
+                if (!uniqueLocations[locName]) uniqueLocations[locName] = { exps: [], forms: [] };
+                uniqueLocations[locName].forms.push(form);
             }
         });
 
@@ -431,49 +436,67 @@ async function initAdminMap() {
         // Traitement par lots pour respecter rate limits
         for (let i = 0; i < locationNames.length; i++) {
             const locName = locationNames[i];
+            const locData = uniqueLocations[locName];
             let coords = null;
-            const expsAtLoc = uniqueLocations[locName];
 
-            // 1. Tenter d'extraire les coordonnées de l'URL Google Maps si elle existe
-            const firstExpWithUrl = expsAtLoc.find(e => e.data && e.data.locationUrl);
+            // 1. Tenter d'extraire les coordonnées de l'URL Google Maps si elle existe (exps ou forms)
+            const firstExpWithUrl = [...locData.exps, ...locData.forms].find(e => e.data && e.data.locationUrl);
             if (firstExpWithUrl) {
                 coords = extractCoordsFromUrl(firstExpWithUrl.data.locationUrl);
             }
 
-            // 2. Sinon, utiliser le géo-codage OSM Nominatim (avec cache session)
+            // 2. Sinon, utiliser le géo-codage OSM Nominatim (avec cache session & Firestore)
             if (!coords) {
                 if (window._geoCache && window._geoCache[locName]) {
                     coords = window._geoCache[locName];
                 } else {
                     coords = await geocodeLocation(locName);
-                    if (coords) await sleep(1200); // 1.2s pause pour respecter Nominatim (1 req/s)
+                    if (coords) await sleep(1200); 
                 }
             }
 
             if (coords) {
-                // Ajouter un marqueur pour chaque expérience à ce lieu (légèrement décalé si besoin ou popup groupé)
-                // Ici on groupe tout dans une seule popup liste si plusieurs
-                const expsAtLoc = uniqueLocations[locName];
+                const hasExps = locData.exps.length > 0;
+                const hasForms = locData.forms.length > 0;
 
-                let popupContent = `<div style="font-family: Arial, sans-serif; font-size: 13px; max-height:200px; overflow-y:auto;">
+                // Code couleur : Rouge (Exp), Bleu (Form), Violet (Mixte)
+                let markerColor = '#dc2626';
+                if (hasForms && !hasExps) markerColor = '#2563eb';
+                if (hasForms && hasExps) markerColor = '#7c3aed';
+
+                let popupContent = `<div style="font-family: Arial, sans-serif; font-size: 13px; max-height:220px; overflow-y:auto; min-width:180px;">
                     <strong style="font-size: 1.1em; color: #1f2937; display:block; margin-bottom:5px;">${locName}</strong>`;
 
-                expsAtLoc.forEach(exp => {
+                // Afficher les expériences
+                locData.exps.forEach(exp => {
                     popupContent += `
                     <div style="border-top: 1px solid #eee; padding: 6px 0;">
-                        <div style="display: flex; align-items: center;">
-                            <i class="bi bi-person-fill" style="color: #dc2626; margin-right: 5px;"></i>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <i class="bi bi-person-fill" style="color: #dc2626;"></i>
                             <strong>${exp.userName}</strong>
+                            <span style="font-size: 0.75rem; color: #dc2626; background: #fee2e2; padding: 1px 4px; border-radius: 3px;">Exp.</span>
                         </div>
-                        <div style="color: #666; font-size: 0.9em; margin-left: 18px;">
-                            ${exp.data.date}
-                        </div>
+                        <div style="color: #666; font-size: 0.85em; margin-left: 20px;">${exp.data.date}</div>
                     </div>`;
                 });
+
+                // Afficher les formations
+                locData.forms.forEach(form => {
+                    popupContent += `
+                    <div style="border-top: 1px solid #eee; padding: 6px 0;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <i class="bi bi-person-fill" style="color: #2563eb;"></i>
+                            <strong>${form.userName}</strong>
+                            <span style="font-size: 0.75rem; color: #2563eb; background: #dbeafe; padding: 1px 4px; border-radius: 3px;">Form.</span>
+                        </div>
+                        <div style="color: #666; font-size: 0.85em; margin-left: 20px;">${form.data.date}</div>
+                    </div>`;
+                });
+                
                 popupContent += `</div>`;
 
                 const markerIcon = L.divIcon({
-                    html: `<div style="background-color: #dc2626; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>`,
+                    html: `<div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>`,
                     className: 'custom-marker-icon',
                     iconSize: [12, 12],
                     iconAnchor: [6, 6],
@@ -483,8 +506,8 @@ async function initAdminMap() {
                 const marker = L.marker([coords.lat, coords.lng], { icon: markerIcon }).bindPopup(popupContent);
                 adminMarkers.push(marker);
                 marker.addTo(adminMap);
-                markerCount += expsAtLoc.length;
-                console.log(`Marqueur ajouté : ${locName} (${coords.lat}, ${coords.lng})`);
+                markerCount += (locData.exps.length + locData.forms.length);
+                console.log(`Marqueur ajouté : ${locName} (${markerColor})`);
             } else {
                 console.warn(`Lieu non localisé : ${locName}`);
             }
@@ -655,14 +678,23 @@ function updateActivityStats() {
  */
 function updateOrganismStats() {
     const container = document.getElementById('adminTopOrganisms');
+    const toggle = document.getElementById('topOrgToggle');
     if (!container) return;
 
+    const isForm = toggle && toggle.checked;
+    const labelExp = document.getElementById('labelExp');
+    const labelForm = document.getElementById('labelForm');
+
+    // Mise à jour visuelle des labels
+    if (labelExp) labelExp.style.color = isForm ? '#9ca3af' : '#dc2626';
+    if (labelForm) labelForm.style.color = isForm ? '#2563eb' : '#9ca3af';
+
     const orgCounts = {};
-    const allData = [...adminDataCache.experiences, ...adminDataCache.formations];
+    const dataToProcess = isForm ? adminDataCache.formations : adminDataCache.experiences;
     let totalItems = 0;
 
-    allData.forEach(item => {
-        let name = item.data.organizer || item.data.organism;
+    dataToProcess.forEach(item => {
+        let name = isForm ? item.data.organism : (item.data.organizer || item.data.organism);
         if (!name) return;
 
         // Normalisation simple : enlever le département "(75)"
@@ -674,7 +706,7 @@ function updateOrganismStats() {
     });
 
     if (totalItems === 0) {
-        container.innerHTML = '<p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Aucune donnée disponible.</p>';
+        container.innerHTML = `<p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Aucune ${isForm ? 'formation' : 'expérience'} disponible.</p>`;
         return;
     }
 
@@ -683,7 +715,7 @@ function updateOrganismStats() {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5); // Prendre les 5 premiers
 
-    const colors = ['#7c3aed', '#2563eb', '#16a34a', '#db2777', '#ea580c'];
+    const colors = isForm ? ['#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'] : ['#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fecaca'];
 
     container.innerHTML = '';
     sortedOrgs.forEach(([name, count], index) => {
