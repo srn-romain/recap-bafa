@@ -240,6 +240,9 @@ function updateAdminStatsDisplay(filterMode) {
 
     // Mettre à jour les boutons de filtre
     updateFilterButtons(filterMode);
+    
+    // Mettre à jour les stats d'activité (7j, 30j, 1an)
+    updateActivityStats();
 }
 
 /**
@@ -458,6 +461,91 @@ function extractCoordsFromUrl(url) {
     }
 
     return null;
+}
+
+/**
+ * Calcule et affiche les statistiques d'activité (connexions et ajouts)
+ */
+function updateActivityStats() {
+    const now = new Date();
+    const ms7d = 7 * 24 * 60 * 60 * 1000;
+    const ms30d = 30 * 24 * 60 * 60 * 1000;
+    const ms1y = 365.25 * 24 * 60 * 60 * 1000; // Un an glissant
+
+    const stats = {
+        connexions: { '7d': 0, '30d': 0, '1y': 0 },
+        ajouts: { '7d': 0, '30d': 0, '1y': 0 },
+        connexionsPrev: { '7d': 0, '30d': 0, '1y': 0 },
+        ajoutsPrev: { '7d': 0, '30d': 0, '1y': 0 }
+    };
+
+    // 1. Connexions (estimées par unique lastLogin dans la période)
+    adminDataCache.users.forEach(u => {
+        if (!u.lastLogin) return;
+        const lastLoginDate = u.lastLogin.toDate ? u.lastLogin.toDate() : new Date(u.lastLogin.seconds * 1000);
+        const diff = now - lastLoginDate;
+
+        // Actuel
+        if (diff <= ms7d) stats.connexions['7d']++;
+        if (diff <= ms30d) stats.connexions['30d']++;
+        if (diff <= ms1y) stats.connexions['1y']++;
+
+        // Précédent (pour la tendance)
+        if (diff > ms7d && diff <= 2 * ms7d) stats.connexionsPrev['7d']++;
+        if (diff > ms30d && diff <= 2 * ms30d) stats.connexionsPrev['30d']++;
+        if (diff > ms1y && diff <= 2 * ms1y) stats.connexionsPrev['1y']++;
+    });
+
+    // 2. Ajouts de données (expériences et formations)
+    const allData = [...adminDataCache.experiences, ...adminDataCache.formations];
+    allData.forEach(item => {
+        const createdAt = item.data.createdAt;
+        if (!createdAt) return;
+        
+        const createdDate = createdAt.toDate ? createdAt.toDate() : new Date(createdAt.seconds * 1000);
+        const diff = now - createdDate;
+
+        // Actuel
+        if (diff <= ms7d) stats.ajouts['7d']++;
+        if (diff <= ms30d) stats.ajouts['30d']++;
+        if (diff <= ms1y) stats.ajouts['1y']++;
+
+        // Précédent
+        if (diff > ms7d && diff <= 2 * ms7d) stats.ajoutsPrev['7d']++;
+        if (diff > ms30d && diff <= 2 * ms30d) stats.ajoutsPrev['30d']++;
+        if (diff > ms1y && diff <= 2 * ms1y) stats.ajoutsPrev['1y']++;
+    });
+
+    const setTrend = (id, current, prev) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (current > prev) {
+            el.innerHTML = '<i class="bi bi-arrow-up-short"></i>';
+            el.style.color = '#16a34a';
+        } else if (current < prev) {
+            el.innerHTML = '<i class="bi bi-arrow-down-short"></i>';
+            el.style.color = '#dc2626';
+        } else {
+            el.innerHTML = '<i class="bi bi-dash"></i>';
+            el.style.color = '#9ca3af';
+        }
+    };
+
+    // Mise à jour de l'UI Valeurs
+    setText('statConnexions7d', stats.connexions['7d']);
+    setText('statConnexions30d', stats.connexions['30d']);
+    setText('statConnexions1y', stats.connexions['1y']);
+    setText('statAjouts7d', stats.ajouts['7d']);
+    setText('statAjouts30d', stats.ajouts['30d']);
+    setText('statAjouts1y', stats.ajouts['1y']);
+
+    // Mise à jour de l'UI Tendances
+    setTrend('trendConnexions7d', stats.connexions['7d'], stats.connexionsPrev['7d']);
+    setTrend('trendConnexions30d', stats.connexions['30d'], stats.connexionsPrev['30d']);
+    setTrend('trendConnexions1y', stats.connexions['1y'], stats.connexionsPrev['1y']);
+    setTrend('trendAjouts7d', stats.ajouts['7d'], stats.ajoutsPrev['7d']);
+    setTrend('trendAjouts30d', stats.ajouts['30d'], stats.ajoutsPrev['30d']);
+    setTrend('trendAjouts1y', stats.ajouts['1y'], stats.ajoutsPrev['1y']);
 }
 
 // Helpers

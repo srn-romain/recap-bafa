@@ -107,8 +107,51 @@ function createAdminModal() {
                         <p class="admin-stat-value" style="color: #0891b2;" id="adminStatTotalOrgs">0</p>
                         <p class="admin-stat-label">Organismes</p>
                     </div>
+                    <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; margin-bottom: 0px;">
+                        <p style="font-size: 0.875rem; font-weight: 700; color: #b91c1c; margin-bottom: 0.8rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="bi bi-activity"></i>Activité du site
+                        </p>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #fee2e2;">
+                                    <th style="padding: 8px; text-align: center; color: #6b7280; font-weight: 500;">Période</th>
+                                    <th style="padding: 8px; text-align: center; color: #6b7280; font-weight: 500;">7 jours</th>
+                                    <th style="padding: 8px; text-align: center; color: #6b7280; font-weight: 500;">30 jours</th>
+                                    <th style="padding: 8px; text-align: center; color: #6b7280; font-weight: 500;">1 an</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #fee2e2;">
+                                    <td style="padding: 10px 8px; font-weight: 600; color: #374151;">Connexions (activités)</td>
+                                    <td style="padding: 10px 8px; text-align: center; color: #16a34a; font-weight: 700; font-size: 1.1rem;">
+                                        <span id="statConnexions7d">0</span><span id="trendConnexions7d" style="font-size: 0.7rem; margin-left: 4px;"></span>
+                                    </td>
+                                    <td style="padding: 10px 8px; text-align: center; color: #16a34a; font-weight: 700; font-size: 1.1rem;">
+                                        <span id="statConnexions30d">0</span><span id="trendConnexions30d" style="font-size: 0.7rem; margin-left: 4px;"></span>
+                                    </td>
+                                    <td style="padding: 10px 8px; text-align: center; color: #16a34a; font-weight: 700; font-size: 1.1rem;">
+                                        <span id="statConnexions1y">0</span><span id="trendConnexions1y" style="font-size: 0.7rem; margin-left: 4px;"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 8px; font-weight: 600; color: #374151;">Ajouts de données</td>
+                                    <td style="padding: 10px 8px; text-align: center; color: #2563eb; font-weight: 700; font-size: 1.1rem;">
+                                        <span id="statAjouts7d">0</span><span id="trendAjouts7d" style="font-size: 0.7rem; margin-left: 4px;"></span>
+                                    </td>
+                                    <td style="padding: 10px 8px; text-align: center; color: #2563eb; font-weight: 700; font-size: 1.1rem;">
+                                        <span id="statAjouts30d">0</span><span id="trendAjouts30d" style="font-size: 0.7rem; margin-left: 4px;"></span>
+                                    </td>
+                                    <td style="padding: 10px 8px; text-align: center; color: #2563eb; font-weight: 700; font-size: 1.1rem;">
+                                        <span id="statAjouts1y">0</span><span id="trendAjouts1y" style="font-size: 0.7rem; margin-left: 4px;"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="admin-stat-card admin-stat-full" style="text-align: left; align-items: flex-start; min-height: 180px;">
-                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center;">Dernières connexions (hors vous)</p>
+                        <p style="font-size: 0.875rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; width: 100%; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                             <i class="bi bi-clock-history"></i>Dernières connexions (hors vous)
+                        </p>
                         <div id="adminStatLastLoginList" style="width: 100%; display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto; padding-right: 5px;">
                             <p style="margin: 0; color: #6b7280; font-style: italic; text-align: center; width: 100%;">Chargement...</p>
                         </div>

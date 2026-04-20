@@ -2892,6 +2892,10 @@ async function addExperienceToFirebase(data) {
   if (!isOwner()) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
+  // Ajouter les timestamps
+  data.createdAt = new Date();
+  data.updatedAt = new Date();
+  
   await getCollectionRef('experiences').add(data);
   console.log('Expérience ajoutée avec succès');
 }
@@ -2934,6 +2938,9 @@ async function updateExperienceInFirebase(data, row) {
 
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
+    // Mettre à jour le timestamp
+    data.updatedAt = new Date();
+    
     await doc.ref.update(data);
     console.log('Expérience modifiée avec succès');
   } else {
@@ -2946,6 +2953,10 @@ async function addFormationToFirebase(data) {
   if (!isOwner()) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
+  // Ajouter les timestamps
+  data.createdAt = new Date();
+  data.updatedAt = new Date();
+
   await getCollectionRef('formations').add(data);
   console.log('Formation ajoutée avec succès');
 }
@@ -2980,6 +2991,9 @@ async function updateFormationInFirebase(data, row) {
 
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
+    // Mettre à jour le timestamp
+    data.updatedAt = new Date();
+
     await doc.ref.update(data);
     console.log('Formation modifiée avec succès');
   } else {
