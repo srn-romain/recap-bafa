@@ -2892,9 +2892,10 @@ async function addExperienceToFirebase(data) {
   if (!isOwner()) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
-  // Ajouter les timestamps
-  data.createdAt = new Date();
-  data.updatedAt = new Date();
+  // Ajouter les timestamps (utiliser serverTimestamp pour plus de précision)
+  const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+  data.createdAt = timestamp;
+  data.updatedAt = timestamp;
   
   await getCollectionRef('experiences').add(data);
   console.log('Expérience ajoutée avec succès');
@@ -2938,8 +2939,16 @@ async function updateExperienceInFirebase(data, row) {
 
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
-    // Mettre à jour le timestamp
-    data.updatedAt = new Date();
+    // Mettre à jour le timestamp de modification
+    data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+    
+    // Garder la date de création originale si elle existe dans le doc
+    const existingData = doc.data();
+    if (existingData && existingData.createdAt) {
+      data.createdAt = existingData.createdAt;
+    } else {
+      data.createdAt = data.updatedAt; // Fallback pour les vieilles données
+    }
     
     await doc.ref.update(data);
     console.log('Expérience modifiée avec succès');
@@ -2954,8 +2963,9 @@ async function addFormationToFirebase(data) {
     throw new Error('Non autorisé : vous n\'êtes pas le propriétaire de ce profil.');
   }
   // Ajouter les timestamps
-  data.createdAt = new Date();
-  data.updatedAt = new Date();
+  const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+  data.createdAt = timestamp;
+  data.updatedAt = timestamp;
 
   await getCollectionRef('formations').add(data);
   console.log('Formation ajoutée avec succès');
@@ -2992,7 +3002,14 @@ async function updateFormationInFirebase(data, row) {
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
     // Mettre à jour le timestamp
-    data.updatedAt = new Date();
+    data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+
+    const existingData = doc.data();
+    if (existingData && existingData.createdAt) {
+      data.createdAt = existingData.createdAt;
+    } else {
+      data.createdAt = data.updatedAt;
+    }
 
     await doc.ref.update(data);
     console.log('Formation modifiée avec succès');

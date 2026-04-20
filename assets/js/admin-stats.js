@@ -138,6 +138,39 @@ async function fetchAllSubCollections() {
     });
 
     await Promise.all(promises);
+
+    // 2. Récupérer aussi les collections à la racine (legacy ou standalone)
+    try {
+        const [rootExpSnap, rootFormSnap] = await Promise.all([
+            window.firebaseDb.collection('experiences').get(),
+            window.firebaseDb.collection('formations').get()
+        ]);
+
+        rootExpSnap.docs.forEach(doc => {
+            // Éviter les doublons si déjà présents via les sous-collections
+            if (!adminDataCache.experiences.some(e => e.id === doc.id)) {
+                adminDataCache.experiences.push({
+                    id: doc.id,
+                    data: doc.data(),
+                    userId: 'root',
+                    userName: 'Système / Legacy'
+                });
+            }
+        });
+
+        rootFormSnap.docs.forEach(doc => {
+            if (!adminDataCache.formations.some(f => f.id === doc.id)) {
+                adminDataCache.formations.push({
+                    id: doc.id,
+                    data: doc.data(),
+                    userId: 'root',
+                    userName: 'Système / Legacy'
+                });
+            }
+        });
+    } catch (err) {
+        console.warn("Erreur lors du chargement des collections racine:", err);
+    }
 }
 
 /**
@@ -482,10 +515,19 @@ function updateActivityStats() {
         ajoutsPrev: { '7d': 0, '30d': 0, '1y': 0 }
     };
 
+    const safeDate = (val) => {
+        if (!val) return null;
+        if (val instanceof Date) return val;
+        if (typeof val.toDate === 'function') return val.toDate();
+        if (val.seconds !== undefined) return new Date(val.seconds * 1000);
+        const d = new Date(val);
+        return isNaN(d.getTime()) ? null : d;
+    };
+
     // 1. Connexions (estimées par unique lastLogin dans la période)
     adminDataCache.users.forEach(u => {
-        if (!u.lastLogin) return;
-        const lastLoginDate = u.lastLogin.toDate ? u.lastLogin.toDate() : new Date(u.lastLogin.seconds * 1000);
+        const lastLoginDate = safeDate(u.lastLogin);
+        if (!lastLoginDate) return;
         const diff = now - lastLoginDate;
 
         // Actuel
@@ -502,10 +544,10 @@ function updateActivityStats() {
     // 2. Ajouts de données (expériences et formations)
     const allData = [...adminDataCache.experiences, ...adminDataCache.formations];
     allData.forEach(item => {
-        const createdAt = item.data.createdAt;
-        if (!createdAt) return;
+        // createdAt peut être absent pour les anciennes données, on replie sur updatedAt
+        const createdDate = safeDate(item.data.createdAt || item.data.updatedAt);
+        if (!createdDate) return;
         
-        const createdDate = createdAt.toDate ? createdAt.toDate() : new Date(createdAt.seconds * 1000);
         const diff = now - createdDate;
 
         // Actuel
