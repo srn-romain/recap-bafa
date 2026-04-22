@@ -550,6 +550,12 @@ function updateUI() {
     logoutButtonTop.style.display = isLoggedIn ? 'block' : 'none';
   }
 
+  // Gestion du bandeau promotionnel pour les visiteurs non connectés
+  const promoBanner = document.getElementById('promo-banner-visitor');
+  if (promoBanner) {
+    promoBanner.style.display = isLoggedIn ? 'none' : 'block';
+  }
+
   // Gestion spécifique de l'index (boutons Hero)
   const heroAuthBtns = document.getElementById('hero-auth-btns');
   const heroLoggedBtns = document.getElementById('hero-logged-btns');

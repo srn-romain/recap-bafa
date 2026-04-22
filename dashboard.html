@@ -98,6 +98,24 @@
             }
         </script>
 
+        <!-- Bandeau Publicitaire pour les visiteurs non connectés -->
+        <test id="promo-banner-visitor"
+            style="display: none; max-width: 1000px; margin: 0 auto 20px; padding: 20px; background: linear-gradient(135deg, #50644c 0%, #7a8e75 100%); border-radius: 12px; color: white; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1);">
+            <test style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <test style="font-size: 1.1rem; line-height: 1.4; max-width: 600px;">
+                    <i class="bi bi-rocket-takeoff-fill" style="margin-right: 10px; font-size: 1.4rem;"></i>
+                    Vous aussi, créez votre <strong>page personnalisée</strong> pour valoriser votre parcours d'animation ! <br>
+                    <span style="font-size: 0.95rem; opacity: 0.9;">Rejoignez la communauté, centralisez vos expériences et générez votre CV en un clic. <strong>C'est gratuit !</strong></span>
+                </test>
+                <button onclick="showAuthModal('register')" 
+                    style="background-color: #f39c12; color: white; border: none; padding: 10px 25px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
+                    onmouseover="this.style.backgroundColor='#e67e22'; this.style.transform='translateY(-2px)'"
+                    onmouseout="this.style.backgroundColor='#f39c12'; this.style.transform='translateY(0)'">
+                    Créer mon profil gratuit
+                </button>
+            </test>
+        </test>
+
         <!-- Bandeau d'information pour le profil Joe Doe -->
         <div id="fictional-profile-notice"
             style="display: none; max-width: 1000px; margin: 0 auto 20px; padding: 15px; background-color: #e6f7ff; border: 1px solid #91d5ff; border-radius: 8px; color: #0050b3; text-align: center; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
