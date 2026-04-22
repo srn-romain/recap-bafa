@@ -575,25 +575,16 @@ function updateUI() {
     };
   }
 
-  // Gérer automatiquement le dépliage/pliage des astuces selon qu'on est propriétaire ou non
+  // Les astuces sont repliées par défaut pour tout le monde (propriétaire et visiteurs)
   const tipsContent = document.getElementById('tips-content');
   const tipsIcon = document.getElementById('tips-icon');
   const tipsContainer = tipsContent ? tipsContent.closest('.info-box') : null;
 
   if (tipsContent && tipsIcon) {
-    if (isOwner) {
-      // Pour le propriétaire : replié par défaut pour être discret
-      tipsContent.style.display = 'none';
-      tipsIcon.classList.remove('bi-chevron-down');
-      tipsIcon.classList.add('bi-chevron-right');
-      if (tipsContainer) tipsContainer.classList.add('tips-collapsed');
-    } else {
-      // Pour les visiteurs : déplié par défaut pour aider
-      tipsContent.style.display = 'block';
-      tipsIcon.classList.remove('bi-chevron-right');
-      tipsIcon.classList.add('bi-chevron-down');
-      if (tipsContainer) tipsContainer.classList.remove('tips-collapsed');
-    }
+    tipsContent.style.display = 'none';
+    tipsIcon.classList.remove('bi-chevron-down');
+    tipsIcon.classList.add('bi-chevron-right');
+    if (tipsContainer) tipsContainer.classList.add('tips-collapsed');
   }
 
   // Gérer la visibilité du bouton Paramètres (nouvel engrenage)
