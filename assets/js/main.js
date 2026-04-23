@@ -39,8 +39,11 @@ function remplirNum(table) {
   const totalRows = visibleRows.length;
   visibleRows.forEach((cell, index) => {
     const num = totalRows - index;
-    // On rend le numéro cliquable pour ouvrir la modale récapitulative
-    cell.innerHTML = `<button type="button" class="num-btn" onclick="handleNumClick(event, this)" title="Voir le récapitulatif">${num}</button>`;
+    // On rend toute la cellule cliquable pour ouvrir la modale récapitulative
+    cell.setAttribute('onclick', 'handleNumClick(event, this)');
+    cell.setAttribute('title', 'Voir le récapitulatif');
+    cell.style.cursor = 'pointer';
+    cell.innerHTML = `<span class="num-btn">${num}</span>`;
   });
 }
 
