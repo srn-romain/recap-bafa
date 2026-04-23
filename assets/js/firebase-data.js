@@ -246,7 +246,10 @@ function createExperienceRow(experience) {
       }
     });
     if (experience.country) {
-      tdLocation.appendChild(document.createTextNode(' (' + experience.country + ')'));
+      const countrySpan = document.createElement('span');
+      countrySpan.className = 'country-label';
+      countrySpan.textContent = ' (' + experience.country + ')';
+      tdLocation.appendChild(countrySpan);
     }
   } else {
     // Un seul lieu
@@ -269,7 +272,10 @@ function createExperienceRow(experience) {
     tdLocation.appendChild(locLink);
 
     if (experience.country) {
-      tdLocation.appendChild(document.createTextNode(' (' + experience.country + ')'));
+      const countrySpan = document.createElement('span');
+      countrySpan.className = 'country-label';
+      countrySpan.textContent = ' (' + experience.country + ')';
+      tdLocation.appendChild(countrySpan);
     }
   }
   tr.appendChild(tdLocation);

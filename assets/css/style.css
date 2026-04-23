@@ -608,6 +608,10 @@ table tr.even {
   border: 2px solid black;
 }
 
+.country-label {
+  color: #d8a659;
+}
+
 #mobile-message {
   display: none;
 }
