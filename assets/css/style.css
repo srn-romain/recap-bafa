@@ -405,6 +405,12 @@ p {
   display: none;
 }
 
+@media (max-width: 1200px) {
+  #mobile-message {
+    display: block;
+  }
+}
+
 .table-container {
   overflow-x: auto;
   margin-top: 15px;
@@ -452,11 +458,9 @@ h1+.tabs .tab:hover {
 h1+.tabs .tab.active {
   z-index: 2;
   background: #f39c12;
-  /* Orange demandé */
   color: #fff;
   border: 1px solid #f39c12;
   border-bottom: 1px solid #f39c12;
-  /* Assurer la continuité */
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -470,7 +474,7 @@ h1+.tabs+.tabs {
   /* Ligne orange pour lier au filtre actif */
   border-radius: 0 0 8px 8px;
   padding: 0;
-  overflow: hidden;
+  overflow-x: auto;
   background: #fff;
 }
 
@@ -501,6 +505,7 @@ h1+.tabs+.tabs {
 --------------------------------------------------------------*/
 table {
   width: 100%;
+  min-width: 1200px; /* Augmenté pour éviter que le contenu ne soit trop compressé */
   border-collapse: collapse;
   margin-bottom: 20px;
 }
@@ -525,7 +530,7 @@ table td {
 /* Style pour la colonne numéro */
 .num {
   white-space: nowrap;
-  min-width: 40px;
+  min-width: 30px;
   text-align: center;
   padding: 0 !important;
 }
@@ -549,30 +554,35 @@ table td {
   text-decoration: underline;
 }
 
-/* Limiter la largeur de certaines colonnes pour forcer les retours à la ligne */
-/* Colonne Organisateur (expériences) */
-#table-experiences th:nth-child(4),
+/*==============================================================
+# CONFIGURATION DES LARGEURS DE COLONNES (Tableaux)
+# Modifiez les valeurs min-width et max-width ici pour ajuster le tableau
+==============================================================*/
 
-#table-experiences td:nth-child(6),
-#table-formations th:nth-child(7),
-#table-formations td:nth-child(7) {
-  max-width: 200px;
-  white-space: normal;
-}
+/* --- TABLEAU EXPÉRIENCES --- */
+#table-experiences th:nth-child(1), #table-experiences td:nth-child(1) { min-width: 30px !important; width: 30px !important; padding: 0; } /* N° */
+#table-experiences th:nth-child(2), #table-experiences td:nth-child(2) { min-width: 90px; }  /* Date */
+#table-experiences th:nth-child(3), #table-experiences td:nth-child(3) { min-width: 70px; }  /* Durée */
+#table-experiences th:nth-child(4), #table-experiences td:nth-child(4) { min-width: 150px; max-width: 300px; white-space: normal; } /* Organisateur */
+#table-experiences th:nth-child(5), #table-experiences td:nth-child(5) { min-width: 80px; }  /* Logo */
+#table-experiences th:nth-child(6), #table-experiences td:nth-child(6) { min-width: 250px; max-width: 400px; white-space: normal; } /* Lieu */
+#table-experiences th:nth-child(7), #table-experiences td:nth-child(7) { min-width: 130px; white-space: normal; } /* Type de séjour */
+#table-experiences th:nth-child(8), #table-experiences td:nth-child(8) { min-width: 180px; max-width: 350px; white-space: normal; } /* Intitulé poste */
+#table-experiences th:nth-child(9), #table-experiences td:nth-child(9) { min-width: 90px; white-space: normal; } /* Tranche d'âge */
+#table-experiences th:nth-child(10), #table-experiences td:nth-child(10) { min-width: 65px; } /* Nb jeunes */
+#table-experiences th:nth-child(11), #table-experiences td:nth-child(11) { min-width: 60px; } /* Modifier */
+#table-experiences th:nth-child(12), #table-experiences td:nth-child(12) { min-width: 60px; } /* Supprimer */
 
-/* Colonne Intitulé du poste (expériences) */
-#table-experiences th:nth-child(8),
-#table-experiences td:nth-child(8) {
-  max-width: 200px;
-  white-space: normal;
-}
-
-/* Colonne Intitulé (formations) */
-#table-formations th:nth-child(6),
-#table-formations td:nth-child(6) {
-  max-width: 200px;
-  white-space: normal;
-}
+/* --- TABLEAU FORMATIONS --- */
+#table-formations th:nth-child(1), #table-formations td:nth-child(1) { min-width: 30px !important; width: 30px !important; padding: 0; } /* N° */
+#table-formations th:nth-child(2), #table-formations td:nth-child(2) { min-width: 90px; }  /* Date */
+#table-formations th:nth-child(3), #table-formations td:nth-child(3) { min-width: 70px; }  /* Durée */
+#table-formations th:nth-child(4), #table-formations td:nth-child(4) { min-width: 150px; max-width: 300px; white-space: normal; } /* Organisme */
+#table-formations th:nth-child(5), #table-formations td:nth-child(5) { min-width: 80px; }  /* Logo */
+#table-formations th:nth-child(6), #table-formations td:nth-child(6) { min-width: 200px; max-width: 350px; white-space: normal; } /* Intitulé */
+#table-formations th:nth-child(7), #table-formations td:nth-child(7) { min-width: 150px; max-width: 350px; white-space: normal; } /* Lieu */
+#table-formations th:nth-child(8), #table-formations td:nth-child(8) { min-width: 60px; }  /* Modifier */
+#table-formations th:nth-child(9), #table-formations td:nth-child(9) { min-width: 60px; }  /* Supprimer */
 
 table th {
   background-color: #a6d866;
@@ -703,7 +713,7 @@ table tr.even {
   }
 }
 
-@media only screen and (max-width: 770px) {
+@media only screen and (max-width: 1320px) {
   #mobile-message {
     display: block;
     background-color: #f8d7da;

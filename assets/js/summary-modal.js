@@ -103,7 +103,7 @@ function createSummaryModal() {
             </div>
             
             <div id="summary-footer" style="padding: 15px; background: white; border-top: 1px solid #e2e8f0; text-align: center;">
-                <button type="button" onclick="closeSummaryModal()" style="background: #64748b; color: white; border: none; padding: 8px 25px; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Fermer</button>
+                <button type="button" onclick="closeSummaryModal()" style="background: #50634c; color: white; border: none; padding: 8px 25px; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Fermer</button>
             </div>
         </div>
     </div>
