@@ -163,7 +163,7 @@ window.showSummaryModal = function (data, itemType) {
 
   // 2. Données communes
   logo.src = data.logoPath || 'assets/img/default-logo.png';
-  dateDuration.textContent = `${data.date || '?'} — ${data.duration || '?'}`;
+  dateDuration.textContent = `${data.date || '?'} - ${data.duration || '?'}`;
 
   // 3. Afficher
   modal.style.display = 'flex';
