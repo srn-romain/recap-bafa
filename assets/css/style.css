@@ -679,14 +679,11 @@ table tr.even {
   table th,
   table td {
     font-size: 0.8rem;
-    /* Réduit de 0.85rem à 0.8rem */
     padding: 4px;
-    /* Réduit de 6px à 4px */
   }
 
   table th {
     font-size: 0.75rem;
-    /* Encore plus petit pour les en-têtes */
     padding: 6px 2px;
   }
 }
@@ -694,7 +691,6 @@ table tr.even {
 @media (max-width: 480px) {
   table th {
     font-size: 0.65rem;
-    /* Format téléphone : très compact */
     letter-spacing: -0.5px;
   }
 

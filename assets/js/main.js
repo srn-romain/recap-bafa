@@ -728,19 +728,21 @@ function filterTable(type, tableId) {
     }
   });
 
-  // Mettre à jour le label du bouton PDF selon le filtre actif
-  const pdfLabelId = tableId === 'table-experiences'
-    ? 'pdf-btn-experiences-label'
-    : 'pdf-btn-formations-label';
-  const pdfLabel = document.getElementById(pdfLabelId);
-  if (pdfLabel) {
+  // Mettre à jour les labels des boutons PDF et Image selon le filtre actif
+  const isExp = tableId === 'table-experiences';
+  const pdfLabel = document.getElementById(isExp ? 'pdf-btn-experiences-label' : 'pdf-btn-formations-label');
+  const imgLabel = document.getElementById(isExp ? 'img-btn-experiences-label' : 'img-btn-formations-label');
+
+  if (pdfLabel || imgLabel) {
     if (type === 'all') {
-      pdfLabel.textContent = 'Générer PDF';
+      if (pdfLabel) pdfLabel.textContent = 'PDF';
+      if (imgLabel) imgLabel.textContent = 'Image';
     } else {
       // Récupérer le texte de l'onglet actif pour l'afficher dans le bouton
       const activeTab = tabContainer.querySelector('.tab.active');
       const filterName = activeTab ? activeTab.textContent.trim() : type.toUpperCase();
-      pdfLabel.textContent = `Générer PDF — ${filterName}`;
+      if (pdfLabel) pdfLabel.textContent = `PDF - ${filterName}`;
+      if (imgLabel) imgLabel.textContent = `Image - ${filterName}`;
     }
   }
 }
@@ -1350,11 +1352,8 @@ async function generateImage(tableId, title) {
     return { rowDisplay: row.style.display, cellStyles };
   });
 
-  // Pour l'export image, on veut voir TOUTES les données mais MASQUER les actions
+  // Pour l'export image, on veut MASQUER les actions mais respecter les filtres actuels
   rows.forEach(row => {
-    if (row.hasAttribute('data-type')) {
-      row.style.display = ''; // Affichage par défaut (table-row)
-    }
     indicesToHide.forEach(index => {
       if (row.cells[index]) {
         row.cells[index].style.display = 'none';
