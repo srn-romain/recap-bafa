@@ -2155,3 +2155,13 @@ th.sortable:hover .sort-indicator.sort-neutral {
     opacity: 0.6;
   }
 }
+
+/* Modale Récapitulative - Effets au survol */
+#summary-modal a:hover {
+  text-decoration: underline !important;
+  opacity: 0.8;
+}
+
+.summary-info-card:has(a[href="#"]) a {
+  cursor: default;
+}
