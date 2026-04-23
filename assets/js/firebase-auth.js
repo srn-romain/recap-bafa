@@ -154,7 +154,7 @@ function showAuthError(message) {
 }
 
 // Basculer entre connexion et inscription
-function toggleAuthMode() {
+window.toggleAuthMode = function () {
   const modeInput = document.getElementById('auth-mode');
   const title = document.querySelector('#auth-modal h2');
   const submitText = document.getElementById('auth-submit-text');
@@ -301,7 +301,7 @@ function showAuthError(message) {
 }
 
 // Gérer la connexion ou l'inscription
-async function handleLogin(event) {
+window.handleLogin = async function (event) {
   if (event) {
     event.preventDefault();
   }
@@ -442,7 +442,7 @@ async function handleForgotPassword() {
 window.handleForgotPassword = handleForgotPassword;
 
 // Déconnexion
-async function signOut() {
+window.signOut = async function () {
   try {
     await firebase.auth().signOut();
     window.currentUser = null;
@@ -861,7 +861,7 @@ function showUserMenu() {
 
 
 // Afficher le modal d'authentification
-function showAuthModal(mode) {
+window.showAuthModal = function (mode) {
   const modal = document.getElementById('auth-modal');
   if (modal) {
     modal.style.display = 'flex';
@@ -886,7 +886,7 @@ function showAuthModal(mode) {
 }
 
 // Fermer le modal d'authentification
-function closeAuthModal() {
+window.closeAuthModal = function () {
   const modal = document.getElementById('auth-modal');
   if (modal) {
     modal.style.display = 'none';

@@ -6,7 +6,7 @@ const SETTINGS_FEEDBACK_ID = 'settings-feedback';
  * @param {string} type 'success' ou 'error'
  * @param {string} message Le message à afficher
  */
-function showSettingsFeedback(type, message, { durationMs = 3000, allowHtml = false } = {}) {
+window.showSettingsFeedback = function (type, message, { durationMs = 3000, allowHtml = false } = {}) {
     const feedbackEl = document.getElementById(SETTINGS_FEEDBACK_ID);
     if (!feedbackEl) return;
 
@@ -25,7 +25,7 @@ function showSettingsFeedback(type, message, { durationMs = 3000, allowHtml = fa
 /**
  * Toggle l'affichage de la bulle explicative du genre
  */
-function toggleGenderExplanation(event) {
+window.toggleGenderExplanation = function (event) {
     event.preventDefault();
     const bubble = document.getElementById('gender-explanation-bubble');
 
@@ -41,7 +41,7 @@ function toggleGenderExplanation(event) {
 /**
  * Toggle l'affichage de la bulle explicative LinkedIn
  */
-function toggleLinkedinExplanation(event) {
+window.toggleLinkedinExplanation = function (event) {
     event.preventDefault();
     const bubble = document.getElementById('linkedin-explanation-bubble');
 
@@ -165,13 +165,9 @@ document.addEventListener('DOMContentLoaded', function () {
 /**
  * Traite la photo de profil sélectionnée
  */
-function handleProfilePicUpload(event) {
+window.handleProfilePicUpload = function (event) {
     const file = event.target.files[0];
     const previewImg = document.getElementById('preview-profile-pic');
-
-    // Note: On utilise le même conteneur d'erreur ou un spécifique si on veut
-    // Pour l'instant on alerte simple ou reuse errorEl global de la modale feedback si besoin
-    // Mais restons simple : check taille
 
     if (!file) return;
 
@@ -220,7 +216,7 @@ function handleProfilePicUpload(event) {
 /**
  * Supprime la photo de profil
  */
-async function removeProfilePic() {
+window.removeProfilePic = async function () {
     profilePicData = null;
     const input = document.getElementById('settings-profile-pic');
     const previewImg = document.getElementById('preview-profile-pic');
@@ -299,7 +295,7 @@ function handleBackgroundImageUpload(event) {
 /**
  * Supprime l'image de fond
  */
-function removeBackgroundImage() {
+window.removeBackgroundImage = function () {
     backgroundImageData = null;
     const input = document.getElementById('settings-background-image');
     const previewContainer = document.getElementById('background-preview');
@@ -346,7 +342,7 @@ function hasUnsavedSettingsChanges() {
 /**
  * Ouvre la modale de paramètres et pré-remplit les champs
  */
-async function openSettingsModal() {
+window.openSettingsModal = async function () {
     if (!window.currentUser || !window.targetUid || window.currentUser.uid !== window.targetUid) {
         return; // Sécurité côté client
     }
@@ -478,13 +474,9 @@ window.closeSettingsModal = function (force = false) {
     }
 
     if (hasUnsavedSettingsChanges()) {
-        const unsavedModal = document.getElementById('unsaved-changes-modal');
+        const unsavedModal = document.getElementById('settings-unsaved-changes-modal');
         if (unsavedModal) {
-            if (typeof window.showUnsavedChangesModal === 'function') {
-                window.showUnsavedChangesModal('settings');
-            } else {
-                unsavedModal.style.display = 'flex';
-            }
+            unsavedModal.style.display = 'flex';
         } else {
             // Fallback si la modale de confirmation n'existe pas
             if (confirm("Vous avez des modifications non enregistrées. Voulez-vous vraiment fermer sans sauvegarder ?")) {
@@ -519,7 +511,7 @@ window.confirmCloseSettings = function () {
     settingsInitialState = null;
 
     // Fermer la modale globale d'avertissement depuis settings (s'assure de l'effacer)
-    const unsavedModal = document.getElementById('unsaved-changes-modal');
+    const unsavedModal = document.getElementById('settings-unsaved-changes-modal');
     if (unsavedModal) unsavedModal.style.display = 'none';
 };
 
@@ -534,7 +526,7 @@ window.addEventListener('click', function (event) {
 /**
  * Gère la soumission du formulaire de paramètres
  */
-async function handleSettingsSubmit(event) {
+window.handleSettingsSubmit = async function (event) {
     event.preventDefault();
 
     const firstname = document.getElementById('settings-firstname').value.trim().replace(/\\s+/g, ' ');
@@ -590,7 +582,7 @@ async function handleSettingsSubmit(event) {
 /**
  * Envoie un email de réinitialisation de mot de passe
  */
-async function sendPasswordReset() {
+window.sendPasswordReset = async function () {
     if (!window.currentUser || !window.currentUser.email) return;
 
     try {
@@ -612,7 +604,7 @@ async function sendPasswordReset() {
 /**
  * Affiche l'écran de confirmation de suppression
  */
-function showDeleteConfirmation() {
+window.showDeleteConfirmation = function () {
     document.getElementById('danger-initial-view').style.display = 'none';
     document.getElementById('danger-confirmation-view').style.display = 'block';
     // Clear input
@@ -622,7 +614,7 @@ function showDeleteConfirmation() {
 /**
  * Annule la suppression et revient à la vue initiale
  */
-function cancelDeleteConfirmation() {
+window.cancelDeleteConfirmation = function () {
     document.getElementById('danger-confirmation-view').style.display = 'none';
     document.getElementById('danger-initial-view').style.display = 'block';
 }
@@ -630,7 +622,7 @@ function cancelDeleteConfirmation() {
 /**
  * Exécute la suppression du compte après validation du mot clé
  */
-async function finalDeleteAccount() {
+window.finalDeleteAccount = async function () {
     const input = document.getElementById('delete-confirmation-input');
     const confirmation = input.value.trim();
 
@@ -682,7 +674,7 @@ async function finalDeleteAccount() {
 /**
  * Déclenche l'export des données en JSON
  */
-async function exportData() {
+window.exportData = async function () {
     if (!window.currentUser) return;
 
     try {
@@ -737,11 +729,22 @@ async function exportData() {
 /**
  * Déclenche le clic sur l'input file caché
  */
-function triggerImportData() {
+window.triggerImportData = function () {
     const input = document.getElementById('import-file-input');
     if (input) input.click();
 }
 
+
+/**
+ * Toggle l'affichage de la bulle explicative des stats
+ */
+window.toggleStatsExplanation = function (event) {
+    event.preventDefault();
+    const bubble = document.getElementById('stats-explanation-bubble');
+    if (bubble) {
+        bubble.style.display = (bubble.style.display === 'none' || !bubble.style.display) ? 'block' : 'none';
+    }
+}
 
 // Variables pour gérer l'import en attente
 let pendingImportData = null;
@@ -750,7 +753,7 @@ let pendingImportInput = null;
 /**
  * Prépare l'import depuis le fichier JSON sélectionné et demande confirmation
  */
-async function importData(input) {
+window.importData = async function (input) {
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
@@ -796,7 +799,7 @@ async function importData(input) {
 /**
  * Ferme la modale de confirmation d'import
  */
-function closeImportConfirmationModal() {
+window.closeImportConfirmationModal = function () {
     const modal = document.getElementById('import-confirmation-modal');
     if (modal) {
         modal.style.display = 'none';
@@ -818,7 +821,7 @@ function closeImportConfirmationModal() {
 /**
  * Exécute l'import après confirmation
  */
-async function confirmImport() {
+window.confirmImport = async function () {
     console.log("Confirming import...");
     if (!pendingImportData) {
         console.error("No pending import data");
@@ -875,7 +878,7 @@ async function confirmImport() {
 /**
  * Copie le lien de partage dans le presse-papier
  */
-function copyProfileLink() {
+window.copyProfileLink = function () {
     const linkInput = document.getElementById('share-profile-link');
     if (!linkInput) return;
 
@@ -944,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * Met à jour la phrase de prévisualisation des statistiques manuelles
  */
-function updateSettingsStatsPreview() {
+window.updateSettingsStatsPreview = function () {
     const animators = parseInt(document.getElementById('settings-animators-count')?.value || 0, 10);
     const directors = parseInt(document.getElementById('settings-directors-count')?.value || 0, 10);
     const trainers = parseInt(document.getElementById('settings-trainers-count')?.value || 0, 10);
