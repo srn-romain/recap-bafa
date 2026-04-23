@@ -23,6 +23,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <!-- Tom Select CSS for search dropdowns -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         .pdf-btn {
             background-color: #e74c3c;
@@ -229,10 +230,16 @@
         <h1 id="experiences" data-section="experiences" data-section-title="Expériences"
             style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <span class="section-title-text">1- Expériences</span>
-            <button id="pdf-btn-experiences" onclick="generatePDF('table-experiences', 'Récapitulatif des Expériences')"
-                class="pdf-btn">
-                <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-experiences-label">Générer PDF</span>
-            </button>
+            <test style="display: flex; gap: 8px;">
+                <button id="pdf-btn-experiences" onclick="generatePDF('table-experiences', 'Récapitulatif des Expériences')"
+                    class="pdf-btn">
+                    <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-experiences-label">Générer PDF</span>
+                </button>
+                <button onclick="generateImage('table-experiences', 'Récapitulatif des Expériences')" class="pdf-btn"
+                    style="background-color: #3b82f6;">
+                    <i class="bi bi-image-fill"></i> <span>Générer Image</span>
+                </button>
+            </test>
         </h1>
         <div class="tabs">
             <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
@@ -275,10 +282,16 @@
         <h1 id="formations" data-section="formations" data-section-title="Formations"
             style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <span class="section-title-text">2- Formations</span>
-            <button id="pdf-btn-formations" onclick="generatePDF('table-formations', 'Récapitulatif des Formations')"
-                class="pdf-btn">
-                <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-formations-label">Générer PDF</span>
-            </button>
+            <test style="display: flex; gap: 8px;">
+                <button id="pdf-btn-formations" onclick="generatePDF('table-formations', 'Récapitulatif des Formations')"
+                    class="pdf-btn">
+                    <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-formations-label">Générer PDF</span>
+                </button>
+                <button onclick="generateImage('table-formations', 'Récapitulatif des Formations')" class="pdf-btn"
+                    style="background-color: #3b82f6;">
+                    <i class="bi bi-image-fill"></i> <span>Générer Image</span>
+                </button>
+            </test>
         </h1>
         <div class="tabs">
             <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
@@ -1490,6 +1503,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="assets/js/user-settings.js"></script>
     <script src="assets/js/summary-modal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Tom Select JS -->

@@ -1322,3 +1322,63 @@ async function generatePDF(tableId, title) {
     }
   });
 }
+
+/**
+ * Génère une image JPG du tableau spécifié
+ * @param {string} tableId ID de la table à capturer
+ * @param {string} title Titre du fichier généré
+ */
+async function generateImage(tableId, title) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+
+  // Sauvegarder l'état original des filtres pour pouvoir restaurer
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const originalStyles = rows.map(row => row.style.display);
+
+  // Pour l'export image, on veut voir TOUTES les données
+  rows.forEach(row => {
+    if (row.hasAttribute('data-type')) {
+      row.style.display = ''; // Affichage par défaut (table-row)
+    }
+  });
+
+  // Afficher un indicateur de chargement
+  const btn = window.event ? window.event.currentTarget : null;
+  let originalHtml = '';
+  if (btn) {
+    originalHtml = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> <span>Génération...</span>';
+    btn.disabled = true;
+  }
+
+  try {
+    const canvas = await html2canvas(table, {
+      scale: 2, // Haute qualité
+      useCORS: true, // Pour charger les logos distants
+      backgroundColor: "#ffffff",
+      logging: false
+    });
+
+    // Restaurer l'affichage original
+    rows.forEach((row, index) => {
+      row.style.display = originalStyles[index];
+    });
+
+    // Conversion en JPG et téléchargement
+    const link = document.createElement('a');
+    const dateStr = new Date().toLocaleDateString('fr-FR').replace(/\//g, '-');
+    link.download = `${title.replace(/\s+/g, '_')}_${dateStr}.jpg`;
+    link.href = canvas.toDataURL('image/jpeg', 0.9);
+    link.click();
+
+  } catch (error) {
+    console.error("Erreur lors de la capture d'image :", error);
+    alert("Une erreur est survenue lors de la génération de l'image. Assurez-vous que tous les éléments sont bien chargés.");
+  } finally {
+    if (btn) {
+      btn.innerHTML = originalHtml;
+      btn.disabled = false;
+    }
+  }
+}

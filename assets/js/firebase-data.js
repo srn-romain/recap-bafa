@@ -209,6 +209,7 @@ function createExperienceRow(experience) {
   logoLink.href = experience.organizerUrl;
   logoLink.target = '_blank';
   const logoImg = document.createElement('img');
+  logoImg.crossOrigin = 'anonymous';
   logoImg.src = experience.logoPath;
   logoImg.alt = 'Logo de ' + experience.organizer;
   logoImg.className = 'image-carrée';
@@ -362,6 +363,7 @@ function createFormationRow(formation) {
   logoLink.href = formation.organismUrl;
   logoLink.target = '_blank';
   const logoImg = document.createElement('img');
+  logoImg.crossOrigin = 'anonymous';
   logoImg.src = formation.logoPath;
   logoImg.alt = 'Logo de ' + formation.organism;
   logoImg.className = 'image-carrée';
