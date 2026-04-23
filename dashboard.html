@@ -104,10 +104,12 @@
             <test style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
                 <test style="font-size: 1.1rem; line-height: 1.4; max-width: 600px;">
                     <i class="bi bi-rocket-takeoff-fill" style="margin-right: 10px; font-size: 1.4rem;"></i>
-                    Vous aussi, créez votre <strong>page personnalisée</strong> pour valoriser votre parcours d'animation ! <br>
-                    <span style="font-size: 0.95rem; opacity: 0.9;">Rejoignez la communauté, centralisez vos expériences et générez votre CV en un clic. <strong>C'est gratuit !</strong></span>
+                    Vous aussi, créez votre <strong>page personnalisée</strong> pour valoriser votre parcours
+                    d'animation ! <br>
+                    <span style="font-size: 0.95rem; opacity: 0.9;">Rejoignez la communauté, centralisez vos expériences
+                        et générez votre CV en un clic. <strong>C'est gratuit !</strong></span>
                 </test>
-                <button onclick="showAuthModal('register')" 
+                <button onclick="showAuthModal('register')"
                     style="background-color: #f39c12; color: white; border: none; padding: 10px 25px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
                     onmouseover="this.style.backgroundColor='#e67e22'; this.style.transform='translateY(-2px)'"
                     onmouseout="this.style.backgroundColor='#f39c12'; this.style.transform='translateY(0)'">
@@ -120,8 +122,10 @@
         <div id="fictional-profile-notice"
             style="display: none; max-width: 1000px; margin: 0 auto 20px; padding: 15px; background-color: #e6f7ff; border: 1px solid #91d5ff; border-radius: 8px; color: #0050b3; text-align: center; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
             <i class="bi bi-info-circle-fill" style="margin-right: 8px; font-size: 1.1rem; vertical-align: middle;"></i>
-            <strong>Profil de démonstration :</strong> Vous consultez le profil d'un animateur fictif nommé <strong>Joe Doe</strong>. 
-            Cette page illustre l'étendue de ce que la plateforme propose pour structurer et valoriser votre parcours d'animation (expériences, formations et statistiques).
+            <strong>Profil de démonstration :</strong> Vous consultez le profil d'un animateur fictif nommé <strong>Joe
+                Doe</strong>.
+            Cette page illustre l'étendue de ce que la plateforme propose pour structurer et valoriser votre parcours
+            d'animation (expériences, formations et statistiques).
         </div>
 
         <div id="privacy-notice-owner"
@@ -310,7 +314,8 @@
                 <div class="stats-section" id="stats-section-experiences">
                     <h3>Expériences</h3>
                     <div class="stats-sentences">
-                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-all">0</span> jours d'animation</p>
+                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-all">0</span> jours
+                            d'animation</p>
                         <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span> jours
                             en colonie de vacances</p>
                         <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span> jours
@@ -322,7 +327,8 @@
                             au total</p>
                         <p class="stat-sentence">J'ai réalisé <span class="stat-value" id="total-experiences">0</span>
                             expériences d'animation</p>
-                        <p class="stat-sentence">J'ai collaboré avec <span class="stat-value" id="total-organizations">0</span>
+                        <p class="stat-sentence">J'ai collaboré avec <span class="stat-value"
+                                id="total-organizations">0</span>
                             organismes différents</p>
                         <p class="stat-sentence" id="stat-colleagues-sentence" style="display: none;"></p>
                         <p class="stat-sentence">J'ai principalement encadré des jeunes de <span class="stat-value"
@@ -433,12 +439,17 @@
                     <div id="standard-date-container">
                         <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                             <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Début <span class="required-asterisk">*</span></label>
-                                <input type="date" id="exp-date-start" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateExpDuration()">
+                                <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Début <span
+                                        class="required-asterisk">*</span></label>
+                                <input type="date" id="exp-date-start"
+                                    style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+                                    oninput="calculateExpDuration()">
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px;">
                                 <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Fin</label>
-                                <input type="date" id="exp-date-end" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateExpDuration()">
+                                <input type="date" id="exp-date-end"
+                                    style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+                                    oninput="calculateExpDuration()">
                             </div>
                         </div>
                         <input type="hidden" id="exp-date-month">
@@ -468,12 +479,16 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Durée <span style="font-size:0.78rem; color:#888; font-weight:normal;">(calculée automatiquement)</span></label>
+                    <label>Durée <span style="font-size:0.78rem; color:#888; font-weight:normal;">(calculée
+                            automatiquement)</span></label>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="number" id="exp-duration" placeholder="—" style="width: 80px; background:#f9f9f9; color:#555;" min="0" max="9999" readonly>
+                        <input type="number" id="exp-duration" placeholder="—"
+                            style="width: 80px; background:#f9f9f9; color:#555;" min="0" max="9999" readonly>
                         <span>jours</span>
                     </div>
-                    <p id="exp-duration-hint" style="font-size:0.8rem; color:#a0aec0; margin-top:4px; font-style:italic;">Saisissez une date de début et de fin pour calculer la durée.</p>
+                    <p id="exp-duration-hint"
+                        style="font-size:0.8rem; color:#a0aec0; margin-top:4px; font-style:italic;">Saisissez une date
+                        de début et de fin pour calculer la durée.</p>
                 </div>
                 <div class="form-group">
                     <label>Gestion</label>
@@ -715,8 +730,15 @@
                             <option value="Sans Frontières">Sans Frontières</option>
                             <option value="SILC">SILC</option>
                             <option value="Visas Loisirs">Visas Loisirs</option>
-                            <option value="Scout et Guide de France">Scout et Guide de France</option>
-                            <option value="Éclaireuses/Éclaireurs de France">Éclaireuses/Éclaireurs de France</option>
+                            <option value="Scouts et Guides de France (SGDF)">Scouts et Guides de France (SGDF)</option>
+                            <option value="Éclaireuses/Éclaireurs de France (EEDF)">Éclaireuses/Éclaireurs de France
+                                (EEDF)</option>
+                            <option value="Éclaireuses et Éclaireurs Unionistes de France (EEUdF)">Éclaireuses et
+                                Éclaireurs Unionistes de France (EEUdF)</option>
+                            <option value="Scouts Musulmans de France (SMF)">Scouts Musulmans de France (SMF)</option>
+                            <option value="Éclaireuses et Éclaireurs Israélites de France (EEIF)">Éclaireuses et
+                                Éclaireurs Israélites de France (EEIF)</option>
+                            <option value="Guides et Scouts d'Europe (AGSE)">Guides et Scouts d'Europe (AGSE)</option>
                             <option value="Autre">Autre (préciser)</option>
                         </select>
                         <input type="text" id="exp-dept" placeholder="Dép." style="width: 70px; text-align: center;"
@@ -854,24 +876,33 @@
                     <label>Date <span class="required-asterisk">*</span></label>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Début <span class="required-asterisk">*</span></label>
-                            <input type="date" id="form-date-start" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateFormDuration()" required>
+                            <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Début <span
+                                    class="required-asterisk">*</span></label>
+                            <input type="date" id="form-date-start"
+                                style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+                                oninput="calculateFormDuration()" required>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px;">
                             <label style="font-size: 0.82rem; color: #666; font-weight: 500; margin: 0;">Fin</label>
-                            <input type="date" id="form-date-end" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" oninput="calculateFormDuration()">
+                            <input type="date" id="form-date-end"
+                                style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+                                oninput="calculateFormDuration()">
                         </div>
                     </div>
                     <input type="hidden" id="form-date-month">
                     <input type="hidden" id="form-date">
                 </div>
                 <div class="form-group">
-                    <label>Durée <span style="font-size:0.78rem; color:#888; font-weight:normal;">(calculée automatiquement)</span></label>
+                    <label>Durée <span style="font-size:0.78rem; color:#888; font-weight:normal;">(calculée
+                            automatiquement)</span></label>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="number" id="form-duration" placeholder="—" style="width: 80px; background:#f9f9f9; color:#555;" min="0" max="9999" readonly>
+                        <input type="number" id="form-duration" placeholder="—"
+                            style="width: 80px; background:#f9f9f9; color:#555;" min="0" max="9999" readonly>
                         <span>jours</span>
                     </div>
-                    <p id="form-duration-hint" style="font-size:0.8rem; color:#a0aec0; margin-top:4px; font-style:italic;">Saisissez une date de début et de fin pour calculer la durée.</p>
+                    <p id="form-duration-hint"
+                        style="font-size:0.8rem; color:#a0aec0; margin-top:4px; font-style:italic;">Saisissez une date
+                        de début et de fin pour calculer la durée.</p>
                 </div>
                 <div class="form-group">
                     <label>Intitulé</label>

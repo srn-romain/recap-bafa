@@ -275,6 +275,11 @@ function toggleAlshDateFields() {
     updatePositionLabels();
   }
 
+  // Mise à jour de la liste des organisateurs
+  if (typeof updateOrganizerOptions === 'function') {
+    updateOrganizerOptions();
+  }
+
   // Si c'est un ALSH, Scout ou Périscolaire, on montre les options radio
   if (expType === 'alsh' || expType === 'scout' || expType === 'periscolaire') {
     alshOptions.style.display = 'block';
@@ -612,6 +617,119 @@ async function updatePositionLabels() {
   sortSelectOptionsGenerically(positionSelect);
 }
 
+/**
+ * Gère l'affichage des organisateurs selon le type d'expérience.
+ */
+function updateOrganizerOptions() {
+  const expType = document.getElementById('exp-type').value;
+  const organizerSelect = document.getElementById('exp-organizer');
+  if (!organizerSelect) return;
+
+  const ts = organizerSelect.tomselect;
+  const currentValue = ts ? ts.getValue() : organizerSelect.value;
+
+  // --- CONFIGURATION DES FILTRES ---
+
+  // Liste des organismes à RETIRER spécifiquement pour "Colonie de vacances" (colo)
+  const removableOptionsColo = [
+    'Scouts et Guides de France (SGDF)',
+    'Éclaireuses/Éclaireurs de France (EEDF)',
+    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)',
+    'Scouts Musulmans de France (SMF)',
+    'Éclaireuses et Éclaireurs Israélites de France (EEIF)',
+    'Guides et Scouts d\'Europe (AGSE)'
+  ];
+
+  // Liste des organismes à afficher EXCLUSIVEMENT pour "Scout" (scout)
+  const onlyOptionsScout = [
+    'Éclaireuses/Éclaireurs de France (EEDF)',
+    'Scouts et Guides de France (SGDF)',
+    'Scouts Musulmans de France (SMF)',
+    'Éclaireuses et Éclaireurs Israélites de France (EEIF)',
+    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)',
+    'Guides et Scouts d\'Europe (AGSE)'
+  ];
+
+  // --- FIN DE CONFIGURATION ---
+
+  // Liste de tous les organisateurs connus (base de référence)
+  const allKnownOrganizers = [
+    'UCPA', 'Telligo', 'Djuringa', 'Cap Monde', 'CGCV', 'Compagnons Des Jours Heureux',
+    'Haute Pyrénées Sport & Nature', 'Nouvelles Aventures Junior', 'Sports Elite Jeunes',
+    'SNU', 'Temps Jeunes', 'UFCV', 'Croq Vacances', 'Léo Lagrange', 'Avea', 'CIE Thales',
+    'Zigo', 'Le Zèbre', 'Cap Juniors', 'Mondiale Junior', 'Agence Nature', 'Les séjours de l\'AJD',
+    'Association Regards', 'CE SNCF', 'CE Air France', 'Chemins du Monde', 'Chic Planet',
+    'GoColo', 'Le Temps des Copains', 'Nouvelles Vagues', 'Passion Aventure Junior',
+    'Sans Frontières', 'SILC', 'Visas Loisirs',
+    'Éclaireuses/Éclaireurs de France (EEDF)',
+    'Scouts et Guides de France (SGDF)',
+    'Scouts Musulmans de France (SMF)',
+    'Éclaireuses et Éclaireurs Israélites de France (EEIF)',
+    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)',
+    'Guides et Scouts d\'Europe (AGSE)'
+  ];
+
+  let toShow = [];
+  if (expType === 'scout') {
+    // Mode Whitelist : Ne proposer que les organismes scouts configurés
+    toShow = onlyOptionsScout;
+  } else if (expType === 'colo') {
+    // Mode Blacklist : Tout montrer SAUF les organismes configurés comme retirés
+    toShow = allKnownOrganizers.filter(opt => !removableOptionsColo.includes(opt));
+  } else {
+    // Mode par défaut : Tout montrer
+    toShow = allKnownOrganizers;
+  }
+
+  // 1. Nettoyer les doublons ou anciennes versions (sans acronyme) qui pourraient traîner
+  Array.from(organizerSelect.options).forEach(opt => {
+    const val = opt.value;
+    // On garde uniquement le placeholder, "Autre", et les options de la liste officielle
+    if (val !== '' && val !== 'Autre' && !allKnownOrganizers.includes(val)) {
+      opt.remove();
+      if (ts) ts.removeOption(val);
+    }
+  });
+
+  // 2. Appliquer le filtrage (Ajout/Suppression)
+  allKnownOrganizers.forEach(val => {
+    if (toShow.includes(val)) {
+      // S'assurer que l'option est présente dans le DOM
+      let opt = Array.from(organizerSelect.options).find(o => o.value === val);
+      if (!opt) {
+        opt = document.createElement('option');
+        opt.value = val;
+        opt.text = val;
+        // Insérer avant "Autre" pour l'ordre
+        const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
+        if (autreOpt) {
+          organizerSelect.insertBefore(opt, autreOpt);
+        } else {
+          organizerSelect.appendChild(opt);
+        }
+        if (ts) ts.addOption({ value: val, text: val });
+      }
+    } else {
+      // Retirer l'option si elle ne doit pas être là
+      const opt = Array.from(organizerSelect.options).find(o => o.value === val);
+      if (opt) opt.remove();
+      if (ts) ts.removeOption(val);
+    }
+  });
+
+  // 2. Gérer la valeur actuelle si elle a été masquée
+  if (!toShow.includes(currentValue) && currentValue !== 'Autre' && currentValue !== '') {
+    if (ts) ts.setValue('', true);
+    else organizerSelect.value = '';
+  }
+
+  if (ts) ts.sync();
+
+  // Trier alphabétiquement (générique)
+  sortSelectOptionsGenerically(organizerSelect);
+}
+window.updateOrganizerOptions = updateOrganizerOptions;
+
 
 // Afficher le modal d'ajout d'expérience
 async function showAddExperienceModal() {
@@ -642,6 +760,7 @@ async function showAddExperienceModal() {
   // Initialiser l'affichage des champs ALSH et types de séjours
   toggleAlshDateFields();
   updateExpStayTypeOptions();
+  updateOrganizerOptions();
   initSearchableSelects();
 
   window.hasUnsavedFormChanges = false;
@@ -854,9 +973,13 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Passion Aventure Junior': { url: 'https://passion-aventure-junior.com/', logo: 'assets/img/passionAventureJunior.png', dept: '31' },
     'Sans Frontières': { url: 'https://www.sans-frontieres.fr/', logo: 'assets/img/sansFrontieres.png', dept: '75' },
     'SILC': { url: 'https://silc.fr/', logo: 'assets/img/silc.webp', dept: '16' },
-    'Éclaireuses/Éclaireurs de France': { url: 'https://www.eedf.fr/', logo: 'assets/img/eedf.webp', dept: '75' },
-    'Scout et Guide de France': { url: 'https://www.sgdf.fr/', logo: 'assets/img/scoutgdf.png', dept: '75' },
+    'Éclaireuses/Éclaireurs de France (EEDF)': { url: 'https://www.eedf.fr/', logo: 'assets/img/eedf.webp', dept: '93' },
+    'Scouts et Guides de France (SGDF)': { url: 'https://www.sgdf.fr/', logo: 'assets/img/scoutgdf.png', dept: '94' },
     'Visas Loisirs': { url: 'https://visasloisirs.com/', logo: 'assets/img/visasLoisirs.webp', dept: '38' },
+    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)': { url: 'https://eeudf.org/', logo: 'assets/img/eeudf.webp', dept: '92' },
+    'Scouts Musulmans de France (SMF)': { url: 'https://scoutsmusulmans.fr/', logo: 'assets/img/scoutsmusulmansdefrance.webp', dept: '93' },
+    'Éclaireuses et Éclaireurs Israélites de France (EEIF)': { url: 'https://www.eeif.org/', logo: 'assets/img/eeif.webp', dept: '78' },
+    'Guides et Scouts d\'Europe (AGSE)': { url: 'https://www.scouts-europe.org/', logo: 'assets/img/euroscouts.webp', dept: '77' },
   };
 
   if (select.value === 'Autre') {
@@ -1784,6 +1907,9 @@ async function showEditExperienceModal(data, row) {
   if (typeof updateExpStayTypeOptions === 'function') {
     updateExpStayTypeOptions();
   }
+  if (typeof updateOrganizerOptions === 'function') {
+    updateOrganizerOptions();
+  }
 
   // Remplir les champs date avec le nouveau système (compatible données existantes)
   const startDateVal = frenchTextToDate(data.date || '');
@@ -1811,7 +1937,7 @@ async function showEditExperienceModal(data, row) {
     }
   }
   document.getElementById('exp-date').value = data.date || '';
-  
+
   // Recalculer la durée affichée
   if (!isMercredis) calculateExpDuration();
   const rawOrganizer = data.organizer || '';
@@ -2480,6 +2606,7 @@ document.addEventListener('DOMContentLoaded', function () {
     expTypeSelect.addEventListener('change', () => {
       toggleAlshDateFields();
       updateExpStayTypeOptions();
+      updateOrganizerOptions();
     });
   }
 
@@ -2896,7 +3023,7 @@ async function addExperienceToFirebase(data) {
   const timestamp = firebase.firestore.FieldValue.serverTimestamp();
   data.createdAt = timestamp;
   data.updatedAt = timestamp;
-  
+
   await getCollectionRef('experiences').add(data);
   console.log('Expérience ajoutée avec succès');
 }
@@ -2941,7 +3068,7 @@ async function updateExperienceInFirebase(data, row) {
     const doc = snapshot.docs[0];
     // Mettre à jour le timestamp de modification
     data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-    
+
     // Garder la date de création originale si elle existe dans le doc
     const existingData = doc.data();
     if (existingData && existingData.createdAt) {
@@ -2949,7 +3076,7 @@ async function updateExperienceInFirebase(data, row) {
     } else {
       data.createdAt = data.updatedAt; // Fallback pour les vieilles données
     }
-    
+
     await doc.ref.update(data);
     console.log('Expérience modifiée avec succès');
   } else {

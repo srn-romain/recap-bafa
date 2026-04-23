@@ -102,8 +102,6 @@ function getStatusBadge(item) {
   return null;
 }
 
-
-
 /**
  * Formate une date d'expérience pour l'affichage dans le tableau principal.
  * - "15 Juillet 2024"                        → "15 Juillet 2024"

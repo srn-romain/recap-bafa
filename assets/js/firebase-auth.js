@@ -202,7 +202,6 @@ function toggleAuthMode() {
   }
 }
 
-// Vérifier la force du mot de passe
 // Vérifier la force du mot de passe (Retourne le détail des critères)
 function checkPasswordStrength(password) {
   if (!password) return {
@@ -329,7 +328,6 @@ async function handleLogin(event) {
     let result;
 
     if (mode === 'register') {
-      // Vérification stricte du mot de passe
       // Vérification stricte du mot de passe
       const securityCheck = checkPasswordStrength(password);
       if (!securityCheck.isValid) {
