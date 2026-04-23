@@ -213,35 +213,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Scroll Spy pour activer les liens au défilement
     function setupScrollSpy() {
-        const sections = ['experiences', 'formations', 'statistiques'];
+        const sections = ['section-experiences', 'section-formations', 'section-statistiques'];
         const navLinks = {
-            'experiences': document.getElementById('nav-link-experiences'),
-            'formations': document.getElementById('nav-link-formations'),
-            'statistiques': document.getElementById('nav-link-stats')
+            'section-experiences': document.getElementById('nav-link-experiences'),
+            'section-formations': document.getElementById('nav-link-formations'),
+            'section-statistiques': document.getElementById('nav-link-stats')
         };
 
         // On utilise IntersectionObserver pour détecter quelle section est visible
         const observerOptions = {
             root: null,
-            rootMargin: '-20% 0px -60% 0px', // Active la section quand elle est dans le haut de l'écran
+            rootMargin: '-10% 0px -70% 0px', // Zone de détection plus large dans le haut de l'écran
             threshold: 0
         };
 
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Désactiver tous les liens
-                    Object.values(navLinks).forEach(link => {
-                        if (link) link.classList.remove('active');
-                    });
+            // Filtrer les entrées qui sont en train d'entrer dans la zone
+            const intersectingEntries = entries.filter(entry => entry.isIntersecting);
+            
+            if (intersectingEntries.length > 0) {
+                // Si plusieurs sections intersectent, on prend la dernière (la plus basse dans le DOM)
+                // ou on pourrait prendre celle avec le ratio le plus élevé
+                const entry = intersectingEntries[intersectingEntries.length - 1];
+                
+                // Désactiver tous les liens
+                Object.values(navLinks).forEach(link => {
+                    if (link) link.classList.remove('active');
+                });
 
-                    // Activer le lien courant
-                    const id = entry.target.id;
-                    if (navLinks[id]) {
-                        navLinks[id].classList.add('active');
-                    }
+                // Activer le lien courant
+                const id = entry.target.id;
+                if (navLinks[id]) {
+                    navLinks[id].classList.add('active');
                 }
-            });
+            }
         }, observerOptions);
 
         sections.forEach(id => {

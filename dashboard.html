@@ -217,178 +217,194 @@
             </div>
         </section>
 
-        <!-- Barre de recherche pour les expériences -->
-        <p class="search-container">
-            <input type="text" id="search-experiences" class="search-input"
-                placeholder="Rechercher une expérience (lieu, date, âge...)">
-            <button class="search-button"><i class="bi bi-search"></i></button>
-            <button id="add-experience-btn" class="add-btn-inline" style="display: none;">
-                <i class="bi bi-plus-circle"></i> Ajouter
-            </button>
-        </p>
+        <test id="section-experiences" data-section="experiences">
+            <!-- Barre de recherche pour les expériences -->
+            <p class="search-container">
+                <input type="text" id="search-experiences" class="search-input"
+                    placeholder="Rechercher une expérience (lieu, date, âge...)">
+                <button class="search-button"><i class="bi bi-search"></i></button>
+                <button id="add-experience-btn" class="add-btn-inline" style="display: none;">
+                    <i class="bi bi-plus-circle"></i> Ajouter
+                </button>
+            </p>
 
-        <h1 id="experiences" data-section="experiences" data-section-title="Expériences"
-            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <span class="section-title-text">1- Expériences</span>
-            <test style="display: flex; gap: 8px;">
-                <button id="pdf-btn-experiences" onclick="generatePDF('table-experiences', 'Récapitulatif des Expériences')"
-                    class="pdf-btn">
-                    <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-experiences-label">Générer PDF</span>
-                </button>
-                <button onclick="generateImage('table-experiences', 'Récapitulatif des Expériences')" class="pdf-btn"
-                    style="background-color: #3b82f6;">
-                    <i class="bi bi-image-fill"></i> <span id="img-btn-experiences-label">Générer Image</span>
-                </button>
-            </test>
-        </h1>
-        <div class="tabs">
-            <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
-            <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
-            <div class="tab" onclick="filterTable('colo', 'table-experiences')">Colonie de vacances</div>
-            <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
-        </div>
-        <div class="tabs">
-            <div id="loading-experiences" class="loading-spinner hidden">
-                <div class="spinner"></div>
-                <p>Chargement des données...</p>
+            <h1 id="experiences" data-section-title="Expériences"
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <span class="section-title-text">1- Expériences</span>
+                <test style="display: flex; gap: 8px;">
+                    <button id="pdf-btn-experiences"
+                        onclick="generatePDF('table-experiences', 'Récapitulatif des Expériences')" class="pdf-btn">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-experiences-label">Générer
+                            PDF</span>
+                    </button>
+                    <button onclick="generateImage('table-experiences', 'Récapitulatif des Expériences')" class="pdf-btn"
+                        style="background-color: #3b82f6;">
+                        <i class="bi bi-image-fill"></i> <span id="img-btn-experiences-label">Générer Image</span>
+                    </button>
+                </test>
+            </h1>
+            <div class="tabs">
+                <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
+                <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
+                <div class="tab" onclick="filterTable('colo', 'table-experiences')">Colonie de vacances</div>
+                <div class="tab" onclick="filterTable('autre', 'table-experiences')">Autre</div>
             </div>
-            <table id="table-experiences">
-                <tr data-type="colo autre alsh" class="always-visible">
-                    <th>N°</th>
-                    <th>Date</th>
-                    <th onclick="sortTable(2, 'table-experiences')">Durée</th>
-                    <th>Organisateur</th>
-                    <th>Logo</th>
-                    <th>Lieu</th>
-                    <th>Type de séjour</th>
-                    <th>Intitulé du poste</th>
-                    <th>Tranche d'âge</th>
-                    <th>Nb de jeunes</th>
-                </tr>
-                <!-- Les données sont chargées dynamiquement depuis Firebase -->
-            </table>
-        </div><br>
-
-        <!-- Barre de recherche pour les formations -->
-        <p class="search-container">
-            <input type="text" id="search-formations" class="search-input"
-                placeholder="Rechercher une formation (organisme, lieu, date...)">
-            <button class="search-button"><i class="bi bi-search"></i></button>
-            <button id="add-formation-btn" class="add-btn-inline" style="display: none;">
-                <i class="bi bi-plus-circle"></i> Ajouter
-            </button>
-        </p>
-
-        <h1 id="formations" data-section="formations" data-section-title="Formations"
-            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <span class="section-title-text">2- Formations</span>
-            <test style="display: flex; gap: 8px;">
-                <button id="pdf-btn-formations" onclick="generatePDF('table-formations', 'Récapitulatif des Formations')"
-                    class="pdf-btn">
-                    <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-formations-label">Générer PDF</span>
-                </button>
-                <button onclick="generateImage('table-formations', 'Récapitulatif des Formations')" class="pdf-btn"
-                    style="background-color: #3b82f6;">
-                    <i class="bi bi-image-fill"></i> <span id="img-btn-formations-label">Générer Image</span>
-                </button>
-            </test>
-        </h1>
-        <div class="tabs">
-            <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
-            <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
-            <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
-        </div>
-        <div class="tabs" id="formations-table-container">
-            <div id="loading-formations" class="loading-spinner hidden">
-                <div class="spinner"></div>
-                <p>Chargement des données...</p>
+            <div class="tabs">
+                <div id="loading-experiences" class="loading-spinner hidden">
+                    <div class="spinner"></div>
+                    <p>Chargement des données...</p>
+                </div>
+                <table id="table-experiences">
+                    <tr data-type="colo autre alsh" class="always-visible">
+                        <th>N°</th>
+                        <th>Date</th>
+                        <th onclick="sortTable(2, 'table-experiences')">Durée</th>
+                        <th>Organisateur</th>
+                        <th>Logo</th>
+                        <th>Lieu</th>
+                        <th>Type de séjour</th>
+                        <th>Intitulé du poste</th>
+                        <th>Tranche d'âge</th>
+                        <th>Nb de jeunes</th>
+                    </tr>
+                    <!-- Les données sont chargées dynamiquement depuis Firebase -->
+                </table>
             </div>
-            <table id="table-formations">
-                <tr data-type="bafa bafd" class="always-visible">
-                    <th>N°</th>
-                    <th>Date</th>
-                    <th>Durée</th>
-                    <th>Organisme</th>
-                    <th>Logo</th>
-                    <th>Intitulé</th>
-                    <th>Lieu</th>
-                </tr>
-                <!-- Les données sont chargées dynamiquement depuis Firebase -->
-            </table>
-        </div><br>
+        </test><br>
 
-        <h1 id="statistiques" data-section="statistiques" data-section-title="Statistiques"><span
-                class="section-title-text">3- Statistiques</span></h1>
-        <div class="tabs">
-            <div class="stats-container">
-                <div id="stats-mobile-message" class="mobile-notification">
-                    ⚠️ Les graphiques statistiques s'affichent mieux sur un écran plus large. Pour une meilleure
-                    expérience, consultez cette section sur ordinateur.
+        <test id="section-formations" data-section="formations">
+            <!-- Barre de recherche pour les formations -->
+            <p class="search-container">
+                <input type="text" id="search-formations" class="search-input"
+                    placeholder="Rechercher une formation (organisme, lieu, date...)">
+                <button class="search-button"><i class="bi bi-search"></i></button>
+                <button id="add-formation-btn" class="add-btn-inline" style="display: none;">
+                    <i class="bi bi-plus-circle"></i> Ajouter
+                </button>
+            </p>
+
+            <h1 id="formations" data-section-title="Formations"
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <span class="section-title-text">2- Formations</span>
+                <test style="display: flex; gap: 8px;">
+                    <button id="pdf-btn-formations"
+                        onclick="generatePDF('table-formations', 'Récapitulatif des Formations')" class="pdf-btn">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-formations-label">Générer
+                            PDF</span>
+                    </button>
+                    <button onclick="generateImage('table-formations', 'Récapitulatif des Formations')" class="pdf-btn"
+                        style="background-color: #3b82f6;">
+                        <i class="bi bi-image-fill"></i> <span id="img-btn-formations-label">Générer Image</span>
+                    </button>
+                </test>
+            </h1>
+            <div class="tabs">
+                <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
+                <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
+                <div class="tab" onclick="filterTable('bafd', 'table-formations')">BAFD</div>
+            </div>
+            <div class="tabs" id="formations-table-container">
+                <div id="loading-formations" class="loading-spinner hidden">
+                    <div class="spinner"></div>
+                    <p>Chargement des données...</p>
                 </div>
+                <table id="table-formations">
+                    <tr data-type="bafa bafd" class="always-visible">
+                        <th>N°</th>
+                        <th>Date</th>
+                        <th>Durée</th>
+                        <th>Organisme</th>
+                        <th>Logo</th>
+                        <th>Intitulé</th>
+                        <th>Lieu</th>
+                    </tr>
+                    <!-- Les données sont chargées dynamiquement depuis Firebase -->
+                </table>
+            </div>
+        </test><br>
 
-                <div class="stats-section" id="stats-section-experiences">
-                    <h3>Expériences</h3>
-                    <div class="stats-sentences">
-                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-all">0</span> jours
-                            d'animation</p>
-                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span> jours
-                            en colonie de vacances</p>
-                        <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span> jours
-                            en centre de loisirs</p>
-                        <p class="stat-sentence">J'ai passé <span class="stat-value"
-                                id="total-days-periscolaire">0</span> jours
-                            en périscolaire</p>
-                        <p class="stat-sentence">J'ai encadré <span class="stat-value" id="total-youth">0</span> jeunes
-                            au total</p>
-                        <p class="stat-sentence">J'ai réalisé <span class="stat-value" id="total-experiences">0</span>
-                            expériences d'animation</p>
-                        <p class="stat-sentence">J'ai collaboré avec <span class="stat-value"
-                                id="total-organizations">0</span>
-                            organismes différents</p>
-                        <p class="stat-sentence" id="stat-colleagues-sentence" style="display: none;"></p>
-                        <p class="stat-sentence">J'ai principalement encadré des jeunes de <span class="stat-value"
-                                id="most-common-age">0</span> ans</p>
-                        <p class="stat-sentence">L'âge moyen est de <span class="stat-value" id="average-age">0</span>
-                            ans</p>
+        <test id="section-statistiques" data-section="statistiques">
+            <h1 id="statistiques" data-section-title="Statistiques"><span class="section-title-text">3-
+                    Statistiques</span></h1>
+            <div class="tabs">
+                <div class="stats-container">
+                    <div id="stats-mobile-message" class="mobile-notification">
+                        ⚠️ Les graphiques statistiques s'affichent mieux sur un écran plus large. Pour une meilleure
+                        expérience, consultez cette section sur ordinateur.
                     </div>
 
-                    <div id="visu-graph-stat-ordi">
-                        ℹ️ Pour visualiser les graphiques plus en détail, survolez les barres verticales avec votre
-                        curseur.
+                    <div class="stats-section" id="stats-section-experiences">
+                        <h3>Expériences</h3>
+                        <div class="stats-sentences">
+                            <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-all">0</span>
+                                jours
+                                d'animation</p>
+                            <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span>
+                                jours
+                                en colonie de vacances</p>
+                            <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span>
+                                jours
+                                en centre de loisirs</p>
+                            <p class="stat-sentence">J'ai passé <span class="stat-value"
+                                    id="total-days-periscolaire">0</span> jours
+                                en périscolaire</p>
+                            <p class="stat-sentence">J'ai encadré <span class="stat-value" id="total-youth">0</span>
+                                jeunes
+                                au total</p>
+                            <p class="stat-sentence">J'ai réalisé <span class="stat-value"
+                                    id="total-experiences">0</span>
+                                expériences d'animation</p>
+                            <p class="stat-sentence">J'ai collaboré avec <span class="stat-value"
+                                    id="total-organizations">0</span>
+                                organismes différents</p>
+                            <p class="stat-sentence" id="stat-colleagues-sentence" style="display: none;"></p>
+                            <p class="stat-sentence">J'ai principalement encadré des jeunes de <span class="stat-value"
+                                    id="most-common-age">0</span> ans</p>
+                            <p class="stat-sentence">L'âge moyen est de <span class="stat-value"
+                                    id="average-age">0</span>
+                                ans</p>
+                        </div>
+
+                        <div id="visu-graph-stat-ordi">
+                            ℹ️ Pour visualiser les graphiques plus en détail, survolez les barres verticales avec votre
+                            curseur.
+                        </div>
+
+                        <div id="visu-graph-stat-tel">
+                            ℹ️ Pour visualiser les graphiques plus en détail, appuyez sur les barres verticales avec
+                            votre
+                            doigt.
+                        </div>
+
+                        <div id="days-by-organization" class="stats-chart">
+                            <canvas id="organizationChart"></canvas>
+                        </div>
+
+                        <div id="age-group-chart-container" class="stats-chart">
+                            <canvas id="ageGroupChart"></canvas>
+                        </div>
                     </div>
 
-                    <div id="visu-graph-stat-tel">
-                        ℹ️ Pour visualiser les graphiques plus en détail, appuyez sur les barres verticales avec votre
-                        doigt.
-                    </div>
+                    <div class="stats-section" id="stats-section-formations">
+                        <h3>Formations</h3>
 
-                    <div id="days-by-organization" class="stats-chart">
-                        <canvas id="organizationChart"></canvas>
-                    </div>
+                        <div class="stats-sentences">
+                            <p class="stat-sentence">J'ai suivi <span class="stat-value"
+                                    id="total-days-formation">0</span>
+                                jours de formation</p>
+                            <p class="stat-sentence">J'ai participé à <span class="stat-value"
+                                    id="total-bafa-formations">0</span> formations BAFA</p>
+                            <p class="stat-sentence">J'ai participé à <span class="stat-value"
+                                    id="total-bafd-formations">0</span> formations BAFD</p>
+                        </div>
 
-                    <div id="age-group-chart-container" class="stats-chart">
-                        <canvas id="ageGroupChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="stats-section" id="stats-section-formations">
-                    <h3>Formations</h3>
-
-                    <div class="stats-sentences">
-                        <p class="stat-sentence">J'ai suivi <span class="stat-value" id="total-days-formation">0</span>
-                            jours de formation</p>
-                        <p class="stat-sentence">J'ai participé à <span class="stat-value"
-                                id="total-bafa-formations">0</span> formations BAFA</p>
-                        <p class="stat-sentence">J'ai participé à <span class="stat-value"
-                                id="total-bafd-formations">0</span> formations BAFD</p>
-                    </div>
-
-                    <div id="formation-organization-chart" class="stats-chart">
-                        <canvas id="formationOrganizationChart"></canvas>
+                        <div id="formation-organization-chart" class="stats-chart">
+                            <canvas id="formationOrganizationChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </test>
     </div>
 
     <footer id="footer">
