@@ -490,7 +490,8 @@ async function loadExperiencesFromFirebase() {
         stayType: data.stayType || '',
         position: data.position || '',
         ageRange: data.ageRange || '',
-        youthCount: data.youthCount || 0
+        youthCount: data.youthCount || 0,
+        ce: data.ce || ''
       });
     });
 

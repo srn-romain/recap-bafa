@@ -736,6 +736,8 @@ async function showAddExperienceModal() {
   document.getElementById('experience-modal-title').textContent = 'Ajouter une expérience';
   const form = document.getElementById('experience-form');
   form.reset();
+  const ceField = document.getElementById('exp-ce');
+  if (ceField) ceField.value = '';
 
   // Reset Tom Selects
   ['exp-stay-type', 'exp-position', 'exp-organizer'].forEach(id => {
@@ -1865,6 +1867,7 @@ async function showEditExperienceModal(data, row) {
 
   // Remplir le formulaire avec les données
   document.getElementById('exp-type').value = data.type || 'colo';
+  document.getElementById('exp-ce').value = data.ce || '';
 
   // Gestion spécifique ALSH/Scout/Périscolaire (Mercredis vs Ponctuel)
   const isAlsh = (data.type === 'alsh' || data.type === 'scout' || data.type === 'periscolaire');
@@ -2830,7 +2833,8 @@ document.addEventListener('DOMContentLoaded', function () {
           return selectVal;
         })(),
         ageRange: ageRangeString,
-        youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10)
+        youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10),
+        ce: document.getElementById('exp-ce').value.trim()
       };
 
       // Gérer le tableau locations selon le type de séjour

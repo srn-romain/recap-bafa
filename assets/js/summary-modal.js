@@ -57,6 +57,17 @@ function createSummaryModal() {
                         </div>
                     </div>
 
+                    <!-- Comité d'entreprise -->
+                    <div id="summary-ce-card" class="summary-info-card" style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; display: none; align-items: center; gap: 15px;">
+                        <div style="width: 40px; height: 40px; background: #fdf2f8; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #db2777; font-size: 1.2rem;">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Comité d'entreprise</div>
+                            <div id="summary-ce" style="font-size: 0.95rem; color: #1e293b; font-weight: 500;">-</div>
+                        </div>
+                    </div>
+
                     <!-- Lieu -->
                     <div class="summary-info-card" style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 15px;">
                         <div style="width: 40px; height: 40px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #3b82f6; font-size: 1.2rem;">
@@ -142,6 +153,16 @@ window.showSummaryModal = function (data, itemType) {
     location.textContent = locText;
     location.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
     location.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
+
+    // Comité d'entreprise
+    const ceCard = document.getElementById('summary-ce-card');
+    const ceText = document.getElementById('summary-ce');
+    if (data.ce) {
+      ceCard.style.display = 'flex';
+      ceText.textContent = data.ce;
+    } else {
+      ceCard.style.display = 'none';
+    }
 
   } else {
     // Formation
