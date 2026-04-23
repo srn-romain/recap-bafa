@@ -38,8 +38,28 @@ function remplirNum(table) {
   // Remplir chaque cellule avec un numéro en partant du bas
   const totalRows = visibleRows.length;
   visibleRows.forEach((cell, index) => {
-    cell.textContent = totalRows - index;
+    const num = totalRows - index;
+    // On rend le numéro cliquable pour ouvrir la modale récapitulative
+    cell.innerHTML = `<button type="button" class="num-btn" onclick="handleNumClick(event, this)" title="Voir le récapitulatif">${num}</button>`;
   });
+}
+
+// Gère le clic sur un numéro de ligne
+function handleNumClick(event, element) {
+  event.preventDefault();
+  const tr = element.closest('tr');
+  const expData = tr.dataset.experience;
+  const formData = tr.dataset.formation;
+
+  if (expData) {
+    if (typeof showSummaryModal === 'function') {
+      showSummaryModal(JSON.parse(expData), 'experience');
+    }
+  } else if (formData) {
+    if (typeof showSummaryModal === 'function') {
+      showSummaryModal(JSON.parse(formData), 'formation');
+    }
+  }
 }
 
 /*--------------------------------------------------------------
