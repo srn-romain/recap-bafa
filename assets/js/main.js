@@ -1332,15 +1332,34 @@ async function generateImage(tableId, title) {
   const table = document.getElementById(tableId);
   if (!table) return;
 
-  // Sauvegarder l'état original des filtres pour pouvoir restaurer
-  const rows = Array.from(table.querySelectorAll('tr'));
-  const originalStyles = rows.map(row => row.style.display);
+  // Identifier les colonnes à masquer (Modifier et Supprimer)
+  const headerCells = Array.from(table.querySelectorAll('th'));
+  const indicesToHide = [];
+  headerCells.forEach((th, index) => {
+    const text = th.textContent.toLowerCase();
+    if (text.includes('modifier') || text.includes('supprimer') || 
+        th.classList.contains('edit-column') || th.classList.contains('delete-column')) {
+      indicesToHide.push(index);
+    }
+  });
 
-  // Pour l'export image, on veut voir TOUTES les données
+  // Sauvegarder l'état original pour pouvoir restaurer
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const originalStyles = rows.map(row => {
+    const cellStyles = Array.from(row.cells).map(cell => cell.style.display);
+    return { rowDisplay: row.style.display, cellStyles };
+  });
+
+  // Pour l'export image, on veut voir TOUTES les données mais MASQUER les actions
   rows.forEach(row => {
     if (row.hasAttribute('data-type')) {
       row.style.display = ''; // Affichage par défaut (table-row)
     }
+    indicesToHide.forEach(index => {
+      if (row.cells[index]) {
+        row.cells[index].style.display = 'none';
+      }
+    });
   });
 
   // Afficher un indicateur de chargement
@@ -1361,8 +1380,13 @@ async function generateImage(tableId, title) {
     });
 
     // Restaurer l'affichage original
-    rows.forEach((row, index) => {
-      row.style.display = originalStyles[index];
+    rows.forEach((row, rowIndex) => {
+      row.style.display = originalStyles[rowIndex].rowDisplay;
+      indicesToHide.forEach(cellIndex => {
+        if (row.cells[cellIndex]) {
+          row.cells[cellIndex].style.display = originalStyles[rowIndex].cellStyles[cellIndex];
+        }
+      });
     });
 
     // Conversion en JPG et téléchargement
@@ -1375,6 +1399,16 @@ async function generateImage(tableId, title) {
   } catch (error) {
     console.error("Erreur lors de la capture d'image :", error);
     alert("Une erreur est survenue lors de la génération de l'image. Assurez-vous que tous les éléments sont bien chargés.");
+    
+    // Restaurer en cas d'erreur aussi
+    rows.forEach((row, rowIndex) => {
+      row.style.display = originalStyles[rowIndex].rowDisplay;
+      indicesToHide.forEach(cellIndex => {
+        if (row.cells[cellIndex]) {
+          row.cells[cellIndex].style.display = originalStyles[rowIndex].cellStyles[cellIndex];
+        }
+      });
+    });
   } finally {
     if (btn) {
       btn.innerHTML = originalHtml;
