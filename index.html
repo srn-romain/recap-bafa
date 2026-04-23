@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <meta http-equiv="refresh" content="0; url=https://macollectiondebafa.web.app/">
-    <link rel="canonical" href="https://macollectiondebafa.web.app/">
+<!--    <meta http-equiv="refresh" content="0; url=https://macollectiondebafa.web.app/">
+    <link rel="canonical" href="https://macollectiondebafa.web.app/">-->
   <style>
     @media (max-width: 768px) {
       #admin-stats-btn {
@@ -1096,104 +1096,109 @@
 
   <!-- Modal Manuel Utilisateur -->
   <div id="user-manual-modal" class="modal" style="display: none; z-index: 10001;">
-    <div class="modal-content large-modal" style="max-height: 90vh; overflow-y: auto; padding: 15px;">
-      <span class="close-modal" onclick="closeUserManual()">&times;</span>
-      <h2
-        style="border-bottom: 2px solid #f39c12; padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
-        <i class="bi bi-book-half" style="color: #f39c12; font-size: 1.8rem;"></i> Manuel d'utilisation
-      </h2>
-
-      <div style="text-align: left; line-height: 1.7; color: #333; padding: 0 10px;">
-
-        <!-- Section 1 -->
-        <div style="margin-bottom: 25px;">
-          <h3
-            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
-            1. Personnalisation du Profil
-          </h3>
-          <p style="margin-bottom: 10px;">Dès votre inscription, rendez-vous dans les <strong>Paramètres</strong> (icône
-            <i class="bi bi-gear-fill"></i>) pour :
-          </p>
-          <ul style="padding-left: 20px; margin-bottom: 10px;">
-            <li><strong>Photo de profil :</strong> Téléchargez votre plus beau sourire pour humaniser votre fiche.</li>
-            <li><strong>Genre :</strong> Indiquez-le pour que l'application adapte automatiquement les accords (Ex:
-              <em>Animateur</em> ou <em>Animatrice</em>).
-            </li>
-            <li><strong>Visibilité :</strong> Choisissez de rendre votre profil public ou privé. Un bandeau
-              de couleur vous indique en temps réel votre niveau de confidentialité.</li>
-          </ul>
-        </div>
-
-        <!-- Section 2 -->
-        <div style="margin-bottom: 25px;">
-          <h3
-            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
-            2. Gestion Dynamique du Parcours
-          </h3>
-          <p style="margin-bottom: 10px;">Votre tableau de bord permet d'ajouter vos <strong>Expériences</strong>
-            (Colos, ALSH, Périscolaire, Scouts) et vos <strong>Formations</strong> (BAFA, BAFD, Secourisme).</p>
-          <div
-            style="background: #fff8e1; border-radius: 8px; padding: 15px; border: 1px dashed #f39c12; margin-bottom: 10px;">
-            <p style="margin: 0; font-weight: 600; color: #b45309;"><i class="bi bi-magic"></i> Magie des champs
-              dynamiques :</p>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem;">Remplissez les formulaires dans l'ordre ! Les questions
-              <strong>s'adaptent à vos réponses</strong> (Ex: choix du mode de séjour, auto-détection des logos
-              d'organisme). <br>En saisissant une date de début et de fin,
-              l'application <strong> calculera automatiquement</strong> la durée ! Visualisez aussi l'état de vos
-              séjours grâce aux
-              badges de statut (À venir, En cours, Nouveau).
-            </p>
-          </div>
-        </div>
-
-        <!-- Section 3 -->
-        <div style="margin-bottom: 25px;">
-          <h3
-            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
-            3. Votre Carte de Visite Digitale
-          </h3>
-          <p style="margin-bottom: 10px;">Une fois complété, votre profil devient une véritable vitrine professionnelle
-            prête à être partagée :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Statistiques :</strong> Vos jours travaillés, vos publics encadrés et le nombre
-              d'organismes différents avec qui vous avez collaboré sont calculés en temps réel.
-            </li>
-            <li><strong>Carte Interactive :</strong> Si vous renseignez l'URL Google Maps de vos séjours, ils
-              s'afficheront sur une carte Google Map dès lors que vous cliquer dessus.</li>
-            <li><strong>Logos Automatiques :</strong> Pour un panels d'organismes, le logo officiel et le département
-              sont automatiquement détecté !</li>
-          </ul>
-        </div>
-
-        <!-- Section 4 -->
-        <div style="margin-bottom: 25px;">
-          <h3
-            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
-            4. Export, PDF et Sauvegarde
-          </h3>
-          <p style="margin-bottom: 10px;">Nous tenons à votre autonomie. Vous pouvez à tout moment :</p>
-          <ul style="padding-left: 20px;">
-            <li><strong>Générer un PDF :</strong> Exportez vos tableaux d'expériences et de formations en haute qualité.
-            </li>
-            <li><strong>Import / Export JSON :</strong> Téléchargez l'intégralité de vos données en un clic pour une
-              sauvegarde locale ou pour les transférer sur un autre compte.</li>
-          </ul>
-        </div>
-
-        <!-- Section 5 -->
-        <div>
-          <h3
-            style="color: #d35400; font-size: 1.15rem; border-left: 4px solid #f39c12; padding-left: 12px; margin-bottom: 12px; font-weight: 700;">
-            5. Mode Directeur (Recrutement)
-          </h3>
-          <p>Les recruteurs peuvent demander un <strong>accès spécial</strong> pour explorer la base des profils
-            publics, facilitant ainsi la mise en relation directe avec les animateurs qualifiés.</p>
-        </div>
+    <div class="modal-content large-modal"
+      style="max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 0; border-radius: 12px; border: none; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+      <div
+        style="background: #f39c12; padding: 15px 25px; color: white; position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;">
+        <h2 style="margin: 0; color: white; display: flex; align-items: center; gap: 10px; border: none; font-size: 1.2rem;">
+          <i class="bi bi-book-half"></i> Manuel d'utilisation complet
+        </h2>
+        <span class="close-modal" onclick="closeUserManual()"
+          style="color: white; position: static; opacity: 0.8; font-size: 24px; cursor: pointer;">&times;</span>
       </div>
 
-      <div style="margin-top: 30px; text-align: center;">
-        <button onclick="closeUserManual()" class="btn-large btn-green" style="width: auto; padding: 10px 40px;">J'ai
-          compris !</button>
+      <div style="padding: 25px; background: white;">
+        <div style="display: flex; flex-direction: column; gap: 30px; text-align: left;">
+
+          <!-- Section 1 : Inscription et Connexion -->
+          <section>
+            <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-person-plus-fill"></i> 1. Accès et Compte
+            </h3>
+            <p style="font-size: 0.9rem; color: #444; line-height: 1.6; text-align: left">
+              Créez votre compte gratuitement par <strong>Email</strong> ou via <strong>Google</strong>. Une fois connecté, vous disposez d'un espace sécurisé pour stocker tout votre parcours d'animateur BAFA & directeur BAFD.
+            </p>
+          </section>
+
+          <!-- Section 2 : Personnalisation et Confidentialité -->
+          <section>
+            <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-shield-lock-fill"></i> 2. Profil et Confidentialité
+            </h3>
+            <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
+              <li><strong>Photo de profil :</strong> Humanisez votre fiche pour les recruteurs.</li>
+              <li><strong>Genre :</strong> Permet d'accorder automatiquement les titres (Animateur/Animatrice).</li>
+              <li><strong>Niveaux de visibilité :</strong> 
+                <ul>
+                  <li>🌍 <b>Public :</b> Visible via la recherche et partageable.</li>
+                  <li>🔕 <b>Discret :</b> Masqué de la recherche mais partageable via lien direct.</li>
+                  <li>🔒 <b>Privé :</b> Uniquement pour vous.</li>
+                </ul>
+              </li>
+              <li><strong>Bandeau de contrôle :</strong> Un indicateur coloré en temps réel dans vos paramètres vous confirme votre statut.</li>
+            </ul>
+          </section>
+
+          <!-- Section 3 : Ajout d'Expériences et Formations -->
+          <section>
+            <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-plus-circle-fill"></i> 3. Gestion du Parcours
+            </h3>
+            <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
+              <li><strong>Types de séjours :</strong> Gérez les Colos, ALSH, Périscolaire et Scoutisme (EEDF, SGDF, SMF...).</li>
+              <li><strong>Automatisation :</strong> 
+                <ul>
+                  <li>Calcul automatique de la <b>durée</b> dès la saisie des dates.</li>
+                  <li>Détection automatique des <b>logos officiels</b> et des départements selon l'organisme choisi.</li>
+                  <li>Gestion des <b>itinérances</b> (multi-lieux) pour les camps scouts ou treks.</li>
+                </ul>
+              </li>
+              <li><strong>Champ CE :</strong> Précisez le Comité d'entreprise organisateur (SNCF, EDF, etc.).</li>
+            </ul>
+          </section>
+
+          <!-- Section 4 : Navigation et Consultation -->
+          <section>
+            <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-search"></i> 4. Consultation Intelligente
+            </h3>
+            <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
+              <li><strong>Fenêtre de détail :</strong> Cliquez sur le <b>N° d'une ligne</b> pour ouvrir un récapitulatif complet et élégant de l'expérience.</li>
+              <li><strong>Badges de Statut :</strong> Des badges animés indiquent si un séjour est <b>"À venir"</b>, <b>"En cours"</b> ou <b>"Nouveau"</b>.</li>
+              <li><strong>Recherche et Tris :</strong> Filtrez par type (filtres verts), utilisez la barre de recherche ou cliquez sur les en-têtes de colonnes pour trier.</li>
+              <li><strong>Cartographie :</strong> Cliquez sur un lieu pour l'ouvrir instantanément dans Google Maps.</li>
+            </ul>
+          </section>
+
+          <!-- Section 5 : Statistiques et Outils -->
+          <section>
+            <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-bar-chart-line-fill"></i> 5. Statistiques et Export
+            </h3>
+            <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
+              <li><strong>Statistiques en temps réel :</strong> Total de jours travaillés, publics encadrés, diversité des organismes, etc.</li>
+              <li><strong>Génération PDF :</strong> Exportez vos tableaux pour vos dossiers de candidature.</li>
+              <li><strong>Import / Export JSON :</strong> Sauvegardez l'intégralité de vos données sur votre ordinateur.</li>
+            </ul>
+          </section>
+
+          <!-- Section 6 : Partage et Recrutement -->
+          <section>
+            <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="bi bi-share-fill"></i> 6. Partage et Recrutement
+            </h3>
+            <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
+              <li><strong>URL Unique :</strong> Partagez votre profil via un lien personnalisé.</li>
+              <li><strong>Mode Directeur :</strong> Les recruteurs peuvent demander un accès pour parcourir la base des profils publics et vous contacter.</li>
+            </ul>
+          </section>
+
+        </div>
+
+        <div style="margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
+          <button onclick="closeUserManual()" class="btn-large btn-green"
+            style="width: auto; padding: 10px 40px; border-radius: 30px; font-weight: 700;">Fermer le manuel</button>
+        </div>
       </div>
     </div>
   </div>
