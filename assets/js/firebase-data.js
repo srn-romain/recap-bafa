@@ -1027,16 +1027,29 @@ async function loadUserProfile() {
         }
       }
 
-      // Mettre à jour les statistiques manuelles
-      if (data.stats) {
-        const animators = data.stats.animators || 0;
-        const directors = data.stats.directors || 0;
-        const trainers = data.stats.trainers || 0;
+        // Mettre à jour les statistiques manuelles
+        if (data.stats) {
+          const animators = data.stats.animators || 0;
+          const directors = data.stats.directors || 0;
+          const trainers = data.stats.trainers || 0;
+          const gender = data.gender || '';
 
-        const parts = [];
-        if (animators > 0) parts.push(`<span class="stat-value">${animators}</span> animateur${animators > 1 ? 's' : ''}`);
-        if (directors > 0) parts.push(`<span class="stat-value">${directors}</span> directeur${directors > 1 ? 's' : ''}`);
-        if (trainers > 0) parts.push(`<span class="stat-value">${trainers}</span> formateur${trainers > 1 ? 's' : ''}`);
+          const parts = [];
+          if (animators > 0) {
+            let label = animators > 1 ? 'animateurs' : 'animateur';
+            if (gender === 'feminin') label = animators > 1 ? 'animatrices' : 'animatrice';
+            parts.push(`<span class="stat-value">${animators}</span> ${label}`);
+          }
+          if (directors > 0) {
+            let label = directors > 1 ? 'directeurs' : 'directeur';
+            if (gender === 'feminin') label = directors > 1 ? 'directrices' : 'directrice';
+            parts.push(`<span class="stat-value">${directors}</span> ${label}`);
+          }
+          if (trainers > 0) {
+            let label = trainers > 1 ? 'formateurs' : 'formateur';
+            if (gender === 'feminin') label = trainers > 1 ? 'formatrices' : 'formatrice';
+            parts.push(`<span class="stat-value">${trainers}</span> ${label}`);
+          }
 
         const sentenceEl = document.getElementById('stat-colleagues-sentence');
         if (sentenceEl && parts.length > 0) {

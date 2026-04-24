@@ -142,25 +142,9 @@ const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 /**
  * Gère l'upload de l'image de fond et de profil
  */
-document.addEventListener('DOMContentLoaded', function () {
-    const backgroundInput = document.getElementById('settings-background-image');
-    if (backgroundInput) {
-        backgroundInput.addEventListener('change', handleBackgroundImageUpload);
-    }
-
-    const profilePicInput = document.getElementById('settings-profile-pic');
-    if (profilePicInput) {
-        profilePicInput.addEventListener('change', handleProfilePicUpload);
-    }
-
-    // Listeners pour les stats manuelles (preview dynamique)
-    ['settings-animators-count', 'settings-directors-count', 'settings-trainers-count'].forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            input.addEventListener('input', updateSettingsStatsPreview);
-        }
-    });
-});
+// Les écouteurs pour les inputs de la modale sont maintenant gérés directement via 
+// les attributs onchange/oninput dans settings-modal-component.js pour éviter 
+// les problèmes de timing lors de l'injection dynamique de la modale.
 
 /**
  * Traite la photo de profil sélectionnée
@@ -578,8 +562,18 @@ window.handleSettingsSubmit = async function (event) {
 
         showSettingsFeedback('success', "Profil mis à jour avec succès !");
 
-        // Marquer que des changements ont été sauvegardés pour recharger à la fermeture
-        settingsChangesSaved = true;
+        // Mise à jour instantanée de l'interface sans recharger la page
+        try {
+            if (typeof getUserRole === 'function') await getUserRole(window.currentUser);
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof loadUserProfile === 'function') await loadUserProfile();
+            if (typeof calculateAllStatistics === 'function') calculateAllStatistics();
+        } catch (e) {
+            console.warn("Erreur lors de la mise à jour instantanée de l'interface:", e);
+        }
+
+        // On ne force plus le rechargement à la fermeture car l'UI est déjà à jour
+        settingsChangesSaved = false;
 
     } catch (error) {
         console.error("Erreur mise à jour profil", error);
@@ -964,9 +958,26 @@ window.updateSettingsStatsPreview = function () {
     if (!previewEl) return;
 
     const parts = [];
-    if (animators > 0) parts.push(`<span style="color: #50644c; font-weight: bold;">${animators}</span> animateur${animators > 1 ? 's' : ''}`);
-    if (directors > 0) parts.push(`<span style="color: #50644c; font-weight: bold;">${directors}</span> directeur${directors > 1 ? 's' : ''}`);
-    if (trainers > 0) parts.push(`<span style="color: #50644c; font-weight: bold;">${trainers}</span> formateur${trainers > 1 ? 's' : ''}`);
+    // Récupérer le genre pour l'accord
+    const gender = document.getElementById('settings-gender')?.value || '';
+
+    if (animators > 0) {
+        let label = animators > 1 ? 'animateurs' : 'animateur';
+        if (gender === 'feminin') label = animators > 1 ? 'animatrices' : 'animatrice';
+        parts.push(`<span style="color: #50644c; font-weight: bold;">${animators}</span> ${label}`);
+    }
+    
+    if (directors > 0) {
+        let label = directors > 1 ? 'directeurs' : 'directeur';
+        if (gender === 'feminin') label = directors > 1 ? 'directrices' : 'directrice';
+        parts.push(`<span style="color: #50644c; font-weight: bold;">${directors}</span> ${label}`);
+    }
+    
+    if (trainers > 0) {
+        let label = trainers > 1 ? 'formateurs' : 'formateur';
+        if (gender === 'feminin') label = trainers > 1 ? 'formatrices' : 'formatrice';
+        parts.push(`<span style="color: #50644c; font-weight: bold;">${trainers}</span> ${label}`);
+    }
 
     if (parts.length > 0) {
         let sentence = "J'ai travaillé avec ";

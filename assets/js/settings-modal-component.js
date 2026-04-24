@@ -35,7 +35,7 @@ function injectSettingsModal() {
                         <label for="settings-profile-pic" class="secondary-action-btn" style="width: auto; margin: 0; padding: 5px 10px; font-size: 0.8rem;">
                             <i class="bi bi-upload"></i> Modifier
                         </label>
-                        <input type="file" id="settings-profile-pic" accept="image/*" style="display: none;">
+                        <input type="file" id="settings-profile-pic" accept="image/*" style="display: none;" onchange="handleProfilePicUpload(event)">
 
                         <button type="button" onclick="removeProfilePic()" class="secondary-action-btn" style="width: auto; margin: 0; padding: 5px 10px; font-size: 0.8rem; color: #e74c3c; border-color: #e74c3c;">
                             <i class="bi bi-trash" style="color: #e74c3c;"></i>
@@ -72,7 +72,7 @@ function injectSettingsModal() {
                         </div>
                     </div>
 
-                    <select id="settings-gender">
+                    <select id="settings-gender" onchange="updateSettingsStatsPreview()">
                         <option value="">-- Sélectionner --</option>
                         <option value="masculin">Masculin</option>
                         <option value="feminin">Féminin</option>
@@ -139,15 +139,15 @@ function injectSettingsModal() {
                 <div class="form-row" style="display: flex; gap: 10px;">
                     <div class="form-group" style="flex: 1;">
                         <label>Animateurs</label>
-                        <input type="number" id="settings-animators-count" placeholder="Nb" min="0">
+                        <input type="number" id="settings-animators-count" placeholder="Nb" min="0" oninput="updateSettingsStatsPreview()">
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label>Directeurs</label>
-                        <input type="number" id="settings-directors-count" placeholder="Nb" min="0">
+                        <input type="number" id="settings-directors-count" placeholder="Nb" min="0" oninput="updateSettingsStatsPreview()">
                     </div>
                     <div class="form-group" style="flex: 1;">
                         <label>Formateurs</label>
-                        <input type="number" id="settings-trainers-count" placeholder="Nb" min="0">
+                        <input type="number" id="settings-trainers-count" placeholder="Nb" min="0" oninput="updateSettingsStatsPreview()">
                     </div>
                 </div>
 
