@@ -515,6 +515,14 @@ window.confirmCloseSettings = function () {
     if (unsavedModal) unsavedModal.style.display = 'none';
 };
 
+/**
+ * Annule la fermeture et reste sur les paramètres
+ */
+window.cancelCloseSettings = function () {
+    const unsavedModal = document.getElementById('settings-unsaved-changes-modal');
+    if (unsavedModal) unsavedModal.style.display = 'none';
+};
+
 // Fermer la modale si on clique en dehors
 window.addEventListener('click', function (event) {
     const modal = document.getElementById('settings-modal');
