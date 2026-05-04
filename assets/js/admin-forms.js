@@ -294,9 +294,9 @@ function toggleAlshDateFields() {
       // Récupérer le dernier nœud texte du label
       const textNodes = Array.from(label.childNodes).filter(n => n.nodeType === Node.TEXT_NODE);
       if (textNodes.length > 0) {
-        textNodes[textNodes.length - 1].textContent = isScout ? '\n                                Tous les samedis\n                            ' : isPeriscolaire ? '\n                                Une année périscolaire\n                            ' : '\n                                Tous les mercredis\n                            ';
+        textNodes[textNodes.length - 1].textContent = isScout ? '\n                                Tous les samedis\n                            ' : isPeriscolaire ? '\n                                Tous les jours scolaires\n                            ' : '\n                                Tous les mercredis\n                            ';
       } else {
-        label.lastChild.textContent = isScout ? ' Tous les samedis' : isPeriscolaire ? ' Une année périscolaire' : ' Tous les mercredis';
+        label.lastChild.textContent = isScout ? ' Tous les samedis' : isPeriscolaire ? ' Tous les jours scolaires' : ' Tous les mercredis';
       }
     }
 

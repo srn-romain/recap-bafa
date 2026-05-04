@@ -165,7 +165,7 @@ function createExperienceRow(experience) {
   // On veut afficher seulement "AAAA-AAAA" mais garder le tri correct
   const isPeriodic = (experience.type === 'alsh' || experience.type === 'scout' || experience.type === 'periscolaire') &&
     typeof experience.duration === 'string' &&
-    (experience.duration.includes('mercredis') || experience.duration.includes('samedis') || experience.duration.includes('périscolaire'));
+    (experience.duration.includes('mercredis') || experience.duration.includes('samedis') || experience.duration.includes('périscolaire') || experience.duration.includes('jours scolaires'));
 
   if (isPeriodic) {
     const periodMatch = experience.date.match(/septembre\s+(\d{4})\s*-\s*juin\s+(\d{4})/i);
@@ -189,9 +189,13 @@ function createExperienceRow(experience) {
   tr.appendChild(tdDate);
 
 
-  // Colonne Durée
+  // Colonne Durée — normaliser l'ancienne valeur 'Une année périscolaire' → 'Tous les jours scolaires'
   const tdDuration = document.createElement('td');
-  tdDuration.textContent = experience.duration;
+  let durationDisplay = experience.duration;
+  if (experience.type === 'periscolaire' && typeof durationDisplay === 'string' && durationDisplay.includes('périscolaire')) {
+    durationDisplay = 'Tous les jours scolaires';
+  }
+  tdDuration.textContent = durationDisplay;
   tr.appendChild(tdDuration);
 
   // Colonne Organisateur
