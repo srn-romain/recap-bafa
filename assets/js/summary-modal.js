@@ -14,8 +14,8 @@ function createSummaryModal() {
 
   const modalHTML = `
     <div id="summary-modal" class="modal" style="display: none; z-index: 2000;">
-        <div class="modal-content summary-modal-content" style="max-width: 500px; padding: 0; overflow: hidden; border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-            <div id="summary-header" style="padding: 20px; color: white; position: relative;">
+        <div class="modal-content summary-modal-content" style="max-width: 500px; padding: 0; overflow: hidden; border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; max-height: 90vh;">
+            <div id="summary-header" style="padding: 20px; color: white; position: relative; flex-shrink: 0;">
                 <span class="close-modal" onclick="closeSummaryModal()" style="color: white; position: absolute; top: 15px; right: 20px; opacity: 0.8; cursor: pointer; font-size: 24px;">&times;</span>
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <div id="summary-logo-container" style="width: 60px; height: 60px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
@@ -28,7 +28,7 @@ function createSummaryModal() {
                 </div>
             </div>
             
-            <div id="summary-body" style="padding: 25px; background: #f8fafc;">
+            <div id="summary-body" style="padding: 25px; background: #f8fafc; overflow-y: auto; flex: 1;">
                 <div class="summary-details-grid" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                     
                     <!-- Date et Durée -->
@@ -102,7 +102,7 @@ function createSummaryModal() {
                 </div>
             </div>
             
-            <div id="summary-footer" style="padding: 15px; background: white; border-top: 1px solid #e2e8f0; text-align: center;">
+            <div id="summary-footer" style="padding: 15px; background: white; border-top: 1px solid #e2e8f0; text-align: center; flex-shrink: 0;">
                 <button type="button" onclick="closeSummaryModal()" style="background: #50634c; color: white; border: none; padding: 8px 25px; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Fermer</button>
             </div>
         </div>
