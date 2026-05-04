@@ -125,8 +125,26 @@ window.showSummaryModal = function (data, itemType) {
   const subtitle = document.getElementById('summary-subtitle');
   const dateDuration = document.getElementById('summary-date-duration');
   const organizer = document.getElementById('summary-organizer');
-  const location = document.getElementById('summary-location');
   const extraInfo = document.getElementById('summary-extra-info');
+
+  /**
+   * Retourne le <a id="summary-location"> existant, ou le recrée s'il a été
+   * supprimé lors d'un précédent affichage itinérance (container.innerHTML = '').
+   */
+  function getOrRestoreLocationAnchor() {
+    let loc = document.getElementById('summary-location');
+    if (!loc) {
+      const container = document.getElementById('summary-location-container');
+      container.innerHTML = '';
+      loc = document.createElement('a');
+      loc.id = 'summary-location';
+      loc.href = '#';
+      loc.target = '_blank';
+      loc.style.cssText = 'font-size:0.95rem;color:#1e293b;font-weight:500;display:flex;align-items:center;gap:5px;';
+      container.appendChild(loc);
+    }
+    return loc;
+  }
 
   // 1. Couleurs et En-tête selon le type
   if (itemType === 'experience') {
@@ -146,13 +164,40 @@ window.showSummaryModal = function (data, itemType) {
     organizer.style.pointerEvents = (data.organizerUrl && data.organizerUrl !== '#') ? 'auto' : 'none';
     
     // Lieu
-    let locText = data.location || 'Inconnu';
     if (Array.isArray(data.locations) && data.locations.length > 0) {
-      locText = data.locations.map(l => l.location || l.name).join(' → ');
+      // Itinérance : plusieurs lieux, chacun avec son propre lien
+      const container = document.getElementById('summary-location-container');
+      container.innerHTML = ''; // Vider le conteneur (remplace le <a> existant)
+      data.locations.forEach((loc, index) => {
+        const locName = loc.location || loc.name || 'Lieu inconnu';
+        const locUrl = loc.url && loc.url !== '#' ? loc.url : null;
+        const el = document.createElement(locUrl ? 'a' : 'span');
+        el.textContent = locName;
+        el.style.fontSize = '0.95rem';
+        el.style.color = '#1e293b';
+        el.style.fontWeight = '500';
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.style.gap = '4px';
+        if (locUrl) {
+          el.href = locUrl;
+          el.target = '_blank';
+        }
+        container.appendChild(el);
+        if (index < data.locations.length - 1) {
+          const arrow = document.createElement('span');
+          arrow.textContent = ' → ';
+          arrow.style.color = '#64748b';
+          container.appendChild(arrow);
+        }
+      });
+    } else {
+      // Lieu unique — restaurer le <a> si besoin
+      const locationAnchor = getOrRestoreLocationAnchor();
+      locationAnchor.textContent = data.location || 'Inconnu';
+      locationAnchor.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
+      locationAnchor.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
     }
-    location.textContent = locText;
-    location.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
-    location.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
 
     // Comité d'entreprise
     const ceCard = document.getElementById('summary-ce-card');
@@ -176,10 +221,11 @@ window.showSummaryModal = function (data, itemType) {
     organizer.href = data.organismUrl && data.organismUrl !== '#' ? data.organismUrl : '#';
     organizer.style.pointerEvents = (data.organismUrl && data.organismUrl !== '#') ? 'auto' : 'none';
     
-    // Lieu
-    location.textContent = data.location || 'Inconnu';
-    location.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
-    location.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
+    // Lieu — restaurer le <a> si besoin (cas : après une modale itinérance)
+    const locationAnchor = getOrRestoreLocationAnchor();
+    locationAnchor.textContent = data.location || 'Inconnu';
+    locationAnchor.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
+    locationAnchor.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
   }
 
   // 2. Données communes
