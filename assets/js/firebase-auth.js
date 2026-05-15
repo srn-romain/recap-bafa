@@ -600,20 +600,32 @@ function updateUI() {
   // La visibilité des sections (Formations, Stats) est désormais gérée par loadUserProfile
   // dans firebase-data.js pour respecter les paramètres de confidentialité.
 
-  // Activer les liens Google Maps pour tout le monde (demandé : "tout est accessible")
-  const mapLinks = document.querySelectorAll('a[href*="maps.app.goo.gl"]');
+  // Gérer l'activation/désactivation des liens Google Maps selon l'état de connexion
+  const mapLinks = document.querySelectorAll('a[href*="maps.app.goo.gl"], a[href*="google.fr/maps"], a[href*="google.com/maps"]');
   mapLinks.forEach(link => {
-    const originalHref = link.getAttribute('data-original-href');
-    if (originalHref) {
-      link.setAttribute('href', originalHref);
-      link.removeAttribute('data-original-href');
+    if (isLoggedIn) {
+      // Activer le lien
+      const originalHref = link.getAttribute('data-original-href');
+      if (originalHref) {
+        link.setAttribute('href', originalHref);
+        link.removeAttribute('data-original-href');
+      }
+      link.style.pointerEvents = '';
+      link.style.cursor = '';
+      link.style.color = '';
+      link.style.textDecoration = '';
+      link.removeAttribute('title');
+      link.onclick = null;
+    } else {
+      // Désactiver le lien si pas déjà fait
+      if (link.getAttribute('href') !== '#') {
+        link.setAttribute('data-original-href', link.getAttribute('href'));
+        link.setAttribute('href', '#');
+      }
+      link.style.pointerEvents = 'auto'; // Pour le title
+      link.style.cursor = 'help';
+      link.title = 'Connectez-vous pour voir sur Google Maps';
     }
-    link.style.pointerEvents = '';
-    link.style.cursor = '';
-    link.style.color = '';
-    link.style.textDecoration = '';
-    link.removeAttribute('title');
-    link.onclick = null;
   });
 
   // Afficher/masquer les boutons d'ajout/édition (SEULEMENT POUR LE PROPRIÉTAIRE)

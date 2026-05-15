@@ -119,6 +119,8 @@ window.showSummaryModal = function (data, itemType) {
   const modal = document.getElementById('summary-modal');
   if (!modal) return;
 
+  const isLoggedIn = window.currentUser !== null && window.userRole !== null;
+
   const header = document.getElementById('summary-header');
   const logo = document.getElementById('summary-logo');
   const title = document.getElementById('summary-title');
@@ -170,7 +172,7 @@ window.showSummaryModal = function (data, itemType) {
       container.innerHTML = ''; // Vider le conteneur (remplace le <a> existant)
       data.locations.forEach((loc, index) => {
         const locName = loc.location || loc.name || 'Lieu inconnu';
-        const locUrl = loc.url && loc.url !== '#' ? loc.url : null;
+        const locUrl = (isLoggedIn && loc.url && loc.url !== '#') ? loc.url : null;
         const el = document.createElement(locUrl ? 'a' : 'span');
         el.textContent = locName;
         el.style.fontSize = '0.95rem';
@@ -182,6 +184,9 @@ window.showSummaryModal = function (data, itemType) {
         if (locUrl) {
           el.href = locUrl;
           el.target = '_blank';
+        } else if (loc.url && loc.url !== '#') {
+           el.title = 'Connectez-vous pour voir sur Google Maps';
+           el.style.cursor = 'help';
         }
         container.appendChild(el);
         if (index < data.locations.length - 1) {
@@ -195,8 +200,24 @@ window.showSummaryModal = function (data, itemType) {
       // Lieu unique — restaurer le <a> si besoin
       const locationAnchor = getOrRestoreLocationAnchor();
       locationAnchor.textContent = data.location || 'Inconnu';
-      locationAnchor.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
-      locationAnchor.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
+      
+      const hasValidUrl = data.locationUrl && data.locationUrl !== '#';
+      if (isLoggedIn && hasValidUrl) {
+          locationAnchor.href = data.locationUrl;
+          locationAnchor.style.pointerEvents = 'auto';
+          locationAnchor.title = 'Voir sur Google Maps';
+          locationAnchor.style.cursor = 'pointer';
+      } else {
+          locationAnchor.href = '#';
+          locationAnchor.style.pointerEvents = 'none';
+          if (hasValidUrl) {
+              locationAnchor.title = 'Connectez-vous pour voir sur Google Maps';
+              locationAnchor.style.cursor = 'help';
+              locationAnchor.style.pointerEvents = 'auto'; // On le laisse "cliquable" mais vers # pour le tooltip ? 
+              // En fait non, si on veut pas qu'il soit cliquable, pointerEvents = none.
+              // Mais si on veut le title, il faut pointerEvents auto ou alors mettre le title sur le parent.
+          }
+      }
     }
 
     // Comité d'entreprise
@@ -224,8 +245,22 @@ window.showSummaryModal = function (data, itemType) {
     // Lieu — restaurer le <a> si besoin (cas : après une modale itinérance)
     const locationAnchor = getOrRestoreLocationAnchor();
     locationAnchor.textContent = data.location || 'Inconnu';
-    locationAnchor.href = data.locationUrl && data.locationUrl !== '#' ? data.locationUrl : '#';
-    locationAnchor.style.pointerEvents = (data.locationUrl && data.locationUrl !== '#') ? 'auto' : 'none';
+    
+    const hasValidUrl = data.locationUrl && data.locationUrl !== '#';
+    if (isLoggedIn && hasValidUrl) {
+        locationAnchor.href = data.locationUrl;
+        locationAnchor.style.pointerEvents = 'auto';
+        locationAnchor.title = 'Voir sur Google Maps';
+        locationAnchor.style.cursor = 'pointer';
+    } else {
+        locationAnchor.href = '#';
+        locationAnchor.style.pointerEvents = 'none';
+        if (hasValidUrl) {
+            locationAnchor.title = 'Connectez-vous pour voir sur Google Maps';
+            locationAnchor.style.cursor = 'help';
+            locationAnchor.style.pointerEvents = 'auto';
+        }
+    }
   }
 
   // 2. Données communes
