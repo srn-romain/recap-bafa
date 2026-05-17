@@ -1050,10 +1050,10 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Scouts musulmans de France (SMF)': { url: 'https://scoutsmusulmans.fr/', logo: 'assets/img/scoutsmusulmansdefrance.webp', dept: '93' },
     'Éclaireuses et éclaireurs israélites de France (EEIF)': { url: 'https://www.eeif.org/', logo: 'assets/img/eeif.webp', dept: '78' },
     'Association des guides et scouts d\'Europe (AGSE)': { url: 'https://www.scouts-europe.org/', logo: 'assets/img/euroscouts.webp', dept: '77' },
-    'Éclaireuses et éclaireurs de la nature (EEDLN)': { url: 'https://www.edln.org/', logo: 'assets/img/scoutnature.png', dept: '' },
-    'Éclaireurs neutres de France (ENF)': { url: 'https://www.enf.fr/', logo: 'assets/img/enf.png', dept: '' },
-    'Fédération des éclaireurs et éclaireuses (FEE)': { url: 'https://www.fee.asso.fr/', logo: 'assets/img/fee.jpg', dept: '' },
-    'Scouts unitaires de France (SUF)': { url: 'https://www.scouts-unitaires.org/', logo: 'assets/img/scoutunitaire.png', dept: '' },
+    'Éclaireuses et éclaireurs de la nature (EEDLN)': { url: 'https://www.edln.org/', logo: 'assets/img/scoutnature.png', dept: '01' },
+    'Éclaireurs neutres de France (ENF)': { url: 'https://www.enf.fr/', logo: 'assets/img/enf.png', dept: '75' },
+    'Fédération des éclaireurs et éclaireuses (FEE)': { url: 'https://www.fee.asso.fr/', logo: 'assets/img/fee.jpg', dept: '94' },
+    'Scouts unitaires de France (SUF)': { url: 'https://www.scouts-unitaires.org/', logo: 'assets/img/scoutunitaire.png', dept: '92' },
   };
 
   if (select.value === 'Autre') {
