@@ -632,22 +632,30 @@ function updateOrganizerOptions() {
 
   // Liste des organismes à RETIRER spécifiquement pour "Colonie de vacances" (colo)
   const removableOptionsColo = [
-    'Scouts et Guides de France (SGDF)',
-    'Éclaireuses/Éclaireurs de France (EEDF)',
-    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)',
-    'Scouts Musulmans de France (SMF)',
-    'Éclaireuses et Éclaireurs Israélites de France (EEIF)',
-    'Guides et Scouts d\'Europe (AGSE)'
+    'Guides et scouts de France (SGDF)',
+    'Éclaireuses et éclaireurs de France (EEDF)',
+    'Éclaireuses éclaireurs unionistes de France (EEUF)',
+    'Éclaireuses et éclaireurs israélites de France (EEIF)',
+    'Scouts musulmans de France (SMF)',
+    'Éclaireuses et éclaireurs de la nature (EEDLN)',
+    'Association des guides et scouts d\'Europe (AGSE)',
+    'Éclaireurs neutres de France (ENF)',
+    'Fédération des éclaireurs et éclaireuses (FEE)',
+    'Scouts unitaires de France (SUF)'
   ];
 
   // Liste des organismes à afficher EXCLUSIVEMENT pour "Scout" (scout)
   const onlyOptionsScout = [
-    'Éclaireuses/Éclaireurs de France (EEDF)',
-    'Scouts et Guides de France (SGDF)',
-    'Scouts Musulmans de France (SMF)',
-    'Éclaireuses et Éclaireurs Israélites de France (EEIF)',
-    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)',
-    'Guides et Scouts d\'Europe (AGSE)'
+    'Guides et scouts de France (SGDF)',
+    'Éclaireuses et éclaireurs de France (EEDF)',
+    'Éclaireuses éclaireurs unionistes de France (EEUF)',
+    'Éclaireuses et éclaireurs israélites de France (EEIF)',
+    'Scouts musulmans de France (SMF)',
+    'Éclaireuses et éclaireurs de la nature (EEDLN)',
+    'Association des guides et scouts d\'Europe (AGSE)',
+    'Éclaireurs neutres de France (ENF)',
+    'Fédération des éclaireurs et éclaireuses (FEE)',
+    'Scouts unitaires de France (SUF)'
   ];
 
   // --- FIN DE CONFIGURATION ---
@@ -661,19 +669,33 @@ function updateOrganizerOptions() {
     'Association Regards', 'CE SNCF', 'CE Air France', 'Chemins du Monde', 'Chic Planet',
     'GoColo', 'Le Temps des Copains', 'Nouvelles Vagues', 'Passion Aventure Junior',
     'Sans Frontières', 'SILC', 'Visas Loisirs',
-    'Éclaireuses/Éclaireurs de France (EEDF)',
-    'Scouts et Guides de France (SGDF)',
-    'Scouts Musulmans de France (SMF)',
-    'Éclaireuses et Éclaireurs Israélites de France (EEIF)',
-    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)',
-    'Guides et Scouts d\'Europe (AGSE)'
+    'Guides et scouts de France (SGDF)',
+    'Éclaireuses et éclaireurs de France (EEDF)',
+    'Éclaireuses éclaireurs unionistes de France (EEUF)',
+    'Éclaireuses et éclaireurs israélites de France (EEIF)',
+    'Scouts musulmans de France (SMF)',
+    'Éclaireuses et éclaireurs de la nature (EEDLN)',
+    'Association des guides et scouts d\'Europe (AGSE)',
+    'Éclaireurs neutres de France (ENF)',
+    'Fédération des éclaireurs et éclaireuses (FEE)',
+    'Scouts unitaires de France (SUF)'
   ];
+
+  const getOptgroup = (val) => {
+    const fsf = ['Guides et scouts de France (SGDF)', 'Éclaireuses et éclaireurs de France (EEDF)', 'Éclaireuses éclaireurs unionistes de France (EEUF)', 'Éclaireuses et éclaireurs israélites de France (EEIF)', 'Scouts musulmans de France (SMF)', 'Éclaireuses et éclaireurs de la nature (EEDLN)'];
+    const csf = ['Association des guides et scouts d\'Europe (AGSE)', 'Éclaireurs neutres de France (ENF)'];
+    const indep = ['Fédération des éclaireurs et éclaireuses (FEE)', 'Scouts unitaires de France (SUF)'];
+    if (fsf.includes(val)) return 'Fédération du scoutisme français (FSF)';
+    if (csf.includes(val)) return 'Conférence française du scoutisme (CSF)';
+    if (indep.includes(val)) return 'Indépendant';
+    return '';
+  };
 
   let toShow = [];
   if (expType === 'scout') {
     // Mode Whitelist : Ne proposer que les organismes scouts configurés
     toShow = onlyOptionsScout;
-  } else if (expType === 'colo') {
+  } else if (expType === 'colo' || expType === 'alsh' || expType === 'periscolaire') {
     // Mode Blacklist : Tout montrer SAUF les organismes configurés comme retirés
     toShow = allKnownOrganizers.filter(opt => !removableOptionsColo.includes(opt));
   } else {
@@ -700,22 +722,68 @@ function updateOrganizerOptions() {
         opt = document.createElement('option');
         opt.value = val;
         opt.text = val;
-        // Insérer avant "Autre" pour l'ordre
-        const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
-        if (autreOpt) {
-          organizerSelect.insertBefore(opt, autreOpt);
+        
+        const grp = getOptgroup(val);
+        if (grp) {
+            let optgroup = Array.from(organizerSelect.querySelectorAll('optgroup')).find(g => g.label === grp);
+            if (!optgroup) {
+                optgroup = document.createElement('optgroup');
+                optgroup.label = grp;
+                const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
+                if (autreOpt) {
+                  organizerSelect.insertBefore(optgroup, autreOpt);
+                } else {
+                  organizerSelect.appendChild(optgroup);
+                }
+                if (ts) ts.addOptionGroup(grp, { label: grp });
+            }
+            optgroup.appendChild(opt);
         } else {
-          organizerSelect.appendChild(opt);
+            // Insérer avant "Autre" pour l'ordre
+            const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
+            if (autreOpt) {
+              organizerSelect.insertBefore(opt, autreOpt);
+            } else {
+              organizerSelect.appendChild(opt);
+            }
         }
-        if (ts) ts.addOption({ value: val, text: val });
+        
+        if (ts) {
+            if (grp) {
+                ts.addOption({ value: val, text: val, optgroup: grp });
+            } else {
+                ts.addOption({ value: val, text: val });
+            }
+        }
       }
     } else {
       // Retirer l'option si elle ne doit pas être là
       const opt = Array.from(organizerSelect.options).find(o => o.value === val);
-      if (opt) opt.remove();
+      if (opt) {
+          const parent = opt.parentElement;
+          opt.remove();
+          if (parent && parent.tagName.toUpperCase() === 'OPTGROUP' && parent.children.length === 0) {
+              parent.remove();
+          }
+      }
       if (ts) ts.removeOption(val);
     }
   });
+
+  // Nettoyer les optgroups vides de TomSelect
+  if (ts && typeof ts.removeOptionGroup === 'function') {
+      const allGroups = [
+          'Fédération du scoutisme français (FSF)',
+          'Conférence française du scoutisme (CSF)',
+          'Indépendant'
+      ];
+      allGroups.forEach(grp => {
+          const hasOptions = toShow.some(val => getOptgroup(val) === grp);
+          if (!hasOptions) {
+              ts.removeOptionGroup(grp);
+          }
+      });
+  }
 
   // 2. Gérer la valeur actuelle si elle a été masquée
   if (!toShow.includes(currentValue) && currentValue !== 'Autre' && currentValue !== '') {
@@ -975,13 +1043,17 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Passion Aventure Junior': { url: 'https://passion-aventure-junior.com/', logo: 'assets/img/passionAventureJunior.png', dept: '31' },
     'Sans Frontières': { url: 'https://www.sans-frontieres.fr/', logo: 'assets/img/sansFrontieres.png', dept: '75' },
     'SILC': { url: 'https://silc.fr/', logo: 'assets/img/silc.webp', dept: '16' },
-    'Éclaireuses/Éclaireurs de France (EEDF)': { url: 'https://www.eedf.fr/', logo: 'assets/img/eedf.webp', dept: '93' },
-    'Scouts et Guides de France (SGDF)': { url: 'https://www.sgdf.fr/', logo: 'assets/img/scoutgdf.png', dept: '94' },
+    'Guides et scouts de France (SGDF)': { url: 'https://www.sgdf.fr/', logo: 'assets/img/scoutgdf.png', dept: '94' },
+    'Éclaireuses et éclaireurs de France (EEDF)': { url: 'https://www.eedf.fr/', logo: 'assets/img/eedf.webp', dept: '93' },
     'Visas Loisirs': { url: 'https://visasloisirs.com/', logo: 'assets/img/visasLoisirs.webp', dept: '38' },
-    'Éclaireuses et Éclaireurs Unionistes de France (EEUdF)': { url: 'https://eeudf.org/', logo: 'assets/img/eeudf.webp', dept: '92' },
-    'Scouts Musulmans de France (SMF)': { url: 'https://scoutsmusulmans.fr/', logo: 'assets/img/scoutsmusulmansdefrance.webp', dept: '93' },
-    'Éclaireuses et Éclaireurs Israélites de France (EEIF)': { url: 'https://www.eeif.org/', logo: 'assets/img/eeif.webp', dept: '78' },
-    'Guides et Scouts d\'Europe (AGSE)': { url: 'https://www.scouts-europe.org/', logo: 'assets/img/euroscouts.webp', dept: '77' },
+    'Éclaireuses éclaireurs unionistes de France (EEUF)': { url: 'https://eeudf.org/', logo: 'assets/img/eeudf.webp', dept: '92' },
+    'Scouts musulmans de France (SMF)': { url: 'https://scoutsmusulmans.fr/', logo: 'assets/img/scoutsmusulmansdefrance.webp', dept: '93' },
+    'Éclaireuses et éclaireurs israélites de France (EEIF)': { url: 'https://www.eeif.org/', logo: 'assets/img/eeif.webp', dept: '78' },
+    'Association des guides et scouts d\'Europe (AGSE)': { url: 'https://www.scouts-europe.org/', logo: 'assets/img/euroscouts.webp', dept: '77' },
+    'Éclaireuses et éclaireurs de la nature (EEDLN)': { url: 'https://www.edln.org/', logo: 'assets/img/scoutnature.png', dept: '' },
+    'Éclaireurs neutres de France (ENF)': { url: 'https://www.enf.fr/', logo: 'assets/img/enf.png', dept: '' },
+    'Fédération des éclaireurs et éclaireuses (FEE)': { url: 'https://www.fee.asso.fr/', logo: 'assets/img/fee.jpg', dept: '' },
+    'Scouts unitaires de France (SUF)': { url: 'https://www.scouts-unitaires.org/', logo: 'assets/img/scoutunitaire.png', dept: '' },
   };
 
   if (select.value === 'Autre') {
