@@ -38,7 +38,7 @@ function createSummaryModal() {
                         </div>
                         <div>
                             <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Période & Durée</div>
-                            <div id="summary-date-duration" style="font-size: 0.95rem; color: #1e293b; font-weight: 500;">Date - Durée</div>
+                            <div id="summary-date-duration" style="font-size: 0.95rem; color: #1e293b; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;">Date - Durée</div>
                         </div>
                     </div>
 
@@ -265,7 +265,28 @@ window.showSummaryModal = function (data, itemType) {
 
   // 2. Données communes
   logo.src = data.logoPath || 'assets/img/default-logo.png';
-  dateDuration.textContent = `${data.date || '?'} - ${data.duration || '?'}`;
+  
+  const dateText = data.date || '?';
+  const durationText = data.duration || '?';
+  
+  let badgeBg = '#f1f5f9';
+  let badgeColor = '#475569';
+  
+  if (itemType === 'experience') {
+    badgeBg = '#fff7ed'; // Soft orange/amber background
+    badgeColor = '#d97706'; // Amber 600
+  } else {
+    badgeBg = '#f0fdf4'; // Soft green background
+    badgeColor = '#16a34a'; // Green 600
+  }
+  
+  dateDuration.innerHTML = `
+    <span>${dateText}</span>
+    <span style="color: #cbd5e1; margin: 0 4px;">-</span>
+    <span class="duration-badge" style="display: inline-flex; align-items: center; background-color: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">
+      ${durationText}
+    </span>
+  `;
 
   // 3. Afficher
   modal.style.display = 'flex';
