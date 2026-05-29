@@ -279,13 +279,96 @@ window.showSummaryModal = function (data, itemType) {
     badgeBg = '#f0fdf4'; // Soft green background
     badgeColor = '#16a34a'; // Green 600
   }
+
+  // Calcul du badge de statut (j-XX / j+XX / en cours)
+  let statusHtml = '';
+  const dateStrLower = dateText.toLowerCase();
+  
+  if (dateStrLower.includes('venir')) {
+    statusHtml = `
+      <span style="color: #cbd5e1; margin: 0 4px;">•</span>
+      <span class="status-badge" style="display: inline-flex; align-items: center; background-color: #e8f8f0; color: #15803d; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">
+        À venir
+      </span>
+    `;
+  } else {
+    const parsedStartDate = typeof window.parseFrenchDate === 'function' ? window.parseFrenchDate(dateText) : new Date(dateText);
+    
+    if (parsedStartDate && !isNaN(parsedStartDate.getTime())) {
+      const todayMidnight = new Date();
+      todayMidnight.setHours(0, 0, 0, 0);
+      
+      const startMidnight = new Date(parsedStartDate);
+      startMidnight.setHours(0, 0, 0, 0);
+      
+      // Calcul de la date de fin
+      let endMidnight = new Date(startMidnight);
+      
+      // Vérifier si c'est une année périodique (ex: "septembre 2023 - juin 2024")
+      const academicYearMatch = dateStrLower.match(/septembre\s+(\d{4})\s*[-–]\s*juin\s+(\d{4})/i);
+      if (academicYearMatch) {
+        endMidnight = new Date(parseInt(academicYearMatch[2], 10), 5, 30); // 30 Juin
+      } else {
+        let days = 0;
+        if (typeof window.extractDays === 'function') {
+          days = window.extractDays(durationText);
+        } else {
+          const durationStrLower = durationText.toLowerCase();
+          const dayMatch = durationStrLower.match(/(\d+)/);
+          days = dayMatch ? parseInt(dayMatch[1], 10) : 0;
+        }
+        
+        if (days > 1) {
+          endMidnight.setDate(endMidnight.getDate() + days - 1);
+        } else if (days === 0) {
+          // Par défaut, fin du mois
+          endMidnight.setMonth(endMidnight.getMonth() + 1);
+          endMidnight.setDate(0);
+        }
+      }
+      endMidnight.setHours(0, 0, 0, 0);
+      
+      let statusBg = '';
+      let statusColor = '';
+      let statusText = '';
+      
+      if (todayMidnight < startMidnight) {
+        // Futur : j-XX (Vert)
+        const diffTime = startMidnight - todayMidnight;
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        statusBg = '#e8f8f0'; // Soft green background
+        statusColor = '#15803d'; // Green 700
+        statusText = `j-${diffDays}`;
+      } else if (todayMidnight > endMidnight) {
+        // Passé : j+XX (Rouge)
+        const diffTime = todayMidnight - endMidnight;
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        statusBg = '#fee2e2'; // Soft red background
+        statusColor = '#b91c1c'; // Red 700
+        statusText = `j+${diffDays}`;
+      } else {
+        // En cours : en cours (Indigo/Bleu)
+        statusBg = '#e0e7ff'; // Soft indigo background
+        statusColor = '#4338ca'; // Indigo 700
+        statusText = 'en cours';
+      }
+      
+      statusHtml = `
+        <span style="color: #cbd5e1; margin: 0 4px;">-</span>
+        <span class="status-badge" style="display: inline-flex; align-items: center; background-color: ${statusBg}; color: ${statusColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">
+          ${statusText}
+        </span>
+      `;
+    }
+  }
   
   dateDuration.innerHTML = `
     <span>${dateText}</span>
     <span style="color: #cbd5e1; margin: 0 4px;">-</span>
-    <span class="duration-badge" style="display: inline-flex; align-items: center; background-color: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">
+    <span class="duration-badge" style="display: inline-flex; align-items: center; background-color: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle; margin-right: 4px;">
       ${durationText}
     </span>
+    ${statusHtml}
   `;
 
   // 3. Afficher
