@@ -285,12 +285,7 @@ window.showSummaryModal = function (data, itemType) {
   const dateStrLower = dateText.toLowerCase();
   
   if (dateStrLower.includes('venir')) {
-    statusHtml = `
-      <span style="color: #cbd5e1; margin: 0 4px;">•</span>
-      <span class="status-badge" style="display: inline-flex; align-items: center; background-color: #e8f8f0; color: #15803d; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">
-        À venir
-      </span>
-    `;
+    statusHtml = `<span style="color: #cbd5e1; margin: 0 4px;">-</span><span class="status-badge" style="display: inline-flex; align-items: center; background-color: #e8f8f0; color: #15803d; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">À venir</span>`;
   } else {
     const parsedStartDate = typeof window.parseFrenchDate === 'function' ? window.parseFrenchDate(dateText) : new Date(dateText);
     
@@ -333,43 +328,31 @@ window.showSummaryModal = function (data, itemType) {
       let statusText = '';
       
       if (todayMidnight < startMidnight) {
-        // Futur : j-XX (Vert)
+        // Futur : J-XX (Vert)
         const diffTime = startMidnight - todayMidnight;
         const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
         statusBg = '#e8f8f0'; // Soft green background
         statusColor = '#15803d'; // Green 700
-        statusText = `j-${diffDays}`;
+        statusText = `J-${diffDays}`;
       } else if (todayMidnight > endMidnight) {
-        // Passé : j+XX (Rouge)
+        // Passé : J+XX (Rouge)
         const diffTime = todayMidnight - endMidnight;
         const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
         statusBg = '#fee2e2'; // Soft red background
         statusColor = '#b91c1c'; // Red 700
-        statusText = `j+${diffDays}`;
+        statusText = `J+${diffDays}`;
       } else {
-        // En cours : en cours (Indigo/Bleu)
+        // En cours : En cours (Indigo/Bleu)
         statusBg = '#e0e7ff'; // Soft indigo background
         statusColor = '#4338ca'; // Indigo 700
-        statusText = 'en cours';
+        statusText = 'En cours';
       }
       
-      statusHtml = `
-        <span style="color: #cbd5e1; margin: 0 4px;">-</span>
-        <span class="status-badge" style="display: inline-flex; align-items: center; background-color: ${statusBg}; color: ${statusColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">
-          ${statusText}
-        </span>
-      `;
+      statusHtml = `<span style="color: #cbd5e1; margin: 0 4px;">-</span><span class="status-badge" style="display: inline-flex; align-items: center; background-color: ${statusBg}; color: ${statusColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">${statusText}</span>`;
     }
   }
   
-  dateDuration.innerHTML = `
-    <span>${dateText}</span>
-    <span style="color: #cbd5e1; margin: 0 4px;">-</span>
-    <span class="duration-badge" style="display: inline-flex; align-items: center; background-color: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle; margin-right: 4px;">
-      ${durationText}
-    </span>
-    ${statusHtml}
-  `;
+  dateDuration.innerHTML = `<span>${dateText}</span><span style="color: #cbd5e1; margin: 0 4px;">-</span><span class="duration-badge" style="display: inline-flex; align-items: center; background-color: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); vertical-align: middle;">${durationText}</span>${statusHtml}`;
 
   // 3. Afficher
   modal.style.display = 'flex';
