@@ -974,12 +974,59 @@ async function loadDataFromFirebase() {
             }
           } else {
             console.log("[AutoModal] Aucun séjour ou formation trouvé correspondant aux dates spécifiées.");
+            window.openDateErrorModal(filterStart, filterEnd);
           }
         }
       }, 600);
     }, 200);
   }
 }
+
+// Fonctions pour la modale d'erreur de date introuvable
+function formatYMDToFrench(ymdString) {
+  if (!ymdString || !/^\d{4}-\d{2}-\d{2}$/.test(ymdString)) return ymdString;
+  const [year, month, day] = ymdString.split('-');
+  const months = [
+    'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+    'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+  ];
+  const monthName = months[parseInt(month, 10) - 1];
+  return `${parseInt(day, 10)} ${monthName} ${year}`;
+}
+
+window.openDateErrorModal = function(start, end) {
+  const modal = document.getElementById('date-error-modal');
+  const startSpan = document.getElementById('date-error-start');
+  const endSpan = document.getElementById('date-error-end');
+  
+  if (startSpan) {
+    startSpan.textContent = formatYMDToFrench(start) || start;
+  }
+  if (endSpan) {
+    endSpan.textContent = formatYMDToFrench(end) || end;
+  }
+  
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+  }
+};
+
+window.closeDateErrorModal = function() {
+  const modal = document.getElementById('date-error-modal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  }
+};
+
+// Fermer la modale d'erreur lors d'un clic sur le fond (overlay)
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('date-error-modal');
+  if (event.target === modal) {
+    window.closeDateErrorModal();
+  }
+});
 
 // Charger les données au chargement de la page
 // Attendre que le DOM et Firebase soient chargés

@@ -1186,6 +1186,33 @@
         </div>
     </div>
 
+    <!-- Modal d'erreur pour lien URL de date non trouvé -->
+    <div id="date-error-modal" class="modal" style="display: none; z-index: 9999;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 25px 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+            <span class="close-modal" onclick="closeDateErrorModal()">&times;</span>
+            <p style="font-size: 3rem; color: #e74c3c; margin-bottom: 15px; margin-top: 0;">
+                <i class="bi bi-calendar-x"></i>
+            </p>
+            <h2 style="color: #2c3e50; border-bottom: none; margin-bottom: 10px; font-size: 1.3rem;">Séjour introuvable</h2>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;">
+                Les dates spécifiées dans l'adresse URL ne correspondent à aucun séjour ni aucune formation dans ce profil.
+            </p>
+            <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.88rem; color: #495057; text-align: left;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-weight: 600;">Date de début :</span>
+                    <span id="date-error-start" style="font-family: monospace; color: #e74c3c;">—</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: 600;">Date de fin :</span>
+                    <span id="date-error-end" style="font-family: monospace; color: #e74c3c;">—</span>
+                </div>
+            </div>
+            <button onclick="closeDateErrorModal()" class="submit-btn" style="background: #e74c3c; width: 100%; border-radius: 8px; padding: 12px; font-weight: 600; font-size: 0.95rem; border: none; cursor: pointer; transition: background 0.2s;">
+                Fermer
+            </button>
+        </div>
+    </div>
+
     <!-- Firebase SDK (version compat pour navigateurs) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
