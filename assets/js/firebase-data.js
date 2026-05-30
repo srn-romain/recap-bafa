@@ -853,6 +853,130 @@ async function loadDataFromFirebase() {
       if (typeof window.updateNavbarLinksVisibility === 'function') {
         setTimeout(window.updateNavbarLinksVisibility, 300);
       }
+
+      // Ouverture automatique de la modale de détail si les dates sont spécifiées dans l'URL
+      setTimeout(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const filterStart = urlParams.get('startDate');
+        const filterEnd = urlParams.get('endDate');
+
+        if (filterStart && filterEnd) {
+          console.log(`[AutoModal] Ouverture automatique demandée pour startDate=${filterStart} et endDate=${filterEnd}`);
+          let matchedRow = null;
+
+          // Helper interne robuste pour parser les dates de recap-bafa en YYYY-MM-DD
+          function parseFrenchDateStringToYMD(dateStr) {
+            if (!dateStr) return null;
+            dateStr = dateStr.toLowerCase().trim();
+            
+            const monthMap = {
+              'janvier': '01', 'janv': '01',
+              'février': '02', 'févr': '02',
+              'mars': '03',
+              'avril': '04', 'avr': '04',
+              'mai': '05',
+              'juin': '06',
+              'juillet': '07', 'juil': '07',
+              'août': '08',
+              'septembre': '09', 'sept': '09',
+              'octobre': '10', 'oct': '10',
+              'novembre': '11', 'nov': '11',
+              'décembre': '12', 'déc': '12'
+            };
+
+            const pad = (n) => n.toString().padStart(2, '0');
+
+            // 1. Tenter le format "DD Mois YYYY - DD Mois YYYY"
+            const rangeMatch = dateStr.match(
+              /^(\d{1,2})\s+([a-zà-ÿ\.]+)\s+(\d{4})\s*[-–]\s*(\d{1,2})\s+([a-zà-ÿ\.]+)\s+(\d{4})$/i
+            );
+            if (rangeMatch) {
+              const [, d1, m1Raw, y1, d2, m2Raw, y2] = rangeMatch;
+              const m1 = monthMap[m1Raw.toLowerCase().replace('.', '')];
+              const m2 = monthMap[m2Raw.toLowerCase().replace('.', '')];
+              if (m1 && m2) {
+                return {
+                  start: `${y1}-${m1}-${pad(d1)}`,
+                  end: `${y2}-${m2}-${pad(d2)}`
+                };
+              }
+            }
+
+            // 2. Tenter le format "DD Mois YYYY" (journée unique)
+            const singleMatch = dateStr.match(/^(\d{1,2})\s+([a-zà-ÿ\.]+)\s+(\d{4})$/i);
+            if (singleMatch) {
+              const [, d, mRaw, y] = singleMatch;
+              const m = monthMap[mRaw.toLowerCase().replace('.', '')];
+              if (m) {
+                const ymd = `${y}-${m}-${pad(d)}`;
+                return { start: ymd, end: ymd };
+              }
+            }
+
+            // 3. Tenter le format périodique "Mois YYYY - Mois YYYY" (ex: "Septembre 2023 - Juin 2024")
+            const periodicMatch = dateStr.match(/^([a-zà-ÿ\.]+)\s+(\d{4})\s*[-–]\s*([a-zà-ÿ\.]+)\s+(\d{4})$/i);
+            if (periodicMatch) {
+              const [, m1Raw, y1, m2Raw, y2] = periodicMatch;
+              const m1 = monthMap[m1Raw.toLowerCase().replace('.', '')];
+              const m2 = monthMap[m2Raw.toLowerCase().replace('.', '')];
+              if (m1 && m2) {
+                return {
+                  start: `${y1}-${m1}-01`,
+                  end: `${y2}-${m2}-30`
+                };
+              }
+            }
+
+            return null;
+          }
+
+          // Parcourir les lignes d'expériences
+          const expRows = document.querySelectorAll('#table-experiences tr[data-experience]');
+          for (const row of expRows) {
+            try {
+              const exp = JSON.parse(row.dataset.experience);
+              const parsed = parseFrenchDateStringToYMD(exp.date);
+              if (parsed && parsed.start === filterStart && parsed.end === filterEnd) {
+                matchedRow = row;
+                break;
+              }
+            } catch (e) {
+              console.error("[AutoModal] Erreur parse ligne d'expérience:", e);
+            }
+          }
+
+          // Parcourir les lignes de formations si pas trouvé dans les expériences
+          if (!matchedRow) {
+            const formRows = document.querySelectorAll('#table-formations tr[data-formation]');
+            for (const row of formRows) {
+              try {
+                const form = JSON.parse(row.dataset.formation);
+                const parsed = parseFrenchDateStringToYMD(form.date);
+                if (parsed && parsed.start === filterStart && parsed.end === filterEnd) {
+                  matchedRow = row;
+                  break;
+                }
+              } catch (e) {
+                console.error("[AutoModal] Erreur parse ligne de formation:", e);
+              }
+            }
+          }
+
+          if (matchedRow) {
+            console.log("[AutoModal] Ligne correspondante trouvée et sélectionnée !", matchedRow);
+            // Faire défiler jusqu'à la ligne et simuler un clic sur la cellule N° après stabilisation
+            matchedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const numCell = matchedRow.querySelector('.num');
+            if (numCell) {
+              setTimeout(() => {
+                numCell.click();
+              }, 400);
+            }
+          } else {
+            console.log("[AutoModal] Aucun séjour ou formation trouvé correspondant aux dates spécifiées.");
+          }
+        }
+      }, 600);
     }, 200);
   }
 }
