@@ -1055,8 +1055,8 @@ async function loadUserProfile() {
 
   try {
     const doc = await window.firebaseDb.collection('users').doc(window.targetUid).get();
-    if (doc.exists) {
-      const data = doc.data();
+    const data = doc.exists ? doc.data() : { isPrivate: true };
+    if (true) {
       const linkedinLink = document.getElementById('linkedin-link');
       // Construire le nom complet
       let fullName = 'Animateur';
