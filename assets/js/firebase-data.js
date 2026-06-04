@@ -1143,6 +1143,11 @@ async function loadUserProfile() {
           const navItems = document.querySelectorAll('.nav-toc-link');
           navItems.forEach(item => item.style.setProperty('display', 'none', 'important'));
 
+          // Masquer l'icône LinkedIn si elle existe
+          if (linkedinLink) {
+            linkedinLink.style.display = 'none';
+          }
+
           console.log("Accès refusé : Profil privé");
           return false; // Accès refusé
         }
