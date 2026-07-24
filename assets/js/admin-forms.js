@@ -143,12 +143,18 @@ function updateExpStayTypeOptions() {
     { value: 'ALSH', text: 'ALSH (Accueil de Loisirs Sans Hébergement)' },
     { value: 'Gestion libre', text: 'Gestion libre' },
     { value: 'Gestion libre à l\'étranger', text: 'Gestion libre à l\'étranger' },
+    { value: 'Gestion libre en itinérance', text: 'Gestion libre en itinérance' },
+    { value: 'Gestion libre en itinérance à l\'étranger', text: 'Gestion libre en itinérance à l\'étranger' },
     { value: 'Gestion libre / Camping', text: 'Gestion libre / Camping' },
-    { value: 'Gestion libre', text: 'Gestion libre' },
+    { value: 'Gestion libre / Camping à l\'étranger', text: 'Gestion libre / Camping à l\'étranger' },
+    { value: 'Gestion libre / Camping en itinérance', text: 'Gestion libre / Camping en itinérance' },
+    { value: 'Gestion libre / Camping en itinérance à l\'étranger', text: 'Gestion libre / Camping en itinérance à l\'étranger' },
     { value: 'Itinérance', text: 'Itinérance' },
     { value: 'Itinérance étranger', text: 'Itinérance étranger' },
     { value: 'Pension complète', text: 'Pension complète' },
     { value: 'Pension complète étranger', text: 'Pension complète étranger' },
+    { value: 'Pension complète en itinérance', text: 'Pension complète en itinérance' },
+    { value: 'Pension complète en itinérance à l\'étranger', text: 'Pension complète en itinérance à l\'étranger' },
   ];
 
   // Toutes les options pouvant être retirées (pour les remettre par défaut)
