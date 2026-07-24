@@ -257,6 +257,9 @@ function updateExpStayTypeOptions() {
 
   // Trier alphabétiquement tout le select
   sortSelectOptionsGenerically(staySelect);
+
+  // Synchroniser l'affichage du tableau d'itinérance / lieu unique
+  toggleLocationFields();
 }
 window.updateExpStayTypeOptions = updateExpStayTypeOptions;
 
@@ -905,6 +908,11 @@ function initSearchableSelects() {
             } else {
               this.wrapper.style.width = '100%';
             }
+          },
+          onChange: function () {
+            if (id === 'exp-stay-type') {
+              toggleLocationFields();
+            }
           }
         });
       }
@@ -1346,15 +1354,27 @@ window.toggleDeptExplanation = function (event, type) {
   }
 };
 
+/**
+ * Vérifie si le mode de gestion sélectionné (ou saisi dans 'Autre') concerne une itinérance.
+ */
+function isItineranceStayType() {
+  const selectVal = document.getElementById('exp-stay-type')?.value || '';
+  const customVal = document.getElementById('exp-stay-type-custom')?.value || '';
+  const effectiveVal = (['Autre', 'autre', 'Autre (préciser)'].includes(selectVal))
+    ? customVal
+    : selectVal;
+  return /itin[ée]rance/i.test(effectiveVal);
+}
+window.isItineranceStayType = isItineranceStayType;
+
 // Toggle entre champs lieu unique et tableau itinérance
 function toggleLocationFields() {
   toggleExpStayTypeCustom(); // Mettre à jour l'affichage du champ custom
-  const stayType = document.getElementById('exp-stay-type')?.value;
   const singleFields = document.getElementById('single-location-fields');
   const itineraryFields = document.getElementById('itinerary-locations');
   const tbody = document.getElementById('itinerary-tbody');
 
-  if (stayType && stayType.includes('Itinérance')) {
+  if (isItineranceStayType()) {
     if (singleFields) singleFields.style.display = 'none';
     if (itineraryFields) itineraryFields.style.display = 'block';
     // Désactiver le required sur le champ unique
@@ -2155,7 +2175,7 @@ async function showEditExperienceModal(data, row) {
   // Données d'itinérance : utiliser uniquement 'locations'
   const itineraryData = data.locations || [];
 
-  if (stayTypeVal && stayTypeVal.includes('Itinérance')) {
+  if (isItineranceStayType()) {
     // Mode itinérance : pré-remplir le tableau
     clearItineraryTable();
     if (itineraryData && itineraryData.length > 0) {
@@ -2680,6 +2700,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (expStaySelect) {
     expStaySelect.addEventListener('change', toggleLocationFields);
   }
+  const expStayCustom = document.getElementById('exp-stay-type-custom');
+  if (expStayCustom) {
+    expStayCustom.addEventListener('input', toggleLocationFields);
+  }
 
   // Écouter le changement de type d'expérience pour afficher/masquer les options ALSH
   const expTypeSelect = document.getElementById('exp-type');
@@ -2762,7 +2786,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // car le champ input standard pourrait être ignoré ou avoir une valeur "Tous les mercredis"
 
 
-      const stayType = document.getElementById('exp-stay-type').value || '';
+      const isItinerance = isItineranceStayType();
 
       // Gérer les lieux selon le type de séjour
 
@@ -2770,7 +2794,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let locationUrl = null;
       let itineraryLocationsData = null;
 
-      if (stayType && stayType.includes('Itinérance')) {
+      if (isItinerance) {
         // Mode itinérance : récupérer le tableau de lieux
         itineraryLocationsData = getItineraryLocations();
         if (itineraryLocationsData.length === 0 || itineraryLocationsData.length === 1) {
@@ -2916,7 +2940,7 @@ document.addEventListener('DOMContentLoaded', function () {
       };
 
       // Gérer le tableau locations selon le type de séjour
-      if (stayType && stayType.includes('Itinérance')) {
+      if (isItinerance) {
         data.locations = itineraryLocationsData;
       } else {
         data.locations = null;
