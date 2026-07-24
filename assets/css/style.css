@@ -1940,38 +1940,45 @@ th.sortable:hover .sort-indicator.sort-neutral {
 # TomSelect Customization
 --------------------------------------------------------------*/
 .ts-dropdown .optgroup-header {
-  font-weight: bold !important;
-  color: #2c3e50 !important;
-  background-color: #f1f5f9 !important;
-  padding: 6px 12px !important;
-  font-size: 0.8rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
-  border-bottom: 2px solid #a6d866 !important;
-  margin-top: 8px !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  background-color: transparent !important;
+  padding: 8px 12px 4px 12px !important;
+  font-size: 0.85rem !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  border-bottom: none !important;
+  margin-top: 4px !important;
   line-height: 1.4 !important;
 }
 
 .ts-dropdown .optgroup {
-  border-bottom: 1px solid #f1f5f9 !important;
+  border-bottom: none !important;
 }
 
 .ts-dropdown .option {
-  padding: 4px 12px !important;
+  padding: 5px 12px !important;
 }
 
-/* Tabulation (indentation) des éléments dans les groupes */
+/* Alinéa (indentation) des éléments sélectionnables dans les groupes */
 .ts-dropdown .optgroup .option {
-  padding-left: 28px !important;
-  position: relative;
+  padding-left: 24px !important;
 }
 
 .ts-dropdown .optgroup .option::before {
-  content: "—";
-  position: absolute;
-  left: 12px;
-  color: #cbd5e1;
-  font-size: 0.8rem;
+  display: none !important;
+}
+
+/* Style fallback pour balises optgroup natives */
+optgroup {
+  font-weight: 700;
+  color: #334155;
+  font-style: normal;
+}
+
+optgroup option {
+  font-weight: normal;
+  padding-left: 16px;
 }
 
 .ts-dropdown .option.active {
