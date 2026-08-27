@@ -107,14 +107,14 @@
       <!-- Section Nouveautés -->
       <div id="whats-new-section" style="max-width: 850px; margin: 40px auto; text-align: left;">
 
-        <!-- v18 : Juin 2026 -->
+        <!-- v19 : Août 2026 -->
         <div
           style="background: #fff9eb; border-left: 5px solid #f39c12; padding: 20px 30px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
           <test
             style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
             <h3
               style="color: #d35400; margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; font-weight: 700;">
-              Dernière version : <i>Juin 2026</i>
+              Dernière version : <i>Août 2026</i>
             </h3>
             <span
               style="background: #f39c12; color: white; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;">VERSION
@@ -125,7 +125,7 @@
             <test
               style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
               <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
-              <span><strong>Statut temporel dynamique (j-XX / j+XX) :</strong> La modale de détail d'une colo ou formation affiche désormais en temps réel son statut (<i>j-XX</i> vert pour le futur, <i>en cours</i> bleu/indigo, ou <i>j+XX</i> rouge pour le passé).</span>
+              <span><strong>Optimisation du chargement et de la connexion :</strong> Ajout d'un indicateur de chargement fluide ("loading state") lors de la vérification de la session pour supprimer les sauts d'affichage au démarrage (sur l'accueil et le tableau de bord).</span>
             </test>
 
           </div>
@@ -133,6 +133,21 @@
 
         <!-- Conteneur des versions précédentes (empilées, révélées une par une) -->
         <test id="changelog-history" style="margin-top: 0;">
+
+          <!-- v18 : Juin 2026 -->
+          <div class="changelog-entry" id="cl-juin2026"
+            style="display: none; border-left: 5px solid #0284c7; background: #f0f9ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);">
+            <p
+              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0284c7; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
+              Juin 2026</p>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <test
+                style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+                <span><strong>Statut temporel dynamique (j-XX / j+XX) :</strong> La modale de détail d'une colo ou formation affiche désormais en temps réel son statut (<i>j-XX</i> vert pour le futur, <i>en cours</i> bleu/indigo, ou <i>j+XX</i> rouge pour le passé).</span>
+              </test>
+            </div>
+          </div>
 
           <!-- v17 : Mai 2026 -->
           <div class="changelog-entry" id="cl-mai2026"
@@ -410,7 +425,7 @@
       <script>
         // Ordre des versions à révéler (du plus récent au plus ancien)
         const changelogVersions = [
-          'cl-mai2026', 'cl-avr2026', 'cl-mar2026', 'cl-fev2026', 'cl-jan2026', 'cl-nov2025', 'cl-oct2025',
+          'cl-juin2026', 'cl-mai2026', 'cl-avr2026', 'cl-mar2026', 'cl-fev2026', 'cl-jan2026', 'cl-nov2025', 'cl-oct2025',
           'cl-jul2025', 'cl-mar2025', 'cl-feb2025', 'cl-jan2025', 'cl-nov2024'
         ];
         let changelogIndex = 0;
