@@ -73,9 +73,14 @@ document.addEventListener("DOMContentLoaded", function () {
             <button id="settings-btn" onclick="openSettingsModal()" class="nav-item" title="Paramètres" style="display: none;">
                 <i class="bi bi-gear-fill"></i>
             </button>
+
+            <!-- Auth Loader (visible pendant la vérification) -->
+            <div id="nav-auth-loader" class="auth-loading-spinner">
+                <i class="bi bi-arrow-repeat spin-icon"></i> <span>Vérification...</span>
+            </div>
             
             <!-- Connexion (visible si déconnecté) -->
-            <button id="auth-button-top" onclick="showAuthModal()" class="nav-item" style="font-size: 1rem; font-weight: bold; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 5px 15px;">
+            <button id="auth-button-top" onclick="showAuthModal()" class="nav-item" style="display: none; font-size: 1rem; font-weight: bold; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 5px 15px;">
                 <i class="bi bi-person"></i> Connexion
             </button>
 

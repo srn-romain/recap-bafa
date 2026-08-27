@@ -1,8 +1,8 @@
 // Gestion de l'authentification Firebase
 // Rôles : 'dirlo' (directeur) ou 'admin' (administrateur)
-
-window.currentUser = null;
+window.currentUser = null;
 window.userRole = null;
+window.authStateChecked = false;
 
 console.log("Firebase Auth Script Loading...");
 
@@ -25,7 +25,7 @@ window.handleGoogleLogin = async function () {
       let lastName = "";
 
       if (user.displayName) {
-        const cleanName = user.displayName.trim().replace(/\\s+/g, ' ');
+        const cleanName = user.displayName.trim().replace(/\s+/g, ' ');
         const parts = cleanName.split(' ');
         firstName = parts[0] || "";
         lastName = parts.slice(1).join(' ') || "";
@@ -79,6 +79,7 @@ function initAuth() {
 
   // Écouter les changements d'état d'authentification
   firebase.auth().onAuthStateChanged(async (user) => {
+    window.authStateChecked = true;
     if (user) {
       window.currentUser = user;
 
@@ -104,9 +105,6 @@ function initAuth() {
       updateUI();
 
       // En cas de déconnexion sur un dashboard, on relance le chargement pour vérifier la confidentialité
-      if (window.targetUid && typeof loadDataFromFirebase === 'function') {
-        loadDataFromFirebase();
-      }
     }
   });
 }
@@ -496,6 +494,13 @@ function updateSectionNumbers() {
 
 // Mettre à jour l'interface selon le rôle et l'UID cible
 function updateUI() {
+  // Si l'état d'authentification n'a pas encore été vérifié par Firebase Auth,
+  // conserver les loaders et ne pas modifier l'affichage des boutons d'auth
+  if (!window.authStateChecked) {
+    console.log("updateUI appelé avant vérification Auth : attente de la résolution...");
+    return;
+  }
+
   // Récupérer l'UID cible depuis l'URL (défini dans dashboard.html)
   const targetUid = window.targetUid;
 
@@ -508,6 +513,16 @@ function updateUI() {
   const isOwner = (isLoggedIn && targetUid) ? (currentUid === targetUid) : (isLoggedIn && window.userRole === 'admin');
 
   console.log('updateUI - targetUid:', targetUid, 'currentUid:', currentUid, 'isOwner:', isOwner);
+
+  // Masquer les loaders d'authentification s'ils sont présents
+  const navAuthLoader = document.getElementById('nav-auth-loader');
+  if (navAuthLoader) {
+    navAuthLoader.style.display = 'none';
+  }
+  const heroAuthLoader = document.getElementById('hero-auth-loader');
+  if (heroAuthLoader) {
+    heroAuthLoader.style.display = 'none';
+  }
 
   // Boutons de connexion/déconnexion en haut
   const authButtonTop = document.getElementById('auth-button-top');
@@ -1162,6 +1177,22 @@ if (window.firebaseInitialized) {
     }
   }, 100);
 }
+
+// Timeout de sécurité : si après 3.5s l'authentification n'a toujours pas répondu, masquer les loaders
+setTimeout(() => {
+  if (!window.authStateChecked) {
+    window.authStateChecked = true;
+    updateUI();
+  }
+  const heroAuthLoader = document.getElementById('hero-auth-loader');
+  if (heroAuthLoader && heroAuthLoader.style.display !== 'none') {
+    heroAuthLoader.style.display = 'none';
+    const heroAuthBtns = document.getElementById('hero-auth-btns');
+    if (heroAuthBtns && !window.currentUser) {
+      heroAuthBtns.style.display = 'contents';
+    }
+  }
+}, 3500);
 
 // Fonction pour plier/déplier la section Astuces
 window.toggleTips = function () {

@@ -53,20 +53,10 @@
           d'Expériences BAFA &
           BAFD</span>
       </test>
-      <test id="navbar-auth-buttons" style="display: flex; gap: 10px;">
-        <button id="auth-button-top" onclick="showAuthModal('login')" class="nav-item"
-          style="font-size: 0.9rem; font-weight: bold;  border-radius: 20px; padding: 5px 15px;">
-          <i class="bi bi-person"></i> Se connecter
-        </button>
-        <button id="register-button-top" onclick="showAuthModal('register')" class="nav-item"
-          style="font-size: 0.9rem; font-weight: bold; border-radius: 20px; background: rgba(255,255,255,0.2); padding: 5px 15px; color: white;"
-          onmouseover="this.style.background='#f39c12';" onmouseout="this.style.background='rgba(255,255,255,0.2)';">
-          <i class="bi bi-pencil-square"></i> Créer un compte
-        </button>
-        <button id="logout-button-top" onclick="signOut()" class="nav-item" title="Se déconnecter"
-          style="display: none; font-size: 0.9rem; font-weight: bold; border-radius: 20px; padding: 5px 15px;">
-          <i class="bi bi-box-arrow-right"></i> Déconnexion
-        </button>
+      <test id="navbar-auth-buttons" style="display: flex; gap: 10px; align-items: center;">
+        <div id="nav-auth-loader" class="auth-loading-spinner">
+          <i class="bi bi-arrow-repeat spin-icon"></i> <span>Vérification...</span>
+        </div>
       </test>
     </div>
   </nav>
@@ -88,8 +78,14 @@
 
       <!-- Boutons CTA Hero -->
       <div class="hero-buttons-container">
+        <!-- Loader affiché pendant la réflexion/vérification de l'auth -->
+        <div id="hero-auth-loader" style="display: contents;">
+          <div class="btn-large btn-skeleton">
+            <i class="bi bi-arrow-repeat spin-icon"></i> <span>Vérification...</span>
+          </div>
+        </div>
         <!-- Boutons si déconnecté -->
-        <div id="hero-auth-btns" style="display: contents;">
+        <div id="hero-auth-btns" style="display: none;">
           <button onclick="showAuthModal('login')" class="btn-large btn-green">
             <i class="bi bi-box-arrow-in-right"></i> Se connecter
           </button>
@@ -920,7 +916,13 @@
     // Gestion de l'état de connexion (Mise à jour UI si connecté)
     firebase.auth().onAuthStateChanged(user => {
       const navbarBtns = document.getElementById('navbar-auth-buttons');
-      const heroBtns = document.getElementById('hero-auth-buttons');
+      const heroAuthLoader = document.getElementById('hero-auth-loader');
+      const heroAuthBtns = document.getElementById('hero-auth-btns');
+      const heroLoggedBtns = document.getElementById('hero-logged-btns');
+
+      if (heroAuthLoader) {
+        heroAuthLoader.style.display = 'none';
+      }
 
       if (user) {
         // Définir targetUid pour que user-settings.js fonctionne
@@ -1015,48 +1017,29 @@
           updateDesktopTitleWithProfile(user);
         }
 
-        // Hero : Remplacer les boutons par "Accéder à mon espace" + Bouton Partage
-        if (heroBtns) {
-          heroBtns.innerHTML = `
-                <test style="display: flex; justify-content: center; width: 100%;">
-                    <test style="display: inline-flex; flex-direction: column; align-items: stretch;">
-                        <button onclick="window.location.href='dashboard.html?uid=${user.uid}'" class="btn-large btn-orange" style="justify-content: center;">
-                            <i class="bi bi-speedometer2"></i> Accéder à mon espace
-                        </button>
-                        <!-- Bouton de copie de lien rapide -->
-                        <button id="quick-copy-link-btn" onclick="copyProfileLink()" class="btn-large"
-                            style="background: #50644c; color: white; justify-content: center;"
-                            onmouseover="this.style.background='#3e4e3b'" onmouseout="this.style.background='#50644c'">
-                            <i class="bi bi-link-45deg" style="color: white; font-size: 1.2rem;"></i>
-                            <span id="quick-copy-text">Copier le lien de partage d'espace</span>
-                        </button>
-                        <!-- Bouton Manuel Utilisateur -->
-                        <button onclick="openUserManual()" class="btn-large"
-                            style="background: #34495e; color: white; justify-content: center;"
-                            onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
-                            <i class="bi bi-book"></i> Manuel utilisateur
-                        </button>
-                    </test>
-                </test>
-            `;
+        // Hero : Afficher les boutons connectés
+        if (heroAuthBtns) heroAuthBtns.style.display = 'none';
+        if (heroLoggedBtns) heroLoggedBtns.style.display = 'contents';
+        const heroDashBtn = document.getElementById('hero-dashboard-btn');
+        if (heroDashBtn) {
+          heroDashBtn.onclick = () => {
+            window.location.href = `dashboard.html?uid=${user.uid}`;
+          };
+        }
 
-          // Pré-remplir le lien de partage pour que le bouton fonctionne immédiatement
-          const shareLinkInput = document.getElementById('share-profile-link');
-          if (shareLinkInput) {
-            const currentUrl = new URL(window.location.href);
-            // Remplacer index.html par dashboard.html ou ajouter dashboard.html si on est à la racine
-            let newPath = currentUrl.pathname;
-            if (newPath.endsWith('index.html')) {
-              newPath = newPath.replace('index.html', 'dashboard.html');
-            } else if (newPath.endsWith('/')) {
-              newPath += 'dashboard.html';
-            } else {
-              // Cas où on est sur /foo/bar sans slash final ni extension (rare en static file serving simple mais possible)
-              // On assume qu'on remplace le dernier segment ou on ajoute
-              newPath = newPath.substring(0, newPath.lastIndexOf('/')) + '/dashboard.html';
-            }
-            shareLinkInput.value = `${currentUrl.origin}${newPath}?uid=${user.uid}`;
+        // Pré-remplir le lien de partage pour que le bouton fonctionne immédiatement
+        const shareLinkInput = document.getElementById('share-profile-link');
+        if (shareLinkInput) {
+          const currentUrl = new URL(window.location.href);
+          let newPath = currentUrl.pathname;
+          if (newPath.endsWith('index.html')) {
+            newPath = newPath.replace('index.html', 'dashboard.html');
+          } else if (newPath.endsWith('/')) {
+            newPath += 'dashboard.html';
+          } else {
+            newPath = newPath.substring(0, newPath.lastIndexOf('/')) + '/dashboard.html';
           }
+          shareLinkInput.value = `${currentUrl.origin}${newPath}?uid=${user.uid}`;
         }
       } else {
         window.targetUid = null;
@@ -1083,27 +1066,8 @@
           desktopTitle.innerHTML = `<i class="bi bi-rocket-takeoff-fill"></i> Récapitulatif d'Expériences BAFA & BAFD`;
         }
 
-        if (heroBtns) {
-          heroBtns.innerHTML = `
-            <div style="display: flex; justify-content: center; width: 100%;">
-                <test style="display:inline-flex; flex-direction:column; align-items:stretch;">
-                    <test style="display:flex; justify-content:center; gap:0; flex-wrap:wrap;">
-                        <button onclick="showAuthModal('login')" class="btn-large btn-green">
-                          <i class="bi bi-box-arrow-in-right"></i> Se connecter
-                        </button>
-                        <button onclick="showAuthModal('register')" class="btn-large btn-orange">
-                          <i class="bi bi-rocket-takeoff"></i> Créer un compte
-                        </button>
-                    </test>
-                    <button onclick="openUserManual()" class="btn-large"
-                        style="background: #34495e; color: white; justify-content: center; margin-top: 0;"
-                        onmouseover="this.style.background='#2c3e50'" onmouseout="this.style.background='#34495e'">
-                        <i class="bi bi-book"></i> Manuel utilisateur
-                    </button>
-                </test>
-            </div>
-          `;
-        }
+        if (heroAuthBtns) heroAuthBtns.style.display = 'contents';
+        if (heroLoggedBtns) heroLoggedBtns.style.display = 'none';
       }
     });
 

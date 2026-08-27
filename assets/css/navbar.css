@@ -181,3 +181,53 @@ body {
         gap: 10px;
     }
 }
+
+/* Auth Loading State (Navbar Pill Spinner & Hero Spinner) */
+.auth-loading-spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 5px 15px;
+    user-select: none;
+}
+
+.hero-auth-loader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #555;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 30px;
+    margin: 10px auto;
+    user-select: none;
+}
+
+.btn-skeleton {
+    background: rgba(0, 0, 0, 0.06) !important;
+    color: #777 !important;
+    cursor: default !important;
+    border: 1px dashed rgba(0, 0, 0, 0.15) !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+@keyframes spin-auth {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spin-icon {
+    animation: spin-auth 0.9s linear infinite;
+    display: inline-block;
+}
