@@ -101,10 +101,16 @@ function initAuth() {
     } else {
       window.currentUser = null;
       window.userRole = null;
+      window.userGender = null;
+      window.userProfilePic = null;
+      window.directorRequestStatus = null;
       document.body.classList.remove('user-logged-in');
       updateUI();
 
       // En cas de déconnexion sur un dashboard, on relance le chargement pour vérifier la confidentialité
+      if (typeof loadDataFromFirebase === 'function') {
+        loadDataFromFirebase();
+      }
     }
   });
 }
@@ -445,10 +451,14 @@ window.signOut = async function () {
     await firebase.auth().signOut();
     window.currentUser = null;
     window.userRole = null;
+    window.userGender = null;
     window.userProfilePic = null;
     window.directorRequestStatus = null;
     document.body.classList.remove('user-logged-in');
     updateUI();
+    if (typeof loadDataFromFirebase === 'function') {
+      loadDataFromFirebase();
+    }
   } catch (error) {
     console.error("Erreur lors de la déconnexion:", error);
   }

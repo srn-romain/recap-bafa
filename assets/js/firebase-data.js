@@ -1049,208 +1049,211 @@ function updateDashboardTitle() {
   title.innerHTML = `Détails des expériences BAFA${bafdText} de <orange>${window.currentUserFullName}</orange>`;
 }
 
-// Charger le profil utilisateur (pour le titre et LinkedIn)
+// Charger le profil utilisateur (pour le titre, confidentialité et LinkedIn)
 async function loadUserProfile() {
   if (!window.targetUid || !window.firebaseDb) return true;
 
   try {
     const doc = await window.firebaseDb.collection('users').doc(window.targetUid).get();
     const data = doc.exists ? doc.data() : { isPrivate: true };
-    if (true) {
-      const linkedinLink = document.getElementById('linkedin-link');
-      // Construire le nom complet
-      let fullName = 'Animateur';
-      if (data.firstname && data.lastname) {
-        // Formater: Prénom (1ère lettre maj, reste min) NOM (tout maj)
-        const formatName = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-        fullName = `${formatName(data.firstname)} ${data.lastname.toUpperCase()}`;
-      } else if (data.displayName) {
-        fullName = data.displayName;
-      } else if (data.email) {
-        fullName = data.email.split('@')[0];
-      }
-      window.currentUserFullName = fullName;
 
-      // Mettre à jour le titre initialement (uniquement BAFA par défaut)
-      window.userHasBafd = false;
-      updateDashboardTitle();
+    const linkedinLink = document.getElementById('linkedin-link');
+    // Construire le nom complet
+    let fullName = 'Animateur';
+    if (data.firstname && data.lastname) {
+      // Formater: Prénom (1ère lettre maj, reste min) NOM (tout maj)
+      const formatName = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+      fullName = `${formatName(data.firstname)} ${data.lastname.toUpperCase()}`;
+    } else if (data.displayName) {
+      fullName = data.displayName;
+    } else if (data.email) {
+      fullName = data.email.split('@')[0];
+    }
+    window.currentUserFullName = fullName;
 
-      // Gestion de la confidentialité (Compte privé)
-      const isOwner = window.currentUser && window.currentUser.uid === window.targetUid;
-      const ownerNotice = document.getElementById('privacy-notice-owner');
-      const visitorNotice = document.getElementById('privacy-notice-visitor');
-      const introSection = document.getElementById('intro-section');
-      const tableExperiences = document.getElementById('table-experiences');
-      const tableFormations = document.getElementById('table-formations');
-      const statsSection = document.getElementById('statistiques');
-      const footer = document.getElementById('footer');
-      const dashboardTitle = document.getElementById('main-dashboard-title');
+    // Mettre à jour le titre initialement (uniquement BAFA par défaut)
+    window.userHasBafd = false;
+    updateDashboardTitle();
 
-      // Reset notices
-      if (ownerNotice) ownerNotice.style.display = 'none';
-      if (visitorNotice) visitorNotice.style.display = 'none';
+    // Gestion de la confidentialité (Compte privé)
+    const isOwner = window.currentUser && window.currentUser.uid === window.targetUid;
+    const ownerNotice = document.getElementById('privacy-notice-owner');
+    const visitorNotice = document.getElementById('privacy-notice-visitor');
+    const promoBanner = document.getElementById('promo-banner-visitor');
+    const fictionalNotice = document.getElementById('fictional-profile-notice');
+    const introSection = document.getElementById('intro-section');
+    const sectionExperiences = document.getElementById('section-experiences');
+    const sectionFormations = document.getElementById('section-formations');
+    const sectionStats = document.getElementById('section-statistiques');
+    const tableExperiences = document.getElementById('table-experiences');
+    const tableFormations = document.getElementById('table-formations');
+    const statsSection = document.getElementById('statistiques');
+    const footer = document.getElementById('footer');
+    const dashboardTitle = document.getElementById('main-dashboard-title');
+    const settingsBtn = document.getElementById('settings-btn');
+    const quickCopyBtn = document.getElementById('quick-copy-link-btn');
 
-      if (data.isPrivate === true) {
-        if (isOwner) {
-          // Propriétaire : Afficher la page normally + bandeau jaune
-          if (ownerNotice) ownerNotice.style.display = 'block';
-        } else {
-          // Visiteur non autorisé : Masquer tout et afficher le message d'erreur
-          if (visitorNotice) visitorNotice.style.display = 'block';
+    // Reset notices
+    if (ownerNotice) ownerNotice.style.display = 'none';
+    if (visitorNotice) visitorNotice.style.display = 'none';
 
-          // Masquer les sections de contenu
-          const experiencesHeader = document.getElementById('experiences');
-          const formationsHeader = document.getElementById('formations');
-          const sectionsToHide = [
-            introSection, tableExperiences, tableFormations, statsSection,
-            dashboardTitle, footer, experiencesHeader, formationsHeader
-          ];
+    if (data.isPrivate === true) {
+      if (isOwner) {
+        // Propriétaire : Afficher la page normalement + bandeau info privé
+        if (ownerNotice) ownerNotice.style.display = 'block';
+      } else {
+        // Visiteur non autorisé : Masquer tout le contenu et afficher le message de profil privé
+        if (visitorNotice) visitorNotice.style.display = 'block';
+        if (promoBanner) promoBanner.style.display = 'none';
+        if (fictionalNotice) fictionalNotice.style.display = 'none';
+        if (quickCopyBtn) quickCopyBtn.style.display = 'none';
+        if (settingsBtn) settingsBtn.style.display = 'none';
+        if (linkedinLink) linkedinLink.style.display = 'none';
 
-          // Masquer tous les conteneurs de recherche
-          document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', 'none', 'important'));
-
-          sectionsToHide.forEach(el => {
-            if (el) {
-              el.style.setProperty('display', 'none', 'important');
-
-              // Masquer aussi les conteneurs de type .tabs qui suivent ou précèdent
-              if (el.id === 'table-experiences' || el.id === 'table-formations' || el.id === 'statistiques') {
-                let parent = el.parentElement;
-                while (parent && !parent.classList.contains('tabs')) {
-                  parent = parent.parentElement;
-                }
-                if (parent) parent.style.setProperty('display', 'none', 'important');
-
-                // Masquer aussi les onglets de filtres au-dessus et les éléments adjacents
-                let prev = (parent || el).previousElementSibling;
-                while (prev && (prev.classList.contains('tabs') || prev.classList.contains('search-container') || prev.tagName === 'H1' || prev.tagName === 'BR')) {
-                  prev.style.setProperty('display', 'none', 'important');
-                  prev = prev.previousElementSibling;
-                }
-                // Pour le titre statistique, masquer aussi l'élément suivant (la grille de stats)
-                if (el.id === 'statistiques') {
-                  let next = el.nextElementSibling;
-                  while (next && (next.classList.contains('tabs') || next.tagName === 'BR')) {
-                    next.style.setProperty('display', 'none', 'important');
-                    next = next.nextElementSibling;
-                  }
-                }
-              }
-            }
-          });
-
-          // Masquer la navbar (sauf home et auth)
-          const navItems = document.querySelectorAll('.nav-toc-link');
-          navItems.forEach(item => item.style.setProperty('display', 'none', 'important'));
-
-          // Masquer l'icône LinkedIn si elle existe
-          if (linkedinLink) {
-            linkedinLink.style.display = 'none';
-          }
-
-          console.log("Accès refusé : Profil privé");
-          return false; // Accès refusé
-        }
-      }
-
-      // Si accès public OU autorisé (propriétaire d'un compte privé)
-      if (data.isPrivate !== true || isOwner) {
-        // Accès public ou autorisé : S'assurer que les sections sont visibles
-        const experiencesHeader = document.getElementById('experiences');
-        const formationsHeader = document.getElementById('formations');
-        const sectionsToShow = [
-          introSection, tableExperiences, tableFormations, statsSection,
-          dashboardTitle, footer, experiencesHeader, formationsHeader
+        // Masquer les sections de contenu
+        const sectionsToHide = [
+          introSection, sectionExperiences, sectionFormations, sectionStats,
+          tableExperiences, tableFormations, statsSection, dashboardTitle, footer
         ];
 
-        sectionsToShow.forEach(el => {
-          if (el) el.style.setProperty('display', '', ''); // Reset display
+        sectionsToHide.forEach(el => {
+          if (el) el.style.setProperty('display', 'none', 'important');
         });
-        document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', '', ''));
-        document.querySelectorAll('.nav-toc-link').forEach(item => item.style.setProperty('display', '', ''));
-      }
 
-      // Gérer l'icône LinkedIn et le positionnement du bouton paramètres
-      const settingsBtn = document.getElementById('settings-btn');
-      if (linkedinLink) {
-        if (data.linkedin && data.linkedin.trim() !== '') {
-          linkedinLink.href = data.linkedin;
-          linkedinLink.style.display = 'block';
-          // Si LinkedIn est affiché, le bouton settings reste à sa place (à côté)
-          if (settingsBtn) {
-            settingsBtn.style.left = '70px';
-            settingsBtn.style.top = '26px'; // Garder l'alignement vertical défini
-          }
-        } else {
-          linkedinLink.style.display = 'none';
-          // Si LinkedIn est caché, le bouton settings prend sa place
-          if (settingsBtn) {
-            settingsBtn.style.left = '20px';
-            settingsBtn.style.top = '18px'; // S'aligner comme l'icône LinkedIn
-          }
+        // Masquer tous les conteneurs de recherche et la barre de sommaire
+        document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', 'none', 'important'));
+        document.querySelectorAll('.nav-toc-link').forEach(item => item.style.setProperty('display', 'none', 'important'));
+
+        if (typeof window.updateNavbarLinksVisibility === 'function') {
+          window.updateNavbarLinksVisibility();
         }
+
+        console.log("Accès refusé : Profil privé");
+        return false; // Accès refusé
+      }
+    }
+
+    // Si accès public OU autorisé (propriétaire d'un compte privé)
+    if (data.isPrivate !== true || isOwner) {
+      // Accès public ou autorisé : S'assurer que les sections sont visibles
+      const sectionsToShow = [
+        introSection, sectionExperiences, sectionFormations, sectionStats,
+        tableExperiences, tableFormations, statsSection, dashboardTitle, footer
+      ];
+
+      sectionsToShow.forEach(el => {
+        if (el) el.style.setProperty('display', '', ''); // Reset display
+      });
+      document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', '', ''));
+      document.querySelectorAll('.nav-toc-link').forEach(item => item.style.setProperty('display', '', ''));
+
+      if (window.targetUid === '5DP6faC4Y8ce6K3x07aC2qHjflq2' && fictionalNotice) {
+        fictionalNotice.style.display = 'block';
       }
 
-      // Gérer l'affichage de l'email de contact
-      const contactEmailParagraph = document.getElementById('contact-email-paragraph');
-      const contactEmailLink = document.getElementById('contact-email-link');
+      if (typeof window.updateNavbarLinksVisibility === 'function') {
+        window.updateNavbarLinksVisibility();
+      }
+    }
 
-      console.log('Affichage email:', { visible: data.emailVisible, email: data.email });
-
-      if (contactEmailParagraph && contactEmailLink) {
-        if (data.emailVisible && data.email) {
-          contactEmailLink.href = `mailto:${data.email}`;
-          contactEmailLink.textContent = data.email; // Afficher l'email explicitement
-          contactEmailParagraph.style.display = 'block';
-        } else {
-          contactEmailParagraph.style.display = 'none';
+    // Gérer l'icône LinkedIn et le positionnement du bouton paramètres
+    if (linkedinLink) {
+      if (data.linkedin && data.linkedin.trim() !== '') {
+        linkedinLink.href = data.linkedin;
+        linkedinLink.style.display = 'block';
+        if (settingsBtn) {
+          settingsBtn.style.left = '70px';
+          settingsBtn.style.top = '26px';
         }
-      }
-
-        // Mettre à jour les statistiques manuelles
-        if (data.stats) {
-          const animators = data.stats.animators || 0;
-          const directors = data.stats.directors || 0;
-          const trainers = data.stats.trainers || 0;
-          const gender = data.gender || '';
-
-          const parts = [];
-          if (animators > 0) {
-            let label = animators > 1 ? 'animateurs' : 'animateur';
-            if (gender === 'feminin') label = animators > 1 ? 'animatrices' : 'animatrice';
-            parts.push(`<span class="stat-value">${animators}</span> ${label}`);
-          }
-          if (directors > 0) {
-            let label = directors > 1 ? 'directeurs' : 'directeur';
-            if (gender === 'feminin') label = directors > 1 ? 'directrices' : 'directrice';
-            parts.push(`<span class="stat-value">${directors}</span> ${label}`);
-          }
-          if (trainers > 0) {
-            let label = trainers > 1 ? 'formateurs' : 'formateur';
-            if (gender === 'feminin') label = trainers > 1 ? 'formatrices' : 'formatrice';
-            parts.push(`<span class="stat-value">${trainers}</span> ${label}`);
-          }
-
-        const sentenceEl = document.getElementById('stat-colleagues-sentence');
-        if (sentenceEl && parts.length > 0) {
-          let sentence = "J'ai travaillé avec ";
-          if (parts.length === 1) {
-            sentence += parts[0];
-          } else if (parts.length > 0) {
-            const last = parts.pop();
-            sentence += parts.join(', ') + ' et ' + last;
-          }
-          sentenceEl.innerHTML = sentence;
-          sentenceEl.style.display = 'block';
-        } else if (sentenceEl) {
-          sentenceEl.style.display = 'none';
+      } else {
+        linkedinLink.style.display = 'none';
+        if (settingsBtn) {
+          settingsBtn.style.left = '20px';
+          settingsBtn.style.top = '18px';
         }
       }
     }
+
+    // Gérer l'affichage de l'email de contact
+    const contactEmailParagraph = document.getElementById('contact-email-paragraph');
+    const contactEmailLink = document.getElementById('contact-email-link');
+
+    console.log('Affichage email:', { visible: data.emailVisible, email: data.email });
+
+    if (contactEmailParagraph && contactEmailLink) {
+      if (data.emailVisible && data.email) {
+        contactEmailLink.href = `mailto:${data.email}`;
+        contactEmailLink.textContent = data.email;
+        contactEmailParagraph.style.display = 'block';
+      } else {
+        contactEmailParagraph.style.display = 'none';
+      }
+    }
+
+    // Mettre à jour les statistiques manuelles
+    if (data.stats) {
+      const animators = data.stats.animators || 0;
+      const directors = data.stats.directors || 0;
+      const trainers = data.stats.trainers || 0;
+      const gender = data.gender || '';
+
+      const parts = [];
+      if (animators > 0) {
+        let label = animators > 1 ? 'animateurs' : 'animateur';
+        if (gender === 'feminin') label = animators > 1 ? 'animatrices' : 'animatrice';
+        parts.push(`<span class="stat-value">${animators}</span> ${label}`);
+      }
+      if (directors > 0) {
+        let label = directors > 1 ? 'directeurs' : 'directeur';
+        if (gender === 'feminin') label = directors > 1 ? 'directrices' : 'directrice';
+        parts.push(`<span class="stat-value">${directors}</span> ${label}`);
+      }
+      if (trainers > 0) {
+        let label = trainers > 1 ? 'formateurs' : 'formateur';
+        if (gender === 'feminin') label = trainers > 1 ? 'formatrices' : 'formatrice';
+        parts.push(`<span class="stat-value">${trainers}</span> ${label}`);
+      }
+
+      const sentenceEl = document.getElementById('stat-colleagues-sentence');
+      if (sentenceEl && parts.length > 0) {
+        let sentence = "J'ai travaillé avec ";
+        if (parts.length === 1) {
+          sentence += parts[0];
+        } else if (parts.length > 0) {
+          const last = parts.pop();
+          sentence += parts.join(', ') + ' et ' + last;
+        }
+        sentenceEl.innerHTML = sentence;
+        sentenceEl.style.display = 'block';
+      } else if (sentenceEl) {
+        sentenceEl.style.display = 'none';
+      }
+    }
+
     return true; // Accès autorisé
   } catch (e) {
     console.error("Erreur chargement profil", e);
-    return true; // Fallback par défaut si erreur (ou false si on veut être strict)
+    const visitorNotice = document.getElementById('privacy-notice-visitor');
+    const ownerNotice = document.getElementById('privacy-notice-owner');
+    const promoBanner = document.getElementById('promo-banner-visitor');
+    const sectionsToHide = [
+      document.getElementById('intro-section'),
+      document.getElementById('section-experiences'),
+      document.getElementById('section-formations'),
+      document.getElementById('section-statistiques'),
+      document.getElementById('main-dashboard-title'),
+      document.getElementById('footer')
+    ];
+
+    if (ownerNotice) ownerNotice.style.display = 'none';
+    if (visitorNotice) visitorNotice.style.display = 'block';
+    if (promoBanner) promoBanner.style.display = 'none';
+    sectionsToHide.forEach(el => {
+      if (el) el.style.setProperty('display', 'none', 'important');
+    });
+    document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', 'none', 'important'));
+    document.querySelectorAll('.nav-toc-link').forEach(item => item.style.setProperty('display', 'none', 'important'));
+    return false;
   }
 }
 
