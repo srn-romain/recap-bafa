@@ -696,6 +696,16 @@ function updateUI() {
     }
   }
 
+  // Gestion de l'affichage du bloc contact/suggestion pour dirlo ou admin
+  const contactModal = document.getElementById('contact-modal');
+  if (contactModal) {
+    if (window.userRole === 'admin' || window.userRole === 'dirlo') {
+      contactModal.classList.add('no-box');
+    } else {
+      contactModal.classList.remove('no-box');
+    }
+  }
+
   updateSectionNumbers();
 
   // Gestion des demandes directeur

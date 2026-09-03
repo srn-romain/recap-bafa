@@ -2838,6 +2838,32 @@ optgroup option {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
+/* ==============================================================
+   # BOITE DE CONTACT & SUGGESTIONS (index.html)
+   ============================================================== */
+.contact-feedback-box {
+  background: #ffffff;
+  color: #555555;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 20px 28px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 520px;
+  width: 90%;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Pas de carré blanc pour les profils Directeur (dirlo) et Administrateur (admin) */
+.contact-feedback-box.no-box {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 10px 0 !important;
+  color: inherit !important;
+}
+
 
 
 
