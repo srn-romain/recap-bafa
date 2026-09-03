@@ -99,6 +99,10 @@ function injectSettingsModal() {
                     <input type="url" id="settings-linkedin" placeholder="https://linkedin.com/in/...">
                 </div>
 
+                <div class="settings-divider"></div>
+
+                <h3 class="subsettings-title">Confidentialité</h3>
+
                 <div class="form-group checkbox-row">
                     <input type="checkbox" id="settings-public-visibility" style="transform: scale(1.5); margin-right: 10px;" onchange="handlePrivacyCheckboxChange('public')">
                     <label for="settings-public-visibility">Afficher mon profil dans les résultats de recherche</label>
@@ -117,6 +121,15 @@ function injectSettingsModal() {
                 <div id="privacy-status-banner" style="display:none; border-radius: 10px; padding: 12px 15px; margin-top: 8px; font-size: 0.82rem; line-height: 1.5;">
                     <span id="privacy-status-icon" style="font-size: 1.1rem; margin-right: 6px;"></span>
                     <span id="privacy-status-text"></span>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <h3 class="subsettings-title">Préférences d'affichage</h3>
+
+                <div class="form-group checkbox-row">
+                    <input type="checkbox" id="settings-sticky-header" style="transform: scale(1.5); margin-right: 10px;">
+                    <label for="settings-sticky-header">Faire défiler l'en-tête du tableau lors du scroll</label>
                 </div>
 
                 <div class="settings-divider"></div>

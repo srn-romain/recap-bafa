@@ -1316,6 +1316,10 @@ async function loadUserProfile() {
     }
     window.currentUserFullName = fullName;
 
+    // Charger la préférence de l'en-tête collant
+    window.stickyHeaderEnabled = data.stickyHeader !== false;
+    localStorage.setItem('stickyHeaderEnabled', window.stickyHeaderEnabled ? 'true' : 'false');
+
     // Mettre à jour le titre initialement (uniquement BAFA par défaut)
     window.userHasBafd = false;
     updateDashboardTitle();

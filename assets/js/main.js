@@ -638,6 +638,16 @@ class TableFloatingHeaderManager {
       this.scrollContainer = this.table.closest('.tabs');
     }
 
+    // Vérifier si l'utilisateur a activé ou désactivé le suivi d'en-tête dans ses paramètres
+    const isStickyEnabled = typeof window.stickyHeaderEnabled !== 'undefined'
+      ? window.stickyHeaderEnabled
+      : (localStorage.getItem('stickyHeaderEnabled') !== 'false');
+
+    if (!isStickyEnabled) {
+      this.hide();
+      return;
+    }
+
     // Vérifier si le tableau contient un minimum de 4 lignes visibles
     const rows = this.table.getElementsByTagName('tr');
     let visibleCount = 0;

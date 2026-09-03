@@ -308,6 +308,7 @@ function getSettingsState() {
         publiclyVisible: document.getElementById('settings-public-visibility')?.checked || false,
         emailVisible: document.getElementById('settings-email-visibility')?.checked || false,
         isPrivate: document.getElementById('settings-is-private')?.checked || false,
+        stickyHeader: document.getElementById('settings-sticky-header')?.checked ?? true,
         animators: document.getElementById('settings-animators-count')?.value || '',
         directors: document.getElementById('settings-directors-count')?.value || '',
         trainers: document.getElementById('settings-trainers-count')?.value || ''
@@ -372,6 +373,12 @@ window.openSettingsModal = async function () {
             const isPrivateInput = document.getElementById('settings-is-private');
             if (isPrivateInput) {
                 isPrivateInput.checked = data.isPrivate === true; // Par défaut false
+            }
+
+            // Charger la préférence de défilement de l'en-tête
+            const stickyHeaderInput = document.getElementById('settings-sticky-header');
+            if (stickyHeaderInput) {
+                stickyHeaderInput.checked = data.stickyHeader !== false; // Par défaut true
             }
 
             // Mettre à jour le bandeau de confidentialité avec l'état chargé
@@ -528,6 +535,7 @@ window.handleSettingsSubmit = async function (event) {
     const publiclyVisible = document.getElementById('settings-public-visibility').checked;
     const emailVisible = document.getElementById('settings-email-visibility').checked;
     const isPrivate = document.getElementById('settings-is-private').checked;
+    const stickyHeader = document.getElementById('settings-sticky-header')?.checked ?? true;
 
     // Récupérer les stats manuelles
     const animatorsCount = document.getElementById('settings-animators-count').value;
@@ -547,6 +555,7 @@ window.handleSettingsSubmit = async function (event) {
             publiclyVisible: publiclyVisible,
             emailVisible: emailVisible,
             isPrivate: isPrivate,
+            stickyHeader: stickyHeader,
             stats: {
                 animators: animatorsCount ? parseInt(animatorsCount) : 0,
                 directors: directorsCount ? parseInt(directorsCount) : 0,
@@ -556,6 +565,11 @@ window.handleSettingsSubmit = async function (event) {
 
         // Update local status immediately if needed
         window.userGender = gender;
+        window.stickyHeaderEnabled = stickyHeader;
+        localStorage.setItem('stickyHeaderEnabled', stickyHeader ? 'true' : 'false');
+        if (typeof updateStickyHeaderState === 'function') {
+            updateStickyHeaderState();
+        }
 
         // Mettre à jour l'état initial pour éviter le warning si on ferme après save
         settingsInitialState = getSettingsState();
