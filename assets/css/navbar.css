@@ -1,32 +1,31 @@
 /*--------------------------------------------------------------
-# Modern Navbar
+# Modern Navbar (Full-Width Green Header)
 --------------------------------------------------------------*/
 #sticky-navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background: transparent;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #a6d866;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
     z-index: 1000;
-    padding: 10px 0;
+    padding: 0;
     transition: all 0.3s ease;
 }
 
 .nav-content {
-    background-color: #a6d866;
+    background: transparent;
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 20px;
-    gap: 20px;
-    border-radius: 50px;
-    /* Ajoute un style arrondi pour flotter élégamment */
     padding: 10px 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+    border-radius: 0;
+    box-shadow: none;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .nav-item {
@@ -69,21 +68,8 @@
 
 /* Adjust main container to avoid overlap */
 body {
-    padding-top: 80px !important;
+    padding-top: 68px !important;
 }
-
-/*.btn-inscription {
-    font-size: 0.9rem;
-    font-weight: bold;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px 15px;
-    color: white;
-}
-
-.btn-inscription:hover {
-    background: #f39c12;
-}*/
 
 /* Hide/Show logic based on screen size */
 #nav-menu-btn {
@@ -95,7 +81,6 @@ body {
     color: white;
 }
 
-
 /* Liens Sommaire Navbar */
 .nav-toc-link {
     font-size: 1rem;
@@ -103,8 +88,6 @@ body {
     font-weight: bold;
     gap: 8px;
 }
-
-
 
 /* Desktop styles */
 @media (min-width: 992px) {
@@ -122,24 +105,24 @@ body {
 /* Mobile optimizations */
 @media (max-width: 768px) {
     #sticky-navbar {
-        padding: 5px 0;
+        padding: 0;
     }
 
     .nav-content {
-        padding: 5px 15px;
-        border-radius: 30px;
-        /* Slightly less rounded on small screens if desired, or keep */
-        gap: 10px;
-        /* Reduce gap between items */
+        padding: 6px 12px;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+        gap: 8px;
     }
 
     .nav-item {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         padding: 2px;
     }
 
     .nav-item i {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
     }
 
     /* Masquer le texte du sommaire sur petit écran */
@@ -153,7 +136,7 @@ body {
 
     /* Adjust body padding to prevent content from being hidden behind smaller navbar */
     body {
-        padding-top: 60px !important;
+        padding-top: 58px !important;
     }
 }
 
