@@ -324,8 +324,7 @@
         </div><br>
 
         <div id="section-statistiques" data-section="statistiques">
-            <h1 id="statistiques" data-section-title="Statistiques"><span class="section-title-text">3-
-                    Statistiques</span></h1>
+            <h1 id="statistiques" data-section-title="Statistiques"><span class="section-title-text">3- Statistiques</span></h1>
             <div class="tabs">
                 <div class="stats-container">
                     <div id="stats-mobile-message" class="mobile-notification">
@@ -333,73 +332,246 @@
                         expérience, consultez cette section sur ordinateur.
                     </div>
 
+                    <!-- SECTION STATISTIQUES EXPÉRIENCES -->
                     <div class="stats-section" id="stats-section-experiences">
-                        <h3>Expériences</h3>
-                        <div class="stats-sentences">
-                            <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-all">0</span>
-                                jours
-                                d'animation</p>
-                            <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-colo">0</span>
-                                jours
-                                en colonie de vacances</p>
-                            <p class="stat-sentence">J'ai passé <span class="stat-value" id="total-days-alsh">0</span>
-                                jours
-                                en centre de loisirs</p>
-                            <p class="stat-sentence">J'ai passé <span class="stat-value"
-                                    id="total-days-periscolaire">0</span> jours
-                                en périscolaire</p>
-                            <p class="stat-sentence">J'ai encadré <span class="stat-value" id="total-youth">0</span>
-                                jeunes
-                                au total</p>
-                            <p class="stat-sentence">J'ai réalisé <span class="stat-value"
-                                    id="total-experiences">0</span>
-                                expériences d'animation</p>
-                            <p class="stat-sentence">J'ai collaboré avec <span class="stat-value"
-                                    id="total-organizations">0</span>
-                                organismes différents</p>
-                            <p class="stat-sentence" id="stat-colleagues-sentence" style="display: none;"></p>
-                            <p class="stat-sentence">J'ai principalement encadré des jeunes de <span class="stat-value"
-                                    id="most-common-age">0</span> ans</p>
-                            <p class="stat-sentence">L'âge moyen est de <span class="stat-value"
-                                    id="average-age">0</span>
-                                ans</p>
+                        <div class="stats-section-header">
+                            <i class="bi bi-briefcase-fill"></i>
+                            <h3>Expériences d'animation</h3>
                         </div>
 
-                        <div id="visu-graph-stat-ordi">
-                            ℹ️ Pour visualiser les graphiques plus en détail, survolez les barres verticales avec votre
-                            curseur.
+                        <!-- Grille de cartes KPI Principales -->
+                        <div class="stats-kpi-grid">
+                            <!-- Carte Hero : Total Jours -->
+                            <div class="stats-kpi-card stats-kpi-hero" id="kpi-card-total-days">
+                                <div class="stats-kpi-icon-wrapper hero-icon">
+                                    <i class="bi bi-stopwatch-fill"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Temps de terrain</div>
+                                    <div class="stats-kpi-val"><span id="total-days-all">0</span> <span class="stats-kpi-unit">jours</span></div>
+                                    <div class="stats-kpi-desc" id="total-days-equiv">Total d'animation cumulé</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Colonies de vacances -->
+                            <div class="stats-kpi-card" id="kpi-card-colo">
+                                <div class="stats-kpi-icon-wrapper colo-icon">
+                                    <i class="bi bi-tree-fill"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Colonies de vacances</div>
+                                    <div class="stats-kpi-val"><span id="total-days-colo">0</span> <span class="stats-kpi-unit">jours</span></div>
+                                    <div class="stats-kpi-desc" id="colo-percent-label">En séjours de vacances</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Centre de Loisirs (ALSH) -->
+                            <div class="stats-kpi-card" id="kpi-card-alsh">
+                                <div class="stats-kpi-icon-wrapper alsh-icon">
+                                    <i class="bi bi-sun-fill"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Centres de loisirs (ALSH)</div>
+                                    <div class="stats-kpi-val"><span id="total-days-alsh">0</span> <span class="stats-kpi-unit">jours</span></div>
+                                    <div class="stats-kpi-desc" id="alsh-percent-label">En accueils de loisirs</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Périscolaire -->
+                            <div class="stats-kpi-card" id="kpi-card-periscolaire">
+                                <div class="stats-kpi-icon-wrapper peri-icon">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Périscolaire</div>
+                                    <div class="stats-kpi-val"><span id="total-days-periscolaire">0</span> <span class="stats-kpi-unit">jours</span></div>
+                                    <div class="stats-kpi-desc">En milieu scolaire</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Jeunes Encadrés -->
+                            <div class="stats-kpi-card" id="kpi-card-youth">
+                                <div class="stats-kpi-icon-wrapper youth-icon">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Jeunes encadrés</div>
+                                    <div class="stats-kpi-val"><span id="total-youth">0</span> <span class="stats-kpi-unit">enfants & ados</span></div>
+                                    <div class="stats-kpi-desc">Au total sur l'ensemble des séjours</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Total Expériences -->
+                            <div class="stats-kpi-card" id="kpi-card-experiences">
+                                <div class="stats-kpi-icon-wrapper exp-icon">
+                                    <i class="bi bi-journal-check"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Contrats menés</div>
+                                    <div class="stats-kpi-val"><span id="total-experiences">0</span> <span class="stats-kpi-unit">expériences</span></div>
+                                    <div class="stats-kpi-desc">Séjours et missions réalisés</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Organismes Différents -->
+                            <div class="stats-kpi-card" id="kpi-card-orgs">
+                                <div class="stats-kpi-icon-wrapper org-icon">
+                                    <i class="bi bi-buildings-fill"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Organismes partenaires</div>
+                                    <div class="stats-kpi-val"><span id="total-organizations">0</span> <span class="stats-kpi-unit">structures</span></div>
+                                    <div class="stats-kpi-desc">Associations, mairies, comités</div>
+                                </div>
+                            </div>
+
+                            <!-- Carte Âge Public (Moyen & Prédominant) -->
+                            <div class="stats-kpi-card" id="kpi-card-age">
+                                <div class="stats-kpi-icon-wrapper age-icon">
+                                    <i class="bi bi-person-hearts"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Publics encadrés</div>
+                                    <div class="stats-kpi-val"><span id="most-common-age">0</span> <span class="stats-kpi-unit">ans (phare)</span></div>
+                                    <div class="stats-kpi-desc">Âge moyen global : <strong><span id="average-age">0</span> ans</strong></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div id="visu-graph-stat-tel">
-                            ℹ️ Pour visualiser les graphiques plus en détail, appuyez sur les barres verticales avec
-                            votre
-                            doigt.
+                        <!-- Bandeau Équipe / Collaborateurs (si renseigné) -->
+                        <div id="stat-colleagues-sentence" class="stats-team-banner" style="display: none;"></div>
+
+                        <!-- Faits Marquants & Records -->
+                        <div class="stats-highlights-card" id="stats-highlights-block">
+                            <div class="stats-highlights-header">
+                                <i class="bi bi-trophy-fill"></i>
+                                <span>Faits marquants du parcours</span>
+                            </div>
+                            <div class="stats-highlights-grid">
+                                <div class="stats-highlight-item" id="highlight-longest-stay">
+                                    <i class="bi bi-calendar2-week-fill"></i>
+                                    <div>
+                                        <div class="highlight-title">Séjour le plus long <span style="font-weight: 500; text-transform: none; opacity: 0.8; font-size: 0.72rem;">(hors régulier/annuel)</span></div>
+                                        <div class="highlight-val" id="stat-longest-stay">—</div>
+                                    </div>
+                                </div>
+                                <div class="stats-highlight-item" id="highlight-top-org">
+                                    <i class="bi bi-star-fill"></i>
+                                    <div>
+                                        <div class="highlight-title">Organisme de prédilection</div>
+                                        <div class="highlight-val" id="stat-top-org">—</div>
+                                    </div>
+                                </div>
+                                <div class="stats-highlight-item" id="highlight-locations">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <div>
+                                        <div class="highlight-title">Mobilité géographique</div>
+                                        <div class="highlight-val" id="stat-locations-count">—</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div id="days-by-organization" class="stats-chart">
-                            <canvas id="organizationChart"></canvas>
-                        </div>
+                        <!-- Graphiques d'expériences -->
+                        <div class="stats-charts-grid">
+                            <!-- Graphique 1 : Jours par organisme -->
+                            <div class="stats-chart-card">
+                                <div class="stats-chart-header">
+                                    <i class="bi bi-bar-chart-fill"></i>
+                                    <h4>Jours d'animation par organisme</h4>
+                                </div>
+                                <div class="stats-chart-canvas-wrapper">
+                                    <canvas id="organizationChart"></canvas>
+                                </div>
+                            </div>
 
-                        <div id="age-group-chart-container" class="stats-chart">
-                            <canvas id="ageGroupChart"></canvas>
+                            <!-- Graphique 2 : Répartition par type de structure (Donut) -->
+                            <div class="stats-chart-card" id="stay-type-chart-card">
+                                <div class="stats-chart-header">
+                                    <i class="bi bi-pie-chart-fill"></i>
+                                    <h4>Répartition par cadre d'animation</h4>
+                                </div>
+                                <div class="stats-chart-canvas-wrapper">
+                                    <canvas id="stayTypeChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Graphique 3 : Pyramide des âges -->
+                            <div class="stats-chart-card">
+                                <div class="stats-chart-header">
+                                    <i class="bi bi-graph-up"></i>
+                                    <h4>Expériences par tranche d'âge (3 à 17 ans)</h4>
+                                </div>
+                                <div class="stats-chart-canvas-wrapper">
+                                    <canvas id="ageGroupChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Graphique 4 : Activité annuelle -->
+                            <div class="stats-chart-card" id="yearly-activity-chart-card">
+                                <div class="stats-chart-header">
+                                    <i class="bi bi-calendar-check-fill"></i>
+                                    <h4>Activité d'animation par année</h4>
+                                </div>
+                                <div class="stats-chart-canvas-wrapper">
+                                    <canvas id="yearlyActivityChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- SECTION STATISTIQUES FORMATIONS -->
                     <div class="stats-section" id="stats-section-formations">
-                        <h3>Formations</h3>
-
-                        <div class="stats-sentences">
-                            <p class="stat-sentence">J'ai suivi <span class="stat-value"
-                                    id="total-days-formation">0</span>
-                                jours de formation</p>
-                            <p class="stat-sentence">J'ai participé à <span class="stat-value"
-                                    id="total-bafa-formations">0</span> formations BAFA</p>
-                            <p class="stat-sentence">J'ai participé à <span class="stat-value"
-                                    id="total-bafd-formations">0</span> formations BAFD</p>
+                        <div class="stats-section-header">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            <h3>Formations professionnelles</h3>
                         </div>
 
-                        <div id="formation-organization-chart" class="stats-chart">
-                            <canvas id="formationOrganizationChart"></canvas>
+                        <!-- Grille KPI Formations -->
+                        <div class="stats-kpi-grid formations-kpi-grid">
+                            <div class="stats-kpi-card stats-kpi-hero-formation">
+                                <div class="stats-kpi-icon-wrapper form-days-icon">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Temps de formation</div>
+                                    <div class="stats-kpi-val"><span id="total-days-formation">0</span> <span class="stats-kpi-unit">jours</span></div>
+                                    <div class="stats-kpi-desc">Apprentissage et montée en compétences</div>
+                                </div>
+                            </div>
+
+                            <div class="stats-kpi-card" id="kpi-card-bafa">
+                                <div class="stats-kpi-icon-wrapper form-bafa-icon">
+                                    <i class="bi bi-award-fill"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Cursus BAFA</div>
+                                    <div class="stats-kpi-val"><span id="total-bafa-formations">0</span> <span class="stats-kpi-unit">stages</span></div>
+                                    <div class="stats-kpi-desc">Formation générale & approfondissement</div>
+                                </div>
+                            </div>
+
+                            <div class="stats-kpi-card" id="kpi-card-bafd">
+                                <div class="stats-kpi-icon-wrapper form-bafd-icon">
+                                    <i class="bi bi-shield-fill-check"></i>
+                                </div>
+                                <div class="stats-kpi-content">
+                                    <div class="stats-kpi-label">Cursus BAFD</div>
+                                    <div class="stats-kpi-val"><span id="total-bafd-formations">0</span> <span class="stats-kpi-unit">stages</span></div>
+                                    <div class="stats-kpi-desc">Formation direction & perfectionnement</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphique Organismes de formation -->
+                        <div class="stats-chart-card single-chart-card">
+                            <div class="stats-chart-header">
+                                <i class="bi bi-buildings"></i>
+                                <h4>Jours de formation par organisme</h4>
+                            </div>
+                            <div class="stats-chart-canvas-wrapper">
+                                <canvas id="formationOrganizationChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -128,18 +128,29 @@ function calculateAllStatistics() {
   }
 }
 
-// Fonction utilitaire pour mettre à jour une statistique et masquer sa phrase si la valeur est 0
+// Fonction utilitaire pour mettre à jour une statistique et masquer son conteneur si la valeur est 0
 function updateStatWithVisibility(id, value) {
   const element = document.getElementById(id);
   if (!element) return;
   element.textContent = value;
+
+  // Masquer la phrase ou la carte parente si valeur nulle
   const sentence = element.closest('.stat-sentence');
   if (sentence) {
-    // Si la valeur est 0 (nombre ou chaîne), on masque le paragraphe parent
     if (value === 0 || value === '0' || value === '0.0' || value === 0.0) {
       sentence.style.display = 'none';
     } else {
       sentence.style.display = 'block';
+    }
+  }
+
+  const kpiCard = element.closest('.stats-kpi-card');
+  if (kpiCard && !kpiCard.classList.contains('stats-kpi-hero')) {
+    // Si c'est une carte secondaire avec 0 (ex: périscolaire ou colo à 0), on masque la carte
+    if (value === 0 || value === '0' || value === '0.0' || value === 0.0) {
+      kpiCard.style.display = 'none';
+    } else {
+      kpiCard.style.display = 'flex';
     }
   }
 }
@@ -163,9 +174,15 @@ function calculateExperienceStatistics() {
   let totalDaysColo = 0;
   let totalDaysAlsh = 0;
   let totalDaysPeriscolaire = 0;
+  let totalDaysScout = 0;
+  let totalDaysAutre = 0;
   let totalDaysAll = 0;
   let totalYouth = 0;
   const organizationDays = {};
+  const yearlyDays = {};
+  const uniqueLocations = new Set();
+  let longestStayDays = 0;
+  let longestStayInfo = '';
 
   rows.forEach(row => {
     // Ignorer la ligne d'en-tête
@@ -189,20 +206,57 @@ function calculateExperienceStatistics() {
     const organizerTextRaw = organizerCell ? (organizerCell.querySelector('a')?.textContent || organizerCell.textContent) : '';
     const organizerText = organizerTextRaw.replace(/\s*\(\d{2,3}[AB]?\)\s*$/, '').trim();
 
+    // Extraire le lieu
+    const locationCell = row.cells[5];
+    if (locationCell) {
+      const locText = locationCell.textContent.trim();
+      if (locText && locText !== '-') {
+        uniqueLocations.add(locText.toLowerCase());
+      }
+    }
+
+    // Extraire l'année depuis la cellule Date
+    const dateCell = row.cells[1];
+    if (dateCell) {
+      const dateText = dateCell.textContent.trim();
+      const yearMatch = dateText.match(/\b(20\d{2}|19\d{2})\b/);
+      if (yearMatch) {
+        const year = yearMatch[1];
+        yearlyDays[year] = (yearlyDays[year] || 0) + days;
+      }
+    }
+
+    // Vérifier si c'est une mission régulière / annuelle (mercredis, samedis, périscolaire, année)
+    const durLower = (durationText || '').toLowerCase();
+    const isPeriodicAnnual = types.includes('periscolaire') ||
+      durLower.includes('mercredi') ||
+      durLower.includes('samedi') ||
+      durLower.includes('scolaire') ||
+      durLower.includes('périscolaire') ||
+      durLower.includes('periscolaire') ||
+      durLower.includes('année') ||
+      durLower.includes('annee');
+
+    // Record du séjour le plus long (hors missions régulières à l'année)
+    if (!isPeriodicAnnual && days > longestStayDays) {
+      longestStayDays = days;
+      longestStayInfo = `${days} jours (${organizerText || 'Séjour'})`;
+    }
+
     if (types.includes('colo')) {
       totalDaysColo += days;
-    }
-
-    if (types.includes('alsh')) {
+    } else if (types.includes('alsh')) {
       totalDaysAlsh += days;
-    }
-
-    if (types.includes('periscolaire')) {
+    } else if (types.includes('periscolaire')) {
       totalDaysPeriscolaire += days;
+    } else if (types.includes('scout')) {
+      totalDaysScout += days;
+    } else {
+      totalDaysAutre += days;
     }
 
-    // Ajouter au graphique par organisme si c'est une expérience reconnue
-    if (organizerText && (types.includes('colo') || types.includes('alsh') || types.includes('periscolaire') || types.includes('scout') || types.includes('autre'))) {
+    // Ajouter au graphique par organisme
+    if (organizerText) {
       organizationDays[organizerText] = (organizationDays[organizerText] || 0) + days;
     }
 
@@ -210,20 +264,206 @@ function calculateExperienceStatistics() {
     totalYouth += youthCount;
   });
 
-  // Mettre à jour les valeurs dans le DOM avec gestion de la visibilité
+  // Mettre à jour les valeurs dans le DOM
   updateStatWithVisibility('total-days-all', totalDaysAll);
   updateStatWithVisibility('total-days-colo', totalDaysColo);
   updateStatWithVisibility('total-days-alsh', totalDaysAlsh);
   updateStatWithVisibility('total-days-periscolaire', totalDaysPeriscolaire);
   updateStatWithVisibility('total-youth', totalYouth);
   updateStatWithVisibility('total-experiences', totalExps);
+
+  // Pourcentages & Équivalences
+  const equivEl = document.getElementById('total-days-equiv');
+  if (equivEl) {
+    const months = (totalDaysAll / 30).toFixed(1);
+    equivEl.textContent = totalDaysAll >= 30 ? `Soit l'équivalent de ~${months} mois de terrain cumulés` : `Total cumulé sur l'ensemble du parcours`;
+  }
+
+  const coloPercentEl = document.getElementById('colo-percent-label');
+  if (coloPercentEl && totalDaysAll > 0) {
+    const p = Math.round((totalDaysColo / totalDaysAll) * 100);
+    coloPercentEl.textContent = `${p}% du temps d'animation total`;
+  }
+
+  const alshPercentEl = document.getElementById('alsh-percent-label');
+  if (alshPercentEl && totalDaysAll > 0) {
+    const p = Math.round((totalDaysAlsh / totalDaysAll) * 100);
+    alshPercentEl.textContent = `${p}% du temps d'animation total`;
+  }
   
   // Nombre d'organismes différents
   const totalOrgs = Object.keys(organizationDays).length;
   updateStatWithVisibility('total-organizations', totalOrgs);
 
+  // Faits Marquants & Records
+  const longestStayEl = document.getElementById('stat-longest-stay');
+  if (longestStayEl) {
+    longestStayEl.textContent = longestStayInfo || '—';
+  }
+
+  // Organisme de prédilection
+  let topOrgName = '—';
+  let maxOrgDays = 0;
+  for (const [org, d] of Object.entries(organizationDays)) {
+    if (d > maxOrgDays) {
+      maxOrgDays = d;
+      topOrgName = `${org} (${d} j)`;
+    }
+  }
+  const topOrgEl = document.getElementById('stat-top-org');
+  if (topOrgEl) {
+    topOrgEl.textContent = topOrgName;
+  }
+
+  // Mobilité géographique
+  const locCountEl = document.getElementById('stat-locations-count');
+  if (locCountEl) {
+    const locSize = uniqueLocations.size;
+    locCountEl.textContent = locSize > 0 ? `${locSize} destination${locSize > 1 ? 's' : ''} / ville${locSize > 1 ? 's' : ''}` : '—';
+  }
+
   // Créer le graphique pour les jours par organisme
   createChart('organizationChart', organizationDays, 'Nombre de jours par organisme');
+
+  // Créer le graphique Donut de répartition par cadre
+  const stayTypeDistribution = {};
+  if (totalDaysColo > 0) stayTypeDistribution['Colonies de vacances'] = totalDaysColo;
+  if (totalDaysAlsh > 0) stayTypeDistribution['Centres de loisirs'] = totalDaysAlsh;
+  if (totalDaysPeriscolaire > 0) stayTypeDistribution['Périscolaire'] = totalDaysPeriscolaire;
+  if (totalDaysScout > 0) stayTypeDistribution['Scoutisme'] = totalDaysScout;
+  if (totalDaysAutre > 0) stayTypeDistribution['Autre'] = totalDaysAutre;
+  createStayTypeDonutChart(stayTypeDistribution);
+
+  // Créer le graphique d'activité annuelle
+  if (Object.keys(yearlyDays).length > 0) {
+    createYearlyActivityChart(yearlyDays);
+  } else {
+    const yearlyCard = document.getElementById('yearly-activity-chart-card');
+    if (yearlyCard) yearlyCard.style.display = 'none';
+  }
+}
+
+// Graphique Donut de répartition par cadre d'animation
+function createStayTypeDonutChart(data) {
+  const canvas = document.getElementById('stayTypeChart');
+  const card = document.getElementById('stay-type-chart-card');
+  if (!canvas) return;
+
+  if (chartInstances['stayTypeChart']) {
+    chartInstances['stayTypeChart'].destroy();
+    chartInstances['stayTypeChart'] = null;
+  }
+
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+
+  if (labels.length === 0) {
+    if (card) card.style.display = 'none';
+    return;
+  }
+  if (card) card.style.display = 'flex';
+
+  const modernPalette = ['#d97706', '#ea580c', '#4f46e5', '#16a34a', '#9333ea', '#0d9488'];
+
+  chartInstances['stayTypeChart'] = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: modernPalette.slice(0, labels.length),
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 14,
+            usePointStyle: true,
+            font: { size: 12, family: "'Segoe UI', Roboto, sans-serif" }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function (ctx) {
+              const val = ctx.parsed;
+              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+              const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+              return ` ${ctx.label} : ${val} jours (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// Graphique Chronologique par année
+function createYearlyActivityChart(data) {
+  const canvas = document.getElementById('yearlyActivityChart');
+  const card = document.getElementById('yearly-activity-chart-card');
+  if (!canvas) return;
+
+  if (chartInstances['yearlyActivityChart']) {
+    chartInstances['yearlyActivityChart'].destroy();
+    chartInstances['yearlyActivityChart'] = null;
+  }
+
+  // Trier par année chronologique croissante
+  const sorted = Object.entries(data).sort((a, b) => parseInt(a[0], 10) - parseInt(b[0], 10));
+  const labels = sorted.map(e => e[0]);
+  const values = sorted.map(e => e[1]);
+
+  if (labels.length === 0) {
+    if (card) card.style.display = 'none';
+    return;
+  }
+  if (card) card.style.display = 'flex';
+
+  chartInstances['yearlyActivityChart'] = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Jours d'animation",
+        data: values,
+        backgroundColor: 'rgba(80, 100, 76, 0.85)',
+        borderColor: '#50644c',
+        borderWidth: 1.5,
+        borderRadius: 8,
+        hoverBackgroundColor: '#a6d866'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#f1f5f9' },
+          ticks: { precision: 0 }
+        },
+        x: {
+          grid: { display: false }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` Activité : ${ctx.parsed.y} jours d'animation en ${ctx.label}`
+          }
+        }
+      }
+    }
+  });
 }
 
 // Fonction pour calculer les statistiques des formations
@@ -355,8 +595,13 @@ function createChart(canvasId, data, titleText) {
   const labels = sortedData.map(entry => entry[0]);
   const values = sortedData.map(entry => entry[1]);
 
-  // Générer des couleurs
-  const colors = generateColors(labels.length);
+  // Palette moderne et harmonieuse
+  const modernPalette = [
+    '#50644c', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6',
+    '#ec4899', '#06b6d4', '#ea580c', '#14b8a6', '#6366f1',
+    '#84cc16', '#d97706', '#0284c7', '#059669', '#7c3aed'
+  ];
+  const colors = labels.map((_, i) => modernPalette[i % modernPalette.length]);
 
   // Créer et stocker le nouveau graphique
   chartInstances[canvasId] = new Chart(canvas, {
@@ -366,8 +611,9 @@ function createChart(canvasId, data, titleText) {
       datasets: [{
         data: values,
         backgroundColor: colors,
-        borderColor: colors.map(color => darkenColor(color, 0.2)),
-        borderWidth: 1
+        borderColor: colors,
+        borderWidth: 1,
+        borderRadius: 8
       }]
     },
     options: {
@@ -376,9 +622,13 @@ function createChart(canvasId, data, titleText) {
       scales: {
         y: {
           beginAtZero: true,
+          grid: { color: '#f1f5f9' },
           ticks: {
             precision: 0
           }
+        },
+        x: {
+          grid: { display: false }
         }
       },
       plugins: {
@@ -386,37 +636,16 @@ function createChart(canvasId, data, titleText) {
           display: false
         },
         title: {
-          display: true,
-          text: titleText
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.parsed.y} jours cumulés avec ${ctx.label}`
+          }
         }
       }
     }
   });
-}
-
-// Fonction pour générer des couleurs
-function generateColors(count) {
-  const baseColors = [
-    '#f39c12', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6',
-    '#1abc9c', '#d35400', '#2980b9', '#16a085', '#27ae60',
-    '#e67e22', '#c0392b', '#8e44ad', '#f1c40f', '#f0932b',
-    '#eb4d4b', '#6ab04c', '#4834d4', '#22a6b3', '#be2edd'
-  ];
-
-  return Array.from({ length: count }, (_, i) => baseColors[i % baseColors.length]);
-}
-
-// Fonction pour assombrir une couleur
-function darkenColor(color, amount) {
-  const r = parseInt(color.substring(1, 3), 16);
-  const g = parseInt(color.substring(3, 5), 16);
-  const b = parseInt(color.substring(5, 7), 16);
-
-  const newR = Math.max(0, Math.floor(r * (1 - amount))).toString(16).padStart(2, '0');
-  const newG = Math.max(0, Math.floor(g * (1 - amount))).toString(16).padStart(2, '0');
-  const newB = Math.max(0, Math.floor(b * (1 - amount))).toString(16).padStart(2, '0');
-
-  return `#${newR}${newG}${newB}`;
 }
 
 // Fonction pour calculer les statistiques des tranches d'âges
@@ -425,7 +654,6 @@ function calculateAgeGroupStatistics() {
   if (!experienceTable) return;
 
   const rows = experienceTable.querySelectorAll('tr[data-type]');
-  // Nouveau : tableau pour compter chaque âge de 3 à 17 ans
   const ageCounts = {};
   for (let age = 3; age <= 17; age++) {
     ageCounts[age] = 0;
@@ -481,28 +709,30 @@ function createAgeGroupChart(data) {
   const canvas = document.getElementById('ageGroupChart');
   if (!canvas) return;
 
-  // Détruire le graphique existant s'il existe
   if (chartInstances['ageGroupChart']) {
     chartInstances['ageGroupChart'].destroy();
     chartInstances['ageGroupChart'] = null;
   }
 
-  // Labels de 3 à 17 ans avec "ans"
   const labels = Object.keys(data).map(age => age + ' ans');
   const values = Object.values(data);
-  // Générer les couleurs (une différente par âge)
-  const colors = generateColors(labels.length);
 
-  // Créer et stocker le nouveau graphique
+  // Dégradé progressif de couleur pour les âges (petite enfance vers ados)
+  const agePalette = [
+    '#f87171', '#fb923c', '#fbbf24', '#facc15', '#a3e635',
+    '#4ade80', '#34d399', '#2dd4bf', '#38bdf8', '#60a5fa',
+    '#818cf8', '#a78bfa', '#c084fc', '#e879f9', '#f472b6'
+  ];
+
   chartInstances['ageGroupChart'] = new Chart(canvas, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [{
         data: values,
-        backgroundColor: colors,
-        borderColor: colors,
-        borderWidth: 1
+        backgroundColor: agePalette,
+        borderRadius: 6,
+        borderWidth: 0
       }]
     },
     options: {
@@ -511,19 +741,22 @@ function createAgeGroupChart(data) {
       scales: {
         y: {
           beginAtZero: true,
+          grid: { color: '#f1f5f9' },
           ticks: { precision: 0 }
+        },
+        x: {
+          grid: { display: false }
         }
       },
       plugins: {
         legend: { display: false },
-        title: { display: true, text: "Nombre d'expériences par âge" },
+        title: { display: false },
         tooltip: {
           callbacks: {
             label: function (context) {
-              // Récupère l'âge sans le " ans" pour l'affichage
               const age = context.label.replace(' ans', '');
               const nb = context.parsed.y;
-              return `Âge : ${age} ans — Nombre d'expériences : ${nb}`;
+              return ` ${nb} expérience${nb > 1 ? 's' : ''} avec des jeunes de ${age} ans`;
             }
           }
         }
