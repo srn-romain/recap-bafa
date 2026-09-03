@@ -574,6 +574,157 @@ function createExperienceRow(experience) {
 }
 
 /**
+ * Retourne une icône SVG vectorielle détaillée pour le type ou l'intitulé de la formation
+ * @param {string} title - Intitulé de la formation
+ * @param {string} type - Type (bafa, bafd, etc.)
+ * @returns {string} Code SVG
+ */
+function getFormationIconSvg(title, type) {
+  const t = (title || '').toLowerCase().trim();
+  const fType = (type || '').toLowerCase().trim();
+
+  // 1. Secourisme (PSC1, PSE1, PSE2, Assistant Sanitaire, AS)
+  if (t.includes('psc1') || t.includes('pse1') || t.includes('pse2') || t.includes('secours') || t.includes('sanitaire') || t.includes(' as') || t.startsWith('as ') || t === 'as') {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Secourisme">
+      <rect x="8" y="18" width="48" height="38" rx="6" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M22 18V10a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <rect x="27" y="26" width="10" height="22" rx="1.5" fill="#0f172a"/>
+      <rect x="21" y="32" width="22" height="10" rx="1.5" fill="#0f172a"/>
+      <path d="M14 37h7M43 37h7" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="48" cy="24" r="2" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 2. Aquatique & Nautique (Surveillant de Baignade, BSB, Canoë, Kayak, Voile)
+  if (t.includes('baignade') || t.includes('bsb') || t.includes('surveillant') || t.includes('canoë') || t.includes('canoe') || t.includes('kayak') || t.includes('voile') || t.includes('aquatique')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Surveillance Aquatique / Nautisme">
+      <circle cx="32" cy="28" r="20" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+      <circle cx="32" cy="28" r="10" fill="#0f172a" fill-opacity="0.1" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M32 8v10M32 38v10M12 28h10M42 28h10" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M8 54c6-3 10 3 16 0s10-3 16 0 10-3 16 0" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M12 59c6-3 10 3 16 0s10-3 16 0" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 3. Formateur (Formation de formateur BAFA / BAFD)
+  if (t.includes('formateur') || t.includes('formation de formateur')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Formation de Formateur">
+      <!-- Tableau de cours sur chevalet -->
+      <rect x="6" y="10" width="34" height="26" rx="2" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M12 28l6-6 5 4 9-9" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="32" cy="17" r="1.5" fill="#0f172a"/>
+      <path d="M12 32h14" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M13 36L8 56M33 36l5 20M23 36v18" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M10 36h26" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Formateur à droite avec pointeur -->
+      <circle cx="48" cy="20" r="5.5" fill="#ffffff" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M41 44c0-6 3.5-11 9-11 3.5 0 6.5 2 8 5" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M43 36l-8-5" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M36 32l-14-9" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M46 44v12M53 44v12" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 4. BAFD / Perfectionnement BAFD / Direction
+  if (t.includes('bafd') || fType === 'bafd' || t.includes('direction')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="BAFD / Direction">
+      <path d="M10 22h44v32a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V22z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M22 22V12a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M10 32h44" stroke="#0f172a" stroke-width="2"/>
+      <rect x="27" y="29" width="10" height="7" rx="1" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+      <circle cx="32" cy="45" r="5" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+      <polygon points="32,41 33.5,44 37,44.5 34,47 35,50.5 32,48.5 29,50.5 30,47 27,44.5 30.5,44" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 5. Ski & Glisse
+  if (t.includes('ski') || t.includes('glisse') || t.includes('neige')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Ski & Glisse">
+      <path d="M12 56L44 8c1-2 4-3 6-1s2 4 0 6L18 62c-2 2-5 1-6-1z" fill="#0f172a" fill-opacity="0.15" stroke="#0f172a" stroke-width="2"/>
+      <path d="M20 56L52 8c1-2 4-3 6-1s2 4 0 6L26 62c-2 2-5 1-6-1z" fill="#0f172a" fill-opacity="0.15" stroke="#0f172a" stroke-width="2"/>
+      <path d="M18 18l28 36M46 54l-4-4M18 18l-3 3" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="18" cy="18" r="2" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 6. Mer / Nautique
+  if (t.includes('mer') || t.includes('plage') || t.includes('océan') || t.includes('ocean')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Milieu Marin">
+      <path d="M24 52L27 16h10l3 36H24z" fill="#0f172a" fill-opacity="0.1" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M26 26h12M25 38h14" stroke="#0f172a" stroke-width="1.8"/>
+      <path d="M25 16l7-8 7 8" stroke="#0f172a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M8 56c6-3 10 3 16 0s10-3 16 0 10-3 16 0" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M14 12c3-2 6 0 8-2" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 7. Montagne / Rando / Escalade
+  if (t.includes('montagne') || t.includes('rando') || t.includes('escalade')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Milieu Montagnard">
+      <path d="M6 52L26 14l16 28 8-12 8 22H6z" fill="#0f172a" fill-opacity="0.1" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <polygon points="26,14 31,23 26,26 21,23" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+      <polygon points="50,30 53,36 50,38 47,36" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/>
+      <circle cx="48" cy="14" r="5" stroke="#0f172a" stroke-width="1.8" fill="#0f172a" fill-opacity="0.15"/>
+    </svg>`;
+  }
+
+  // 8. Spectacle / Expression / Théâtre / Arts
+  if (t.includes('spectacle') || t.includes('expression') || t.includes('théâtre') || t.includes('theatre') || t.includes('cirque') || t.includes('musique')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Spectacle & Expression">
+      <path d="M12 20c0-8 6-12 14-12s14 4 14 12c0 10-6 18-14 18s-14-8-14-18z" fill="#0f172a" fill-opacity="0.1" stroke="#0f172a" stroke-width="2.2"/>
+      <circle cx="20" cy="18" r="2.5" fill="#0f172a"/>
+      <circle cx="32" cy="18" r="2.5" fill="#0f172a"/>
+      <path d="M20 28c2 3 8 3 12 0" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M38 34c0-6 4-9 10-9s10 3 10 9c0 8-4 14-10 14s-10-6-10-14z" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+      <circle cx="43" cy="32" r="1.8" fill="#0f172a"/>
+      <circle cx="53" cy="32" r="1.8" fill="#0f172a"/>
+      <path d="M44 42c2-2 6-2 8 0" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 9. Nature / Environnement / Plein air
+  if (t.includes('environnement') || t.includes('nature') || t.includes('plein air') || t.includes('camp') || t.includes('mini-camp')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Environnement & Plein air">
+      <path d="M32 8c-9 0-16 7-16 16 0 5 2 9 6 12v16h20V36c4-3 6-7 6-12 0-9-7-16-16-16z" fill="#0f172a" fill-opacity="0.12" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M32 20v32M26 30l6-6 6 6M24 40l8-6 8 6" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 56h36" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 10. SNU (Tuteur de maisonnée)
+  if (t.includes('snu')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="SNU">
+      <path d="M32 6L14 14v16c0 14 8 24 18 28 10-4 18-14 18-28V14L32 6z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M32 10L18 16v14c0 11 6 19 14 23 8-4 14-12 14-23V16L32 10z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="1.2"/>
+      <polygon points="32,18 34.5,24 41,24.5 36,29 37.5,35 32,31.5 26.5,35 28,29 23,24.5 29.5,24" fill="#0f172a"/>
+      <path d="M23 41l9 5 9-5" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+
+  // 11. Autre (Formation diverse spécifique)
+  if (t === 'autre' || t.startsWith('autre') || t.includes('autre (')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Autre formation">
+      <path d="M10 16c8-3 18-3 22 2 4-5 14-5 22-2v36c-8-3-18-3-22 2-4-5-14-5-22-2V16z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M32 18v36" stroke="#0f172a" stroke-width="2"/>
+      <path d="M16 26c4-1 9-1 12 1M16 34c4-1 9-1 12 1M36 27c3-2 8-2 12-1M36 35c3-2 8-2 12-1" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="32,6 34,11 39,11.5 35.5,15 36.5,20 32,17.5 27.5,20 28.5,15 25,11.5 30,11" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 12. BAFA par défaut (Générale, Approfondissement, Qualification)
+  return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Formation BAFA">
+    <polygon points="32,10 60,22 32,34 4,22" fill="#0f172a" fill-opacity="0.2" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M14 26.5v12c0 6 8 10 18 10s18-4 18-10v-12" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M32 22c7 0 16 3 17 8v16" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="32" cy="22" r="2.5" fill="#0f172a"/>
+    <polygon points="46,46 52,46 50,56 48,56" fill="#0f172a"/>
+    <rect x="18" y="44" width="28" height="9" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+    <rect x="30" y="44" width="4" height="9" fill="#0f172a"/>
+    <circle cx="32" cy="48.5" r="3" fill="#0f172a"/>
+  </svg>`;
+}
+
+/**
  * Structure des données de formation
  */
 function createFormationRow(formation) {
@@ -639,7 +790,12 @@ function createFormationRow(formation) {
 
   // Colonne Intitulé
   const tdTitle = document.createElement('td');
-  tdTitle.textContent = formation.title || '';
+  if (formation.title && formation.title !== '-') {
+    const iconSvg = getFormationIconSvg(formation.title, formation.type);
+    tdTitle.innerHTML = `<span class="stay-type-wrapper">${iconSvg}<span class="stay-type-text">${formation.title}</span><span class="stay-type-spacer"></span></span>`;
+  } else {
+    tdTitle.textContent = formation.title || '';
+  }
   tr.appendChild(tdTitle);
 
   // Colonne Lieu
