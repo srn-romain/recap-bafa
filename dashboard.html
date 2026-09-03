@@ -228,21 +228,30 @@
                 </button>
             </p>
 
-            <h1 id="experiences" data-section-title="Expériences"
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <span class="section-title-text">1- Expériences</span>
-                <div style="display: flex; gap: 8px;">
+            <!-- En-tête de section 1 : Expériences -->
+            <div class="dashboard-section-header" id="experiences" data-section-title="Expériences">
+                <div class="section-header-left">
+                    <div class="section-step-badge">
+                        <span class="step-num">01</span>
+                        <i class="bi bi-briefcase-fill step-icon"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2 class="section-main-title">
+                            <span class="section-title-text">Expériences professionnelles</span>
+                        </h2>
+                        <p class="section-subtitle">Historique des séjours de vacances, accueils de loisirs et missions d'animation</p>
+                    </div>
+                </div>
+                <div class="section-actions-group">
                     <button id="pdf-btn-experiences"
-                        onclick="generatePDF('table-experiences', 'Récapitulatif des Expériences')" class="pdf-btn">
-                        <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-experiences-label">Générer
-                            PDF</span>
+                        onclick="generatePDF('table-experiences', 'Récapitulatif des Expériences')" class="section-action-btn btn-pdf">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-experiences-label">Générer PDF</span>
                     </button>
-                    <button onclick="generateImage('table-experiences', 'Récapitulatif des Expériences')" class="pdf-btn"
-                        style="background-color: #3b82f6;">
+                    <button onclick="generateImage('table-experiences', 'Récapitulatif des Expériences')" class="section-action-btn btn-img">
                         <i class="bi bi-image-fill"></i> <span id="img-btn-experiences-label">Générer Image</span>
                     </button>
                 </div>
-            </h1>
+            </div>
             <div class="tabs">
                 <div class="tab active" onclick="filterTable('all', 'table-experiences')">Toutes les expériences</div>
                 <div class="tab" onclick="filterTable('alsh', 'table-experiences')">Centre de loisir</div>
@@ -270,7 +279,9 @@
                     <!-- Les données sont chargées dynamiquement depuis Firebase -->
                 </table>
             </div>
-        </div><br>
+        </div>
+
+        <div class="section-divider"></div>
 
         <div id="section-formations" data-section="formations">
             <!-- Barre de recherche pour les formations -->
@@ -283,21 +294,30 @@
                 </button>
             </p>
 
-            <h1 id="formations" data-section-title="Formations"
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <span class="section-title-text">2- Formations</span>
-                <div style="display: flex; gap: 8px;">
+            <!-- En-tête de section 2 : Formations -->
+            <div class="dashboard-section-header" id="formations" data-section-title="Formations">
+                <div class="section-header-left">
+                    <div class="section-step-badge badge-formations">
+                        <span class="step-num">02</span>
+                        <i class="bi bi-mortarboard-fill step-icon"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2 class="section-main-title">
+                            <span class="section-title-text">Formations & Diplômes</span>
+                        </h2>
+                        <p class="section-subtitle">Brevets BAFA, BAFD, spécialisations et formations professionnelles</p>
+                    </div>
+                </div>
+                <div class="section-actions-group">
                     <button id="pdf-btn-formations"
-                        onclick="generatePDF('table-formations', 'Récapitulatif des Formations')" class="pdf-btn">
-                        <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-formations-label">Générer
-                            PDF</span>
+                        onclick="generatePDF('table-formations', 'Récapitulatif des Formations')" class="section-action-btn btn-pdf">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> <span id="pdf-btn-formations-label">Générer PDF</span>
                     </button>
-                    <button onclick="generateImage('table-formations', 'Récapitulatif des Formations')" class="pdf-btn"
-                        style="background-color: #3b82f6;">
+                    <button onclick="generateImage('table-formations', 'Récapitulatif des Formations')" class="section-action-btn btn-img">
                         <i class="bi bi-image-fill"></i> <span id="img-btn-formations-label">Générer Image</span>
                     </button>
                 </div>
-            </h1>
+            </div>
             <div class="tabs">
                 <div class="tab active" onclick="filterTable('all', 'table-formations')">Toutes les formations</div>
                 <div class="tab" onclick="filterTable('bafa', 'table-formations')">BAFA</div>
@@ -321,10 +341,25 @@
                     <!-- Les données sont chargées dynamiquement depuis Firebase -->
                 </table>
             </div>
-        </div><br>
+        </div>
 
         <div id="section-statistiques" data-section="statistiques">
-            <h1 id="statistiques" data-section-title="Statistiques"><span class="section-title-text">3- Statistiques</span></h1>
+            <div class="section-divider" id="stats-divider"></div>
+            <!-- En-tête de section 3 : Statistiques -->
+            <div class="dashboard-section-header" id="statistiques" data-section-title="Statistiques">
+                <div class="section-header-left">
+                    <div class="section-step-badge badge-stats">
+                        <span class="step-num">03</span>
+                        <i class="bi bi-bar-chart-line-fill step-icon"></i>
+                    </div>
+                    <div class="section-title-group">
+                        <h2 class="section-main-title">
+                            <span class="section-title-text">Statistiques & Analyses</span>
+                        </h2>
+                        <p class="section-subtitle">Indicateurs clés, graphiques et métriques détaillées de votre parcours</p>
+                    </div>
+                </div>
+            </div>
             <div class="tabs">
                 <div class="stats-container">
                     <div id="stats-mobile-message" class="mobile-notification">

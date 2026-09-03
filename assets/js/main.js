@@ -114,12 +114,19 @@ function calculateAllStatistics() {
   const hasExperiences = expSection && expSection.style.display !== 'none';
   const hasFormations = formSection && formSection.style.display !== 'none';
 
+  const sectionStats = document.getElementById('section-statistiques');
+  const divider = document.getElementById('stats-divider');
+
   if (!hasExperiences && !hasFormations) {
     if (mainTitle) mainTitle.style.display = 'none';
     if (container) container.style.display = 'none';
+    if (divider) divider.style.display = 'none';
+    if (sectionStats) sectionStats.style.display = 'none';
   } else {
-    if (mainTitle) mainTitle.style.display = 'block';
+    if (mainTitle) mainTitle.style.display = 'flex';
     if (container) container.style.display = 'block';
+    if (divider) divider.style.display = 'block';
+    if (sectionStats) sectionStats.style.display = 'block';
   }
 
   // Mettre à jour la visibilité des liens de la navbar
