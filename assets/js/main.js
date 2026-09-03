@@ -302,9 +302,9 @@ function extractDays(text) {
   if (normalizedText.includes('mercredis') || normalizedText.includes('samedis')) {
     return 36;
   }
-  // Cas spécial périscolaire (144 jours = 4 jours/semaine × 36 semaines)
-  if (normalizedText.includes('périscolaire') || normalizedText.includes('periscolaire')) {
-    return 144;
+  // Cas spécial périscolaire (140 jours = 4 jours/semaine × 36 semaines - 4 jours fériés en moyenne hors vacances)
+  if (normalizedText.includes('périscolaire') || normalizedText.includes('periscolaire') || normalizedText.includes('jours scolaires') || normalizedText.includes('scolaire')) {
+    return 140;
   }
 
   // Priorité 1 : Chercher "X jours" ou "X j" (inclut les décimaux)

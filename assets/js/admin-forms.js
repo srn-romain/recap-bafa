@@ -333,7 +333,7 @@ function toggleAlshDateFields() {
       // L'utilisateur demande "dans le champ durée '36' et disabled"
       if (durationInput) {
         durationInput.type = "number";
-        durationInput.value = isPeriscolaire ? "144" : "36";
+        durationInput.value = isPeriscolaire ? "140" : "36";
         durationInput.disabled = true;
       }
     } else {
