@@ -563,6 +563,191 @@ function generateColorGradient(startColor, endColor, steps) {
 # Barre de rechecherche dans les tableaux
 --------------------------------------------------------------*/
 
+/**
+ * ==============================================================
+ * # GESTIONNAIRE D'EN-TÊTE FLOTTANT AU SCROLL (Floating Sticky Header)
+ * ==============================================================
+ */
+class TableFloatingHeaderManager {
+  constructor(tableId) {
+    this.tableId = tableId;
+    this.table = null;
+    this.container = null;
+    this.floatingTable = null;
+    this.floatingTheadRow = null;
+    this.scrollContainer = null;
+    this.isVisible = false;
+    this.init();
+  }
+
+  init() {
+    this.table = document.getElementById(this.tableId);
+    if (!this.table) return;
+
+    this.scrollContainer = this.table.closest('.tabs');
+
+    // Écoute des événements de défilement et de redimensionnement
+    window.addEventListener('scroll', () => this.update(), { passive: true });
+    window.addEventListener('resize', () => this.update(), { passive: true });
+
+    if (this.scrollContainer) {
+      this.scrollContainer.addEventListener('scroll', () => {
+        if (this.isVisible && this.container) {
+          this.container.scrollLeft = this.scrollContainer.scrollLeft;
+        }
+      }, { passive: true });
+    }
+  }
+
+  createFloatingHeader() {
+    if (this.container) return;
+
+    const originalHeaderRow = this.table.querySelector('tr.always-visible');
+    if (!originalHeaderRow) return;
+
+    this.container = document.createElement('div');
+    this.container.className = 'floating-table-header-container';
+    this.container.id = `floating-header-${this.tableId}`;
+    this.container.style.display = 'none';
+
+    this.floatingTable = document.createElement('table');
+    this.floatingTheadRow = originalHeaderRow.cloneNode(true);
+
+    // Relier les clics de tri des colonnes sur l'en-tête flottant
+    const originalThs = originalHeaderRow.querySelectorAll('th');
+    const clonedThs = this.floatingTheadRow.querySelectorAll('th');
+    clonedThs.forEach((th, idx) => {
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', (e) => {
+        if (originalThs[idx]) {
+          originalThs[idx].click();
+          setTimeout(() => this.update(), 50);
+        }
+      });
+    });
+
+    this.floatingTable.appendChild(this.floatingTheadRow);
+    this.container.appendChild(this.floatingTable);
+    document.body.appendChild(this.container);
+  }
+
+  update() {
+    if (!this.table) {
+      this.table = document.getElementById(this.tableId);
+      if (!this.table) return;
+      this.scrollContainer = this.table.closest('.tabs');
+    }
+
+    // Vérifier si le tableau contient un minimum de 4 lignes visibles
+    const rows = this.table.getElementsByTagName('tr');
+    let visibleCount = 0;
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (r.classList.contains('no-results-row') || r.classList.contains('always-visible')) continue;
+      if (r.style.display !== 'none') visibleCount++;
+    }
+
+    if (visibleCount < 4) {
+      this.hide();
+      return;
+    }
+
+    const tableRect = this.table.getBoundingClientRect();
+    const originalHeaderRow = this.table.querySelector('tr.always-visible');
+    if (!originalHeaderRow) return;
+
+    const headerRect = originalHeaderRow.getBoundingClientRect();
+
+    // Récupérer la hauteur exacte de la navbar fixe
+    const navbar = document.getElementById('sticky-navbar');
+    const navBottom = navbar ? Math.max(navbar.getBoundingClientRect().bottom, 0) : 70;
+
+    // Afficher uniquement si l'en-tête réel est passé sous la navbar et que le corps du tableau est en cours de lecture
+    const shouldShow = headerRect.bottom <= navBottom && (tableRect.bottom - headerRect.height) > navBottom;
+
+    if (shouldShow) {
+      if (!this.container) {
+        this.createFloatingHeader();
+      }
+      this.syncDimensions(tableRect, navBottom);
+      this.show();
+    } else {
+      this.hide();
+    }
+  }
+
+  syncDimensions(tableRect, navBottom) {
+    if (!this.container || !this.floatingTable) return;
+
+    const scrollContainerRect = this.scrollContainer ? this.scrollContainer.getBoundingClientRect() : tableRect;
+
+    // Positionnement précis sous la navbar et alignement horizontal exact avec le conteneur du tableau
+    this.container.style.top = `${navBottom}px`;
+    this.container.style.left = `${scrollContainerRect.left}px`;
+    this.container.style.width = `${scrollContainerRect.width}px`;
+
+    // Largeur de la table flottante
+    this.floatingTable.style.width = `${tableRect.width}px`;
+    this.floatingTable.style.minWidth = `${tableRect.width}px`;
+    this.floatingTable.style.maxWidth = `${tableRect.width}px`;
+
+    // Synchronisation au sous-pixel près de la largeur et des marges internes de chaque colonne <th>
+    const originalThs = this.table.querySelectorAll('tr.always-visible th');
+    const clonedThs = this.floatingTheadRow.querySelectorAll('th');
+
+    originalThs.forEach((th, idx) => {
+      if (clonedThs[idx]) {
+        const thRect = th.getBoundingClientRect();
+        const thComputed = window.getComputedStyle(th);
+        clonedThs[idx].style.width = `${thRect.width}px`;
+        clonedThs[idx].style.minWidth = `${thRect.width}px`;
+        clonedThs[idx].style.maxWidth = `${thRect.width}px`;
+        clonedThs[idx].style.paddingLeft = thComputed.paddingLeft;
+        clonedThs[idx].style.paddingRight = thComputed.paddingRight;
+      }
+    });
+
+    // Synchronisation du scroll horizontal
+    if (this.scrollContainer) {
+      this.container.scrollLeft = this.scrollContainer.scrollLeft;
+    }
+  }
+
+  show() {
+    if (!this.isVisible && this.container) {
+      this.container.style.display = 'block';
+      this.isVisible = true;
+    }
+  }
+
+  hide() {
+    if (this.isVisible && this.container) {
+      this.container.style.display = 'none';
+      this.isVisible = false;
+    }
+  }
+}
+
+// Instances globales
+window.tableExpHeaderManager = null;
+window.tableFormHeaderManager = null;
+
+function updateStickyHeaderState(tableId) {
+  if (tableId === 'table-experiences' || !tableId) {
+    if (!window.tableExpHeaderManager) {
+      window.tableExpHeaderManager = new TableFloatingHeaderManager('table-experiences');
+    }
+    window.tableExpHeaderManager.update();
+  }
+  if (tableId === 'table-formations' || !tableId) {
+    if (!window.tableFormHeaderManager) {
+      window.tableFormHeaderManager = new TableFloatingHeaderManager('table-formations');
+    }
+    window.tableFormHeaderManager.update();
+  }
+}
+window.updateStickyHeaderState = updateStickyHeaderState;
+
 // Fonction de recherche dans les tableaux améliorée
 function setupSearch(searchInputId, tableId) {
   const searchInput = document.getElementById(searchInputId);
@@ -658,6 +843,9 @@ function setupSearch(searchInputId, tableId) {
         row.classList.add(index % 2 === 0 ? "even" : "odd");
       });
     }
+
+    // Mettre à jour l'en-tête sticky selon le nombre de résultats visibles
+    updateStickyHeaderState(table);
   });
 }
 
@@ -748,6 +936,9 @@ function filterTable(type, tableId) {
       if (imgLabel) imgLabel.textContent = `Image - ${filterName}`;
     }
   }
+
+  // Mettre à jour l'en-tête sticky selon le nombre de lignes visibles après filtrage
+  updateStickyHeaderState(table);
 }
 
 // Initialiser la recherche pour les deux tableaux quand le DOM est chargé
@@ -757,6 +948,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Ajouter la fonctionnalité de tri aux tableaux
   setupSortableTables();
+
+  // Initialiser les en-têtes flottants au scroll
+  setTimeout(() => {
+    updateStickyHeaderState();
+  }, 300);
 });
 
 /*--------------------------------------------------------------

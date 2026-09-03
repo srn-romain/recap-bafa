@@ -475,6 +475,7 @@ h1+.tabs+.tabs {
   border-radius: 0 0 8px 8px;
   padding: 0;
   overflow-x: auto;
+  overflow-y: clip;
   background: #fff;
 }
 
@@ -1389,8 +1390,8 @@ th.sortable:hover .sort-indicator.sort-neutral {
     border-radius: 8px;
     margin-top: 0;
     overflow-x: auto;
-    /* Permet le scroll horizontal sur mobile */
-    overflow-y: hidden;
+    /* Permet le scroll horizontal sur mobile tout en laissant l'en-tête sticky */
+    overflow-y: clip;
   }
 
   /* Assurer que le tableau peut dépasser la largeur sur mobile */
@@ -2283,6 +2284,50 @@ optgroup option {
   grid-column: 3;
   width: 24px;
 }
+
+/* ==============================================================
+   # EN-TÊTE FLOTTANT DU TABLEAU AU DÉFILEMENT (Floating Header)
+   ============================================================== */
+.floating-table-header-container {
+  position: fixed;
+  z-index: 500;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: none !important;
+  border-top: none !important;
+  background-color: #a6d866;
+  pointer-events: auto;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.floating-table-header-container table {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-collapse: collapse !important;
+  border: none !important;
+  table-layout: fixed !important;
+}
+
+.floating-table-header-container table th {
+  background-color: #a6d866 !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: 1px solid #ddd !important;
+  border-right: 1px solid #ddd !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  white-space: normal;
+}
+
+
+
+
 
 
 

@@ -1089,6 +1089,11 @@ async function loadDataFromFirebase() {
         }, 100);
       }
 
+      // Mettre à jour l'en-tête sticky des tableaux
+      if (typeof updateStickyHeaderState === 'function') {
+        updateStickyHeaderState();
+      }
+
       // Mettre à jour la visibilité des liens de la navbar après tout le chargement
       if (typeof window.updateNavbarLinksVisibility === 'function') {
         setTimeout(window.updateNavbarLinksVisibility, 300);
