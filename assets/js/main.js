@@ -1981,4 +1981,16 @@ window.addEventListener('resize', () => {
       }
     }
   }
+
+  const ageCanvas = document.getElementById('ageGroupChart');
+  if (ageCanvas) {
+    const scrollInner = ageCanvas.closest('.stats-chart-scroll-inner');
+    if (scrollInner) {
+      if (window.innerWidth <= 900) {
+        scrollInner.style.width = '640px';
+      } else {
+        scrollInner.style.width = '100%';
+      }
+    }
+  }
 });
