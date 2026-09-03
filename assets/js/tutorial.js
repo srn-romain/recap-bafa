@@ -156,12 +156,12 @@ const Tutorial = (function () {
                 <span style="font-size:0.8rem; color:#888;">${currentStep + 1}/${steps.length}</span>
             </div>
             <p style="margin:0; color:#555; text-align:left; font-size:0.95rem; line-height:1.5;">${step.content}</p>
-            <test style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
                 <button onclick="Tutorial.stop()" style="background:none; border:none; color:#888; cursor:pointer; font-size:0.85rem;">Passer</button>
                 <button onclick="Tutorial.next()" style="background:#f39c12; color:white; border:none; padding:8px 18px; border-radius:6px; cursor:pointer; font-weight:bold;">
                     ${currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}
                 </button>
-            </test>
+            </div>
         `;
 
         tooltip.style.display = 'flex';

@@ -51,9 +51,9 @@ body.modal-open {
 }
 
 /*--------------------------------------------------------------
-# Principale
+# Principale (Conteneur principal de la page)
 --------------------------------------------------------------*/
-div {
+.main-card {
   max-width: 1500px;
   margin: 0 auto;
   padding: 13px;
@@ -63,7 +63,7 @@ div {
   position: relative;
 }
 
-/* Exclure les modales de la règle ci-dessus */
+/* Exclure les modales de toute contrainte */
 .modal,
 .modal * {
   max-width: none;

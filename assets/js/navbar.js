@@ -34,9 +34,9 @@ document.addEventListener("DOMContentLoaded", function () {
     <nav id="sticky-navbar">
         <div class="nav-content">
             <!-- Profile Pic (Dynamic) -->
-            <test id="nav-profile-pic-container" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid white; display: none; margin-right: 10px;">
+            <div id="nav-profile-pic-container" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid white; display: none; margin-right: 10px;">
                 <img id="nav-profile-pic" src="" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
-            </test>
+            </div>
 
             <!-- Home Icon (Mobile) -->
             <a href="index.html" class="nav-item home-btn" title="Accueil" id="nav-home-btn">
@@ -49,15 +49,15 @@ document.addEventListener("DOMContentLoaded", function () {
             </a>
             
             <!-- Liens Sommaire (visible sur Dashboard) -->
-            <test id="nav-link-experiences" class="nav-item nav-toc-link" onclick="document.getElementById('experiences').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+            <div id="nav-link-experiences" class="nav-item nav-toc-link" onclick="document.getElementById('experiences').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
                 <i class="bi bi-briefcase"></i> <span class="nav-text">Expériences</span>
-            </test>
-            <test id="nav-link-formations" class="nav-item nav-toc-link" onclick="document.getElementById('formations').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+            </div>
+            <div id="nav-link-formations" class="nav-item nav-toc-link" onclick="document.getElementById('formations').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
                 <i class="bi bi-journal-text"></i> <span class="nav-text">Formations</span>
-            </test>
-            <test id="nav-link-stats" class="nav-item nav-toc-link" onclick="document.getElementById('statistiques').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
+            </div>
+            <div id="nav-link-stats" class="nav-item nav-toc-link" onclick="document.getElementById('statistiques').scrollIntoView({behavior: 'smooth'})" style="cursor: pointer;">
                 <i class="bi bi-bar-chart-line"></i> <span class="nav-text">Statistiques</span>
-            </test>
+            </div>
 
             <!-- LinkedIn (visible si connecté) -->
             <a id="linkedin-link" href="#" target="_blank" class="nav-item" title="LinkedIn" style="display: none;">
