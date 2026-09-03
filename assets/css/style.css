@@ -2218,46 +2218,73 @@ optgroup option {
   text-align: center;
 }
 
-/* Palette de tags avec couleur 100% identique pour les mêmes données */
-.tag-color-1 {
+/* Palette de tags pour les tranches d'âge (par groupe pédagogique d'âge) */
+.tag-age-petite-enfance { /* 3-6 ans (Rose) */
   background-color: #fff1f2;
   color: #e11d48;
   border-color: #ffe4e6;
 }
-.tag-color-2 {
-  background-color: #fff7ed;
-  color: #c2410c;
-  border-color: #ffedd5;
-}
-.tag-color-3 {
-  background-color: #fefce8;
-  color: #a16207;
-  border-color: #fef08a;
-}
-.tag-color-4 {
+.tag-age-enfance { /* 6-12 ans / 8-12 ans (Vert menthe) */
   background-color: #ecfdf5;
   color: #047857;
   border-color: #a7f3d0;
 }
-.tag-color-5 {
-  background-color: #f0fdfa;
-  color: #0f766e;
-  border-color: #ccfbf1;
+.tag-age-preado { /* 10-14 ans (Ambre doré) */
+  background-color: #fefce8;
+  color: #a16207;
+  border-color: #fef08a;
 }
-.tag-color-6 {
+.tag-age-ados { /* 14-17 ans (Bleu azur) */
   background-color: #f0f9ff;
   color: #0284c7;
   border-color: #bae6fd;
 }
-.tag-color-7 {
-  background-color: #eef2ff;
-  color: #4338ca;
-  border-color: #c7d2fe;
-}
-.tag-color-8 {
+.tag-age-adultes { /* 18+ / Adultes (Violet) */
   background-color: #faf5ff;
   color: #7e22ce;
   border-color: #e9d5ff;
 }
+
+/* ==============================================================
+   # ICÔNES MONOCHROME DES TYPES DE SÉJOUR (Tableau Dashboard)
+   ============================================================== */
+#table-experiences td:nth-child(7) {
+  text-align: center;
+  padding: 6px 8px;
+}
+
+.stay-type-wrapper {
+  display: grid;
+  grid-template-columns: 24px 1fr 24px;
+  align-items: center;
+  width: 100%;
+}
+
+.stay-type-icon {
+  grid-column: 1;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  max-width: 22px;
+  justify-self: start;
+  display: inline-block;
+  vertical-align: middle;
+  color: #0f172a; /* Noir / anthracite profond professionnel */
+}
+
+.stay-type-text {
+  grid-column: 2;
+  text-align: center;
+  justify-self: center;
+  line-height: 1.3;
+}
+
+.stay-type-spacer {
+  grid-column: 3;
+  width: 24px;
+}
+
+
+
 
 

@@ -147,19 +147,231 @@ function formatDateForDisplay(dateStr) {
 }
 
 /**
- * Retourne une classe de couleur déterministe basée sur le texte exact.
- * Deux données identiques auront TOUJOURS la même couleur.
+ * Détermine la classe de couleur logique et cohérente selon la tranche d'âge réelle.
+ * Les tranches d'âge sont réparties par groupe pédagogique :
+ * - Petite enfance (3-6 ans) : Rose
+ * - Enfance (6-12 ans / 8-12 ans) : Vert menthe
+ * - Pré-ados (10-14 ans) : Ambre doré
+ * - Adolescents (14-17 ans) : Bleu azur
+ * - Adultes / 18+ : Violet
  */
-function getDeterministicTagClass(text) {
-  if (!text) return '';
-  const str = text.trim().toLowerCase();
-  
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+function getAgeRangeTagClass(ageRange) {
+  if (!ageRange) return '';
+  const text = ageRange.trim().toLowerCase();
+  if (text === '-' || text === '?') return '';
+
+  if (text.includes('adulte') || text.includes('majeur') || text.includes('tous')) {
+    return 'tag-age-adultes';
   }
-  const colorIndex = (Math.abs(hash) % 8) + 1;
-  return `tag-color-${colorIndex}`;
+
+  const matches = text.match(/\d+/g);
+  if (matches && matches.length > 0) {
+    const minAge = parseInt(matches[0], 10);
+    const maxAge = matches.length > 1 ? parseInt(matches[1], 10) : minAge;
+
+    // Petite enfance : max <= 6 (ex: 3-5 ans, 4-6 ans, 3-6 ans)
+    if (maxAge <= 6) {
+      return 'tag-age-petite-enfance';
+    }
+    // Enfance : 6-12 ans, 6-10 ans, 8-12 ans
+    if (minAge <= 8 && maxAge <= 12) {
+      return 'tag-age-enfance';
+    }
+    // Pré-adolescents : 10-14 ans, 11-14 ans, 10-13 ans
+    if (minAge >= 9 && maxAge <= 14) {
+      return 'tag-age-preado';
+    }
+    // Adolescents : 12-17 ans, 14-17 ans, 15-17 ans
+    if (maxAge <= 17) {
+      return 'tag-age-ados';
+    }
+    // 18+ / Adultes
+    return 'tag-age-adultes';
+  }
+
+  return 'tag-age-enfance';
+}
+
+/**
+ * Retourne l'icône vectorielle monochrome (noir et blanc / pro) riche en détails associée au type de séjour.
+ */
+function getStayTypeIconSvg(stayType, expType) {
+  const st = (stayType || '').toLowerCase();
+  const et = (expType || '').toLowerCase();
+
+  // 1. Pension complète (Hébergement en fond + Couverts détaillés au premier plan)
+  if (st.includes('pension complète') || st.includes('pension complete')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Pension complète">
+      <path d="M12 24L32 8l20 16v32H12V24z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M42 16v-6h5v10" stroke="#0f172a" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="18" y="24" width="7" height="7" rx="1" stroke="#0f172a" stroke-width="1.8" fill="#ffffff"/>
+      <path d="M21.5 24v7M18 27.5h7" stroke="#0f172a" stroke-width="1.2"/>
+      <rect x="39" y="24" width="7" height="7" rx="1" stroke="#0f172a" stroke-width="1.8" fill="#ffffff"/>
+      <path d="M42.5 24v7M39 27.5h7" stroke="#0f172a" stroke-width="1.2"/>
+      <circle cx="32" cy="44" r="15" fill="#ffffff" stroke="#0f172a" stroke-width="2.2"/>
+      <circle cx="32" cy="44" r="12" fill="#0f172a" fill-opacity="0.06" stroke="#0f172a" stroke-width="1" stroke-dasharray="2 2"/>
+      <path d="M27 35v5a2 2 0 0 0 2 2v10a1 1 0 0 0 2 0V42a2 2 0 0 0 2-2v-5" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M27 35v4M29 35v4M31 35v4M33 35v4" stroke="#0f172a" stroke-width="1.2"/>
+      <path d="M37 35v17a1 1 0 0 0 2 0v-8c0-5-.5-9-2-9z" fill="#0f172a" stroke="#0f172a" stroke-width="1.2"/>
+    </svg>`;
+  }
+
+  // 2. Camping (Gestion libre / Camping - Tente canadienne détaillée avec haubans, ouverture et sapin)
+  if (st.includes('camping')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Camping">
+      <path d="M54 28l-5-7h3l-6-8-6 8h3l-5 7h4l-4 7h12l-4-7h4z" fill="#0f172a" opacity="0.25"/>
+      <rect x="44" y="35" width="2" height="6" fill="#0f172a" opacity="0.25"/>
+      <path d="M32 10L6 48h52L32 10z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M32 10v38" stroke="#0f172a" stroke-width="2.5"/>
+      <path d="M32 10L16 48h16V10z" fill="#0f172a" fill-opacity="0.25"/>
+      <path d="M32 10l-16 38" stroke="#0f172a" stroke-width="2" stroke-dasharray="2 2"/>
+      <path d="M32 24l-9 24h18l-9-24z" fill="#0f172a"/>
+      <path d="M6 48L2 54M58 48l4 6M32 10L48 54M32 10L16 54" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M2 54h60" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="2" cy="54" r="1.5" fill="#0f172a"/>
+      <circle cx="62" cy="54" r="1.5" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 3. Itinérance / Itinérant (Sac à dos de trekking avec tapis de sol, sangles, poches et bâton)
+  if (st.includes('itinéran') || st.includes('itineran') || et === 'itinerance') {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Itinérance">
+      <rect x="18" y="6" width="28" height="7" rx="3.5" fill="#0f172a" fill-opacity="0.15" stroke="#0f172a" stroke-width="2"/>
+      <path d="M24 6v7M40 6v7" stroke="#0f172a" stroke-width="1.5"/>
+      <rect x="16" y="14" width="32" height="42" rx="6" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.5"/>
+      <path d="M14 15c0-2 2-4 5-4h26c3 0 5 2 5 4v8H14v-8z" fill="#0f172a" fill-opacity="0.2" stroke="#0f172a" stroke-width="2"/>
+      <path d="M26 19h12" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M23 23v28M41 23v28" stroke="#0f172a" stroke-width="1.8"/>
+      <rect x="21.5" y="32" width="3" height="4" rx="0.5" fill="#0f172a"/>
+      <rect x="39.5" y="32" width="3" height="4" rx="0.5" fill="#0f172a"/>
+      <rect x="22" y="38" width="20" height="15" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+      <path d="M27 42h10" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M16 36h-3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3M48 36h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M9 12l2 44" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="9" cy="12" r="1.5" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 4. Gestion libre (Maison avec cuisine autonome & faitout avec vapeur)
+  if (st.includes('gestion libre')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Gestion libre">
+      <path d="M8 26L32 8l24 18v30a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V26z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M44 17v-8h5v12" stroke="#0f172a" stroke-width="2"/>
+      <path d="M46 5c-1-2 1-3 0-4" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="32" cy="20" r="4" stroke="#0f172a" stroke-width="1.5" fill="#ffffff"/>
+      <path d="M32 16v8M28 20h8" stroke="#0f172a" stroke-width="1"/>
+      <circle cx="32" cy="43" r="13" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+      <path d="M23 41h18a1 1 0 0 1 1 1v6a3 3 0 0 1-3 3H25a3 3 0 0 1-3-3v-6a1 1 0 0 1 1-1z" fill="#0f172a" fill-opacity="0.2" stroke="#0f172a" stroke-width="1.8"/>
+      <path d="M22 43h-2M42 43h2" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M21 41h22" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M30 39h4" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M28 35c0-2 2-2 2-4M34 35c0-2 2-2 2-4" stroke="#0f172a" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 5. ALSH (Centre de loisirs - Soleil radieux & palette artistique avec pinceau)
+  if (st.includes('alsh') || st.includes('loisir') || et === 'alsh') {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="ALSH">
+      <circle cx="44" cy="20" r="9" fill="#0f172a" fill-opacity="0.15" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M44 7v3M44 30v3M31 20h3M54 20h3M35 11l2 2M51 27l2 2M35 29l2-2M51 13l2-2" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M12 40c0-11 9-19 20-19 9 0 16 6 16 14 0 5-3 8-7 8h-3c-2 0-3 1.5-3 3.5 0 2 1.5 3.5 1.5 5.5 0 4-4 8-10 8-8 0-14-6-14-14z" fill="#ffffff" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="21" cy="34" r="2.5" fill="#0f172a"/>
+      <circle cx="29" cy="29" r="2.5" fill="#0f172a"/>
+      <circle cx="38" cy="32" r="2.5" fill="#0f172a"/>
+      <circle cx="23" cy="47" r="3.5" stroke="#0f172a" stroke-width="1.8" fill="#ffffff"/>
+      <path d="M14 58l22-22" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M11 61l3-3" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 6. Périscolaire / Péri-scolaire (École avec tour clocher, horloge scolaire & doubles portes)
+  if (st.includes('péri') || st.includes('peri') || st.includes('scolaire') || et === 'periscolaire') {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Périscolaire">
+      <path d="M8 32L32 16l24 16v24a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V32z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M26 18V6h12v12" stroke="#0f172a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M23 6l9-5 9 5" stroke="#0f172a" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M32 9v5" stroke="#0f172a" stroke-width="2"/>
+      <circle cx="32" cy="30" r="9" fill="#ffffff" stroke="#0f172a" stroke-width="2.2"/>
+      <path d="M32 24v6l4 2.5" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="32" cy="30" r="1.5" fill="#0f172a"/>
+      <rect x="27" y="44" width="10" height="14" rx="1" stroke="#0f172a" stroke-width="2" fill="#ffffff"/>
+      <path d="M32 44v14" stroke="#0f172a" stroke-width="1.5"/>
+      <path d="M23 58h18" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 7. Classe découverte (Boussole d'exploration avec rose des vents, aiguille & monts)
+  if (st.includes('classe') || st.includes('découverte') || st.includes('decouverte')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Classe découverte">
+      <path d="M4 42L22 18l14 18 10-12 14 18H4z" fill="#0f172a" fill-opacity="0.1" stroke="#0f172a" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="32" cy="36" r="19" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+      <circle cx="32" cy="36" r="15" fill="#0f172a" fill-opacity="0.05" stroke="#0f172a" stroke-width="1" stroke-dasharray="2 2"/>
+      <circle cx="32" cy="13" r="4" stroke="#0f172a" stroke-width="2" fill="#ffffff"/>
+      <path d="M32 23v3M32 46v3M19 36h3M42 36h3" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+      <polygon points="32,23 35.5,36 32,33 28.5,36" fill="#0f172a"/>
+      <polygon points="32,49 35.5,36 32,39 28.5,36" stroke="#0f172a" stroke-width="1.5" fill="#ffffff"/>
+      <circle cx="32" cy="36" r="2.5" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 8. Scout (Feu de camp scout détaillé avec bûches croisées, cercle de pierres et étincelles)
+  if (st.includes('scout') || et === 'scout') {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Scout">
+      <path d="M8 52l48-16M56 52L8 36" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M8 52l48-16M56 52L8 36" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+      <ellipse cx="32" cy="54" rx="22" ry="5" stroke="#0f172a" stroke-width="2" fill="#0f172a" fill-opacity="0.1"/>
+      <path d="M32 8c4 8 13 14 13 24 0 9-7 16-13 16s-13-7-13-16c0-7 6-13 8-18 1 3 2 5 5 5-2-4-2-7 0-11z" fill="#0f172a" fill-opacity="0.2" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M32 22c2 4 7 7 7 12 0 4-3 8-7 8s-7-4-7-8c0-4 4-7 5-9 0 2 1 3 2 3-1-2-1-4 0-6z" fill="#0f172a"/>
+      <circle cx="24" cy="12" r="1.5" fill="#0f172a"/>
+      <circle cx="42" cy="10" r="1.5" fill="#0f172a"/>
+      <circle cx="38" cy="4" r="1.5" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 9. SNU (Insigne / Bouclier officiel avec couronne de laurier, étoile & chevron)
+  if (st.includes('snu')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="SNU">
+      <path d="M12 42c-4-8-3-18 2-24M52 42c4-8 3-18-2-24" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="10" cy="24" r="2" fill="#0f172a"/>
+      <circle cx="8" cy="32" r="2" fill="#0f172a"/>
+      <circle cx="10" cy="40" r="2" fill="#0f172a"/>
+      <circle cx="54" cy="24" r="2" fill="#0f172a"/>
+      <circle cx="56" cy="32" r="2" fill="#0f172a"/>
+      <circle cx="54" cy="40" r="2" fill="#0f172a"/>
+      <path d="M32 6L14 14v16c0 14 8 24 18 28 10-4 18-14 18-28V14L32 6z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M32 10L18 16v14c0 11 6 19 14 23 8-4 14-12 14-23V16L32 10z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="1.2"/>
+      <polygon points="32,18 34.5,24 41,24.5 36,29 37.5,35 32,31.5 26.5,35 28,29 23,24.5 29.5,24" fill="#0f172a"/>
+      <path d="M23 41l9 5 9-5" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+
+  // 10. Formation BAFA / BAFD (Toque universitaire, pompon à frange & parchemin avec ruban)
+  if (st.includes('formation') || st.includes('bafa') || st.includes('bafd')) {
+    return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Formation">
+      <polygon points="32,10 60,22 32,34 4,22" fill="#0f172a" fill-opacity="0.2" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M14 26.5v12c0 6 8 10 18 10s18-4 18-10v-12" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M32 22c7 0 16 3 17 8v16" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="32" cy="22" r="2.5" fill="#0f172a"/>
+      <polygon points="46,46 52,46 50,56 48,56" fill="#0f172a"/>
+      <rect x="18" y="44" width="28" height="9" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+      <rect x="30" y="44" width="4" height="9" fill="#0f172a"/>
+      <circle cx="32" cy="48.5" r="3" fill="#0f172a"/>
+    </svg>`;
+  }
+
+  // 11. Défaut (Chalet de colonie avec drapeau, fenêtres à croisillons & porche)
+  return `<svg class="stay-type-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" title="Séjour">
+    <circle cx="48" cy="18" r="7" stroke="#0f172a" stroke-width="1.8" fill="#0f172a" fill-opacity="0.1"/>
+    <path d="M6 30L32 10l26 20v26a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V30z" fill="#0f172a" fill-opacity="0.08" stroke="#0f172a" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M4 29l28-21 28 21" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="16" y="32" width="10" height="9" rx="1" stroke="#0f172a" stroke-width="1.8" fill="#ffffff"/>
+    <path d="M21 32v9M16 36.5h10" stroke="#0f172a" stroke-width="1.2"/>
+    <rect x="38" y="32" width="10" height="9" rx="1" stroke="#0f172a" stroke-width="1.8" fill="#ffffff"/>
+    <path d="M43 32v9M38 36.5h10" stroke="#0f172a" stroke-width="1.2"/>
+    <rect x="26" y="45" width="12" height="13" stroke="#0f172a" stroke-width="2" fill="#ffffff"/>
+    <path d="M24 45h16" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M32 10V2l10 4-10 4" stroke="#0f172a" stroke-width="1.8" fill="#0f172a" stroke-linejoin="round"/>
+  </svg>`;
 }
 
 function createExperienceRow(experience) {
@@ -302,7 +514,12 @@ function createExperienceRow(experience) {
 
   // Colonne Type de séjour
   const tdStayType = document.createElement('td');
-  tdStayType.textContent = experience.stayType || '';
+  if (experience.stayType && experience.stayType !== '-') {
+    const iconSvg = getStayTypeIconSvg(experience.stayType, experience.type);
+    tdStayType.innerHTML = `<span class="stay-type-wrapper">${iconSvg}<span class="stay-type-text">${experience.stayType}</span><span class="stay-type-spacer"></span></span>`;
+  } else {
+    tdStayType.textContent = experience.stayType || '';
+  }
   tr.appendChild(tdStayType);
 
   // Colonne Intitulé du poste
@@ -332,7 +549,7 @@ function createExperienceRow(experience) {
   const tdAgeRange = document.createElement('td');
   if (experience.ageRange && experience.ageRange !== '-' && experience.ageRange !== '?') {
     const span = document.createElement('span');
-    span.className = `cell-tag ${getDeterministicTagClass(experience.ageRange)}`;
+    span.className = `cell-tag ${getAgeRangeTagClass(experience.ageRange)}`;
     span.textContent = experience.ageRange;
     tdAgeRange.appendChild(span);
   } else {
