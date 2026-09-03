@@ -684,7 +684,7 @@
         demande possible (aucun message ne vous sera transmis pour vous dire si c'est accepté ou non).
       </p>
 
-      <!-- Section Recherche Profil -->
+      <!-- Section Recherche Profil (Rechercher un animateur) -->
       <section id="search-section" style="text-align: center; padding: 40px 20px;">
         <h2 style="color: #333; margin-bottom: 10px;"><i class="bi bi-search"></i> Rechercher un animateur</h2>
         <p style="color: #666; margin-bottom: 25px;">Recherchez un animateur ci-dessous. S’il est inscrit sur la
@@ -708,6 +708,46 @@
 
         <div id="search-results" style="display: none; margin-top: 30px; min-height: 20px;"></div>
       </section>
+
+      <!-- Section directeur (Explorer les profils publics) -->
+      <section id="user-list-section" class="director-section-card" style="display: none;">
+        <div class="director-section-header">
+          <div class="director-badge">
+            <i class="bi bi-shield-check"></i> Espace Recrutement Directeur
+          </div>
+          <h2><i class="bi bi-people-fill" style="color: #50644c;"></i> Explorer les profils publics d'animateurs</h2>
+          <p class="director-subtitle">
+            Consultez les parcours d'animation et découvrez les profils partagés par les animateurs et animatrices inscrits sur la plateforme.
+          </p>
+          <div class="director-filter-box">
+            <i class="bi bi-search director-filter-icon"></i>
+            <input type="text" id="director-quick-filter" class="director-filter-input" placeholder="Filtrer les profils par prénom, nom ou email..."
+              oninput="filterPublicUsers(this.value)">
+          </div>
+          <div id="director-relinquish-container" style="margin-top: 14px;">
+            <button type="button" onclick="relinquishDirectorRole()" 
+              style="background: transparent; border: 1px dashed #d97706; color: #b45309; font-size: 0.78rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
+              onmouseover="this.style.background='#fef3c7'; this.style.color='#92400e';"
+              onmouseout="this.style.background='transparent'; this.style.color='#b45309';">
+              <i class="bi bi-person-dash"></i> Renoncer au statut Directeur (repasser Animateur)
+            </button>
+          </div>
+        </div>
+
+        <div id="user-list-container" class="user-list-grid">
+          <!-- Rempli par JS -->
+        </div>
+
+        <div id="pagination-controls" class="pagination-container" style="display: none;">
+          <button id="prev-page" class="pagination-btn" onclick="changePage(-1)">
+            <i class="bi bi-chevron-left"></i> Précédent
+          </button>
+          <span id="page-info" class="pagination-info">Page 1 / 1</span>
+          <button id="next-page" class="pagination-btn" onclick="changePage(1)">
+            Suivant <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </section>
     </section>
 
     <div id="contact-overlay" style="inset:0; z-index:9998; display:flex; align-items:center; justify-content:center;">
@@ -730,46 +770,6 @@
         <i class="bi bi-shield-check"></i> Politique de confidentialité & RGPD
       </button>
     </p>
-
-    <!-- Section directeur -->
-    <section id="user-list-section" class="director-section-card" style="display: none;">
-      <div class="director-section-header">
-        <div class="director-badge">
-          <i class="bi bi-shield-check"></i> Espace Recrutement Directeur
-        </div>
-        <h2><i class="bi bi-people-fill" style="color: #50644c;"></i> Explorer les profils publics d'animateurs</h2>
-        <p class="director-subtitle">
-          Consultez les parcours d'animation et découvrez les profils partagés par les animateurs et animatrices inscrits sur la plateforme.
-        </p>
-        <div class="director-filter-box">
-          <i class="bi bi-search director-filter-icon"></i>
-          <input type="text" id="director-quick-filter" class="director-filter-input" placeholder="Filtrer les profils par prénom, nom ou email..."
-            oninput="filterPublicUsers(this.value)">
-        </div>
-        <div id="director-relinquish-container" style="margin-top: 14px;">
-          <button type="button" onclick="relinquishDirectorRole()" 
-            style="background: transparent; border: 1px dashed #d97706; color: #b45309; font-size: 0.78rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
-            onmouseover="this.style.background='#fef3c7'; this.style.color='#92400e';"
-            onmouseout="this.style.background='transparent'; this.style.color='#b45309';">
-            <i class="bi bi-person-dash"></i> Renoncer au statut Directeur (repasser Animateur)
-          </button>
-        </div>
-      </div>
-
-      <div id="user-list-container" class="user-list-grid">
-        <!-- Rempli par JS -->
-      </div>
-
-      <div id="pagination-controls" class="pagination-container" style="display: none;">
-        <button id="prev-page" class="pagination-btn" onclick="changePage(-1)">
-          <i class="bi bi-chevron-left"></i> Précédent
-        </button>
-        <span id="page-info" class="pagination-info">Page 1 / 1</span>
-        <button id="next-page" class="pagination-btn" onclick="changePage(1)">
-          Suivant <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
-    </section>
     <br>
   </div>
 
