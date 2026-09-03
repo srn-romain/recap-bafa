@@ -1363,6 +1363,20 @@ table tr.even {
   display: block;
 }
 
+.stats-chart-scroll-inner {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  min-width: 100%;
+  display: block;
+}
+
+.stats-chart-scroll-inner canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
 .stats-chart-canvas-wrapper::-webkit-scrollbar {
   height: 6px;
 }
@@ -1389,19 +1403,6 @@ table tr.even {
   .stats-chart-canvas-wrapper {
     height: 290px;
     padding-bottom: 6px;
-  }
-
-  /* Largeur minimale sur mobile pour conserver des barres et des libellés nets, sans tassement */
-  #organizationChart,
-  #ageGroupChart,
-  #yearlyActivityChart,
-  #formationOrganizationChart {
-    min-width: 520px !important;
-  }
-
-  /* Le graphique circulaire Donut reste centré et adapté sans scroll forcé */
-  #stayTypeChart {
-    min-width: 100% !important;
   }
 
   .stats-kpi-val {

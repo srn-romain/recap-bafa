@@ -468,6 +468,18 @@ function createYearlyActivityChart(data) {
   }
   if (card) card.style.display = 'flex';
 
+  // Dimensionner le conteneur intérieur pour un scroll net et sans déformation
+  const scrollInner = canvas.closest('.stats-chart-scroll-inner') || canvas.parentElement;
+  if (scrollInner) {
+    if (window.innerWidth <= 900) {
+      scrollInner.style.width = `${Math.max(520, labels.length * 60)}px`;
+    } else if (labels.length > 10) {
+      scrollInner.style.width = `${labels.length * 65}px`;
+    } else {
+      scrollInner.style.width = '100%';
+    }
+  }
+
   chartInstances['yearlyActivityChart'] = new Chart(canvas, {
     type: 'bar',
     data: {
@@ -479,6 +491,7 @@ function createYearlyActivityChart(data) {
         borderColor: '#50644c',
         borderWidth: 1.5,
         borderRadius: 8,
+        maxBarThickness: 34,
         hoverBackgroundColor: '#a6d866'
       }]
     },
@@ -489,10 +502,15 @@ function createYearlyActivityChart(data) {
         y: {
           beginAtZero: true,
           grid: { color: '#f1f5f9' },
-          ticks: { precision: 0 }
+          ticks: { precision: 0, font: { size: 11 } }
         },
         x: {
-          grid: { display: false }
+          grid: { display: false },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            font: { size: 12, weight: '600' }
+          }
         }
       },
       plugins: {
@@ -637,6 +655,18 @@ function createChart(canvasId, data, titleText) {
   ];
   const colors = labels.map((_, i) => modernPalette[i % modernPalette.length]);
 
+  // Dimensionner le conteneur intérieur pour un défilement propre sans étirement
+  const scrollInner = canvas.closest('.stats-chart-scroll-inner') || canvas.parentElement;
+  if (scrollInner) {
+    if (window.innerWidth <= 900) {
+      scrollInner.style.width = `${Math.max(520, labels.length * 62)}px`;
+    } else if (canvasId === 'organizationChart' && labels.length >= 16) {
+      scrollInner.style.width = `${labels.length * 68}px`;
+    } else {
+      scrollInner.style.width = '100%';
+    }
+  }
+
   // Créer et stocker le nouveau graphique
   chartInstances[canvasId] = new Chart(canvas, {
     type: 'bar',
@@ -647,7 +677,8 @@ function createChart(canvasId, data, titleText) {
         backgroundColor: colors,
         borderColor: colors,
         borderWidth: 1,
-        borderRadius: 8
+        borderRadius: 8,
+        maxBarThickness: 32
       }]
     },
     options: {
@@ -658,11 +689,22 @@ function createChart(canvasId, data, titleText) {
           beginAtZero: true,
           grid: { color: '#f1f5f9' },
           ticks: {
-            precision: 0
+            precision: 0,
+            font: { size: 11 }
           }
         },
         x: {
-          grid: { display: false }
+          grid: { display: false },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 45,
+            minRotation: 25,
+            font: { size: 11, family: "'Segoe UI', Roboto, sans-serif" },
+            callback: function (val, index) {
+              const raw = labels[index] || '';
+              return raw.length > 18 ? raw.substring(0, 16) + '…' : raw;
+            }
+          }
         }
       },
       plugins: {
@@ -751,6 +793,16 @@ function createAgeGroupChart(data) {
   const labels = Object.keys(data).map(age => age + ' ans');
   const values = Object.values(data);
 
+  // Dimensionner le conteneur intérieur : scroll uniquement sur mobile/téléphone (largeur 640px)
+  const scrollInner = canvas.closest('.stats-chart-scroll-inner') || canvas.parentElement;
+  if (scrollInner) {
+    if (window.innerWidth <= 900) {
+      scrollInner.style.width = '640px';
+    } else {
+      scrollInner.style.width = '100%';
+    }
+  }
+
   // Dégradé progressif de couleur pour les âges (petite enfance vers ados)
   const agePalette = [
     '#f87171', '#fb923c', '#fbbf24', '#facc15', '#a3e635',
@@ -766,7 +818,8 @@ function createAgeGroupChart(data) {
         data: values,
         backgroundColor: agePalette,
         borderRadius: 6,
-        borderWidth: 0
+        borderWidth: 0,
+        maxBarThickness: 28
       }]
     },
     options: {
@@ -776,10 +829,15 @@ function createAgeGroupChart(data) {
         y: {
           beginAtZero: true,
           grid: { color: '#f1f5f9' },
-          ticks: { precision: 0 }
+          ticks: { precision: 0, font: { size: 11 } }
         },
         x: {
-          grid: { display: false }
+          grid: { display: false },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            font: { size: 11, weight: '500' }
+          }
         }
       },
       plugins: {
@@ -1891,3 +1949,36 @@ async function generateImage(tableId, title) {
     }
   }
 }
+
+// Réajuster les largeurs des conteneurs de graphiques lors du redimensionnement de la fenêtre
+window.addEventListener('resize', () => {
+  const orgCanvas = document.getElementById('organizationChart');
+  if (orgCanvas) {
+    const scrollInner = orgCanvas.closest('.stats-chart-scroll-inner');
+    const labelsCount = chartInstances['organizationChart']?.data?.labels?.length || 0;
+    if (scrollInner) {
+      if (window.innerWidth <= 900) {
+        scrollInner.style.width = `${Math.max(520, labelsCount * 62)}px`;
+      } else if (labelsCount >= 16) {
+        scrollInner.style.width = `${labelsCount * 68}px`;
+      } else {
+        scrollInner.style.width = '100%';
+      }
+    }
+  }
+
+  const yearCanvas = document.getElementById('yearlyActivityChart');
+  if (yearCanvas) {
+    const scrollInner = yearCanvas.closest('.stats-chart-scroll-inner');
+    const yearsCount = chartInstances['yearlyActivityChart']?.data?.labels?.length || 0;
+    if (scrollInner) {
+      if (window.innerWidth <= 900) {
+        scrollInner.style.width = `${Math.max(520, yearsCount * 60)}px`;
+      } else if (yearsCount > 10) {
+        scrollInner.style.width = `${yearsCount * 65}px`;
+      } else {
+        scrollInner.style.width = '100%';
+      }
+    }
+  }
+});
