@@ -456,8 +456,47 @@
         ];
         let changelogIndex = 0;
 
+        // Calcul intelligent de la taille du prochain lot (évite les orphelins et équilibre les étapes)
+        function getSmartBatchSize() {
+          const remaining = changelogVersions.length - changelogIndex;
+          if (remaining <= 0) return 0;
+          if (remaining <= 5) return remaining; // Si 5 ou moins restants, on les affiche tous d'un coup
+          // Découpage équilibré en 2 ou 3 étapes optimales
+          const targetBatches = Math.min(3, Math.max(1, Math.round(remaining / 4.5)));
+          return Math.ceil(remaining / targetBatches);
+        }
+
+        function updateChangelogControls() {
+          const remaining = changelogVersions.length - changelogIndex;
+          const prevBtn = document.getElementById('changelog-prev-btn');
+          const collapseBtn = document.getElementById('changelog-collapse-btn');
+          const textSpan = document.getElementById('changelog-prev-text');
+
+          if (collapseBtn) {
+            collapseBtn.style.display = changelogIndex > 0 ? 'inline-flex' : 'none';
+          }
+
+          if (prevBtn) {
+            if (remaining <= 0) {
+              prevBtn.style.display = 'none';
+            } else {
+              prevBtn.style.display = 'inline-flex';
+              const nextBatch = getSmartBatchSize();
+              if (textSpan) {
+                if (changelogIndex === 0) {
+                  textSpan.textContent = `Voir les versions précédentes (+${nextBatch})`;
+                } else if (nextBatch === remaining) {
+                  textSpan.textContent = `Voir les ${remaining} dernières versions`;
+                } else {
+                  textSpan.textContent = `Voir +${nextBatch} versions (${remaining} restantes)`;
+                }
+              }
+            }
+          }
+        }
+
         function revealPreviousVersion() {
-          const batchSize = 4;
+          const batchSize = getSmartBatchSize();
           for (let i = 0; i < batchSize; i++) {
             if (changelogIndex >= changelogVersions.length) break;
             
@@ -469,7 +508,7 @@
               el.style.transform = 'translateY(-6px)';
               
               const currentEl = el;
-              const delay = i * 60;
+              const delay = i * 50;
               
               setTimeout(() => {
                 requestAnimationFrame(() => {
@@ -482,25 +521,7 @@
             changelogIndex++;
           }
 
-          // Rendre le bouton Replier disponible dès qu'une version est affichée
-          const collapseBtn = document.getElementById('changelog-collapse-btn');
-          if (collapseBtn && changelogIndex > 0) {
-            collapseBtn.style.display = 'inline-flex';
-          }
-
-          // Mettre à jour le bouton de chargement
-          const prevBtn = document.getElementById('changelog-prev-btn');
-          const remaining = changelogVersions.length - changelogIndex;
-          if (prevBtn) {
-            if (remaining <= 0) {
-              prevBtn.style.display = 'none';
-            } else {
-              const textSpan = document.getElementById('changelog-prev-text');
-              if (textSpan) {
-                textSpan.textContent = `Voir plus de versions (${remaining} restantes)`;
-              }
-            }
-          }
+          updateChangelogControls();
         }
 
         function collapseAllVersions() {
@@ -517,23 +538,19 @@
                   el.style.opacity = '';
                   el.style.transform = '';
                 }, 200);
-              }, i * 25);
+              }, i * 20);
             }
           });
 
-          // Réinitialiser l'état et réafficher le bouton d'ouverture
+          // Réinitialiser l'état et rafraîchir les boutons
           changelogIndex = 0;
           setTimeout(() => {
-            const prevBtn = document.getElementById('changelog-prev-btn');
-            if (prevBtn) {
-              prevBtn.style.display = 'inline-flex';
-              const textSpan = document.getElementById('changelog-prev-text');
-              if (textSpan) textSpan.textContent = "Voir les versions précédentes";
-            }
-            const collapseBtn = document.getElementById('changelog-collapse-btn');
-            if (collapseBtn) collapseBtn.style.display = 'none';
+            updateChangelogControls();
           }, 200);
         }
+
+        // Initialisation du libellé du bouton au chargement
+        document.addEventListener('DOMContentLoaded', updateChangelogControls);
       </script>
 
       <!-- Cartes de fonctionnalités -->
