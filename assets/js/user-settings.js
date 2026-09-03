@@ -308,7 +308,7 @@ function getSettingsState() {
         publiclyVisible: document.getElementById('settings-public-visibility')?.checked || false,
         emailVisible: document.getElementById('settings-email-visibility')?.checked || false,
         isPrivate: document.getElementById('settings-is-private')?.checked || false,
-        stickyHeader: document.getElementById('settings-sticky-header')?.checked ?? true,
+        stickyHeader: document.getElementById('settings-sticky-header')?.checked || false,
         animators: document.getElementById('settings-animators-count')?.value || '',
         directors: document.getElementById('settings-directors-count')?.value || '',
         trainers: document.getElementById('settings-trainers-count')?.value || ''
@@ -375,10 +375,10 @@ window.openSettingsModal = async function () {
                 isPrivateInput.checked = data.isPrivate === true; // Par défaut false
             }
 
-            // Charger la préférence de défilement de l'en-tête
+            // Charger la préférence de défilement de l'en-tête (par défaut false)
             const stickyHeaderInput = document.getElementById('settings-sticky-header');
             if (stickyHeaderInput) {
-                stickyHeaderInput.checked = data.stickyHeader !== false; // Par défaut true
+                stickyHeaderInput.checked = data.stickyHeader === true; // Par défaut false
             }
 
             // Gérer le bloc d'habilitation directeur
@@ -541,7 +541,7 @@ window.handleSettingsSubmit = async function (event) {
     const publiclyVisible = document.getElementById('settings-public-visibility').checked;
     const emailVisible = document.getElementById('settings-email-visibility').checked;
     const isPrivate = document.getElementById('settings-is-private').checked;
-    const stickyHeader = document.getElementById('settings-sticky-header')?.checked ?? true;
+    const stickyHeader = document.getElementById('settings-sticky-header')?.checked ?? false;
 
     // Récupérer les stats manuelles
     const animatorsCount = document.getElementById('settings-animators-count').value;

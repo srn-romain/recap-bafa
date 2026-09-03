@@ -638,10 +638,10 @@ class TableFloatingHeaderManager {
       this.scrollContainer = this.table.closest('.tabs');
     }
 
-    // Vérifier si l'utilisateur a activé ou désactivé le suivi d'en-tête dans ses paramètres
+    // Vérifier si l'utilisateur a activé ou désactivé le suivi d'en-tête dans ses paramètres (par défaut désactivé)
     const isStickyEnabled = typeof window.stickyHeaderEnabled !== 'undefined'
       ? window.stickyHeaderEnabled
-      : (localStorage.getItem('stickyHeaderEnabled') !== 'false');
+      : (localStorage.getItem('stickyHeaderEnabled') === 'true');
 
     if (!isStickyEnabled) {
       this.hide();
