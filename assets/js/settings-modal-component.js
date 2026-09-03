@@ -174,6 +174,19 @@ function injectSettingsModal() {
 
             <div class="settings-actions">
                 <h3 class="subsettings-title">Actions</h3>
+
+                <div id="settings-director-role-block" style="display: none; background: #fefce8; border: 1px solid #fde047; border-radius: 10px; padding: 14px 16px; margin: 0 0 15px; text-align: center;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #854d0e; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px;">
+                        <i class="bi bi-award" style="color: #ca8a04; font-size: 1.1rem;"></i> Statut Directeur BAFD actif
+                    </div>
+                    <p style="color: #713f12; font-size: 0.8rem; margin: 0 0 10px 0; line-height: 1.4;">
+                        Vous disposez des droits d'exploration des profils publics d'animateurs. Vous pouvez renoncer à ce statut à tout moment pour repasser en compte Animateur.
+                    </p>
+                    <button type="button" onclick="relinquishDirectorRole()" class="secondary-action-btn" style="width: auto; margin: 0 auto; background: #ffffff; border-color: #eab308; color: #a16207; font-size: 0.82rem; font-weight: 600; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-person-dash"></i> Renoncer au statut Directeur (repasser Animateur)
+                    </button>
+                </div>
+
                 <div class="action-buttons-group">
                     <button type="button" onclick="copyProfileLink()" class="secondary-action-btn">
                         <i class="bi bi-link-45deg"></i> <span id="share-btn-text">Copier le lien de mon profil</span>
@@ -251,6 +264,52 @@ function injectSettingsModal() {
             <div style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 25px;">
                 <button type="button" onclick="confirmCloseSettings()" class="submit-btn" style="flex: 1; max-width: 180px; margin: 0; background-color: #e74c3c;">Quitter</button>
                 <button type="button" onclick="cancelCloseSettings()" class="secondary-action-btn" style="flex: 1; max-width: 150px; margin: 0;">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation pour renoncer au statut Directeur -->
+    <div id="director-relinquish-modal" class="modal" style="display: none; z-index: 10000;">
+        <div class="modal-content" style="max-width: 460px; text-align: center; padding: 28px 24px;">
+            <span class="close-modal" onclick="closeDirectorRelinquishModal()">&times;</span>
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.8rem;">
+                <i class="bi bi-person-dash"></i>
+            </div>
+            <h2 style="margin-bottom: 12px; font-size: 1.25rem; color: #1f2937; border: none;">Renoncer au statut Directeur</h2>
+            <p style="color: #4b5563; font-size: 0.92rem; line-height: 1.55; margin-bottom: 22px;">
+                Votre compte repassera en <strong>profil Animateur standard</strong>.<br>
+                Vous n'aurez plus accès à l'exploration des profils publics d'animateurs.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button type="button" onclick="closeDirectorRelinquishModal()" class="secondary-action-btn" style="flex: 1; max-width: 140px; margin: 0;">
+                    Annuler
+                </button>
+                <button type="button" id="confirm-relinquish-btn" onclick="executeRelinquishDirectorRole()" class="submit-btn" style="flex: 1.3; max-width: 200px; margin: 0; background-color: #d97706;">
+                    Confirmer le changement
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation décision Admin (Accepter / Refuser demande directeur) -->
+    <div id="admin-director-decision-modal" class="modal" style="display: none; z-index: 10000;">
+        <div class="modal-content" style="max-width: 480px; text-align: center; padding: 28px 24px;">
+            <span class="close-modal" onclick="closeAdminDirectorDecisionModal()">&times;</span>
+            <div id="admin-decision-icon-wrapper" style="width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.8rem;">
+            </div>
+            <h2 id="admin-decision-title" style="margin-bottom: 10px; font-size: 1.25rem; color: #1f2937; border: none;">
+            </h2>
+            <div id="admin-decision-user-box" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 16px; margin: 0 auto 16px; text-align: left; font-size: 0.88rem; line-height: 1.5;">
+            </div>
+            <p id="admin-decision-text" style="color: #4b5563; font-size: 0.9rem; line-height: 1.5; margin-bottom: 22px;">
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button type="button" onclick="closeAdminDirectorDecisionModal()" class="secondary-action-btn" style="flex: 1; max-width: 140px; margin: 0;">
+                    Annuler
+                </button>
+                <button type="button" id="admin-decision-confirm-btn" class="submit-btn" style="flex: 1.3; max-width: 200px; margin: 0;">
+                    Confirmer
+                </button>
             </div>
         </div>
     </div>

@@ -381,6 +381,12 @@ window.openSettingsModal = async function () {
                 stickyHeaderInput.checked = data.stickyHeader !== false; // Par défaut true
             }
 
+            // Gérer le bloc d'habilitation directeur
+            const directorRoleBlock = document.getElementById('settings-director-role-block');
+            if (directorRoleBlock) {
+                directorRoleBlock.style.display = (data.role === 'dirlo' || window.userRole === 'dirlo') ? 'block' : 'none';
+            }
+
             // Mettre à jour le bandeau de confidentialité avec l'état chargé
             updatePrivacyBanner();
 

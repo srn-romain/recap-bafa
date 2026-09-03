@@ -840,19 +840,27 @@ async function fetchDirectorRequests() {
     noMsg.style.display = 'none';
     section.style.display = 'block';
 
+    window.directorRequestsMap = window.directorRequestsMap || {};
     snapshot.forEach(doc => {
       const data = doc.data();
       const date = data.directorRequestDate ? new Date(data.directorRequestDate.seconds * 1000).toLocaleDateString() : '-';
+      const fullName = `${data.firstname || ''} ${data.lastname || ''}`.trim() || 'Utilisateur';
+      const email = data.email || doc.id;
+      window.directorRequestsMap[doc.id] = { id: doc.id, fullName, email };
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-                <td style="padding: 12px; border-bottom: 1px solid #eee;">${data.lastname || '-'}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee;">${data.firstname || '-'}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee;">${data.email || doc.id}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee;">${date}</td>
-                <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-                    <button onclick="approveDirectorRequest('${doc.id}')" style="background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px;">Accepter</button>
-                    <button onclick="rejectDirectorRequest('${doc.id}')" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Refuser</button>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: 500;">${data.lastname || '-'}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: 500;">${data.firstname || '-'}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; color: #555;">${email}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; color: #777;">${date}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap;">
+                    <button type="button" onclick="approveDirectorRequest('${doc.id}')" style="background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; margin-right: 6px; transition: opacity 0.2s;">
+                      <i class="bi bi-check-lg"></i> Accepter
+                    </button>
+                    <button type="button" onclick="rejectDirectorRequest('${doc.id}')" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: opacity 0.2s;">
+                      <i class="bi bi-x-lg"></i> Refuser
+                    </button>
                 </td>
             `;
       tableBody.appendChild(tr);
@@ -862,36 +870,198 @@ async function fetchDirectorRequests() {
   }
 }
 
-// Admin: Accepter
-async function approveDirectorRequest(uid) {
-  if (!confirm("Confirmer l'accès directeur pour cet utilisateur ?")) return;
+// --- MODALE DECISION ADMIN DIRECTEUR ---
+let pendingAdminDecisionUid = null;
+let pendingAdminDecisionAction = null;
+
+function openAdminDirectorDecisionModal(uid, action, fullName, email) {
+  pendingAdminDecisionUid = uid;
+  pendingAdminDecisionAction = action;
+
+  const modal = document.getElementById('admin-director-decision-modal');
+  if (!modal) {
+    console.error("Modale admin-director-decision-modal introuvable dans le DOM");
+    return;
+  }
+
+  const iconWrapper = document.getElementById('admin-decision-icon-wrapper');
+  const titleEl = document.getElementById('admin-decision-title');
+  const userBox = document.getElementById('admin-decision-user-box');
+  const textEl = document.getElementById('admin-decision-text');
+  const confirmBtn = document.getElementById('admin-decision-confirm-btn');
+
+  if (userBox) {
+    userBox.innerHTML = `
+      <div style="font-weight: 600; color: #1f2937; margin-bottom: 3px;"><i class="bi bi-person-fill" style="color: #50644c;"></i> ${fullName || 'Utilisateur'}</div>
+      <div style="color: #6b7280; font-size: 0.82rem;"><i class="bi bi-envelope"></i> ${email || uid}</div>
+    `;
+  }
+
+  if (action === 'approve') {
+    if (iconWrapper) {
+      iconWrapper.style.background = '#dcfce7';
+      iconWrapper.style.color = '#16a34a';
+      iconWrapper.innerHTML = '<i class="bi bi-shield-check"></i>';
+    }
+    if (titleEl) titleEl.textContent = "Accorder l'accès Directeur";
+    if (textEl) textEl.textContent = "Cet utilisateur obtiendra immédiatement le rôle Directeur et aura accès à l'exploration des profils publics d'animateurs.";
+    if (confirmBtn) {
+      confirmBtn.textContent = "Accorder l'accès";
+      confirmBtn.style.backgroundColor = '#16a34a';
+    }
+  } else {
+    if (iconWrapper) {
+      iconWrapper.style.background = '#fee2e2';
+      iconWrapper.style.color = '#dc2626';
+      iconWrapper.innerHTML = '<i class="bi bi-shield-x"></i>';
+    }
+    if (titleEl) titleEl.textContent = "Refuser la demande";
+    if (textEl) textEl.textContent = "La demande sera refusée. L'utilisateur pourra reformuler une nouvelle demande ultérieurement s'il le souhaite.";
+    if (confirmBtn) {
+      confirmBtn.textContent = "Refuser la demande";
+      confirmBtn.style.backgroundColor = '#dc2626';
+    }
+  }
+
+  if (confirmBtn) confirmBtn.onclick = executeAdminDirectorDecision;
+
+  modal.style.display = 'flex';
+  document.body.classList.add('modal-open');
+}
+
+function closeAdminDirectorDecisionModal() {
+  const modal = document.getElementById('admin-director-decision-modal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  }
+  pendingAdminDecisionUid = null;
+  pendingAdminDecisionAction = null;
+}
+
+async function executeAdminDirectorDecision() {
+  if (!pendingAdminDecisionUid || !pendingAdminDecisionAction) return;
+
+  const uid = pendingAdminDecisionUid;
+  const action = pendingAdminDecisionAction;
+  const confirmBtn = document.getElementById('admin-decision-confirm-btn');
+
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "En cours...";
+  }
+
   try {
-    await window.firebaseDb.collection('users').doc(uid).update({
-      role: 'dirlo',
-      directorRequestStatus: 'approved'
-    });
-    fetchDirectorRequests(); // Rafraichir
-    alert("Accès accordé.");
+    if (action === 'approve') {
+      await window.firebaseDb.collection('users').doc(uid).update({
+        role: 'dirlo',
+        directorRequestStatus: 'approved'
+      });
+    } else {
+      await window.firebaseDb.collection('users').doc(uid).update({
+        directorRequestStatus: null // On remet à null pour qu'il puisse redemander
+      });
+    }
+
+    closeAdminDirectorDecisionModal();
+    fetchDirectorRequests(); // Rafraichir la liste
   } catch (error) {
-    console.error(error);
-    alert("Erreur.");
+    console.error("Erreur décision admin:", error);
+    alert("Une erreur est survenue lors de l'enregistrement de votre décision : " + error.message);
+  } finally {
+    if (confirmBtn) confirmBtn.disabled = false;
   }
 }
 
-// Admin: Refuser
-async function rejectDirectorRequest(uid) {
-  if (!confirm("Refuser la demande ?")) return;
-  try {
-    await window.firebaseDb.collection('users').doc(uid).update({
-      directorRequestStatus: null // On remet à null pour qu'il puisse redemander
-    });
-    fetchDirectorRequests();
-    alert("Demande refusée.");
-  } catch (error) {
-    console.error(error);
-    alert("Erreur.");
+function approveDirectorRequest(uid) {
+  const req = (window.directorRequestsMap && window.directorRequestsMap[uid]) || { fullName: 'Utilisateur', email: uid };
+  openAdminDirectorDecisionModal(uid, 'approve', req.fullName, req.email);
+}
+
+function rejectDirectorRequest(uid) {
+  const req = (window.directorRequestsMap && window.directorRequestsMap[uid]) || { fullName: 'Utilisateur', email: uid };
+  openAdminDirectorDecisionModal(uid, 'reject', req.fullName, req.email);
+}
+
+window.openAdminDirectorDecisionModal = openAdminDirectorDecisionModal;
+window.closeAdminDirectorDecisionModal = closeAdminDirectorDecisionModal;
+window.approveDirectorRequest = approveDirectorRequest;
+window.rejectDirectorRequest = rejectDirectorRequest;
+
+// --- MODALE RENONCEMENT STATUT DIRECTEUR ---
+function openDirectorRelinquishModal() {
+  const modal = document.getElementById('director-relinquish-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
   }
 }
+
+function closeDirectorRelinquishModal() {
+  const modal = document.getElementById('director-relinquish-modal');
+  if (modal) {
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  }
+}
+
+async function executeRelinquishDirectorRole() {
+  const user = window.currentUser || (firebase.auth && firebase.auth().currentUser);
+  if (!user) {
+    alert("Vous devez être connecté.");
+    return;
+  }
+
+  const confirmBtn = document.getElementById('confirm-relinquish-btn');
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Modification en cours...";
+  }
+
+  try {
+    await window.firebaseDb.collection('users').doc(user.uid).update({
+      role: 'user',
+      directorRequestStatus: null
+    });
+
+    window.userRole = 'user';
+    window.directorRequestStatus = null;
+
+    closeDirectorRelinquishModal();
+    if (typeof closeSettingsModal === 'function') closeSettingsModal();
+    if (typeof closeDirectorRequestModal === 'function') closeDirectorRequestModal();
+
+    window.location.reload();
+  } catch (error) {
+    console.error("Erreur renoncement statut directeur:", error);
+    alert("Une erreur est survenue lors de la mise à jour de votre profil : " + error.message);
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirmer le changement";
+    }
+  }
+}
+
+function relinquishDirectorRole() {
+  openDirectorRelinquishModal();
+}
+
+window.openDirectorRelinquishModal = openDirectorRelinquishModal;
+window.closeDirectorRelinquishModal = closeDirectorRelinquishModal;
+window.executeRelinquishDirectorRole = executeRelinquishDirectorRole;
+window.relinquishDirectorRole = relinquishDirectorRole;
+
+// Fermeture des modales au clic sur l'arrière-plan (overlay)
+window.addEventListener('click', function (event) {
+  const relinquishModal = document.getElementById('director-relinquish-modal');
+  if (event.target === relinquishModal) {
+    closeDirectorRelinquishModal();
+  }
+  const adminDecisionModal = document.getElementById('admin-director-decision-modal');
+  if (event.target === adminDecisionModal) {
+    closeAdminDirectorDecisionModal();
+  }
+});
 
 // Afficher le menu utilisateur
 function showUserMenu() {
