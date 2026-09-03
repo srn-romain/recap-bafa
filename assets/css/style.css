@@ -2198,3 +2198,66 @@ optgroup option {
 .summary-info-card:has(a[href="#"]) a {
   cursor: default;
 }
+
+/* ==============================================================
+   # MODERN DATA BADGES / TAGS (Tableaux)
+   ============================================================== */
+.cell-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+  white-space: normal;
+  text-align: center;
+}
+
+/* Palette de tags avec couleur 100% identique pour les mêmes données */
+.tag-color-1 {
+  background-color: #fff1f2;
+  color: #e11d48;
+  border-color: #ffe4e6;
+}
+.tag-color-2 {
+  background-color: #fff7ed;
+  color: #c2410c;
+  border-color: #ffedd5;
+}
+.tag-color-3 {
+  background-color: #fefce8;
+  color: #a16207;
+  border-color: #fef08a;
+}
+.tag-color-4 {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+.tag-color-5 {
+  background-color: #f0fdfa;
+  color: #0f766e;
+  border-color: #ccfbf1;
+}
+.tag-color-6 {
+  background-color: #f0f9ff;
+  color: #0284c7;
+  border-color: #bae6fd;
+}
+.tag-color-7 {
+  background-color: #eef2ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+.tag-color-8 {
+  background-color: #faf5ff;
+  color: #7e22ce;
+  border-color: #e9d5ff;
+}
+
+

@@ -146,6 +146,22 @@ function formatDateForDisplay(dateStr) {
   return dateStr;
 }
 
+/**
+ * Retourne une classe de couleur déterministe basée sur le texte exact.
+ * Deux données identiques auront TOUJOURS la même couleur.
+ */
+function getDeterministicTagClass(text) {
+  if (!text) return '';
+  const str = text.trim().toLowerCase();
+  
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const colorIndex = (Math.abs(hash) % 8) + 1;
+  return `tag-color-${colorIndex}`;
+}
+
 function createExperienceRow(experience) {
 
   const tr = document.createElement('tr');
@@ -195,7 +211,7 @@ function createExperienceRow(experience) {
   if (experience.type === 'periscolaire' && typeof durationDisplay === 'string' && durationDisplay.includes('périscolaire')) {
     durationDisplay = 'Tous les jours scolaires';
   }
-  tdDuration.textContent = durationDisplay;
+  tdDuration.textContent = durationDisplay || '';
   tr.appendChild(tdDuration);
 
   // Colonne Organisateur
@@ -286,7 +302,7 @@ function createExperienceRow(experience) {
 
   // Colonne Type de séjour
   const tdStayType = document.createElement('td');
-  tdStayType.textContent = experience.stayType;
+  tdStayType.textContent = experience.stayType || '';
   tr.appendChild(tdStayType);
 
   // Colonne Intitulé du poste
@@ -309,12 +325,19 @@ function createExperienceRow(experience) {
     }
   }
 
-  tdPosition.textContent = positionText;
+  tdPosition.textContent = positionText || '';
   tr.appendChild(tdPosition);
 
   // Colonne Tranche d'âge
   const tdAgeRange = document.createElement('td');
-  tdAgeRange.textContent = experience.ageRange;
+  if (experience.ageRange && experience.ageRange !== '-' && experience.ageRange !== '?') {
+    const span = document.createElement('span');
+    span.className = `cell-tag ${getDeterministicTagClass(experience.ageRange)}`;
+    span.textContent = experience.ageRange;
+    tdAgeRange.appendChild(span);
+  } else {
+    tdAgeRange.textContent = experience.ageRange || '';
+  }
   tr.appendChild(tdAgeRange);
 
   // Colonne Nb de jeunes
@@ -355,7 +378,7 @@ function createFormationRow(formation) {
 
   // Colonne Durée
   const tdDuration = document.createElement('td');
-  tdDuration.textContent = formation.duration;
+  tdDuration.textContent = formation.duration || '';
   tr.appendChild(tdDuration);
 
   // Colonne Organisme
@@ -384,7 +407,7 @@ function createFormationRow(formation) {
 
   // Colonne Intitulé
   const tdTitle = document.createElement('td');
-  tdTitle.textContent = formation.title;
+  tdTitle.textContent = formation.title || '';
   tr.appendChild(tdTitle);
 
   // Colonne Lieu
