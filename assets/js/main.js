@@ -94,6 +94,26 @@ document.addEventListener("DOMContentLoaded", function () {
   setTimeout(calculateAllStatistics, 500);
 });
 
+// Fonction globale pour basculer entre les deux grands onglets de statistiques
+window.switchStatsTab = function (tabName) {
+  const btnExp = document.getElementById('tab-btn-stats-experiences');
+  const btnForm = document.getElementById('tab-btn-stats-formations');
+  const sectionExp = document.getElementById('stats-section-experiences');
+  const sectionForm = document.getElementById('stats-section-formations');
+
+  if (tabName === 'formations') {
+    if (btnExp) btnExp.classList.remove('active');
+    if (btnForm) btnForm.classList.add('active');
+    if (sectionExp) sectionExp.style.display = 'none';
+    if (sectionForm) sectionForm.style.display = 'block';
+  } else {
+    if (btnExp) btnExp.classList.add('active');
+    if (btnForm) btnForm.classList.remove('active');
+    if (sectionExp) sectionExp.style.display = 'block';
+    if (sectionForm) sectionForm.style.display = 'none';
+  }
+};
+
 // Fonction principale pour calculer toutes les statistiques
 function calculateAllStatistics() {
   // Calculer les statistiques des expériences
@@ -105,17 +125,18 @@ function calculateAllStatistics() {
   // Calculer les statistiques des formations
   calculateFormationStatistics();
 
-  // Masquer la rubrique principale si aucune sous-section n'est visible
-  const expSection = document.getElementById('stats-section-experiences');
-  const formSection = document.getElementById('stats-section-formations');
+  // Déterminer la présence de données
+  const expRows = document.querySelectorAll('#table-experiences tr[data-type]');
+  const formRows = document.querySelectorAll('#table-formations tr[data-type]');
+  const hasExperiences = expRows.length > 1;
+  const hasFormations = formRows.length > 1;
+
   const mainTitle = document.getElementById('statistiques');
   const container = document.querySelector('.stats-container')?.parentElement;
-
-  const hasExperiences = expSection && expSection.style.display !== 'none';
-  const hasFormations = formSection && formSection.style.display !== 'none';
-
   const sectionStats = document.getElementById('section-statistiques');
   const divider = document.getElementById('stats-divider');
+  const btnExp = document.getElementById('tab-btn-stats-experiences');
+  const btnForm = document.getElementById('tab-btn-stats-formations');
 
   if (!hasExperiences && !hasFormations) {
     if (mainTitle) mainTitle.style.display = 'none';
@@ -127,6 +148,22 @@ function calculateAllStatistics() {
     if (container) container.style.display = 'block';
     if (divider) divider.style.display = 'block';
     if (sectionStats) sectionStats.style.display = 'block';
+
+    // Gestion de l'affichage des onglets selon les données disponibles
+    if (!hasExperiences && hasFormations) {
+      if (btnExp) btnExp.style.display = 'none';
+      if (btnForm) btnForm.style.display = 'flex';
+      switchStatsTab('formations');
+    } else if (hasExperiences && !hasFormations) {
+      if (btnExp) btnExp.style.display = 'flex';
+      if (btnForm) btnForm.style.display = 'none';
+      switchStatsTab('experiences');
+    } else {
+      if (btnExp) btnExp.style.display = 'flex';
+      if (btnForm) btnForm.style.display = 'flex';
+      const isFormActive = btnForm && btnForm.classList.contains('active');
+      switchStatsTab(isFormActive ? 'formations' : 'experiences');
+    }
   }
 
   // Mettre à jour la visibilité des liens de la navbar
@@ -169,13 +206,6 @@ function calculateExperienceStatistics() {
 
   const rows = experienceTable.querySelectorAll('tr[data-type]');
   const totalExps = Math.max(0, rows.length - 1);
-
-  // Gérer la visibilité de la section entière
-  const section = document.getElementById('stats-section-experiences');
-  if (section) {
-    section.style.display = totalExps === 0 ? 'none' : 'block';
-  }
-
   if (totalExps === 0) return;
 
   let totalDaysColo = 0;
@@ -186,6 +216,7 @@ function calculateExperienceStatistics() {
   let totalDaysAll = 0;
   let totalYouth = 0;
   const organizationDays = {};
+  const coloOrganizationDays = {};
   const yearlyDays = {};
   const uniqueLocations = new Set();
   let longestStayDays = 0;
@@ -252,6 +283,9 @@ function calculateExperienceStatistics() {
 
     if (types.includes('colo')) {
       totalDaysColo += days;
+      if (organizerText) {
+        coloOrganizationDays[organizerText] = (coloOrganizationDays[organizerText] || 0) + days;
+      }
     } else if (types.includes('alsh')) {
       totalDaysAlsh += days;
     } else if (types.includes('periscolaire')) {
@@ -308,13 +342,13 @@ function calculateExperienceStatistics() {
     longestStayEl.textContent = longestStayInfo || '—';
   }
 
-  // Organisme de prédilection
+  // Organisme de colo de prédilection
   let topOrgName = '—';
   let maxOrgDays = 0;
-  for (const [org, d] of Object.entries(organizationDays)) {
+  for (const [org, d] of Object.entries(coloOrganizationDays)) {
     if (d > maxOrgDays) {
       maxOrgDays = d;
-      topOrgName = `${org} (${d} j)`;
+      topOrgName = `${org} (${d} j en colo)`;
     }
   }
   const topOrgEl = document.getElementById('stat-top-org');
@@ -480,13 +514,6 @@ function calculateFormationStatistics() {
 
   const rows = formationTable.querySelectorAll('tr[data-type]');
   const totalFormations = Math.max(0, rows.length - 1);
-
-  // Gérer la visibilité de la section entière
-  const section = document.getElementById('stats-section-formations');
-  if (section) {
-    section.style.display = totalFormations === 0 ? 'none' : 'block';
-  }
-
   if (totalFormations === 0) return;
 
   let totalDaysFormation = 0;

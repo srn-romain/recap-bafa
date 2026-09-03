@@ -971,14 +971,88 @@ table tr.even {
   padding: 0;
 }
 
+/* Deux Grands Onglets Statistiques */
+.stats-main-nav-tabs {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.stats-nav-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 14px;
+  border: 2px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.stats-nav-tab i {
+  font-size: 1.3rem;
+  transition: transform 0.2s ease;
+}
+
+.stats-nav-tab:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.stats-nav-tab.active {
+  background-color: #ffffff;
+  color: #166534;
+  border-color: #86efac;
+  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.12);
+}
+
+.stats-nav-tab.active i {
+  color: #16a34a;
+  transform: scale(1.1);
+}
+
+#tab-btn-stats-formations.active {
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.12);
+}
+
+#tab-btn-stats-formations.active i {
+  color: #2563eb;
+}
+
+@media (max-width: 640px) {
+  .stats-main-nav-tabs {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stats-nav-tab {
+    padding: 11px 16px;
+    font-size: 0.95rem;
+  }
+}
+
 .stats-section {
-  margin-bottom: 35px;
+  margin-bottom: 25px;
   background: transparent;
   padding: 0;
+  width: 100%;
 }
 
 /* Masquer la section stats formations pour les utilisateurs non connectés */
-.stats-section.hidden-formations {
+.stats-section.hidden-formations,
+.stats-nav-tab.hidden-formations {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
@@ -1010,30 +1084,41 @@ table tr.even {
   text-align: center;
 }
 
-/* Grille de cartes KPI */
+/* Grille de cartes KPI Flexible et Auto-Centrée */
 .stats-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 25px;
+  justify-content: center;
+  width: 100%;
 }
 
 .formations-kpi-grid {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 25px;
+  justify-content: center;
+  width: 100%;
 }
 
 .stats-kpi-card {
+  flex: 1 1 240px;
+  min-width: 220px;
+  max-width: 100%;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
   padding: 18px 20px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .stats-kpi-card:hover {
@@ -1044,18 +1129,15 @@ table tr.even {
 
 /* Carte Hero (Total Jours) */
 .stats-kpi-hero {
+  flex: 2 1 380px;
+  min-width: 280px;
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
   border: 1px solid #86efac;
-  grid-column: span 2;
-}
-
-@media (max-width: 640px) {
-  .stats-kpi-hero {
-    grid-column: span 1;
-  }
 }
 
 .stats-kpi-hero-formation {
+  flex: 1.5 1 300px;
+  min-width: 260px;
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
   border: 1px solid #93c5fd;
 }
@@ -1216,11 +1298,12 @@ table tr.even {
   margin-top: 2px;
 }
 
-/* Grille de Graphiques */
+/* Grille de Graphiques : 2 en haut, 2 en bas sur ordinateur */
 .stats-charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  width: 100%;
 }
 
 .stats-chart-card {
@@ -1231,11 +1314,20 @@ table tr.even {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .stats-charts-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .single-chart-card {
-  max-width: 800px;
+  max-width: 750px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .stats-chart-header {

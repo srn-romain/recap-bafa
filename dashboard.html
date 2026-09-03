@@ -367,13 +367,20 @@
                         expérience, consultez cette section sur ordinateur.
                     </div>
 
+                    <!-- Deux Grands Onglets Statistiques -->
+                    <div class="stats-main-nav-tabs">
+                        <button class="stats-nav-tab active" id="tab-btn-stats-experiences" onclick="switchStatsTab('experiences')">
+                            <i class="bi bi-briefcase-fill"></i>
+                            <span>Statistiques Expériences</span>
+                        </button>
+                        <button class="stats-nav-tab" id="tab-btn-stats-formations" onclick="switchStatsTab('formations')">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            <span>Statistiques Formations</span>
+                        </button>
+                    </div>
+
                     <!-- SECTION STATISTIQUES EXPÉRIENCES -->
                     <div class="stats-section" id="stats-section-experiences">
-                        <div class="stats-section-header">
-                            <i class="bi bi-briefcase-fill"></i>
-                            <h3>Expériences d'animation</h3>
-                        </div>
-
                         <!-- Grille de cartes KPI Principales -->
                         <div class="stats-kpi-grid">
                             <!-- Carte Hero : Total Jours -->
@@ -493,7 +500,7 @@
                                 <div class="stats-highlight-item" id="highlight-top-org">
                                     <i class="bi bi-star-fill"></i>
                                     <div>
-                                        <div class="highlight-title">Organisme de prédilection</div>
+                                        <div class="highlight-title">Organisme de colo de prédilection</div>
                                         <div class="highlight-val" id="stat-top-org">—</div>
                                     </div>
                                 </div>
@@ -556,12 +563,7 @@
                     </div>
 
                     <!-- SECTION STATISTIQUES FORMATIONS -->
-                    <div class="stats-section" id="stats-section-formations">
-                        <div class="stats-section-header">
-                            <i class="bi bi-mortarboard-fill"></i>
-                            <h3>Formations professionnelles</h3>
-                        </div>
-
+                    <div class="stats-section" id="stats-section-formations" style="display: none;">
                         <!-- Grille KPI Formations -->
                         <div class="stats-kpi-grid formations-kpi-grid">
                             <div class="stats-kpi-card stats-kpi-hero-formation">
