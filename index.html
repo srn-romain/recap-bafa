@@ -732,10 +732,22 @@
     </p>
 
     <!-- Section directeur -->
-    <section id="user-list-section" style="display: none; margin-top: 40px; padding: 20px; border-top: 2px solid #eee;">
-      <h2 style="color: #333; margin-bottom: 20px; text-align: center;">
-        <i class="bi bi-people-fill"></i> Explorer les profils publics d'animateurs inscrits
-      </h2>
+    <section id="user-list-section" class="director-section-card" style="display: none;">
+      <div class="director-section-header">
+        <div class="director-badge">
+          <i class="bi bi-shield-check"></i> Espace Recrutement Directeur
+        </div>
+        <h2><i class="bi bi-people-fill" style="color: #50644c;"></i> Explorer les profils publics d'animateurs</h2>
+        <p class="director-subtitle">
+          Consultez les parcours d'animation et découvrez les profils partagés par les animateurs et animatrices inscrits sur la plateforme.
+        </p>
+        <div class="director-filter-box">
+          <i class="bi bi-search director-filter-icon"></i>
+          <input type="text" id="director-quick-filter" class="director-filter-input" placeholder="Filtrer les profils par prénom, nom ou email..."
+            oninput="filterPublicUsers(this.value)">
+        </div>
+      </div>
+
       <div id="user-list-container" class="user-list-grid">
         <!-- Rempli par JS -->
       </div>
@@ -744,7 +756,7 @@
         <button id="prev-page" class="pagination-btn" onclick="changePage(-1)">
           <i class="bi bi-chevron-left"></i> Précédent
         </button>
-        <span id="page-info" class="pagination-info">Page 1</span>
+        <span id="page-info" class="pagination-info">Page 1 / 1</span>
         <button id="next-page" class="pagination-btn" onclick="changePage(1)">
           Suivant <i class="bi bi-chevron-right"></i>
         </button>
@@ -1226,10 +1238,11 @@
       }
     }
 
-    // --- LOGIQUE LISTE UTILISATEURS & PAGINATION ---
+    // --- LOGIQUE LISTE UTILISATEURS & PAGINATION (DIRECTEUR) ---
     let currentPage = 1;
-    const pageSize = 20;
+    const pageSize = 12; // Format 12 cartes par page (idéal pour les grilles de 2, 3 ou 4 colonnes)
     let allPublicUsers = [];
+    let filteredPublicUsers = [];
 
     firebase.auth().onAuthStateChanged(async user => {
       const userListSection = document.getElementById('user-list-section');
@@ -1296,7 +1309,7 @@
     async function loadPublicUsers() {
       const container = document.getElementById('user-list-container');
       if (!container) return;
-      container.innerHTML = '<div style="text-align:center; padding:20px; grid-column: 1/-1;"><div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #50644c; border-radius: 50%; animation: spin 1s linear infinite;"></div></div>';
+      container.innerHTML = '<div style="text-align:center; padding:30px; grid-column: 1/-1;"><div style="display: inline-block; width: 34px; height: 34px; border: 3px solid #f3f3f3; border-top: 3px solid #50644c; border-radius: 50%; animation: spin 1s linear infinite;"></div><p style="color:#666; font-size:0.9rem; margin-top:10px;">Chargement des profils publics...</p></div>';
 
       try {
         const snapshot = await window.firebaseDb.collection('users')
@@ -1311,45 +1324,85 @@
           }
         });
 
+        // Tri alphabétique par défaut
+        allPublicUsers.sort((a, b) => (a.firstname || '').localeCompare(b.firstname || ''));
+        filteredPublicUsers = [...allPublicUsers];
+
+        currentPage = 1;
         renderUserPage();
       } catch (e) {
         console.error("Erreur chargement liste users:", e);
-        container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1/-1;">Erreur lors du chargement des profils.</p>';
+        container.innerHTML = '<p style="text-align:center; color:#dc2626; grid-column: 1/-1; padding: 20px;">Erreur lors du chargement des profils.</p>';
       }
     }
 
+    // Filtrage instantané des utilisateurs
+    window.filterPublicUsers = function (query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        filteredPublicUsers = [...allPublicUsers];
+      } else {
+        filteredPublicUsers = allPublicUsers.filter(user => {
+          const fn = (user.firstname || '').toLowerCase();
+          const ln = (user.lastname || '').toLowerCase();
+          const fullName = `${fn} ${ln}`.trim();
+          const em = (user.emailVisible && user.email) ? user.email.toLowerCase() : '';
+          return fn.includes(q) || ln.includes(q) || fullName.includes(q) || em.includes(q);
+        });
+      }
+      currentPage = 1;
+      renderUserPage();
+    };
+
     /**
-     * Crée une carte de profil (utilisée par la recherche et la liste paginée)
+     * Crée une carte de profil soignée et parfaitement alignée
      */
     function createUserCard(user) {
       const card = document.createElement('div');
       card.className = 'user-small-card';
 
       const emailHtml = (user.emailVisible && user.email) ?
-        `<a href="mailto:${user.email}" class="user-email">
-                <i class="bi bi-envelope-at"></i> ${user.email}
-            </a>` : '';
+        `<div class="user-email-wrapper">
+          <a href="mailto:${user.email}" class="user-email" title="Contacter : ${user.email}">
+            <i class="bi bi-envelope-at"></i> ${user.email}
+          </a>
+        </div>` :
+        `<div class="user-email-wrapper">
+          <span class="user-email-hidden"><i class="bi bi-shield-lock"></i> Email privé</span>
+        </div>`;
+
+      let roleLabel = 'Animateur BAFA';
+      if (user.role === 'dirlo') roleLabel = 'Directeur BAFD';
+      else if (user.gender === 'female') roleLabel = 'Animatrice BAFA';
 
       let photoHtml = '';
       if (user.profilePic) {
         photoHtml = `
-            <div class="user-icon" style="overflow: hidden; padding: 0;">
-                <img src="${user.profilePic}" alt="Profil de ${user.firstname} ${user.lastname} - Animateur BAFA" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="event.preventDefault(); window.openImageViewer(this.src)" loading="lazy">
+            <div class="user-icon">
+                <img src="${user.profilePic}" alt="Profil de ${user.firstname || ''} ${user.lastname || ''}" onclick="event.preventDefault(); window.openImageViewer(this.src)" loading="lazy" title="Cliquer pour agrandir la photo">
             </div>
           `;
       } else {
         photoHtml = `
             <div class="user-icon">
-                <i class="bi bi-person-fill" style="color:#50644c;"></i>
+                <i class="bi bi-person-fill"></i>
             </div>
           `;
       }
 
+      const displayName = `${user.firstname || ''} ${user.lastname || ''}`.trim() || 'Profil Animateur';
+
       card.innerHTML = `
-            ${photoHtml}
-            <h4>${user.firstname || ''} ${user.lastname || ''}</h4>
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+              ${photoHtml}
+              <h4 title="${displayName}">${displayName}</h4>
+              <span class="user-role-badge"><i class="bi bi-award"></i> ${roleLabel}</span>
+            </div>
             ${emailHtml}
-            <a href="dashboard.html?uid=${user.id}" class="view-link">Voir le profil</a>
+            <a href="dashboard.html?uid=${user.id}" class="view-link">
+              <span>Voir le parcours</span>
+              <i class="bi bi-arrow-right-short" style="font-size: 1.15rem;"></i>
+            </a>
         `;
       return card;
     }
@@ -1359,15 +1412,21 @@
       const controls = document.getElementById('pagination-controls');
       if (!container) return;
 
+      const usersToDisplay = filteredPublicUsers;
+      const totalUsers = usersToDisplay.length;
+      const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize));
+
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
-      const pageUsers = allPublicUsers.slice(start, end);
-      const totalPages = Math.ceil(allPublicUsers.length / pageSize);
+      const pageUsers = usersToDisplay.slice(start, end);
 
       container.innerHTML = '';
 
       if (pageUsers.length === 0) {
-        container.innerHTML = '<p style="text-align:center; grid-column: 1/-1; color: #666;">Aucun profil public disponible.</p>';
+        container.innerHTML = '<div style="text-align:center; grid-column: 1/-1; padding: 30px; color: #6b7280;"><i class="bi bi-search" style="font-size: 2rem; color: #d1d5db; display: block; margin-bottom: 8px;"></i> Aucun animateur ne correspond à votre recherche.</div>';
         if (controls) controls.style.display = 'none';
         return;
       }
@@ -1376,12 +1435,15 @@
         container.appendChild(createUserCard(user));
       });
 
-      if (allPublicUsers.length > pageSize) {
+      if (totalUsers > pageSize) {
         if (controls) {
           controls.style.display = 'flex';
-          document.getElementById('page-info').textContent = `Page ${currentPage} / ${totalPages}`;
-          document.getElementById('prev-page').disabled = (currentPage === 1);
-          document.getElementById('next-page').disabled = (currentPage === totalPages);
+          const pageInfo = document.getElementById('page-info');
+          if (pageInfo) pageInfo.textContent = `Page ${currentPage} / ${totalPages} (${totalUsers} profils)`;
+          const prevBtn = document.getElementById('prev-page');
+          const nextBtn = document.getElementById('next-page');
+          if (prevBtn) prevBtn.disabled = (currentPage === 1);
+          if (nextBtn) nextBtn.disabled = (currentPage === totalPages);
         }
       } else {
         if (controls) controls.style.display = 'none';
@@ -1391,6 +1453,10 @@
     window.changePage = function (delta) {
       currentPage += delta;
       renderUserPage();
+      const section = document.getElementById('user-list-section');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     };
 
     async function searchProfile() {
