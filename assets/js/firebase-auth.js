@@ -726,7 +726,12 @@ function checkDirectorRequestStatus() {
     btn.style.display = 'none';
     msg.style.display = 'none';
     // Afficher la section directeur si c'est un directeur/admin (si elle existe sur la page)
-    if (userListSection) userListSection.style.display = 'block';
+    if (userListSection) {
+      userListSection.style.display = 'block';
+      if (typeof loadPublicUsers === 'function' && (!window.allPublicUsers || window.allPublicUsers.length === 0)) {
+        loadPublicUsers();
+      }
+    }
     return;
   } else {
     // Si user simple, cacher la section directeur

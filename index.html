@@ -1254,18 +1254,20 @@
           const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
           const userData = userDoc.data();
 
-          // Accessible uniquement si rôle 'dirlo' ou email contenant 'dirlo'
-          const isDirloProfile = (userData && userData.role === 'dirlo') || (user.email && user.email.toLowerCase().includes('dirlo'));
+          // Accessible pour les rôles 'admin', 'dirlo' ou emails contenant 'dirlo'
+          const isPrivileged = (userData && (userData.role === 'dirlo' || userData.role === 'admin')) ||
+                               (user.email && (user.email.toLowerCase().includes('dirlo') || user.email.toLowerCase().includes('admin'))) ||
+                               (window.userRole === 'admin' || window.userRole === 'dirlo');
 
-          if (isDirloProfile) {
+          if (isPrivileged) {
             if (userListSection) userListSection.style.display = 'block';
             loadPublicUsers();
           } else {
             if (userListSection) userListSection.style.display = 'none';
           }
 
-          // Gérer la visibilité du bouton de demande d'accès directeur
-          if (userData && (userData.role === 'user' || !userData.role)) {
+          // Gérer la visibilité du bouton de demande d'accès directeur (visible uniquement pour un user simple)
+          if (userData && (userData.role === 'user' || !userData.role) && !isPrivileged) {
             if (directorBtn) directorBtn.style.display = 'block';
           } else {
             if (directorBtn) directorBtn.style.display = 'none';
