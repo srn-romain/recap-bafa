@@ -423,7 +423,15 @@ function createExperienceRow(experience) {
   if (experience.type === 'periscolaire' && typeof durationDisplay === 'string' && durationDisplay.includes('périscolaire')) {
     durationDisplay = 'Tous les jours scolaires';
   }
-  tdDuration.textContent = durationDisplay || '';
+  if (durationDisplay) {
+    const span = document.createElement('span');
+    const isLongText = typeof durationDisplay === 'string' && (durationDisplay.length > 8 || durationDisplay.includes('mercredi') || durationDisplay.includes('scolaire') || durationDisplay.includes('samedi'));
+    span.className = `cell-tag tag-neutral${isLongText ? ' tag-long-text' : ''}`;
+    span.textContent = durationDisplay;
+    tdDuration.appendChild(span);
+  } else {
+    tdDuration.textContent = '';
+  }
   tr.appendChild(tdDuration);
 
   // Colonne Organisateur
@@ -595,7 +603,14 @@ function createFormationRow(formation) {
 
   // Colonne Durée
   const tdDuration = document.createElement('td');
-  tdDuration.textContent = formation.duration || '';
+  if (formation.duration) {
+    const span = document.createElement('span');
+    span.className = 'cell-tag tag-neutral';
+    span.textContent = formation.duration;
+    tdDuration.appendChild(span);
+  } else {
+    tdDuration.textContent = '';
+  }
   tr.appendChild(tdDuration);
 
   // Colonne Organisme

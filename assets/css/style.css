@@ -2246,6 +2246,21 @@ optgroup option {
   border-color: #e9d5ff;
 }
 
+/* Tag neutre pour les durées / nombres de jours */
+.tag-neutral {
+  background-color: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+/* Tag avec texte long (ex: "Tous les mercredis", "Tous les jours scolaires") */
+.cell-tag.tag-long-text {
+  font-size: 0.68rem;
+  line-height: 1.15;
+  padding: 3px 5px;
+  font-weight: 500;
+}
+
 /* ==============================================================
    # ICÔNES MONOCHROME DES TYPES DE SÉJOUR (Tableau Dashboard)
    ============================================================== */
