@@ -120,7 +120,19 @@
               style="background: #f39c12; color: white; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;">VERSION
               ACTUELLE</span>
           </div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+
+            <div
+              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+              <span><strong>Section statistiques repensée :</strong> Cartes compteurs dynamiques & nouveaux graphiques.</span>
+            </div>
+
+            <div
+              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+                <span><strong>Icônes et titres repensés :</strong> une vingtaine d'icônes pour illustrer vos tableaux et des titres de sections clarifiés.</span>
+            </div>
 
             <div
               style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
@@ -131,19 +143,7 @@
             <div
               style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
               <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
-              <span><strong>Icônes vectorielles :</strong> Nouvelles illustrations pour chaque type de séjour (camping, pension, trek, ALSH...).</span>
-            </div>
-
-            <div
-              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
               <span><strong>Couleurs par tranche d'âge :</strong> Badges automatiques selon le public (petite enfance, enfance, ados, adultes).</span>
-            </div>
-
-            <div
-              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
-              <span><strong>Historique perfectionné :</strong> Repliage rapide à tout moment et nouvelles couleurs par version.</span>
             </div>
 
           </div>
@@ -983,8 +983,8 @@
               <i class="bi bi-plus-circle-fill"></i> 3. Gestion du Parcours & Visuels
             </h3>
             <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
-              <li><strong>Types de séjours & Icônes :</strong> Illustrations graphiques modernes pour les Colos, ALSH, Périscolaire, Treks, Formations et Scoutisme (EEDF, SGDF, SMF...).</li>
-              <li><strong>Codes couleurs par âge :</strong> Badges colorés automatiques pour identifier rapidement la tranche d'âge (petite enfance, enfance, ados, adultes).</li>
+              <li><strong>Types de séjours & Formations :</strong> Illustrations graphiques soignées pour les Colos, ALSH, Périscolaire, Treks, Scoutisme et formations spécialisées (Secourisme, Surveillance de Baignade, Formateur BAFA/BAFD, Direction...).</li>
+              <li><strong>Codes couleurs par âge :</strong> Badges colorés automatiques pour identifier immédiatement la tranche d'âge (petite enfance, enfance, ados, adultes).</li>
               <li><strong>Automatisation :</strong> 
                 <ul>
                   <li>Calcul automatique de la <b>durée</b> dès la saisie des dates avec badge épuré.</li>
@@ -1002,21 +1002,24 @@
               <i class="bi bi-search"></i> 4. Consultation Intelligente
             </h3>
             <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
+              <li><strong>En-têtes de section élégants :</strong> Badges d'étapes numérotés et sous-titres clairs pour structurer la lecture du tableau de bord.</li>
               <li><strong>En-tête de tableau dynamique :</strong> L'en-tête du tableau vous suit lors du défilement pour garder un repère permanent sur les colonnes.</li>
               <li><strong>Fenêtre de détail :</strong> Cliquez sur toute la <b>cellule du N°</b> pour ouvrir un récapitulatif complet de l'expérience.</li>
-              <li><strong>Badges de Statut & Compte à rebours :</strong> Des badges animés indiquent si un séjour est <b>"À venir"</b>, <b>"En cours"</b> ou <b>"Nouveau"</b>. De plus, la modale de détail affiche en temps réel le décompte de jours restants ou écoulés (<b>j-XX</b> en vert pour le futur, <b>en cours</b> en bleu/indigo, ou <b>j+XX</b> en rouge pour le passé).</li>
+              <li><strong>Badges de Statut & Compte à rebours :</strong> Des badges animés indiquent si un séjour est <b>"À venir"</b>, <b>"En cours"</b> ou <b>"Nouveau"</b> avec décompte temps réel (j-XX / j+XX).</li>
               <li><strong>Recherche et Tris :</strong> Filtrez par type (filtres verts), utilisez la barre de recherche ou cliquez sur les en-têtes pour trier les colonnes.</li>
-              <li><strong>Cartographie :</strong> Cliquez sur un lieu pour l'ouvrir instantanément dans Google Maps (nécessite d'être connecté).</li>
+              <li><strong>Cartographie :</strong> Cliquez sur un lieu pour l'ouvrir instantanément dans Google Maps.</li>
             </ul>
           </section>
 
           <!-- Section 5 : Statistiques et Outils -->
           <section>
             <h3 style="color: #d35400; font-size: 1.1rem; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <i class="bi bi-bar-chart-line-fill"></i> 5. Statistiques et Export
+              <i class="bi bi-bar-chart-line-fill"></i> 5. Statistiques & Analyses de Carrière
             </h3>
             <ul style="font-size: 0.9rem; color: #444; line-height: 1.6; padding-left: 20px;">
-              <li><strong>Statistiques en temps réel :</strong> Total de jours travaillés, publics encadrés, diversité des organismes, etc.</li>
+              <li><strong>Double Onglet Interactif :</strong> Basculez instantanément entre vos <b>Statistiques Expériences</b> et vos <b>Statistiques Formations</b>.</li>
+              <li><strong>Compteurs & Faits Marquants :</strong> Total cumulé en mois de terrain, pourcentages d'activité (% Colo, % ALSH, Périscolaire), séjour le plus long, organisme favori et mobilité géographique.</li>
+              <li><strong>Graphiques Dynamiques :</strong> Répartition par cadre (Donut), activité annuelle chronologique, pyramide des âges et volume par organisme, avec défilement interne tactile fluide sur mobile sans déformation.</li>
               <li><strong>Génération PDF & Image :</strong> Exportez vos tableaux au format <b>PDF</b> (pour dossiers) ou <b>JPG</b> (pour partage rapide).</li>
               <li><strong>Import / Export JSON :</strong> Sauvegardez l'intégralité de vos données sur votre ordinateur.</li>
             </ul>
