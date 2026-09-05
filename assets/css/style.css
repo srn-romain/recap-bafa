@@ -1322,9 +1322,9 @@ table tr.even {
 }
 
 .single-chart-card {
-  max-width: 750px;
-  margin: 0 auto;
   width: 100%;
+  max-width: 100% !important;
+  margin: 0 auto;
   min-width: 0 !important;
 }
 

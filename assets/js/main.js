@@ -655,16 +655,50 @@ function createChart(canvasId, data, titleText) {
   ];
   const colors = labels.map((_, i) => modernPalette[i % modernPalette.length]);
 
+  // Paramètres spécifiques pour le graphique des formations (qui prend toute la largeur)
+  const isFormationChart = canvasId === 'formationOrganizationChart';
+
   // Dimensionner le conteneur intérieur pour un défilement propre sans étirement
   const scrollInner = canvas.closest('.stats-chart-scroll-inner') || canvas.parentElement;
   if (scrollInner) {
     if (window.innerWidth <= 900) {
-      scrollInner.style.width = `${Math.max(520, labels.length * 62)}px`;
+      if (isFormationChart) {
+        scrollInner.style.width = labels.length > 4 ? `${Math.max(480, labels.length * 90)}px` : '100%';
+      } else {
+        scrollInner.style.width = `${Math.max(520, labels.length * 62)}px`;
+      }
     } else if (canvasId === 'organizationChart' && labels.length >= 16) {
       scrollInner.style.width = `${labels.length * 68}px`;
+    } else if (isFormationChart && labels.length >= 12) {
+      scrollInner.style.width = `${labels.length * 95}px`;
     } else {
       scrollInner.style.width = '100%';
     }
+  }
+
+  // Configuration du dataset
+  const datasetConfig = {
+    data: values,
+    backgroundColor: colors,
+    borderColor: colors,
+    borderWidth: 1,
+    borderRadius: 8
+  };
+
+  if (isFormationChart) {
+    const count = labels.length;
+    // Remplir l'espace proportionnellement à l'écran et au nombre d'items
+    datasetConfig.categoryPercentage = count === 1 ? 0.45 : (count === 2 ? 0.65 : 0.8);
+    datasetConfig.barPercentage = 0.88;
+
+    // Calcul dynamique selon la largeur réelle de l'écran / conteneur
+    const availableWidth = scrollInner ? (scrollInner.clientWidth || window.innerWidth) : window.innerWidth;
+    const perItemWidth = Math.round(availableWidth / Math.max(count, 1));
+    
+    // Largeur généreuse selon la place disponible (ex: 120px à 200px sur grand écran)
+    datasetConfig.maxBarThickness = Math.max(70, Math.min(220, Math.round(perItemWidth * 0.75)));
+  } else {
+    datasetConfig.maxBarThickness = 32;
   }
 
   // Créer et stocker le nouveau graphique
@@ -672,14 +706,7 @@ function createChart(canvasId, data, titleText) {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: colors,
-        borderColor: colors,
-        borderWidth: 1,
-        borderRadius: 8,
-        maxBarThickness: 32
-      }]
+      datasets: [datasetConfig]
     },
     options: {
       responsive: true,
@@ -1991,6 +2018,28 @@ window.addEventListener('resize', () => {
       } else {
         scrollInner.style.width = '100%';
       }
+    }
+  }
+
+  const formCanvas = document.getElementById('formationOrganizationChart');
+  if (formCanvas) {
+    const scrollInner = formCanvas.closest('.stats-chart-scroll-inner');
+    const chart = chartInstances['formationOrganizationChart'];
+    const labelsCount = chart?.data?.labels?.length || 0;
+    if (scrollInner) {
+      if (window.innerWidth <= 900) {
+        scrollInner.style.width = labelsCount > 4 ? `${Math.max(480, labelsCount * 90)}px` : '100%';
+      } else if (labelsCount >= 12) {
+        scrollInner.style.width = `${labelsCount * 95}px`;
+      } else {
+        scrollInner.style.width = '100%';
+      }
+    }
+    if (chart && chart.data?.datasets?.[0]) {
+      const availableWidth = scrollInner ? (scrollInner.clientWidth || window.innerWidth) : window.innerWidth;
+      const perItemWidth = Math.round(availableWidth / Math.max(labelsCount, 1));
+      chart.data.datasets[0].maxBarThickness = Math.max(70, Math.min(220, Math.round(perItemWidth * 0.75)));
+      chart.update('none');
     }
   }
 });
