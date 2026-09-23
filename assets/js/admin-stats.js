@@ -22,7 +22,7 @@ async function loadAdminStats() {
         const usersSnapshot = await window.firebaseDb.collection('users').get();
         adminDataCache.users = usersSnapshot.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(u => u.id !== 'iaoZlSgBXUc6eYVHaZMy6hz4tVI3' && u.id !== '5DP6faC4Y8ce6K3x07aC2qHjflq2'); // Exclure les comptes de test/démo
+            .filter(u => !u.isDemo && !u.isTest && !(u.firstName === 'Joe' && u.lastName === 'Doe') && !u.email?.includes('test') && !u.email?.includes('demo')); // Exclure les comptes de test/démo sans hardcoder d'identifiants privés
 
         // 1. Stats de base (Utilisateurs)
         updateUserStats();

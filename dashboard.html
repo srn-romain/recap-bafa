@@ -83,19 +83,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             window.targetUid = urlParams.get('uid');
 
-            // Si pas d'UID et pas de redirection en cours, on pourrait rediriger vers l'accueil
-            // Mais on attend de voir si l'utilisateur se connecte
+            // Si pas d'UID et pas de redirection en cours
             if (!window.targetUid) {
-                // Optional: window.location.href = 'index.html';
-                console.log("Aucun UID spécifié, mode démo ou attente connexion");
-            }
-
-            // Afficher le bandeau de démonstration pour le profil Joe Doe
-            if (window.targetUid === '5DP6faC4Y8ce6K3x07aC2qHjflq2') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    const notice = document.getElementById('fictional-profile-notice');
-                    if (notice) notice.style.display = 'block';
-                });
+                console.log("Aucun UID spécifié, attente de connexion ou redirection");
             }
         </script>
 
@@ -1522,9 +1512,9 @@
                     }
                 }
             } else {
-                // Rediriger vers le profil par défaut si pas d'UID et pas connecté
+                // Rediriger vers l'accueil si pas d'UID et pas connecté
                 if (!window.targetUid) {
-                    window.location.href = 'dashboard.html?uid=5DP6faC4Y8ce6K3x07aC2qHjflq2';
+                    window.location.href = 'index.html';
                 }
             }
         });

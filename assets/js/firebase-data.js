@@ -1567,7 +1567,8 @@ async function loadUserProfile() {
       document.querySelectorAll('.search-container').forEach(el => el.style.setProperty('display', '', ''));
       document.querySelectorAll('.nav-toc-link').forEach(item => item.style.setProperty('display', '', ''));
 
-      if (window.targetUid === '5DP6faC4Y8ce6K3x07aC2qHjflq2' && fictionalNotice) {
+      const isFictionalProfile = data.isDemoProfile || data.isFictional || (data.firstName === 'Joe' && data.lastName === 'Doe');
+      if (isFictionalProfile && fictionalNotice) {
         fictionalNotice.style.display = 'block';
       }
 
