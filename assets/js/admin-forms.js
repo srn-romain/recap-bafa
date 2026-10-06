@@ -2950,9 +2950,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentEditingRow) {
           // Modification : trouver le document dans Firebase
           await updateExperienceInFirebase(data, currentEditingRow);
+          if (typeof window.showSuccessToast === 'function') {
+            window.showSuccessToast('Expérience modifiée avec succès !');
+          }
         } else {
           // Ajout
           await addExperienceToFirebase(data);
+          if (typeof window.showSuccessToast === 'function') {
+            window.showSuccessToast('Expérience enregistrée avec succès !');
+          }
         }
 
         window.hasUnsavedFormChanges = false;
@@ -2966,6 +2972,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         console.error('Erreur:', error);
         showExperienceError('Erreur lors de l\'enregistrement. Veuillez recharger la page.');
+        if (typeof window.showBlockingErrorToast === 'function') {
+          window.showBlockingErrorToast('Erreur lors de l\'enregistrement de l\'expérience : ' + (error.message || error));
+        }
       }
     });
   }
@@ -3088,9 +3097,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentEditingRow) {
           // Modification
           await updateFormationInFirebase(data, currentEditingRow);
+          if (typeof window.showSuccessToast === 'function') {
+            window.showSuccessToast('Formation modifiée avec succès !');
+          }
         } else {
           // Ajout
           await addFormationToFirebase(data);
+          if (typeof window.showSuccessToast === 'function') {
+            window.showSuccessToast('Formation enregistrée avec succès !');
+          }
         }
 
         window.hasUnsavedFormChanges = false;
@@ -3104,6 +3119,9 @@ document.addEventListener('DOMContentLoaded', function () {
       } catch (error) {
         console.error('Erreur:', error);
         showFormationError('Erreur lors de l\'enregistrement. Veuillez réessayer.');
+        if (typeof window.showBlockingErrorToast === 'function') {
+          window.showBlockingErrorToast('Erreur lors de l\'enregistrement de la formation : ' + (error.message || error));
+        }
       }
     });
   }

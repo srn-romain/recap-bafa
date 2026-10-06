@@ -1876,9 +1876,16 @@ async function generatePDF(tableId, title) {
       originalBtn.innerHTML = originalText;
       originalBtn.disabled = false;
     }
+    if (typeof window.showSuccessToast === 'function') {
+      window.showSuccessToast('PDF téléchargé avec succès !');
+    }
   }).catch(err => {
     console.error("Erreur génération PDF:", err);
-    alert("Erreur lors de la génération du PDF.");
+    if (typeof window.showBlockingErrorToast === 'function') {
+      window.showBlockingErrorToast("Erreur lors de la génération du PDF.");
+    } else {
+      alert("Erreur lors de la génération du PDF.");
+    }
     if (originalBtn) {
       originalBtn.innerHTML = originalText;
       originalBtn.disabled = false;
@@ -1956,9 +1963,17 @@ async function generateImage(tableId, title) {
     link.href = canvas.toDataURL('image/jpeg', 0.9);
     link.click();
 
+    if (typeof window.showSuccessToast === 'function') {
+      window.showSuccessToast('Image téléchargée avec succès !');
+    }
+
   } catch (error) {
     console.error("Erreur lors de la capture d'image :", error);
-    alert("Une erreur est survenue lors de la génération de l'image. Assurez-vous que tous les éléments sont bien chargés.");
+    if (typeof window.showBlockingErrorToast === 'function') {
+      window.showBlockingErrorToast("Une erreur est survenue lors de la génération de l'image.");
+    } else {
+      alert("Une erreur est survenue lors de la génération de l'image. Assurez-vous que tous les éléments sont bien chargés.");
+    }
     
     // Restaurer en cas d'erreur aussi
     rows.forEach((row, rowIndex) => {

@@ -813,9 +813,16 @@ async function requestDirectorAccess() {
     window.directorRequestStatus = 'pending';
     checkDirectorRequestStatus();
     closeDirectorRequestModal();
+    if (typeof window.showSuccessToast === 'function') {
+      window.showSuccessToast('Votre demande a bien été envoyée.');
+    }
   } catch (error) {
     console.error("Erreur demande directeur:", error);
-    alert("Une erreur est survenue lors de l'envoi de la demande.");
+    if (typeof window.showBlockingErrorToast === 'function') {
+      window.showBlockingErrorToast("Une erreur est survenue lors de l'envoi de la demande : " + (error.message || error));
+    } else {
+      alert("Une erreur est survenue lors de l'envoi de la demande.");
+    }
     closeDirectorRequestModal();
   }
 }
@@ -1250,12 +1257,18 @@ async function confirmDelete() {
     if (currentDeletingType === 'experience') {
       if (typeof deleteExperienceFromFirebase === 'function') {
         await deleteExperienceFromFirebase(currentDeletingRow);
+        if (typeof window.showSuccessToast === 'function') {
+          window.showSuccessToast('Expérience supprimée avec succès !');
+        }
       } else {
         throw new Error('Fonction deleteExperienceFromFirebase non disponible');
       }
     } else if (currentDeletingType === 'formation') {
       if (typeof deleteFormationFromFirebase === 'function') {
         await deleteFormationFromFirebase(currentDeletingRow);
+        if (typeof window.showSuccessToast === 'function') {
+          window.showSuccessToast('Formation supprimée avec succès !');
+        }
       } else {
         throw new Error('Fonction deleteFormationFromFirebase non disponible');
       }
@@ -1271,7 +1284,11 @@ async function confirmDelete() {
     window.scrollTo({ top: savedScrollY, behavior: 'instant' });
   } catch (error) {
     console.error('Erreur lors de la suppression:', error);
-    alert('Erreur lors de la suppression. Veuillez réessayer.');
+    if (typeof window.showBlockingErrorToast === 'function') {
+      window.showBlockingErrorToast('Erreur lors de la suppression : ' + (error.message || error));
+    } else {
+      alert('Erreur lors de la suppression. Veuillez réessayer.');
+    }
   }
 }
 

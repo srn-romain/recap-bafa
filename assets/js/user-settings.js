@@ -8,17 +8,27 @@ const SETTINGS_FEEDBACK_ID = 'settings-feedback';
  */
 window.showSettingsFeedback = function (type, message, { durationMs = 3000, allowHtml = false } = {}) {
     const feedbackEl = document.getElementById(SETTINGS_FEEDBACK_ID);
-    if (!feedbackEl) return;
+    if (feedbackEl) {
+        feedbackEl.innerHTML = allowHtml ? message : message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        feedbackEl.className = `feedback-message ${type}`;
+        feedbackEl.style.display = 'block';
 
-    feedbackEl.innerHTML = allowHtml ? message : message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    feedbackEl.className = `feedback-message ${type}`;
-    feedbackEl.style.display = 'block';
+        // Auto-hide après quelques secondes si c'est un succès
+        if (type === 'success') {
+            setTimeout(() => {
+                feedbackEl.style.display = 'none';
+            }, durationMs);
+        }
+    }
 
-    // Auto-hide après quelques secondes si c'est un succès
-    if (type === 'success') {
-        setTimeout(() => {
-            feedbackEl.style.display = 'none';
-        }, durationMs);
+    // Déclencher également un toaster global pour informer l'utilisateur
+    if (typeof window.showToast === 'function') {
+        const plainText = message.replace(/<[^>]*>?/gm, '');
+        if (type === 'success') {
+            window.showSuccessToast(plainText, durationMs);
+        } else if (type === 'error') {
+            window.showErrorToast(plainText, durationMs || 6000);
+        }
     }
 }
 
@@ -945,6 +955,10 @@ window.copyProfileLink = function () {
             quickBtn.style.justifyContent = 'center'; // S'assurer que le contenu reste centré
 
             quickBtnText.textContent = 'Lien copié !';
+        }
+
+        if (typeof window.showSuccessToast === 'function') {
+            window.showSuccessToast('Lien de votre profil copié dans le presse-papier !');
         }
 
         setTimeout(() => {
