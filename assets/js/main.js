@@ -1606,16 +1606,33 @@ async function generatePDF(tableId, title) {
   // Cloner le tableau
   const element = originalTable.cloneNode(true);
 
-  // S'assurer que le tableau cloné est visible (cas où original est display:none)
+  // Supprimer l'ID pour éviter que les règles CSS du dashboard (ex: min-width: 1200px) ne s'appliquent
+  element.removeAttribute('id');
+  element.className = 'pdf-table-export';
+
+  // S'assurer que le tableau cloné est visible et dimensionné à 100% avec table-layout fixed
   element.style.display = 'table';
+  element.style.width = '100%';
+  element.style.minWidth = '0';
+  element.style.maxWidth = '100%';
+  element.style.tableLayout = 'fixed';
+  element.style.borderCollapse = 'collapse';
+  element.style.fontSize = '8.5px';
+  element.style.fontFamily = 'Roboto, Arial, sans-serif';
+  element.style.backgroundColor = '#ffffff';
+  element.style.color = '#1e293b';
+  element.style.marginBottom = '15px';
+  element.style.boxSizing = 'border-box';
 
   // Supprimer les colonnes d'action (édition/suppression) pour le propre PDF
-  const headers = element.querySelectorAll('th');
-  const rows = element.querySelectorAll('tr');
+  const headers = Array.from(element.querySelectorAll('th'));
+  const rows = Array.from(element.querySelectorAll('tr'));
 
   let indicesToRemove = [];
   headers.forEach((th, index) => {
-    if (th.classList.contains('edit-column') || th.classList.contains('delete-column')) {
+    const text = th.textContent.toLowerCase();
+    if (th.classList.contains('edit-column') || th.classList.contains('delete-column') ||
+        text.includes('modifier') || text.includes('supprimer')) {
       indicesToRemove.push(index);
     }
   });
@@ -1629,39 +1646,193 @@ async function generatePDF(tableId, title) {
     });
   });
 
-  // Pour un meilleur rendu PDF : forcer les styles sur la copie
-  element.style.width = '100%';
-  element.style.borderCollapse = 'collapse';
-  element.style.fontSize = '10px';
-  element.style.fontFamily = 'Arial, sans-serif';
-  element.style.backgroundColor = '#ffffff';
-  element.style.color = '#333333';
-  element.style.marginBottom = '20px';
+  // Définir les largeurs relatives proportionnelles de chaque colonne pour A4 Paysage
+  const isExp = tableId.includes('experience');
+  // 10 colonnes pour Expériences : N°, Date, Durée, Organisateur, Logo, Lieu, Type de séjour, Intitulé, Tranche d'âge, Nb jeunes
+  const expColWidths = ['3.5%', '11.5%', '8%', '13.5%', '6%', '16%', '13.5%', '13.5%', '8.5%', '6%'];
+  // 7 colonnes pour Formations : N°, Date, Durée, Organisme, Logo, Intitulé, Lieu
+  const formColWidths = ['4%', '14%', '10%', '20%', '8%', '24%', '20%'];
+  const colWidths = isExp ? expColWidths : formColWidths;
 
-  element.querySelectorAll('td, th').forEach(cell => {
-    cell.style.border = '1px solid #ddd';
-    cell.style.padding = '8px';
-    cell.style.textAlign = 'left';
+  const remainingHeaders = element.querySelectorAll('th');
+  remainingHeaders.forEach((th, index) => {
+    if (colWidths[index]) {
+      th.style.width = colWidths[index];
+    }
+    th.style.minWidth = '0';
+    th.style.maxWidth = 'none';
+    th.style.backgroundColor = '#a6d866';
+    th.style.color = '#ffffff';
+    th.style.fontWeight = 'bold';
+    th.style.fontSize = '9px';
+    th.style.textAlign = 'center';
+    th.style.verticalAlign = 'middle';
+    th.style.padding = '6px 2px';
+    th.style.border = '1px solid #c5e1a5';
+    th.style.boxSizing = 'border-box';
+    th.style.whiteSpace = 'normal';
+    th.style.wordBreak = 'break-word';
+  });
 
-    // Nettoyer les liens pour qu'ils ne soient pas bleus soulignés si on veut un look propre
+  // Gérer la visibilité des lignes pour le PDF
+  const originalRows = Array.from(originalTable.querySelectorAll('tr'));
+  let visibleRowCounter = 0;
+
+  Array.from(rows).forEach((row, index) => {
+    // 1. Supprimer la ligne "Aucun résultat trouvé" de la recherche
+    if (row.classList.contains('no-results-row') || row.textContent.includes("Aucun résultat trouvé")) {
+      row.remove();
+      return;
+    }
+
+    // 2. Si la ligne correspondante dans le tableau d'origine est masquée (filtres/recherche)
+    const originalRow = originalRows[index];
+    if (originalRow && !originalRow.classList.contains('always-visible')) {
+      const display = window.getComputedStyle(originalRow).display;
+      if (display === 'none') {
+        row.remove();
+        return;
+      }
+    }
+
+    // 3. Pour les lignes restantes, forcer l'affichage correct et l'alternance de fond
+    row.style.display = 'table-row';
+    row.style.pageBreakInside = 'avoid';
+
+    if (!row.querySelector('th')) {
+      row.style.backgroundColor = (visibleRowCounter % 2 === 1) ? '#f8fafc' : '#ffffff';
+      visibleRowCounter++;
+    }
+  });
+
+  // Appliquer le centrage, bordures et styles à toutes les cellules de données (td)
+  element.querySelectorAll('td').forEach(cell => {
+    cell.style.minWidth = '0';
+    cell.style.maxWidth = 'none';
+    cell.style.border = '1px solid #e2e8f0';
+    cell.style.padding = '5px 2px';
+    cell.style.textAlign = 'center';
+    cell.style.verticalAlign = 'middle';
+    cell.style.fontSize = '8.5px';
+    cell.style.lineHeight = '1.25';
+    cell.style.boxSizing = 'border-box';
+    cell.style.whiteSpace = 'normal';
+    cell.style.wordBreak = 'break-word';
+    cell.style.overflowWrap = 'break-word';
+
+    // Conserver et styliser les liens pour qu'ils soient cliquables dans le PDF
     const links = cell.querySelectorAll('a');
     links.forEach(link => {
-      link.style.color = '#333';
-      link.style.textDecoration = 'none';
+      // Restaurer l'URL si stockée dans data-original-href
+      const origHref = link.getAttribute('data-original-href');
+      if (origHref && origHref !== '#') {
+        link.href = origHref;
+      }
+
+      const currentHref = link.getAttribute('href');
+      if (currentHref && currentHref !== '#' && !currentHref.startsWith('javascript:')) {
+        link.target = '_blank';
+        link.style.color = '#1d4ed8'; // Bleu élégant et lisible
+        link.style.textDecoration = 'underline';
+        link.style.pointerEvents = 'auto';
+      } else {
+        link.style.color = '#1e293b';
+        link.style.textDecoration = 'none';
+        link.removeAttribute('href');
+      }
     });
   });
 
-  // Gérer toutes les images de l'élément pour le PDF
-  // On doit les convertir en Base64 pour éviter l'erreur "Tainted Canvas"
+  // Gérer les conteneurs d'icônes SVG (stay-type-wrapper) pour html2canvas
+  element.querySelectorAll('.stay-type-wrapper').forEach(wrapper => {
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.gap = '4px';
+    wrapper.style.width = '100%';
+    wrapper.style.textAlign = 'center';
+  });
+
+  element.querySelectorAll('.stay-type-spacer').forEach(sp => {
+    sp.style.display = 'none';
+  });
+
+  element.querySelectorAll('.stay-type-text').forEach(txt => {
+    txt.style.textAlign = 'center';
+    txt.style.display = 'inline-block';
+    txt.style.fontSize = '8.5px';
+    txt.style.lineHeight = '1.2';
+  });
+
+  // Forcer les dimensions explicites des SVG vectoriels
+  element.querySelectorAll('svg.stay-type-icon, svg').forEach(svg => {
+    svg.style.width = '16px';
+    svg.style.height = '16px';
+    svg.style.minWidth = '16px';
+    svg.style.minHeight = '16px';
+    svg.style.maxWidth = '16px';
+    svg.style.maxHeight = '16px';
+    svg.style.display = 'inline-block';
+    svg.style.verticalAlign = 'middle';
+    svg.style.flexShrink = '0';
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+  });
+
+  // Conserver et styliser les tags (.cell-tag)
+  element.querySelectorAll('.cell-tag').forEach(tag => {
+    tag.style.display = 'inline-block';
+    tag.style.padding = '2px 5px';
+    tag.style.borderRadius = '4px';
+    tag.style.fontSize = '7.5px';
+    tag.style.fontWeight = '600';
+    tag.style.lineHeight = '1.2';
+    tag.style.textAlign = 'center';
+    tag.style.boxShadow = 'none';
+    tag.style.whiteSpace = 'normal';
+  });
+
+  // Styliser les badges de statut (.badge-status)
+  element.querySelectorAll('.badge-status').forEach(badge => {
+    badge.style.display = 'inline-block';
+    badge.style.padding = '1px 5px';
+    badge.style.borderRadius = '8px';
+    badge.style.fontSize = '6.5px';
+    badge.style.fontWeight = '700';
+    badge.style.marginLeft = '3px';
+    badge.style.verticalAlign = 'middle';
+    badge.style.animation = 'none';
+    badge.style.whiteSpace = 'nowrap';
+  });
+
+  // Numéros de ligne (.num, .num-btn)
+  element.querySelectorAll('.num, .num-btn').forEach(numEl => {
+    numEl.style.textAlign = 'center';
+    numEl.style.justifyContent = 'center';
+    numEl.style.fontWeight = '600';
+    numEl.style.fontSize = '8.5px';
+  });
+
+  // Libellés pays (.country-label)
+  element.querySelectorAll('.country-label').forEach(country => {
+    country.style.color = '#d8a659';
+    country.style.fontSize = '8px';
+  });
+
+  // Gérer toutes les images de logos de l'élément pour le PDF
   const images = Array.from(element.querySelectorAll('img'));
   const originalImages = Array.from(originalTable.querySelectorAll('img'));
   let hasMissingLogos = false;
 
   const imagePromises = images.map(async (img, idx) => {
-    img.style.maxWidth = '30px'; // Taille légèrement réduite pour sécurité
+    img.style.maxWidth = '30px';
+    img.style.maxHeight = '30px';
+    img.style.width = 'auto';
     img.style.height = 'auto';
+    img.style.objectFit = 'contain';
     img.style.display = 'block';
     img.style.margin = '0 auto';
+    img.style.borderRadius = '3px';
 
     if (img.src && !img.src.startsWith('data:image')) {
       // 1. Tenter d'abord de récupérer l'image depuis l'élément d'origine s'il est chargé
@@ -1674,15 +1845,14 @@ async function generatePDF(tableId, title) {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(originalImg, 0, 0);
           img.src = canvas.toDataURL('image/png');
-          return; // Succès via canvas
+          return;
         } catch (e) {
-          // Si erreur de sécurité canvas (CORS), on passe au fetch
+          // Erreur de sécurité canvas (CORS), on passe au fetch
         }
       }
 
-      // 2. Fallback via fetch (nécesaire pour les images non encore chargées ou cross-origin avec CORS)
+      // 2. Fallback via fetch
       try {
-        // Convertir en URL absolue pour éviter les problèmes de chemins relatifs dans le clone
         const absoluteUrl = new URL(img.src, window.location.href).href;
         const response = await fetch(absoluteUrl);
         const blob = await response.blob();
@@ -1695,7 +1865,6 @@ async function generatePDF(tableId, title) {
           reader.readAsDataURL(blob);
         });
       } catch (e) {
-        // En cas d'échec total (CORS/accès), on retire l'image pour que le PDF se génère
         img.remove();
         hasMissingLogos = true;
       }
@@ -1704,34 +1873,6 @@ async function generatePDF(tableId, title) {
 
   // Attendre que toutes les images soient converties (ou retirées)
   await Promise.all(imagePromises);
-
-  // Gérer la visibilité des lignes pour le PDF
-  // On s'assure qu'on voit bien tout le contenu et on prépare le rendu
-  const originalRows = Array.from(originalTable.querySelectorAll('tr'));
-
-  Array.from(rows).forEach((row, index) => {
-    // 1. Supprimer la ligne "Aucun résultat trouvé" de la recherche
-    if (row.classList.contains('no-results-row') || row.textContent.includes("Aucun résultat trouvé")) {
-      row.remove();
-      return;
-    }
-
-    // 2. Si la ligne correspondante dans le tableau d'origine est masquée (fitres/recherche)
-    // On la retire aussi du PDF pour ne montrer que ce que l'utilisateur voit à l'écran
-    const originalRow = originalRows[index];
-    if (originalRow && !originalRow.classList.contains('always-visible')) {
-      const display = window.getComputedStyle(originalRow).display;
-      if (display === 'none') {
-        row.remove();
-        return;
-      }
-    }
-
-    // 3. Pour les lignes restantes, on force l'affichage correct
-    row.style.display = 'table-row';
-    row.style.pageBreakInside = 'avoid';
-  });
-
 
   // Récupérer le nom de l'utilisateur pour le nom de fichier et l'en-tête
   let userName = window.currentUserFullName || "Animateur";
@@ -1744,23 +1885,19 @@ async function generatePDF(tableId, title) {
   }
 
   // Générer un nom de fichier propre
-  // Format: type_nom_prenom_numero
   const now = new Date();
   const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-  // Création du timestamp pour le fichier (YYYYMMDD_HHMM)
   const pad = (num) => num.toString().padStart(2, '0');
   const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
 
-  // Nettoyage du nom (accents, espaces -> underscores, minuscules)
   const cleanName = userName
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Enlever les accents
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, "_") // Remplacer tout ce qui n'est pas alphanum par underscore
-    .replace(/_+/g, "_"); // Éviter les doubles underscores
+    .replace(/[^a-z0-9]/g, "_")
+    .replace(/_+/g, "_");
 
-  // Déterminer le type (experience ou formation)
   let typePrefix = "document";
   if (tableId.includes("experience")) {
     typePrefix = "experience";
@@ -1771,67 +1908,66 @@ async function generatePDF(tableId, title) {
   const filename = `${typePrefix}_${cleanName}_${timestamp}.pdf`;
 
   const opt = {
-    margin: [1, 10, 10, 10], // top, left, bottom, right (Marge haute réduite)
+    margin: [6, 8, 6, 8], // top, left, bottom, right (mm)
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
+    enableLinks: true, // Active la détection et la création des liens cliquables dans le PDF
     html2canvas: {
       scale: 2,
       useCORS: true,
       logging: false,
       letterRendering: true,
-      scrollY: 0 // Important pour éviter les décalages si la fenêtre est scrollée
+      scrollY: 0
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
   };
 
   // Création d'un wrapper pour le rendu PDF
   const container = document.createElement('div');
-  container.style.padding = '10px'; // Padding réduit
+  container.style.padding = '6px 8px';
   container.style.backgroundColor = '#ffffff';
-  container.style.fontFamily = 'Arial, sans-serif';
-  container.style.width = '100%'; // Forcer la largeur
-
+  container.style.fontFamily = 'Roboto, Arial, sans-serif';
+  container.style.width = '100%';
+  container.style.boxSizing = 'border-box';
 
   // En-tête personnalisé (Nom de l'utilisateur) - TOUT EN HAUT
   const header = document.createElement('div');
-  header.style.marginBottom = '10px';
-  header.style.borderBottom = '2px solid #e74c3c'; // Ligne plus visible
-  header.style.paddingBottom = '5px';
-  header.style.fontSize = '16px';
+  header.style.marginBottom = '8px';
+  header.style.borderBottom = '2px solid #e74c3c';
+  header.style.paddingBottom = '4px';
+  header.style.fontSize = '14px';
   header.style.color = '#2c3e50';
   header.style.fontWeight = 'bold';
   header.style.display = 'flex';
-  header.style.justifyContent = 'space-between'; // Espacer si on ajoute d'autres infos
-  header.innerHTML = `<div>Document appartenant à : <span style="color: #e67e22; font-size: 18px; text-transform: uppercase;">${userName}</span></div>`;
+  header.style.justifyContent = 'space-between';
+  header.innerHTML = `<div>Document appartenant à : <span style="color: #e67e22; font-size: 16px; text-transform: uppercase;">${userName}</span></div>`;
 
   // Titre du document
   const h1 = document.createElement('h1');
   h1.textContent = title;
   h1.style.textAlign = 'center';
-  h1.style.marginBottom = '20px';
-  h1.style.marginTop = '10px';
+  h1.style.marginBottom = '14px';
+  h1.style.marginTop = '6px';
   h1.style.color = '#2c3e50';
-  h1.style.fontSize = '22px';
-  // h1.style.borderBottom = '2px solid #e74c3c'; // Déjà dans le header
-  // h1.style.paddingBottom = '10px';
+  h1.style.fontSize = '18px';
 
   // Pied de page personnalisé (Signature + Date + Pagination)
   const footer = document.createElement('div');
-  footer.style.marginTop = '20px';
+  footer.style.marginTop = '14px';
   footer.style.borderTop = '1px solid #ddd';
-  footer.style.paddingTop = '10px';
-  footer.style.fontSize = '12px'; // Plus visible
+  footer.style.paddingTop = '8px';
+  footer.style.fontSize = '10px';
   footer.style.color = '#555';
   footer.style.display = 'flex';
   footer.style.justifyContent = 'space-between';
-  footer.style.alignItems = 'flex-end'; // Aligner en bas
-  footer.style.pageBreakBefore = 'avoid'; // Essayer de garder le footer avec le contenu
+  footer.style.alignItems = 'flex-end';
+  footer.style.pageBreakBefore = 'avoid';
 
   const leftPart = document.createElement('div');
   leftPart.innerHTML = `Généré le <strong>${dateStr}</strong> à ${timeStr}`;
 
   const rightPart = document.createElement('div');
-  rightPart.innerHTML = `<strong>Récapitulatif BAFA/BAFD - Plateforme collaborative - (© Romain SIEURIN)</a></strong><br>
+  rightPart.innerHTML = `<strong>Récapitulatif BAFA/BAFD - Plateforme collaborative - (© Romain SIEURIN)</strong><br>
                          Généré via <a href="https://macollectiondebafa.web.app/" style="color: #e67e22; text-decoration: none;">https://macollectiondebafa.web.app/</a>`;
   rightPart.style.textAlign = 'right';
 
@@ -1845,10 +1981,10 @@ async function generatePDF(tableId, title) {
   // Note discrète si des logos manquent
   if (hasMissingLogos) {
     const note = document.createElement('p');
-    note.style.fontSize = '10px';
+    note.style.fontSize = '9px';
     note.style.color = '#777';
     note.style.fontStyle = 'italic';
-    note.style.margin = '5px 0 0 0';
+    note.style.margin = '4px 0 0 0';
     note.style.textAlign = 'right';
     note.innerHTML = `<i class="bi bi-info-circle"></i> Note : Certains logos n'apparaissent pas car l'accès sécurisé à leur source est restreint par le navigateur (CORS).`;
     container.appendChild(note);
