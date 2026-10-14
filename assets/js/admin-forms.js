@@ -817,6 +817,8 @@ async function showAddExperienceModal() {
   if (ceField) ceField.value = '';
   const expDriveField = document.getElementById('exp-drive-url');
   if (expDriveField) expDriveField.value = '';
+  const expDriveBubble = document.getElementById('exp-drive-explanation-bubble');
+  if (expDriveBubble) expDriveBubble.style.display = 'none';
 
   // Reset Tom Selects
   ['exp-stay-type', 'exp-position', 'exp-organizer'].forEach(id => {
@@ -1350,6 +1352,15 @@ window.toggleMapExplanation = function (event, type) {
 window.toggleDeptExplanation = function (event, type) {
   if (event) event.preventDefault();
   const bubbleId = type === 'exp' ? 'exp-dept-explanation-bubble' : 'form-dept-explanation-bubble';
+  const bubble = document.getElementById(bubbleId);
+  if (bubble) {
+    bubble.style.display = bubble.style.display === 'none' ? 'block' : 'none';
+  }
+};
+
+window.toggleDriveExplanation = function (event, type) {
+  if (event) event.preventDefault();
+  const bubbleId = type === 'exp' ? 'exp-drive-explanation-bubble' : 'form-drive-explanation-bubble';
   const bubble = document.getElementById(bubbleId);
   if (bubble) {
     bubble.style.display = bubble.style.display === 'none' ? 'block' : 'none';
@@ -2095,6 +2106,8 @@ async function showEditExperienceModal(data, row) {
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
   const expDriveField = document.getElementById('exp-drive-url');
   if (expDriveField) expDriveField.value = data.driveUrl || '';
+  const expDriveBubble = document.getElementById('exp-drive-explanation-bubble');
+  if (expDriveBubble) expDriveBubble.style.display = 'none';
 
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
@@ -2481,6 +2494,8 @@ async function showAddFormationModal() {
   form.reset();
   const formDriveField = document.getElementById('form-drive-url');
   if (formDriveField) formDriveField.value = '';
+  const formDriveBubble = document.getElementById('form-drive-explanation-bubble');
+  if (formDriveBubble) formDriveBubble.style.display = 'none';
 
   // Mettre à jour les labels selon le type par défaut
   updateFormationTitleLabels();
@@ -2613,6 +2628,8 @@ function showEditFormationModal(data, row) {
   document.getElementById('form-organism-url').value = data.organismUrl || '';
   const formDriveField = document.getElementById('form-drive-url');
   if (formDriveField) formDriveField.value = data.driveUrl || '';
+  const formDriveBubble = document.getElementById('form-drive-explanation-bubble');
+  if (formDriveBubble) formDriveBubble.style.display = 'none';
 
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
