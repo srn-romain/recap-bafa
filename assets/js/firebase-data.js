@@ -914,7 +914,8 @@ async function loadExperiencesFromFirebase() {
         position: data.position || '',
         ageRange: data.ageRange || '',
         youthCount: data.youthCount || 0,
-        ce: data.ce || ''
+        ce: data.ce || '',
+        driveUrl: data.driveUrl || ''
       });
     });
 
@@ -1077,7 +1078,8 @@ async function loadFormationsFromFirebase() {
         logoPath: data.logoPath || '',
         title: data.title || '',
         location: data.location || '',
-        locationUrl: (data.locationUrl && data.locationUrl !== '#') ? data.locationUrl : ''
+        locationUrl: (data.locationUrl && data.locationUrl !== '#') ? data.locationUrl : '',
+        driveUrl: data.driveUrl || ''
       };
       formations.push(formation);
 

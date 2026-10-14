@@ -1319,7 +1319,8 @@ function editExperience(row) {
       position: cells[7]?.textContent?.trim() || '',
       ageRange: cells[8]?.textContent?.trim() || '',
       youthCount: parseInt(cells[9]?.textContent?.trim() || '0', 10),
-      type: row.getAttribute('data-type') || 'colo'
+      type: row.getAttribute('data-type') || 'colo',
+      driveUrl: ''
     };
   }
 
@@ -1352,7 +1353,8 @@ function editFormation(row) {
       title: cells[5]?.textContent?.trim() || '',
       location: cells[6]?.textContent?.trim() || '',
       locationUrl: cells[6]?.querySelector('a')?.href || '',
-      type: row.getAttribute('data-type') || 'bafa'
+      type: row.getAttribute('data-type') || 'bafa',
+      driveUrl: ''
     };
   }
 

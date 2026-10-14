@@ -1,6 +1,37 @@
 /**
- * Gère la modale récapitulative des expériences et formations.
+ * Normalise ou convertit une saisie utilisateur (lien complet ou clé de dossier) en URL Google Drive valide.
+ * @param {string} input - Lien complet ou ID/clé du dossier Google Drive
+ * @returns {string} URL complète vers le dossier Google Drive
  */
+function formatGoogleDriveUrl(input) {
+  if (!input || typeof input !== 'string') return '';
+  let trimmed = input.trim();
+  if (!trimmed) return '';
+
+  // Si HTTP vers drive.google.com, forcer en HTTPS
+  if (/^http:\/\/drive\.google\.com/i.test(trimmed)) {
+    trimmed = trimmed.replace(/^http:\/\//i, 'https://');
+  }
+
+  // Si c'est déjà une URL HTTP(S) complète
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  // Si commence par drive.google.com
+  if (/^drive\.google\.com/i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+
+  // Si préfixé par id=
+  if (trimmed.startsWith('id=')) {
+    trimmed = trimmed.substring(3).trim();
+  }
+
+  // Clé / ID de dossier Google Drive
+  return `https://drive.google.com/drive/folders/${trimmed}`;
+}
+window.formatGoogleDriveUrl = formatGoogleDriveUrl;
 
 document.addEventListener('DOMContentLoaded', function () {
   createSummaryModal();
@@ -97,6 +128,30 @@ function createSummaryModal() {
                              <div style="font-size: 0.7rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Public encadré</div>
                             <div id="summary-youth-count" style="font-size: 0.9rem; color: #1e293b; font-weight: 500;">-</div>
                         </div>
+                    </div>
+
+                    <!-- Répertoire Google Drive -->
+                    <div id="summary-drive-card" class="summary-info-card" style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; display: none; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 40px; height: 40px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg viewBox="0 0 87.3 78" width="22" height="20" style="display: block;">
+                                    <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+                                    <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+                                    <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+                                    <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+                                    <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+                                    <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Google Drive</div>
+                                <div style="font-size: 0.95rem; color: #1e293b; font-weight: 500;">Dossier partagé</div>
+                            </div>
+                        </div>
+                        <a id="summary-drive-btn" href="#" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; padding: 7px 14px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='#f1f5f9';this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#cbd5e1';">
+                            <span>Accéder au Drive</span>
+                            <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem; color: #64748b;"></i>
+                        </a>
                     </div>
 
                 </div>
@@ -265,6 +320,26 @@ window.showSummaryModal = function (data, itemType) {
 
   // 2. Données communes
   logo.src = data.logoPath || 'assets/img/default-logo.png';
+
+  // Google Drive
+  const driveCard = document.getElementById('summary-drive-card');
+  const driveBtn = document.getElementById('summary-drive-btn');
+  const rawDrive = data.driveUrl || data.drive || data.driveFolder || '';
+  const formattedDriveUrl = formatGoogleDriveUrl(rawDrive);
+
+  if (formattedDriveUrl && formattedDriveUrl.trim() !== '') {
+    if (driveCard) driveCard.style.display = 'flex';
+    if (driveBtn) {
+      driveBtn.href = formattedDriveUrl;
+      driveBtn.setAttribute('target', '_blank');
+      driveBtn.setAttribute('rel', 'noopener noreferrer');
+    }
+  } else {
+    if (driveCard) driveCard.style.display = 'none';
+    if (driveBtn) {
+      driveBtn.href = '#';
+    }
+  }
   
   const dateText = data.date || '?';
   const durationText = data.duration || '?';

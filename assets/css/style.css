@@ -2680,6 +2680,11 @@ optgroup option {
   opacity: 0.8;
 }
 
+#summary-modal #summary-drive-btn:hover {
+  text-decoration: none !important;
+  opacity: 1 !important;
+}
+
 .summary-info-card:has(a[href="#"]) a {
   cursor: default;
 }

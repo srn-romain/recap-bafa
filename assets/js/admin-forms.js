@@ -815,6 +815,8 @@ async function showAddExperienceModal() {
   form.reset();
   const ceField = document.getElementById('exp-ce');
   if (ceField) ceField.value = '';
+  const expDriveField = document.getElementById('exp-drive-url');
+  if (expDriveField) expDriveField.value = '';
 
   // Reset Tom Selects
   ['exp-stay-type', 'exp-position', 'exp-organizer'].forEach(id => {
@@ -2091,6 +2093,8 @@ async function showEditExperienceModal(data, row) {
 
   document.getElementById('exp-dept').value = orgDept;
   document.getElementById('exp-organizer-url').value = data.organizerUrl || '';
+  const expDriveField = document.getElementById('exp-drive-url');
+  if (expDriveField) expDriveField.value = data.driveUrl || '';
 
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
@@ -2475,6 +2479,8 @@ async function showAddFormationModal() {
   document.getElementById('formation-modal-title').textContent = 'Ajouter une formation';
   const form = document.getElementById('formation-form');
   form.reset();
+  const formDriveField = document.getElementById('form-drive-url');
+  if (formDriveField) formDriveField.value = '';
 
   // Mettre à jour les labels selon le type par défaut
   updateFormationTitleLabels();
@@ -2605,6 +2611,8 @@ function showEditFormationModal(data, row) {
   }
 
   document.getElementById('form-organism-url').value = data.organismUrl || '';
+  const formDriveField = document.getElementById('form-drive-url');
+  if (formDriveField) formDriveField.value = data.driveUrl || '';
 
   // Gérer le logo
   const logoPath = extractLogoFilename(data.logoPath || '');
@@ -2936,7 +2944,11 @@ document.addEventListener('DOMContentLoaded', function () {
         })(),
         ageRange: ageRangeString,
         youthCount: parseInt(document.getElementById('exp-youth-count').value || '0', 10),
-        ce: document.getElementById('exp-ce').value.trim()
+        ce: document.getElementById('exp-ce').value.trim(),
+        driveUrl: (() => {
+          const rawDrive = document.getElementById('exp-drive-url')?.value?.trim() || '';
+          return typeof window.formatGoogleDriveUrl === 'function' ? window.formatGoogleDriveUrl(rawDrive) : rawDrive;
+        })()
       };
 
       // Gérer le tableau locations selon le type de séjour
@@ -3090,6 +3102,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return `https://www.google.fr/maps/search/${encodeURIComponent(fullLoc)}`;
           }
           return null;
+        })(),
+        driveUrl: (() => {
+          const rawDrive = document.getElementById('form-drive-url')?.value?.trim() || '';
+          return typeof window.formatGoogleDriveUrl === 'function' ? window.formatGoogleDriveUrl(rawDrive) : rawDrive;
         })()
       };
 
