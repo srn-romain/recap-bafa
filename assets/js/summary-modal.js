@@ -144,8 +144,10 @@ function createSummaryModal() {
                                 </svg>
                             </div>
                             <div>
-                                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Google Drive</div>
-                                <div style="font-size: 0.95rem; color: #1e293b; font-weight: 500;">Dossier partagé</div>
+                                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                                    Google Drive
+                                </div>
+                                <div style="font-size: 0.95rem; color: #1e293b; font-weight: 500;">Dossier associé</div>
                             </div>
                         </div>
                         <a id="summary-drive-btn" href="#" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; padding: 7px 14px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='#f1f5f9';this.style.borderColor='#94a3b8';" onmouseout="this.style.background='#f8fafc';this.style.borderColor='#cbd5e1';">
@@ -321,13 +323,24 @@ window.showSummaryModal = function (data, itemType) {
   // 2. Données communes
   logo.src = data.logoPath || 'assets/img/default-logo.png';
 
-  // Google Drive
+  // Google Drive (visible UNIQUEMENT si l'utilisateur est connecté et qu'il s'agit de sa propre page)
+  const isPageOwner = (function () {
+    if (typeof window.isOwner === 'function') {
+      return window.isOwner();
+    }
+    if (!window.currentUser) return false;
+    if (window.targetUid) {
+      return window.currentUser.uid === window.targetUid;
+    }
+    return window.userRole === 'admin';
+  })();
+
   const driveCard = document.getElementById('summary-drive-card');
   const driveBtn = document.getElementById('summary-drive-btn');
   const rawDrive = data.driveUrl || data.drive || data.driveFolder || '';
   const formattedDriveUrl = formatGoogleDriveUrl(rawDrive);
 
-  if (formattedDriveUrl && formattedDriveUrl.trim() !== '') {
+  if (isPageOwner && formattedDriveUrl && formattedDriveUrl.trim() !== '') {
     if (driveCard) driveCard.style.display = 'flex';
     if (driveBtn) {
       driveBtn.href = formattedDriveUrl;
@@ -338,6 +351,8 @@ window.showSummaryModal = function (data, itemType) {
     if (driveCard) driveCard.style.display = 'none';
     if (driveBtn) {
       driveBtn.href = '#';
+      driveBtn.removeAttribute('target');
+      driveBtn.removeAttribute('rel');
     }
   }
   

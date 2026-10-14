@@ -123,6 +123,11 @@ function injectSettingsModal() {
                     <span id="privacy-status-text"></span>
                 </div>
 
+                <div style="font-size: 0.8rem; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-top: 10px; line-height: 1.4; display: flex; align-items: flex-start; gap: 8px;">
+                    <i class="bi bi-shield-lock-fill" style="color: #0284c7; font-size: 1rem; margin-top: 1px; flex-shrink: 0;"></i>
+                    <span><strong>Confidentialité Google Drive :</strong> Les dossiers Drive rattachés à vos séjours et formations restent strictement privés. Ils sont affichés dans la modale de détail uniquement pour vous sur votre propre page connectée, et sont automatiquement masqués pour tout autre visiteur.</span>
+                </div>
+
                 <div class="settings-divider"></div>
 
                 <h3 class="subsettings-title">Préférences d'affichage</h3>

@@ -411,6 +411,7 @@ function isOwner() {
   // Si on est sur la page générale (legacy), seul l'admin peut modifier
   return window.userRole === 'admin';
 }
+window.isOwner = isOwner;
 
 // Helper: Obtenir la référence de la collection (reflète la logique de lecture)
 function getCollectionRef(name) {
