@@ -2,7 +2,7 @@
   "name": "Récap BAFA & BAFD",
   "short_name": "Récap BAFA",
   "description": "Gérez et partagez votre parcours d'animation simplement.",
-  "start_url": "/index.html",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
