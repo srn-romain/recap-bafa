@@ -286,476 +286,9 @@
           </button>
         </div>
         <button onclick="openUserManual()" class="btn-large btn-dark">
-          <i class="bi bi-book-half"></i> Manuel utilisateur
+          <i class="bi bi-book"></i> Manuel d'utilisation
         </button>
       </div>
-
-      <!-- Section Nouveautés -->
-      <div id="whats-new-section" style="max-width: 850px; margin: 40px auto; text-align: left;">
-
-        <!-- v21 : Octobre 2026 -->
-        <div
-          style="background: #fff9eb; border-left: 5px solid #f39c12; padding: 20px 30px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
-          <div
-            style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
-            <h3
-              style="color: #d35400; margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; font-weight: 700;">
-              Dernière version : <i>Octobre 2026</i>
-            </h3>
-            <span
-              style="background: #f39c12; color: white; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;">VERSION
-              ACTUELLE</span>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 9px;">
-
-            <div
-              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
-              <span><strong>Notifications Toasters :</strong> alertes interactives et retours visuels instantanés (succès, erreur, avertissement) lors de chaque action utilisateur (création, modification, suppression, sauvegarde de profil, export, copie de lien).</span>
-            </div>
-
-            <div
-              style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
-              <span><strong>Nouveau champ Google Drive :</strong> ajout d'un champ facultatif (lien ou clé de dossier) pour vos séjours et formations avec bouton d'accès direct dans la modale de détail (champ privé, visible exclusivement par vous lorsque vous êtes connecté sur votre propre page).</span>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Conteneur des versions précédentes (empilées, révélées une par une) -->
-        <div id="changelog-history" style="margin-top: 0;">
-
-          <!-- v20 : Septembre 2026 -->
-          <div class="changelog-entry" id="cl-sept2026"
-            style="display: none; border-left: 5px solid #6366f1; background: #eef2ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #4338ca; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Septembre 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Section statistiques repensée :</strong> Cartes compteurs dynamiques & nouveaux graphiques.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Icônes et titres repensés :</strong> une vingtaine d'icônes pour illustrer vos tableaux et des titres de sections clarifiés.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>En-tête fixe au scroll :</strong> L'en-tête du tableau vous suit lors du défilement (paramétrable dans vos options).</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Couleurs par tranche d'âge :</strong> Badges automatiques selon le public (petite enfance, enfance, ados, adultes).</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v19 : Août 2026 -->
-          <div class="changelog-entry" id="cl-aout2026"
-            style="display: none; border-left: 5px solid #8b5cf6; background: #f5f3ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #7c3aed; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Août 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #8b5cf6; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Chargement fluide :</strong> indicateur de session pour supprimer les sauts d'affichage au démarrage.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v18 : Juin 2026 -->
-          <div class="changelog-entry" id="cl-juin2026"
-            style="display: none; border-left: 5px solid #0284c7; background: #f0f9ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0284c7; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Juin 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #0284c7; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Statut temporel dynamique (j-XX / j+XX) :</strong> la modale de détail d'une colo ou formation affiche désormais en temps réel son statut (<i>j-XX</i> vert, <i>en cours</i> bleu, <i>j+XX</i> rouge).</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v17 : Mai 2026 -->
-          <div class="changelog-entry" id="cl-mai2026"
-            style="display: none; border-left: 5px solid #0d9488; background: #f0fdfa; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(13, 148, 136, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0d9488; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Mai 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Fenêtre de détail :</strong> cliquez sur le numéro d'une ligne pour ouvrir une modale récapitulative complète.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Enrichissement du scoutisme :</strong> davantage d'organismes de scoutisme ajoutés (EEDF, EEIF...).</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Champ Comité d'Entreprise :</strong> nouveau champ optionnel pour préciser le CE/CSE organisateur de vos colos.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Export image JPG :</strong> nouveau bouton pour générer une image (.jpg) haute qualité de vos tableaux.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Manuel utilisateur :</strong> design graphique de la modale entièrement retravaillé.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v16 : Avril 2026 -->
-          <div class="changelog-entry" id="cl-avr2026"
-            style="display: none; border-left: 5px solid #db2777; background: #fdf2f8; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(219, 39, 119, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #db2777; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Avril 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #db2777; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Nouveau type &laquo;&nbsp;Périscolaire&nbsp;&raquo; :</strong> ajoutez vos expériences en accueil périscolaire.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #db2777; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Date améliorée :</strong> saisie de date de début et de fin.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #db2777; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Confidentialité & Badges :</strong> bandeau récapitulatif des accès et badges animés (Futur, En cours, Nouveau).</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v15 : Mars 2026 -->
-          <div class="changelog-entry" id="cl-mar2026"
-            style="display: none; border-left: 5px solid #10b981; background: #ecfdf5; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #059669; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Mars 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #10b981; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Enrichissement des organismes :</strong> une liste plus large d'organismes de formation est désormais disponible.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #10b981; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Mot de passe oublié :</strong> réinitialisez votre mot de passe sans être connecté.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #10b981; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Liste déroulante des lieux :</strong> à partir de 3 caractères, une liste déroulante vous propose des lieux correspondants.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v14 : Février 2026 -->
-          <div class="changelog-entry" id="cl-fev2026"
-            style="display: none; border-left: 5px solid #ef4444; background: #fef2f2; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.12);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #dc2626; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Février 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #ef4444; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Gestion photo de profil :</strong> personnalisez votre espace avec votre propre image.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #ef4444; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Connexion Google :</strong> connectez-vous désormais directement via votre compte Google.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #ef4444; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Génération PDF :</strong> téléchargez tout votre parcours en un seul clic.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v13 : Janvier 2026 -->
-          <div class="changelog-entry" id="cl-jan2026"
-            style="display: none; border-left: 5px solid #3b82f6; background: #eff6ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(59,130,246,0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #2563eb; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Janvier 2026</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #3b82f6; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Ouverture des comptes publics :</strong> chacun peut créer son propre espace.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #3b82f6; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Colos itinérantes :</strong> gestion des séjours multi-lieux.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v12 : Novembre 2025 -->
-          <div class="changelog-entry" id="cl-nov2025"
-            style="display: none; border-left: 5px solid #a855f7; background: #faf5ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #9333ea; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Novembre 2025</p>
-            <div
-              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #a855f7; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>Système de connexion :</strong> mise en place du moyen de connexion utilisateur.</span>
-            </div>
-          </div>
-
-          <!-- v11 : Octobre 2025 -->
-          <div class="changelog-entry" id="cl-oct2025"
-            style="display: none; border-left: 5px solid #14b8a6; background: #f0fdfa; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(20,184,166,0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0d9488; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Octobre 2025</p>
-            <div
-              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #14b8a6; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>Responsive mobile :</strong> l'interface s'adapte désormais aux écrans de téléphone.</span>
-            </div>
-          </div>
-
-          <!-- v10 : Juillet 2025 -->
-          <div class="changelog-entry" id="cl-jul2025"
-            style="display: none; border-left: 5px solid #f59e0b; background: #fffbeb; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(245,158,11,0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #d97706; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Juillet 2025</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #f59e0b; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Graphiques :</strong> ajout de graphiques dans la section Statistiques.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #f59e0b; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Nouvelles colonnes :</strong> nombre de jeunes encadrés et logo de l'organisme.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v9 : Mars 2025 -->
-          <div class="changelog-entry" id="cl-mar2025"
-            style="display: none; border-left: 5px solid #f43f5e; background: #fff1f2; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(244, 63, 94, 0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #e11d48; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Mars 2025</p>
-            <div
-              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #f43f5e; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>Barre de recherche :</strong> filtrez vos expériences et formations.</span>
-            </div>
-          </div>
-
-          <!-- v8 : Février 2025 -->
-          <div class="changelog-entry" id="cl-feb2025"
-            style="display: none; border-left: 5px solid #f97316; background: #fff7ed; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(249,115,22,0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #ea580c; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Février 2025</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Tableau des formations :</strong> nouvelle section dédiée à vos formations BAFA/BAFD.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Bouton "Retour en haut" :</strong> navigation rapide en bas de page.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Filtres :</strong> filtrez vos données par type, date ou organisme.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- v7 : Janvier 2025 -->
-          <div class="changelog-entry" id="cl-jan2025"
-            style="display: none; border-left: 5px solid #06b6d4; background: #ecfeff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(6,182,212,0.1);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0891b2; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Janvier 2025</p>
-            <div
-              style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
-              <i class="bi bi-check2-circle" style="color: #06b6d4; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>Section Statistiques :</strong> visualisez votre parcours avec des données chiffrées.</span>
-            </div>
-          </div>
-
-          <!-- v1 : Novembre 2024 -->
-          <div class="changelog-entry" id="cl-nov2024"
-            style="display: none; border-left: 5px solid #64748b; background: #f8fafc; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(100, 116, 139, 0.08);">
-            <p
-              style="margin: 0 0 8px 0; font-size: 0.78rem; color: #475569; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
-              Novembre 2024 — Lancement 🚀</p>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #475569; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-rocket-takeoff-fill" style="color: #64748b; flex-shrink: 0; margin-top: 2px;"></i>
-                <span><strong>Mise en ligne initiale :</strong> première version de l'application.</span>
-              </div>
-              <div
-                style="display: flex; align-items: flex-start; gap: 8px; color: #475569; font-size: 0.9rem; line-height: 1.5;">
-                <i class="bi bi-check2-circle" style="color: #64748b; flex-shrink: 0; margin-top: 2px;"></i>
-                <span>Mise en place du compte de démonstration.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Boutons d'action du changelog -->
-        <div style="text-align: center; margin-top: 18px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <button id="changelog-prev-btn" onclick="revealPreviousVersion()"
-            style="background: #ffffff; border: 1px solid #d1d5db; color: #4b5563; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s ease;"
-            onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#9ca3af'; this.style.transform='translateY(-1px)';"
-            onmouseout="this.style.background='#ffffff'; this.style.borderColor='#d1d5db'; this.style.transform='translateY(0)';">
-            <i class="bi bi-clock-history"></i> <span id="changelog-prev-text">Voir les versions précédentes</span>
-          </button>
-          <button id="changelog-collapse-btn" onclick="collapseAllVersions()"
-            style="display: none; background: #ffffff; border: 1px solid #d1d5db; color: #6b7280; font-size: 0.82rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s ease;"
-            onmouseover="this.style.background='#fee2e2'; this.style.color='#b91c1c'; this.style.borderColor='#fca5a5'; this.style.transform='translateY(-1px)';"
-            onmouseout="this.style.background='#ffffff'; this.style.color='#6b7280'; this.style.borderColor='#d1d5db'; this.style.transform='translateY(0)';">
-            <i class="bi bi-chevron-up"></i> Replier
-          </button>
-        </div>
-
-      </div>
-
-      <script>
-        // Ordre des versions à révéler (du plus récent au plus ancien)
-        const changelogVersions = [
-          'cl-sept2026', 'cl-aout2026', 'cl-juin2026', 'cl-mai2026', 'cl-avr2026', 'cl-mar2026', 'cl-fev2026', 'cl-jan2026', 'cl-nov2025', 'cl-oct2025',
-          'cl-jul2025', 'cl-mar2025', 'cl-feb2025', 'cl-jan2025', 'cl-nov2024'
-        ];
-        let changelogIndex = 0;
-
-        // Calcul intelligent de la taille du prochain lot (évite les orphelins et équilibre les étapes)
-        function getSmartBatchSize() {
-          const remaining = changelogVersions.length - changelogIndex;
-          if (remaining <= 0) return 0;
-          if (remaining <= 5) return remaining; // Si 5 ou moins restants, on les affiche tous d'un coup
-          // Découpage équilibré en 2 ou 3 étapes optimales
-          const targetBatches = Math.min(3, Math.max(1, Math.round(remaining / 4.5)));
-          return Math.ceil(remaining / targetBatches);
-        }
-
-        function updateChangelogControls() {
-          const remaining = changelogVersions.length - changelogIndex;
-          const prevBtn = document.getElementById('changelog-prev-btn');
-          const collapseBtn = document.getElementById('changelog-collapse-btn');
-          const textSpan = document.getElementById('changelog-prev-text');
-
-          if (collapseBtn) {
-            collapseBtn.style.display = changelogIndex > 0 ? 'inline-flex' : 'none';
-          }
-
-          if (prevBtn) {
-            if (remaining <= 0) {
-              prevBtn.style.display = 'none';
-            } else {
-              prevBtn.style.display = 'inline-flex';
-              const nextBatch = getSmartBatchSize();
-              if (textSpan) {
-                if (changelogIndex === 0) {
-                  textSpan.textContent = `Voir les versions précédentes (+${nextBatch})`;
-                } else if (nextBatch === remaining) {
-                  textSpan.textContent = `Voir les ${remaining} dernières versions`;
-                } else {
-                  textSpan.textContent = `Voir +${nextBatch} versions (${remaining} restantes)`;
-                }
-              }
-            }
-          }
-        }
-
-        function revealPreviousVersion() {
-          const batchSize = getSmartBatchSize();
-          for (let i = 0; i < batchSize; i++) {
-            if (changelogIndex >= changelogVersions.length) break;
-            
-            const id = changelogVersions[changelogIndex];
-            const el = document.getElementById(id);
-            if (el) {
-              el.style.display = 'block';
-              el.style.opacity = '0';
-              el.style.transform = 'translateY(-6px)';
-              
-              const currentEl = el;
-              const delay = i * 50;
-              
-              setTimeout(() => {
-                requestAnimationFrame(() => {
-                  currentEl.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-                  currentEl.style.opacity = '1';
-                  currentEl.style.transform = 'translateY(0)';
-                });
-              }, delay);
-            }
-            changelogIndex++;
-          }
-
-          updateChangelogControls();
-        }
-
-        function collapseAllVersions() {
-          // Masquer toutes les versions avec une animation fluide
-          [...changelogVersions].reverse().forEach((id, i) => {
-            const el = document.getElementById(id);
-            if (el && el.style.display !== 'none') {
-              setTimeout(() => {
-                el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(-6px)';
-                setTimeout(() => {
-                  el.style.display = 'none';
-                  el.style.opacity = '';
-                  el.style.transform = '';
-                }, 200);
-              }, i * 20);
-            }
-          });
-
-          // Réinitialiser l'état et rafraîchir les boutons
-          changelogIndex = 0;
-          setTimeout(() => {
-            updateChangelogControls();
-          }, 200);
-        }
-
-        // Initialisation du libellé du bouton au chargement
-        document.addEventListener('DOMContentLoaded', updateChangelogControls);
-      </script>
 
       <!-- Cartes de fonctionnalités -->
       <div id="features-grid">
@@ -1059,6 +592,482 @@
             Suivant <i class="bi bi-chevron-right"></i>
           </button>
         </div>
+      </section>
+
+      <!-- Section Nouveautés & Mises à jour -->
+      <section id="changelog-wrapper-section" style="padding: 30px 15px 40px; margin: 40px auto 10px; max-width: 950px; border-top: 1px dashed #d1d5db;">
+        <h2 style="color: #2c3e50; font-size: 1.6rem; text-align: center; margin-bottom: 8px;">
+          <i class="bi bi-clock-history" style="color: #f39c12;"></i> Nouveautés & Évolutions de la plateforme
+        </h2>
+        <p style="text-align: center; color: #666; max-width: 700px; margin: 0 auto 25px auto; font-size: 0.95rem;">
+          La plateforme Récap BAFA & BAFD évolue en continu grâce aux retours des animateurs et directeurs.
+        </p>
+
+        <div id="whats-new-section" style="max-width: 850px; margin: 0 auto; text-align: left;">
+
+          <!-- v21 : Octobre 2026 -->
+          <div
+            style="background: #fff9eb; border-left: 5px solid #f39c12; padding: 20px 30px; border-radius: 0 12px 12px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+            <div
+              style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
+              <h3
+                style="color: #d35400; margin: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                Dernière version : <i>Octobre 2026</i>
+              </h3>
+              <span
+                style="background: #f39c12; color: white; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;">VERSION
+                ACTUELLE</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+
+              <div
+                style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+                <span><strong>Notifications Toasters :</strong> alertes interactives et retours visuels instantanés (succès, erreur, avertissement) lors de chaque action utilisateur (création, modification, suppression, sauvegarde de profil, export, copie de lien).</span>
+              </div>
+
+              <div
+                style="display: flex; align-items: flex-start; gap: 10px; color: #444; font-size: 0.95rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #27ae60; margin-top: 3px; flex-shrink: 0;"></i>
+                <span><strong>Nouveau champ Google Drive :</strong> ajout d'un champ facultatif (lien ou clé de dossier) pour vos séjours et formations avec bouton d'accès direct dans la modale de détail (champ privé, visible exclusivement par vous lorsque vous êtes connecté sur votre propre page).</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Conteneur des versions précédentes (empilées, révélées une par une) -->
+          <div id="changelog-history" style="margin-top: 0;">
+
+            <!-- v20 : Septembre 2026 -->
+            <div class="changelog-entry" id="cl-sept2026"
+              style="display: none; border-left: 5px solid #6366f1; background: #eef2ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #4338ca; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Septembre 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Section statistiques repensée :</strong> Cartes compteurs dynamiques & nouveaux graphiques.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Icônes et titres repensés :</strong> une vingtaine d'icônes pour illustrer vos tableaux et des titres de sections clarifiés.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>En-tête fixe au scroll :</strong> L'en-tête du tableau vous suit lors du défilement (paramétrable dans vos options).</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #6366f1; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Couleurs par tranche d'âge :</strong> Badges automatiques selon le public (petite enfance, enfance, ados, adultes).</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v19 : Août 2026 -->
+            <div class="changelog-entry" id="cl-aout2026"
+              style="display: none; border-left: 5px solid #8b5cf6; background: #f5f3ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #7c3aed; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Août 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #8b5cf6; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Chargement fluide :</strong> indicateur de session pour supprimer les sauts d'affichage au démarrage.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v18 : Juin 2026 -->
+            <div class="changelog-entry" id="cl-juin2026"
+              style="display: none; border-left: 5px solid #0284c7; background: #f0f9ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0284c7; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Juin 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #0284c7; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Statut temporel dynamique (j-XX / j+XX) :</strong> la modale de détail d'une colo ou formation affiche désormais en temps réel son statut (<i>j-XX</i> vert, <i>en cours</i> bleu, <i>j+XX</i> rouge).</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v17 : Mai 2026 -->
+            <div class="changelog-entry" id="cl-mai2026"
+              style="display: none; border-left: 5px solid #0d9488; background: #f0fdfa; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(13, 148, 136, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0d9488; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Mai 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Fenêtre de détail :</strong> cliquez sur le numéro d'une ligne pour ouvrir une modale récapitulative complète.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Enrichissement du scoutisme :</strong> davantage d'organismes de scoutisme ajoutés (EEDF, EEIF...).</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Champ Comité d'Entreprise :</strong> nouveau champ optionnel pour préciser le CE/CSE organisateur de vos colos.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Export image JPG :</strong> nouveau bouton pour générer une image (.jpg) haute qualité de vos tableaux.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #0d9488; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Manuel utilisateur :</strong> design graphique de la modale entièrement retravaillé.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v16 : Avril 2026 -->
+            <div class="changelog-entry" id="cl-avr2026"
+              style="display: none; border-left: 5px solid #db2777; background: #fdf2f8; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(219, 39, 119, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #db2777; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Avril 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #db2777; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Nouveau type &laquo;&nbsp;Périscolaire&nbsp;&raquo; :</strong> ajoutez vos expériences en accueil périscolaire.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #db2777; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Date améliorée :</strong> saisie de date de début et de fin.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #db2777; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Confidentialité & Badges :</strong> bandeau récapitulatif des accès et badges animés (Futur, En cours, Nouveau).</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v15 : Mars 2026 -->
+            <div class="changelog-entry" id="cl-mar2026"
+              style="display: none; border-left: 5px solid #10b981; background: #ecfdf5; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #059669; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Mars 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #10b981; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Enrichissement des organismes :</strong> une liste plus large d'organismes de formation est désormais disponible.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #10b981; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Mot de passe oublié :</strong> réinitialisez votre mot de passe sans être connecté.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #10b981; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Liste déroulante des lieux :</strong> à partir de 3 caractères, une liste déroulante vous propose des lieux correspondants.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v14 : Février 2026 -->
+            <div class="changelog-entry" id="cl-fev2026"
+              style="display: none; border-left: 5px solid #ef4444; background: #fef2f2; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.12);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #dc2626; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Février 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #ef4444; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Gestion photo de profil :</strong> personnalisez votre espace avec votre propre image.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #ef4444; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Connexion Google :</strong> connectez-vous désormais directement via votre compte Google.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #ef4444; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Génération PDF :</strong> téléchargez tout votre parcours en un seul clic.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v13 : Janvier 2026 -->
+            <div class="changelog-entry" id="cl-jan2026"
+              style="display: none; border-left: 5px solid #3b82f6; background: #eff6ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(59,130,246,0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #2563eb; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Janvier 2026</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #3b82f6; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Ouverture des comptes publics :</strong> chacun peut créer son propre espace.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #3b82f6; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Colos itinérantes :</strong> gestion des séjours multi-lieux.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v12 : Novembre 2025 -->
+            <div class="changelog-entry" id="cl-nov2025"
+              style="display: none; border-left: 5px solid #a855f7; background: #faf5ff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(168, 85, 247, 0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #9333ea; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Novembre 2025</p>
+              <div
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #a855f7; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Système de connexion :</strong> mise en place du moyen de connexion utilisateur.</span>
+              </div>
+            </div>
+
+            <!-- v11 : Octobre 2025 -->
+            <div class="changelog-entry" id="cl-oct2025"
+              style="display: none; border-left: 5px solid #14b8a6; background: #f0fdfa; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(20,184,166,0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0d9488; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Octobre 2025</p>
+              <div
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #14b8a6; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Responsive mobile :</strong> l'interface s'adapte désormais aux écrans de téléphone.</span>
+              </div>
+            </div>
+
+            <!-- v10 : Juillet 2025 -->
+            <div class="changelog-entry" id="cl-jul2025"
+              style="display: none; border-left: 5px solid #f59e0b; background: #fffbeb; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(245,158,11,0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #d97706; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Juillet 2025</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #f59e0b; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Graphiques :</strong> ajout de graphiques dans la section Statistiques.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #f59e0b; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Nouvelles colonnes :</strong> nombre de jeunes encadrés et logo de l'organisme.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v9 : Mars 2025 -->
+            <div class="changelog-entry" id="cl-mar2025"
+              style="display: none; border-left: 5px solid #f43f5e; background: #fff1f2; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(244, 63, 94, 0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #e11d48; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Mars 2025</p>
+              <div
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #f43f5e; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Barre de recherche :</strong> filtrez vos expériences et formations.</span>
+              </div>
+            </div>
+
+            <!-- v8 : Février 2025 -->
+            <div class="changelog-entry" id="cl-feb2025"
+              style="display: none; border-left: 5px solid #f97316; background: #fff7ed; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(249,115,22,0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #ea580c; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Février 2025</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Tableau des formations :</strong> nouvelle section dédiée à vos formations BAFA/BAFD.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Bouton "Retour en haut" :</strong> navigation rapide en bas de page.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Filtres :</strong> filtrez vos données par type, date ou organisme.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- v7 : Janvier 2025 -->
+            <div class="changelog-entry" id="cl-jan2025"
+              style="display: none; border-left: 5px solid #06b6d4; background: #ecfeff; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(6,182,212,0.1);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #0891b2; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Janvier 2025</p>
+              <div
+                style="display: flex; align-items: flex-start; gap: 8px; color: #555; font-size: 0.9rem; line-height: 1.5;">
+                <i class="bi bi-check2-circle" style="color: #06b6d4; flex-shrink: 0; margin-top: 2px;"></i>
+                <span><strong>Section Statistiques :</strong> visualisez votre parcours avec des données chiffrées.</span>
+              </div>
+            </div>
+
+            <!-- v1 : Novembre 2024 -->
+            <div class="changelog-entry" id="cl-nov2024"
+              style="display: none; border-left: 5px solid #64748b; background: #f8fafc; padding: 14px 30px; border-radius: 0 8px 8px 0; margin-top: 4px; box-shadow: 0 2px 8px rgba(100, 116, 139, 0.08);">
+              <p
+                style="margin: 0 0 8px 0; font-size: 0.78rem; color: #475569; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                Novembre 2024 — Lancement 🚀</p>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-rocket-takeoff-fill" style="color: #64748b; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span><strong>Mise en ligne initiale :</strong> première version de l'application.</span>
+                </div>
+                <div
+                  style="display: flex; align-items: flex-start; gap: 8px; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                  <i class="bi bi-check2-circle" style="color: #64748b; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span>Mise en place du compte de démonstration.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Boutons d'action du changelog -->
+          <div style="text-align: center; margin-top: 18px; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <button id="changelog-prev-btn" onclick="revealPreviousVersion()"
+              style="background: #ffffff; border: 1px solid #d1d5db; color: #4b5563; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s ease;"
+              onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#9ca3af'; this.style.transform='translateY(-1px)';"
+              onmouseout="this.style.background='#ffffff'; this.style.borderColor='#d1d5db'; this.style.transform='translateY(0)';">
+              <i class="bi bi-clock-history"></i> <span id="changelog-prev-text">Voir les versions précédentes</span>
+            </button>
+            <button id="changelog-collapse-btn" onclick="collapseAllVersions()"
+              style="display: none; background: #ffffff; border: 1px solid #d1d5db; color: #6b7280; font-size: 0.82rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s ease;"
+              onmouseover="this.style.background='#fee2e2'; this.style.color='#b91c1c'; this.style.borderColor='#fca5a5'; this.style.transform='translateY(-1px)';"
+              onmouseout="this.style.background='#ffffff'; this.style.color='#6b7280'; this.style.borderColor='#d1d5db'; this.style.transform='translateY(0)';">
+              <i class="bi bi-chevron-up"></i> Replier
+            </button>
+          </div>
+
+        </div>
+
+        <script>
+          // Ordre des versions à révéler (du plus récent au plus ancien)
+          const changelogVersions = [
+            'cl-sept2026', 'cl-aout2026', 'cl-juin2026', 'cl-mai2026', 'cl-avr2026', 'cl-mar2026', 'cl-fev2026', 'cl-jan2026', 'cl-nov2025', 'cl-oct2025',
+            'cl-jul2025', 'cl-mar2025', 'cl-feb2025', 'cl-jan2025', 'cl-nov2024'
+          ];
+          let changelogIndex = 0;
+
+          // Calcul intelligent de la taille du prochain lot (évite les orphelins et équilibre les étapes)
+          function getSmartBatchSize() {
+            const remaining = changelogVersions.length - changelogIndex;
+            if (remaining <= 0) return 0;
+            if (remaining <= 5) return remaining; // Si 5 ou moins restants, on les affiche tous d'un coup
+            // Découpage équilibré en 2 ou 3 étapes optimales
+            const targetBatches = Math.min(3, Math.max(1, Math.round(remaining / 4.5)));
+            return Math.ceil(remaining / targetBatches);
+          }
+
+          function updateChangelogControls() {
+            const remaining = changelogVersions.length - changelogIndex;
+            const prevBtn = document.getElementById('changelog-prev-btn');
+            const collapseBtn = document.getElementById('changelog-collapse-btn');
+            const textSpan = document.getElementById('changelog-prev-text');
+
+            if (collapseBtn) {
+              collapseBtn.style.display = changelogIndex > 0 ? 'inline-flex' : 'none';
+            }
+
+            if (prevBtn) {
+              if (remaining <= 0) {
+                prevBtn.style.display = 'none';
+              } else {
+                prevBtn.style.display = 'inline-flex';
+                const nextBatch = getSmartBatchSize();
+                if (textSpan) {
+                  if (changelogIndex === 0) {
+                    textSpan.textContent = `Voir les versions précédentes (+${nextBatch})`;
+                  } else if (nextBatch === remaining) {
+                    textSpan.textContent = `Voir les ${remaining} dernières versions`;
+                  } else {
+                    textSpan.textContent = `Voir +${nextBatch} versions (${remaining} restantes)`;
+                  }
+                }
+              }
+            }
+          }
+
+          function revealPreviousVersion() {
+            const batchSize = getSmartBatchSize();
+            for (let i = 0; i < batchSize; i++) {
+              if (changelogIndex >= changelogVersions.length) break;
+              
+              const id = changelogVersions[changelogIndex];
+              const el = document.getElementById(id);
+              if (el) {
+                el.style.display = 'block';
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-6px)';
+                
+                const currentEl = el;
+                const delay = i * 50;
+                
+                setTimeout(() => {
+                  requestAnimationFrame(() => {
+                    currentEl.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                    currentEl.style.opacity = '1';
+                    currentEl.style.transform = 'translateY(0)';
+                  });
+                }, delay);
+              }
+              changelogIndex++;
+            }
+
+            updateChangelogControls();
+          }
+
+          function collapseAllVersions() {
+            // Masquer toutes les versions avec une animation fluide
+            [...changelogVersions].reverse().forEach((id, i) => {
+              const el = document.getElementById(id);
+              if (el && el.style.display !== 'none') {
+                setTimeout(() => {
+                  el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                  el.style.opacity = '0';
+                  el.style.transform = 'translateY(-6px)';
+                  setTimeout(() => {
+                    el.style.display = 'none';
+                    el.style.opacity = '';
+                    el.style.transform = '';
+                  }, 200);
+                }, i * 20);
+              }
+            });
+
+            // Réinitialiser l'état et rafraîchir les boutons
+            changelogIndex = 0;
+            setTimeout(() => {
+              updateChangelogControls();
+            }, 200);
+          }
+
+          // Initialisation du libellé du bouton au chargement
+          document.addEventListener('DOMContentLoaded', updateChangelogControls);
+        </script>
       </section>
     </section>
 
