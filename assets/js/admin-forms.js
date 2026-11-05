@@ -686,6 +686,13 @@ function updateOrganizerOptions() {
     'BTP Vacances (Groupe PRO BTP)', 'Cap Océan', 'CCAS (Énergie - EDF/Engie)', 'CCGPF (Comité Central Groupe Public Ferroviaire)',
     'CEI (Centre d\'Échanges Internationaux)', 'Centre de Vacances de la Martière', 'Centre Les Vents Salés',
     'Centre Musicalta', 'CESL', 'CEV Vacances (Club Enfants et Vacances)', 'CLC (Club Langues et Civilisations)',
+    'CSE Central Banque de France', 'CSE RATP (CRE RATP)', 'EF Séjours Linguistiques', 'Eole Loisirs',
+    'Familles Rurales', 'FFCAM (Club Alpin Français - Jeunes)', 'Igesa (Armées)',
+    'JPA (La Jeunesse au Plein Air)', 'Label Evasion', 'LCV (Loisirs Culture Vacances Adaptées)',
+    'LEC (Loisirs Culturels à l\'Étranger)', 'Les Glénans', 'Les PEP (Fédération Générale)',
+    'Les Petits Débrouillards', 'Ligue de l\'Enseignement (Vacances pour tous)', 'Loisirs Pluriel',
+    'Loisirs Provence Méditerranée (LPM)', 'MRJC (Mouvement Rural de Jeunesse Chrétienne)',
+    'Nature Pour Tous', 'Neige et Soleil',
     'Guides et scouts de France (SGDF)',
     'Éclaireuses et éclaireurs de France (EEDF)',
     'Éclaireuses éclaireurs unionistes de France (EEUF)',
@@ -742,46 +749,46 @@ function updateOrganizerOptions() {
         
         const grp = getOptgroup(val);
         if (grp) {
-            let optgroup = Array.from(organizerSelect.querySelectorAll('optgroup')).find(g => g.label === grp);
-            if (!optgroup) {
-                optgroup = document.createElement('optgroup');
-                optgroup.label = grp;
-                const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
-                if (autreOpt) {
-                  organizerSelect.insertBefore(optgroup, autreOpt);
-                } else {
-                  organizerSelect.appendChild(optgroup);
-                }
-                if (ts) ts.addOptionGroup(grp, { label: grp });
-            }
-            optgroup.appendChild(opt);
-        } else {
-            // Insérer avant "Autre" pour l'ordre
+          let optgroup = Array.from(organizerSelect.querySelectorAll('optgroup')).find(g => g.label === grp);
+          if (!optgroup) {
+            optgroup = document.createElement('optgroup');
+            optgroup.label = grp;
             const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
             if (autreOpt) {
-              organizerSelect.insertBefore(opt, autreOpt);
+              organizerSelect.insertBefore(optgroup, autreOpt);
             } else {
-              organizerSelect.appendChild(opt);
+              organizerSelect.appendChild(optgroup);
             }
+            if (ts) ts.addOptionGroup(grp, { label: grp });
+          }
+          optgroup.appendChild(opt);
+        } else {
+          // Insérer avant "Autre" pour l'ordre
+          const autreOpt = Array.from(organizerSelect.options).find(o => o.value === 'Autre');
+          if (autreOpt) {
+            organizerSelect.insertBefore(opt, autreOpt);
+          } else {
+            organizerSelect.appendChild(opt);
+          }
         }
-        
+
         if (ts) {
-            if (grp) {
-                ts.addOption({ value: val, text: val, optgroup: grp });
-            } else {
-                ts.addOption({ value: val, text: val });
-            }
+          if (grp) {
+            ts.addOption({ value: val, text: val, optgroup: grp });
+          } else {
+            ts.addOption({ value: val, text: val });
+          }
         }
       }
     } else {
       // Retirer l'option si elle ne doit pas être là
       const opt = Array.from(organizerSelect.options).find(o => o.value === val);
       if (opt) {
-          const parent = opt.parentElement;
-          opt.remove();
-          if (parent && parent.tagName.toUpperCase() === 'OPTGROUP' && parent.children.length === 0) {
-              parent.remove();
-          }
+        const parent = opt.parentElement;
+        opt.remove();
+        if (parent && parent.tagName.toUpperCase() === 'OPTGROUP' && parent.children.length === 0) {
+          parent.remove();
+        }
       }
       if (ts) ts.removeOption(val);
     }
@@ -789,17 +796,17 @@ function updateOrganizerOptions() {
 
   // Nettoyer les optgroups vides de TomSelect
   if (ts && typeof ts.removeOptionGroup === 'function') {
-      const allGroups = [
-          'Fédération du scoutisme français (FSF)',
-          'Conférence française du scoutisme (CSF)',
-          'Indépendant'
-      ];
-      allGroups.forEach(grp => {
-          const hasOptions = toShow.some(val => getOptgroup(val) === grp);
-          if (!hasOptions) {
-              ts.removeOptionGroup(grp);
-          }
-      });
+    const allGroups = [
+      'Fédération du scoutisme français (FSF)',
+      'Conférence française du scoutisme (CSF)',
+      'Indépendant'
+    ];
+    allGroups.forEach(grp => {
+      const hasOptions = toShow.some(val => getOptgroup(val) === grp);
+      if (!hasOptions) {
+        ts.removeOptionGroup(grp);
+      }
+    });
   }
 
   // 2. Gérer la valeur actuelle si elle a été masquée
@@ -1109,6 +1116,26 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'CESL': { url: 'https://www.cesl.fr/', logo: 'assets/img/cesl.png', dept: '75' },
     'CEV Vacances (Club Enfants et Vacances)': { url: 'https://www.cev-vacances.com/', logo: 'assets/img/cevVacances.png', dept: '92' },
     'CLC (Club Langues et Civilisations)': { url: 'https://www.clc.fr/', logo: 'assets/img/clc.png', dept: '12' },
+    'CSE Central Banque de France': { url: 'https://www.csebanquedefrance.fr/', logo: 'assets/img/cseBanqueDeFrance.png', dept: '75' },
+    'CSE RATP (CRE RATP)': { url: 'https://www.cse-ratp.fr/', logo: 'assets/img/cseRatp.jpg', dept: '75' },
+    'EF Séjours Linguistiques': { url: 'https://www.ef.fr/', logo: 'assets/img/ef.webp', dept: '75' },
+    'Eole Loisirs': { url: 'https://www.eole-loisirs.com/', logo: 'assets/img/eoleLoisirs.png', dept: '77' },
+    'Familles Rurales': { url: 'https://www.famillesrurales.org/', logo: 'assets/img/famillesRurales.png', dept: '75' },
+    'FFCAM (Club Alpin Français - Jeunes)': { url: 'https://www.ffcam.fr/', logo: 'assets/img/ffcam.png', dept: '75' },
+    'Igesa (Armées)': { url: 'https://www.igesa.fr/', logo: 'assets/img/igesa.png', dept: '20' },
+    'JPA (La Jeunesse au Plein Air)': { url: 'https://www.jpa.asso.fr/', logo: 'assets/img/jpa.png', dept: '75' },
+    'Label Evasion': { url: 'https://www.label-evasion.fr/', logo: 'assets/img/labelEvasion.png', dept: '95' },
+    'LCV (Loisirs Culture Vacances Adaptées)': { url: 'https://www.lcv-asso.com/', logo: 'assets/img/lcv.jpg', dept: '37' },
+    'LEC (Loisirs Culturels à l\'Étranger)': { url: 'https://www.sejour-linguistique-lec.fr/', logo: 'assets/img/lec.jpg', dept: '75' },
+    'Les Glénans': { url: 'https://www.glenans.asso.fr/', logo: 'assets/img/lesGlenans.png', dept: '75' },
+    'Les PEP (Fédération Générale)': { url: 'https://www.lespep.org/', logo: 'assets/img/lesPep.jpg', dept: '94' },
+    'Les Petits Débrouillards': { url: 'https://www.lespetitsdebrouillards.org/', logo: 'assets/img/petitsDebrouillards.png', dept: '93' },
+    'Ligue de l\'Enseignement (Vacances pour tous)': { url: 'https://www.vacances-pour-tous.org/', logo: 'assets/img/ligueEnseignement.png', dept: '75' },
+    'Loisirs Pluriel': { url: 'https://www.loisirs-pluriel.com/', logo: 'assets/img/loisirsPluriel.png', dept: '35' },
+    'Loisirs Provence Méditerranée (LPM)': { url: 'https://www.lpm.asso.fr/', logo: 'assets/img/lpm.jpg', dept: '13' },
+    'MRJC (Mouvement Rural de Jeunesse Chrétienne)': { url: 'https://www.mrjc.org/', logo: 'assets/img/mrjc.jpg', dept: '93' },
+    'Nature Pour Tous': { url: 'https://www.naturepourtous.fr/', logo: 'assets/img/naturePourTous.png', dept: '42' },
+    'Neige et Soleil': { url: 'https://www.neige-et-soleil.com/', logo: 'assets/img/neigeEtSoleil.jpg', dept: '73' },
   };
 
   if (select.value === 'Autre') {
@@ -1257,7 +1284,7 @@ window.toggleFormationOrganizerCustom = function (skipReset = false) {
     'Agence Nature': { url: 'https://www.agencenature.com/', logo: 'assets/img/agenceNature.png', dept: '13' },
     'SILC': { url: 'https://silc.fr/', logo: 'assets/img/silc.webp', dept: '16' },
     'Les Francas': { url: 'https://www.francas.asso.fr/', logo: 'assets/img/lesFrancas.webp', dept: '69' },
-    'Cemea': { url: 'https://cemea.asso.fr/', logo: 'assets/img/cemea.webp', dept: '38' },
+    'CEMEA': { url: 'https://cemea.asso.fr/', logo: 'assets/img/cemea.webp', dept: '38' },
     'ALEF': { url: 'https://www.alef.asso.fr/', logo: 'assets/img/alef.jpg', dept: '69' },
     'IFAC': { url: 'https://ifac-formation.fr/', logo: 'assets/img/ifac.jpg', dept: '92' },
     'CGCV': { url: 'https://www.cgcv.org/com/homepage', logo: 'assets/img/cgcv.jpeg', dept: '92' },
@@ -1266,6 +1293,12 @@ window.toggleFormationOrganizerCustom = function (skipReset = false) {
     'AROEVEN (Fédération Nationale)': { url: 'https://www.aroeven.fr/', logo: 'assets/img/aroéven.jpg', dept: '75' },
     'CESL': { url: 'https://www.cesl.fr/', logo: 'assets/img/cesl.png', dept: '75' },
     'CFAG (Centre de Formation d\'Animateurs et de Gestionnaires)': { url: 'https://www.asso-cfag.com/', logo: 'assets/img/cfag.png', dept: '77' },
+    'Familles Rurales': { url: 'https://www.famillesrurales.org/', logo: 'assets/img/famillesRurales.png', dept: '75' },
+    'Les PEP (Fédération Générale)': { url: 'https://www.lespep.org/', logo: 'assets/img/lesPep.jpg', dept: '94' },
+    'Ligue de l\'Enseignement (Vacances pour tous)': { url: 'https://www.vacances-pour-tous.org/', logo: 'assets/img/ligueEnseignement.png', dept: '75' },
+    'Loisirs Provence Méditerranée (LPM)': { url: 'https://www.lpm.asso.fr/', logo: 'assets/img/lpm.jpg', dept: '13' },
+    'MRJC (Mouvement Rural de Jeunesse Chrétienne)': { url: 'https://www.mrjc.org/', logo: 'assets/img/mrjc.jpg', dept: '93' },
+    'Neige et Soleil': { url: 'https://www.neige-et-soleil.com/', logo: 'assets/img/neigeEtSoleil.jpg', dept: '73' },
   };
 
   if (select.value === 'Autre') {
