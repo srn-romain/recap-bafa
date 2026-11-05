@@ -693,6 +693,10 @@ function updateOrganizerOptions() {
     'Les Petits Débrouillards', 'Ligue de l\'Enseignement (Vacances pour tous)', 'Loisirs Pluriel',
     'Loisirs Provence Méditerranée (LPM)', 'MRJC (Mouvement Rural de Jeunesse Chrétienne)',
     'Nature Pour Tous', 'Neige et Soleil',
+        'Nomade Aventure', 'Odynéo', 'OUL', 'Pionniers de France', 'Planète Aventures',
+    'Planète Sciences', 'Secours Populaire Français', 'STAJ', 'Supernova', 'Tootazimut',
+    'Vacances Évasion', 'Veni Vidi Ludi', 'Verdié Hello', 'VIVA (Vacances et Loisirs)',
+    'VIVAC\'S', 'Vitacolo', 'VVL (Vacances Voyages Loisirs)',
     'Guides et scouts de France (SGDF)',
     'Éclaireuses et éclaireurs de France (EEDF)',
     'Éclaireuses éclaireurs unionistes de France (EEUF)',
@@ -1136,6 +1140,24 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'MRJC (Mouvement Rural de Jeunesse Chrétienne)': { url: 'https://www.mrjc.org/', logo: 'assets/img/mrjc.jpg', dept: '93' },
     'Nature Pour Tous': { url: 'https://www.naturepourtous.fr/', logo: 'assets/img/naturePourTous.png', dept: '42' },
     'Neige et Soleil': { url: 'https://www.neige-et-soleil.com/', logo: 'assets/img/neigeEtSoleil.jpg', dept: '73' },
+    'Nomade Aventure': { url: 'https://www.nomade-aventure.com/', logo: 'assets/img/nomadeAventure.jpg', dept: '75' },
+    'Odynéo': { url: 'https://www.odyneo.fr/', logo: 'assets/img/odyneo.jpg', dept: '69' },
+    'OUL': { url: 'https://www.oul45.asso.fr/', logo: 'assets/img/oul.jpg', dept: '45' },
+    'Pionniers de France': { url: 'https://lespionniers.org/', logo: 'assets/img/pionniersDeFrance.jpg', dept: '93' },
+    'Planète Aventures': { url: 'https://www.planeteaventures.fr/', logo: 'assets/img/planeteAventures.jpg', dept: '35' },
+    'Planète Sciences': { url: 'https://www.planete-sciences.org/', logo: 'assets/img/planeteSciences.png', dept: '91' },
+    'Secours Populaire Français': { url: 'https://www.secourspopulaire.fr/', logo: 'assets/img/secoursPopulaire.png', dept: '75' },
+    'STAJ': { url: 'https://www.staj.asso.fr/', logo: 'assets/img/staj.jpg', dept: '75' },
+    'Supernova': { url: 'https://www.supernova-juniors.com/', logo: 'assets/img/supernova.png', dept: '26' },
+    'Tootazimut': { url: 'https://www.tootazimut.fr/', logo: 'assets/img/tootazimuth.png', dept: '34' },
+    'Vacances Évasion': { url: 'https://www.vacances-evasion.asso.fr/', logo: 'assets/img/vacancesEvasion.png', dept: '34' },
+    'Veni Vidi Ludi': { url: 'https://www.venividiludi.org/', logo: 'assets/img/veniVidiLudi.jpg', dept: '69' },
+    'Verdié Hello': { url: 'https://www.verdiehello.com/', logo: 'assets/img/verdieHello.png', dept: '12' },
+    'VIVA (Vacances et Loisirs)': { url: 'https://www.viva.asso.fr/', logo: 'assets/img/viva.jpg', dept: '75' },
+    'VIVAC\'S': { url: 'https://www.vivacaux.fr/', logo: 'assets/img/vivacaux.webp', dept: '76' },
+    'Vitacolo': { url: 'https://www.vitacolo.fr/', logo: 'assets/img/vitacolo.jpg', dept: '69' },
+    'VVL (Vacances Voyages Loisirs)': { url: 'https://www.vvl.org/', logo: 'assets/img/vvl.png', dept: '75' },
+
   };
 
   if (select.value === 'Autre') {
@@ -1299,6 +1321,13 @@ window.toggleFormationOrganizerCustom = function (skipReset = false) {
     'Loisirs Provence Méditerranée (LPM)': { url: 'https://www.lpm.asso.fr/', logo: 'assets/img/lpm.jpg', dept: '13' },
     'MRJC (Mouvement Rural de Jeunesse Chrétienne)': { url: 'https://www.mrjc.org/', logo: 'assets/img/mrjc.jpg', dept: '93' },
     'Neige et Soleil': { url: 'https://www.neige-et-soleil.com/', logo: 'assets/img/neigeEtSoleil.jpg', dept: '73' },
+    'OFAC': { url: 'https://www.ofac-france.org/', logo: 'assets/img/ofac.jpg', dept: '75' },
+    'Pionniers de France': { url: 'https://lespionniers.org/', logo: 'assets/img/pionniersDeFrance.jpg', dept: '93' },
+    'Planète Sciences': { url: 'https://www.planete-sciences.org/', logo: 'assets/img/planeteSciences.png', dept: '91' },
+    'STAJ': { url: 'https://www.staj.asso.fr/', logo: 'assets/img/staj.jpg', dept: '75' },
+    'Vitacolo': { url: 'https://www.vitacolo.fr/', logo: 'assets/img/vitacolo.jpg', dept: '69' },
+    'VVL (Vacances Voyages Loisirs)': { url: 'https://www.vvl.org/', logo: 'assets/img/vvl.png', dept: '75' },
+
   };
 
   if (select.value === 'Autre') {
