@@ -679,6 +679,8 @@ function updateOrganizerOptions() {
     'Association Regards', 'CE SNCF', 'CE Air France', 'Chemins du Monde', 'Chic Planet',
     'GoColo', 'Le Temps des Copains', 'Nouvelles Vagues', 'Passion Aventure Junior',
     'Sans Frontières', 'SILC', 'Visas Loisirs',
+    'Action Séjours', 'ADAPEI Vacances (Réseau Adapei)', 'ADEF Résidences Vacances',
+    'Aludeo', 'American Village', 'ANCAV-TT (Tourisme et Travail)', 'Anglais In France', 'EPAF',
     'Guides et scouts de France (SGDF)',
     'Éclaireuses et éclaireurs de France (EEDF)',
     'Éclaireuses éclaireurs unionistes de France (EEUF)',
@@ -1073,6 +1075,14 @@ window.toggleOrganizerCustom = function (skipReset = false) {
     'Éclaireurs neutres de France (ENF)': { url: 'https://www.enf.fr/', logo: 'assets/img/enf.png', dept: '75' },
     'Fédération des éclaireurs et éclaireuses (FEE)': { url: 'https://www.fee.asso.fr/', logo: 'assets/img/fee.jpg', dept: '94' },
     'Scouts unitaires de France (SUF)': { url: 'https://www.scouts-unitaires.org/', logo: 'assets/img/scoutunitaire.png', dept: '92' },
+    'Action Séjours': { url: 'https://www.action-sejours.com/', logo: 'assets/img/actionSejours.png', dept: '75' },
+    'ADAPEI Vacances (Réseau Adapei)': { url: 'https://www.adapei-vacances.org/', logo: 'assets/img/adapeiVacances.png', dept: '75' },
+    'ADEF Résidences Vacances': { url: 'https://www.adef-residences.com/', logo: 'assets/img/adefResidences.jpg', dept: '94' },
+    'Aludeo': { url: 'https://www.aludeo.fr/', logo: 'assets/img/aludeo.png', dept: '29' },
+    'American Village': { url: 'https://www.americanvillage.fr/', logo: 'assets/img/americanVillage.png', dept: '69' },
+    'ANCAV-TT (Tourisme et Travail)': { url: 'https://www.ancavtt.asso.fr/', logo: 'assets/img/ancavtt.jpg', dept: '93' },
+    'Anglais In France': { url: 'https://www.anglaisinfrance.com/', logo: 'assets/img/anglaisInFrance.jpg', dept: '31' },
+    'EPAF': { url: 'https://www.asfvacances.fr/', logo: 'assets/img/epaf.png', dept: '75' },
   };
 
   if (select.value === 'Autre') {
@@ -1207,7 +1217,7 @@ window.toggleFormationOrganizerCustom = function (skipReset = false) {
 
   const knownOrganizersFormation = {
     'UCPA': { url: 'https://www.ucpa.com/', logo: 'assets/img/ucpa.jpeg', dept: '94' },
-    'Afocal': { url: 'https://www.afocal.fr/', logo: 'assets/img/afocal.webp', dept: '75' },
+    'AFOCAL': { url: 'https://www.afocal.fr/', logo: 'assets/img/afocal.webp', dept: '75' },
     'FFSS': { url: 'https://www.ffss.fr/', logo: 'assets/img/ffss.jpeg', dept: '75' },
     'SNU': { url: 'https://www.snu.fr/', logo: 'assets/img/snu.png', dept: '69' },
     'Temps Jeunes': { url: 'https://temps-jeunes.com/', logo: 'assets/img/tj.png', dept: '69' },
@@ -1224,7 +1234,9 @@ window.toggleFormationOrganizerCustom = function (skipReset = false) {
     'Cemea': { url: 'https://cemea.asso.fr/', logo: 'assets/img/cemea.webp', dept: '38' },
     'ALEF': { url: 'https://www.alef.asso.fr/', logo: 'assets/img/alef.jpg', dept: '69' },
     'IFAC': { url: 'https://ifac-formation.fr/', logo: 'assets/img/ifac.jpg', dept: '92' },
-    'CGCV': { url: 'https://www.cgcv.org/com/homepage', logo: 'assets/img/cgcv.jpeg', dept: '92' }
+    'CGCV': { url: 'https://www.cgcv.org/com/homepage', logo: 'assets/img/cgcv.jpeg', dept: '92' },
+    '3MTKD Formation': { url: 'https://www.3mtkd.fr/', logo: 'assets/img/3mtkd.png', dept: '34' },
+    'EPAF': { url: 'https://www.asfvacances.fr/', logo: 'assets/img/epaf.png', dept: '75' },
   };
 
   if (select.value === 'Autre') {
