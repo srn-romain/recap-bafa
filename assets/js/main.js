@@ -404,7 +404,16 @@ function createStayTypeDonutChart(data) {
   }
   if (card) card.style.display = 'flex';
 
-  const modernPalette = ['#d97706', '#ea580c', '#4f46e5', '#16a34a', '#9333ea', '#0d9488'];
+  // Palette harmonisée avec l'identité visuelle du site (sans teintes ternes / caca d'oie)
+  const cadreColorMap = {
+    'Colonies de vacances': '#10b981', // Vert émeraude frais & lumineux (nature, séjours)
+    'Centres de loisirs': '#f39c12',   // Orange chaud & solaire signature du site (ALSH)
+    'Périscolaire': '#2563eb',         // Bleu royal moderne (milieu scolaire)
+    'Scoutisme': '#0d9488',            // Teal / sarcelle d'aventure
+    'Autre': '#8b5cf6'                 // Violet moderne
+  };
+  const defaultPalette = ['#10b981', '#f39c12', '#2563eb', '#0d9488', '#8b5cf6', '#ec4899'];
+  const chartColors = labels.map((label, idx) => cadreColorMap[label] || defaultPalette[idx % defaultPalette.length]);
 
   chartInstances['stayTypeChart'] = new Chart(canvas, {
     type: 'doughnut',
@@ -412,7 +421,7 @@ function createStayTypeDonutChart(data) {
       labels: labels,
       datasets: [{
         data: values,
-        backgroundColor: modernPalette.slice(0, labels.length),
+        backgroundColor: chartColors,
         borderWidth: 2,
         borderColor: '#ffffff',
         hoverOffset: 6
